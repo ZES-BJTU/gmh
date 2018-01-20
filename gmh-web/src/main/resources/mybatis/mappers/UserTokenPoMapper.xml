@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.UserTokenMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.UserTokenPo">
+		<id column="id" jdbcType="BIGINT" property="id"/>
+		<result column="user_id" jdbcType="BIGINT" property="userId"/>
+		<result column="token" jdbcType="VARCHAR" property="token"/>
+		<result column="login_time" jdbcType="TIMESTAMP" property="loginTime"/>
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+	</resultMap>
+	<sql id="BaseColumnList">
+		`id`, `user_id`, `token`, 
+		`login_time`, `created_time`, `modified_time`
+	</sql>
+	<insert id="insertOrUpdate" parameterType="com.zes.squad.gmh.entity.po.UserTokenPo" >
+		INSERT INTO
+		user_token
+		(`user_id`,`token`,`login_time`)
+		VALUES
+		(#{userId, jdbcType=BIGINT},
+		#{token, jdbcType=VARCHAR},
+		#{loginTime, jdbcType=TIMESTAMP})
+		ON DUPLICATE KEY UPDATE
+		`token` = #{token, jdbcType=VARCHAR},
+		`login_time` = #{loginTime, jdbcType=TIMESTAMP}
+	</insert>
+	<select id="selectByToken" parameterType="string">
+		SELECT
+		<include refid="BaseColumnList"/>
+		FROM user_token
+		WHERE `token` = #{token, jdbcType=VARCHAR}
+		limit 1
+	</select>
+</mapper>

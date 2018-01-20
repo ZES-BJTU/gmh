@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.UserMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.UserPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="account" jdbcType="VARCHAR" property="account" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="salt" jdbcType="VARCHAR" property="salt" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="gender" jdbcType="TINYINT" property="gender" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<sql id="BaseColumnList">
+		`id`, `account`, `email`, `mobile`,
+		`password`, `salt`, `name`, `gender`,
+		`store_id`, `remark`, `created_time`, `modified_time`
+	</sql>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList" />
+		FROM user
+		WHERE id = #{id, jdbcType=BIGINT}
+	</select>
+	<select id="selectByAccount" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList" />
+		FROM user
+		WHERE account = #{account, jdbcType=VARCHAR}
+	</select>
+	<update id="updatePassword" parameterType="string">
+		UPDATE user SET
+		`password` = #{password, jdbcType=VARCHAR}
+	</update>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.UserPo">
+		INSERT INTO
+		user(`account`, `email`, `mobile`,
+		`password`, `salt`, `name`, `gender`,
+		`store_id`, `remark`)
+		VALUES
+		(#{account, jdbcType=VARCHAR},
+		#{email, jdbcType=VARCHAR},
+		#{mobile,
+		jdbcType=VARCHAR},
+		#{password, jdbcType=VARCHAR},
+		#{salt,
+		jdbcType=VARCHAR},
+		#{name, jdbcType=VARCHAR},
+		#{gender,
+		jdbcType=TINYINT},
+		#{storeId, jdbcType=BIGINT},
+		#{remark,
+		jdbcType=VARCHAR})
+	</insert>
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.UserPo">
+		UPDATE user
+		<set>
+			<if test="email != null and email != ''">
+				`email` = #{email, jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null and mobile != ''">
+				`mobile` = #{mobile, jdbcType=VARCHAR},
+			</if>
+			<if test="email != null and email != ''">
+				`email` = #{email, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				`name` = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				`gender` = #{gender, jdbcType=TINYINT},
+			</if>
+			<if test="storeId != null">
+				`store_id` = #{storeId, jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE id = #{id, jdbcType=BIGINT}
+	</update>
+	<select id="selectIdsByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.UserQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT `id` FROM user u
+		LEFT JOIN store s
+		ON u.`store_id` = s.`id`
+		<if test="keyWord != null and keyWord != ''">
+			<bind name="condition" value="'%' + keyWord + '%'"/>
+			CONCAT(u.`account`,u.`email`,u.`mobile`,u.`name`,s.`name`) LIKE #{condition, jdbcType=VARCHAR}
+		</if>
+	</select>
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM user WHERE `id` = #{id, jdbcType=BIGINT}
+	</delete>
+	<delete id="batchDelete" parameterType="list">
+		DELETE FROM user WHERE `id` IN
+		<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=BIGINT}
+		</foreach>
+	</delete>
+</mapper>

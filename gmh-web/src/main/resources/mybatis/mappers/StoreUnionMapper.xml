@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.StoreUnionMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.StoreUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="u_name" jdbcType="VARCHAR" property="principalName" />
+		<association property="storePo"
+			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
+			columnPrefix="_s" />
+	</resultMap>
+	<sql id="BaseColumnList">
+		s.id AS s_id,
+		s.name AS s_name,
+		s.address AS s_address,
+		s.principal_id AS s_principal_id,
+		s.mobile AS s_mobile,
+		s.phone AS s_phone,
+		s.remark = s_remark,
+		s.created_time AS s_created_time,
+		s.modified_time AS s_modified_time,
+		u.name AS u_name
+	</sql>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList"/>
+		FROM
+		store s
+		LEFT JOIN 
+		user u
+		ON
+		s.principal_id = u.id
+	</select>
+	<select id="selectByCondition"
+	parameterType="com.zes.squad.gmh.entity.condition.StoreQueryCondition"
+	resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList" />
+		FROM
+		store s
+		LEFT JOIN
+		user u
+		ON
+		s.principal_id = u.id
+		<if test="storeKeyWord != null and storeKeyWord != ''">
+			<bind name="condition" value="'%' + keyWord + '%'"/>
+			<where>
+				concat_ws(',',s.`name`,s.`address`,u.`name`,s.`mobile`,s.`phone`,s.`remark`)
+				LIKE
+				#{condition, jdbcType=VARCHAR}
+			</where>
+		</if>
+	</select>
+</mapper>

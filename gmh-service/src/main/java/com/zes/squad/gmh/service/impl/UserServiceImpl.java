@@ -1,0 +1,170 @@
+package com.zes.squad.gmh.service.impl;
+
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.zes.squad.gmh.cache.CacheService;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
+import com.zes.squad.gmh.common.page.PagedLists;
+import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.common.util.EncryptUtils;
+import com.zes.squad.gmh.common.util.JsonUtils;
+import com.zes.squad.gmh.constant.CacheConsts;
+import com.zes.squad.gmh.entity.condition.UserQueryCondition;
+import com.zes.squad.gmh.entity.po.StorePo;
+import com.zes.squad.gmh.entity.po.UserPo;
+import com.zes.squad.gmh.entity.po.UserTokenPo;
+import com.zes.squad.gmh.entity.union.UserUnion;
+import com.zes.squad.gmh.mapper.StoreMapper;
+import com.zes.squad.gmh.mapper.UserMapper;
+import com.zes.squad.gmh.mapper.UserTokenMapper;
+import com.zes.squad.gmh.mapper.UserUnionMapper;
+import com.zes.squad.gmh.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service("userService")
+public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserMapper      userMapper;
+    @Autowired
+    private UserTokenMapper userTokenMapper;
+    @Autowired
+    private CacheService    cacheService;
+    @Autowired
+    private StoreMapper     storeMapper;
+    @Autowired
+    private UserUnionMapper userUnionMapper;
+
+    @Override
+    public UserUnion loginWithAccount(String account, String password) {
+        UserPo po = userMapper.selectByAccount(account);
+        ensureEntityExist(po, "用户不存在");
+        String encryptPassword = EncryptUtils.md5(account + po.getSalt() + password);
+        if (Objects.equals(po.getPassword(), encryptPassword)) {
+            throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_INVALID_PARAMETER, "密码错误");
+        }
+        String token = UUID.randomUUID().toString().replaceAll("-", "");
+        UserTokenPo tokenPo = new UserTokenPo();
+        tokenPo.setUserId(po.getId());
+        tokenPo.setToken(token);
+        tokenPo.setLoginTime(new Date());
+        userTokenMapper.insertOrUpdate(tokenPo);
+        UserUnion userUnion = new UserUnion();
+        userUnion.setId(po.getId());
+        userUnion.setUserPo(po);
+        userUnion.setToken(token);
+        return userUnion;
+    }
+
+    @Override
+    public void changePassword(Long id, String originalPassword, String newPassword) {
+        UserPo po = userMapper.selectById(id);
+        String originalEncryptPassword = EncryptUtils.md5(po.getAccount() + po.getSalt() + originalPassword);
+        ensureParameterValid(Objects.equals(originalEncryptPassword, po.getPassword()), "原密码错误");
+        String newEncryptPassword = EncryptUtils.md5(po.getAccount() + po.getSalt() + newPassword);
+        userMapper.updatePassword(newEncryptPassword);
+    }
+
+    @Override
+    public UserUnion queryUserByToken(String token) {
+        boolean isCacheValid = cacheService.isValid();
+        UserUnion user = null;
+        if (!isCacheValid) {
+            return queryUserByTokenFromDb(token);
+        }
+        String cacheKey = String.format(CacheConsts.CACHE_KEY_USER_PREFIX, token);
+        user = cacheService.get(cacheKey, UserUnion.class);
+        if (user != null) {
+            return user;
+        }
+        user = queryUserByTokenFromDb(token);
+        if (user != null) {
+            cacheService.put(cacheKey, user, CacheConsts.THIRTY_MINUTES);
+        }
+        return user;
+    }
+
+    private UserUnion queryUserByTokenFromDb(String token) {
+        UserTokenPo tokenPo = userTokenMapper.selectByToken(token);
+        if (tokenPo == null) {
+            log.error("根据token查询用户失败, token is {}", token);
+            return null;
+        }
+        UserPo po = userMapper.selectById(tokenPo.getUserId());
+        if (po == null) {
+            log.error("根据token查询出的用户id查询用户失败, token is {}, user id is {}", token, tokenPo.getUserId());
+            return null;
+        }
+        StorePo storePo = storeMapper.selectById(po.getStoreId());
+        if (storePo == null) {
+            log.error("根据token查询出的用户所属门店id查询门店失败, token is {}, user id is {}, store id is {}", token,
+                    tokenPo.getUserId(), po.getStoreId());
+        }
+        UserUnion user = new UserUnion();
+        user.setId(po.getId());
+        user.setUserPo(po);
+        user.setStoreName(storePo.getName());
+        return user;
+    }
+
+    @Override
+    public void createUser(UserPo po) {
+        StorePo storePo = storeMapper.selectById(po.getStoreId());
+        ensureEntityExist(storePo, "门店错误");
+        String salt = UUID.randomUUID().toString().replaceAll("-", "");
+        String password = EncryptUtils.md5(po.getAccount() + salt + "123456");
+        po.setSalt(salt);
+        po.setPassword(password);
+        userMapper.insert(po);
+    }
+
+    @Override
+    public void modifyUser(UserPo po) {
+        if (po.getStoreId() != null) {
+            StorePo storePo = storeMapper.selectById(po.getStoreId());
+            ensureEntityExist(storePo, "门店错误");
+        }
+        userMapper.updateSelective(po);
+    }
+
+    @Override
+    public PagedList<UserUnion> listPagedUsers(UserQueryCondition condition) {
+        int pageNum = condition.getPageNum();
+        int pageSize = condition.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+        List<Long> ids = userMapper.selectIdsByCondition(condition);
+        if (CollectionUtils.isEmpty(ids)) {
+            log.warn("用户信息集合为空, condition is {}", JsonUtils.toJson(condition));
+            return PagedLists.newPagedList(pageNum, pageSize);
+        }
+        List<UserUnion> unions = userUnionMapper.selectUserUnionsByIds(ids);
+        PageInfo<Long> pageInfo = new PageInfo<>(ids);
+        return PagedLists.newPagedList(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), unions);
+    }
+
+    @Override
+    public void removeById(Long id) {
+        userMapper.deleteById(id);
+    }
+
+    @Override
+    public void batchRemove(List<Long> ids) {
+        userMapper.batchDelete(ids);
+    }
+
+}

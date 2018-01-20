@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<context:component-scan
+		base-package="com.zes.squad.gmh.web.controller,com.zes.squad.gmh.web.exception.handler"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.web.bind.annotation.RestController" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.web.bind.annotation.RestControllerAdvice" />
+	</context:component-scan>
+
+	<mvc:annotation-driven conversion-service="customConcersionService">
+		<!-- controller层使用@ResponseBody注解或@RestController注解将返回对象json化时过滤null值 -->
+		<mvc:message-converters>
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+						<property name="serializationInclusion">
+							<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean id="customConcersionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<bean class="com.zes.squad.gmh.web.converter.LongToDateConverter" />
+			</set>
+		</property>
+	</bean>
+
+	<mvc:default-servlet-handler />
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/user/login" />
+			<bean class="com.zes.squad.gmh.web.interceptor.AuthInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+</beans>

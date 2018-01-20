@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<context:property-placeholder
+		file-encoding="UTF-8" location="classpath:redis.properties"
+		ignore-unresolvable="true" />
+
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.maxTotal}" />
+		<property name="maxIdle" value="${redis.maxIdle}" />
+		<property name="minIdle" value="${redis.minIdle}" />
+		<property name="maxWaitMillis" value="${redis.maxWaitMillis}" />
+		<property name="testOnBorrow" value="${redis.testOnBorrow}" />
+		<property name="testOnReturn" value="${redis.testOnReturn}" />
+	</bean>
+
+	<bean id="jedisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="usePool" value="true" />
+		<property name="poolConfig" ref="jedisPoolConfig" />
+		<property name="hostName" value="${redis.host}" />
+		<property name="port" value="${redis.port}" />
+		<property name="database" value="${redis.default.db}" />
+		<property name="password" value="${redis.password}" />
+		<property name="timeout" value="${redis.timeout}" />
+	</bean>
+
+	<bean id="jackson2JsonRedisSerializer"
+		class="org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer">
+		<constructor-arg name="type">
+			<value>java.io.Serializable</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="jedisConnectionFactory" />
+		<property name="keySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="valueSerializer" ref="jackson2JsonRedisSerializer" />
+	</bean>
+
+</beans>

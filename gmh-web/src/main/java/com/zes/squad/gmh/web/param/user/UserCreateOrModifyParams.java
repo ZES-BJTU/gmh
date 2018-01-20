@@ -6,6 +6,7 @@ import lombok.Data;
 public class UserCreateOrModifyParams {
 
     private Long    id;
+    private Integer role;
     private String  account;
     private String  email;
     private String  mobile;

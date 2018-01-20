@@ -20,4 +20,12 @@ public interface UserTokenMapper {
      */
     UserTokenPo selectByToken(String token);
 
+    /**
+     * 根据用户id查询
+     * 
+     * @param userId
+     * @return
+     */
+    UserTokenPo selectByUserId(Long userId);
+
 }

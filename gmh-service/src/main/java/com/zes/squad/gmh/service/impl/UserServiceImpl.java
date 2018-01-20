@@ -55,8 +55,14 @@ public class UserServiceImpl implements UserService {
         UserPo po = userMapper.selectByAccount(account);
         ensureEntityExist(po, "用户不存在");
         String encryptPassword = EncryptUtils.md5(account + po.getSalt() + password);
-        if (Objects.equals(po.getPassword(), encryptPassword)) {
+        if (!Objects.equals(po.getPassword(), encryptPassword)) {
             throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_INVALID_PARAMETER, "密码错误");
+        }
+        boolean isCacheValid = cacheService.isValid();
+        if (isCacheValid) {
+            UserTokenPo userTokenPo = userTokenMapper.selectByUserId(po.getId());
+            String cacheKey = String.format(CacheConsts.CACHE_KEY_USER_PREFIX, userTokenPo.getToken());
+            cacheService.delete(cacheKey);
         }
         String token = UUID.randomUUID().toString().replaceAll("-", "");
         UserTokenPo tokenPo = new UserTokenPo();

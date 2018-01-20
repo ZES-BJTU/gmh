@@ -3,6 +3,7 @@
 <mapper namespace="com.zes.squad.gmh.mapper.UserMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.UserPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="role" jdbcType="TINYINT" property="role"/>
 		<result column="account" jdbcType="VARCHAR" property="account" />
 		<result column="email" jdbcType="VARCHAR" property="email" />
 		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
@@ -16,7 +17,7 @@
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="BaseColumnList">
-		`id`, `account`, `email`, `mobile`,
+		`id`, `role`, `account`, `email`, `mobile`,
 		`password`, `salt`, `name`, `gender`,
 		`store_id`, `remark`, `created_time`, `modified_time`
 	</sql>
@@ -38,11 +39,12 @@
 	</update>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.UserPo">
 		INSERT INTO
-		user(`account`, `email`, `mobile`,
+		user(`role`, `account`, `email`, `mobile`,
 		`password`, `salt`, `name`, `gender`,
 		`store_id`, `remark`)
 		VALUES
-		(#{account, jdbcType=VARCHAR},
+		(#{role, jdbcType=TINYINT}
+		#{account, jdbcType=VARCHAR},
 		#{email, jdbcType=VARCHAR},
 		#{mobile,
 		jdbcType=VARCHAR},
@@ -59,6 +61,9 @@
 	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.UserPo">
 		UPDATE user
 		<set>
+			<if test="role != null">
+				`role` = #{role, jdbcType=TINYINT}
+			</if>
 			<if test="email != null and email != ''">
 				`email` = #{email, jdbcType=VARCHAR},
 			</if>

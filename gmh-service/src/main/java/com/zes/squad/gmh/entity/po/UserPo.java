@@ -11,6 +11,7 @@ public class UserPo extends Po {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer           role;
     private String            account;
     private String            email;
     private String            mobile;

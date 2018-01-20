@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : 本机
-Source Server Version : 50624
+Source Server Version : 50720
 Source Host           : localhost:3306
 Source Database       : gmh
 
 Target Server Type    : MYSQL
-Target Server Version : 50624
+Target Server Version : 50720
 File Encoding         : 65001
 
-Date: 2018-01-20 11:26:41
+Date: 2018-01-20 16:22:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -31,14 +31,15 @@ CREATE TABLE `store` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_principal_id` (`principal_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户主键id',
+  `role` tinyint(4) DEFAULT NULL COMMENT '用户角色',
   `account` varchar(255) DEFAULT NULL COMMENT '用户名',
   `email` varchar(255) DEFAULT NULL COMMENT '用户邮箱',
   `mobile` varchar(255) DEFAULT NULL COMMENT '用户手机号',

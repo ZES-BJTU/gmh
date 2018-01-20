@@ -32,4 +32,11 @@
 		WHERE `token` = #{token, jdbcType=VARCHAR}
 		limit 1
 	</select>
+	<select id="selectByUserId" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList"/>
+		FROM user_token
+		WHERE `user_id` = #{userId, jdbcType=BIGINT}
+		limit 1
+	</select>
 </mapper>

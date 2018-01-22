@@ -18,7 +18,7 @@
 	<task:annotation-driven />
 
 	<task:scheduled-tasks scheduler="gmhScheduler">
-		<task:scheduled ref="appointmentTaskService" method=""
+		<task:scheduled ref="appointmentTaskService" method="remindCustomers"
 			cron="${appointment.cron}" />
 	</task:scheduled-tasks>
 

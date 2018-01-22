@@ -3,22 +3,22 @@
 <mapper namespace="com.zes.squad.gmh.mapper.StoreUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.StoreUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="u_name" jdbcType="VARCHAR" property="principalName" />
+		<result column="user_name" jdbcType="VARCHAR" property="principalName" />
 		<association property="storePo"
 			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
-			columnPrefix="_s" />
+			columnPrefix="store_" />
 	</resultMap>
 	<sql id="BaseColumnList">
-		s.id AS s_id,
-		s.name AS s_name,
-		s.address AS s_address,
-		s.principal_id AS s_principal_id,
-		s.mobile AS s_mobile,
-		s.phone AS s_phone,
-		s.remark = s_remark,
-		s.created_time AS s_created_time,
-		s.modified_time AS s_modified_time,
-		u.name AS u_name
+		s.id AS store_id,
+		s.name AS store_name,
+		s.address AS store_address,
+		s.principal_id AS store_principal_id,
+		s.mobile AS store_mobile,
+		s.phone AS store_phone,
+		s.remark = store_remark,
+		s.created_time AS store_created_time,
+		s.modified_time AS store_modified_time,
+		u.name AS user_name
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT

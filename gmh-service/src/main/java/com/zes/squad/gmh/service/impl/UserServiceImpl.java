@@ -39,22 +39,24 @@ import lombok.extern.slf4j.Slf4j;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
+    private static final String DEFAULT_PASSWORD = "123456";
+
     @Autowired
-    private UserMapper      userMapper;
+    private UserMapper          userMapper;
     @Autowired
-    private UserTokenMapper userTokenMapper;
+    private UserTokenMapper     userTokenMapper;
     @Autowired
-    private CacheService    cacheService;
+    private CacheService        cacheService;
     @Autowired
-    private StoreMapper     storeMapper;
+    private StoreMapper         storeMapper;
     @Autowired
-    private UserUnionMapper userUnionMapper;
+    private UserUnionMapper     userUnionMapper;
 
     @Override
     public UserUnion loginWithAccount(String account, String password) {
         UserPo po = userMapper.selectByAccount(account);
         ensureEntityExist(po, "用户不存在");
-        String encryptPassword = EncryptUtils.md5(account + po.getSalt() + password);
+        String encryptPassword = encryptPassword(po.getAccount(), po.getSalt(), password);
         if (!Objects.equals(po.getPassword(), encryptPassword)) {
             throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_INVALID_PARAMETER, "密码错误");
         }
@@ -80,9 +82,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(Long id, String originalPassword, String newPassword) {
         UserPo po = userMapper.selectById(id);
-        String originalEncryptPassword = EncryptUtils.md5(po.getAccount() + po.getSalt() + originalPassword);
+        String originalEncryptPassword = encryptPassword(po.getAccount(), po.getSalt(), originalPassword);
         ensureParameterValid(Objects.equals(originalEncryptPassword, po.getPassword()), "原密码错误");
-        String newEncryptPassword = EncryptUtils.md5(po.getAccount() + po.getSalt() + newPassword);
+        String newEncryptPassword = encryptPassword(po.getAccount(), po.getSalt(), newPassword);
         userMapper.updatePassword(newEncryptPassword);
     }
 
@@ -105,35 +107,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    private UserUnion queryUserByTokenFromDb(String token) {
-        UserTokenPo tokenPo = userTokenMapper.selectByToken(token);
-        if (tokenPo == null) {
-            log.error("根据token查询用户失败, token is {}", token);
-            return null;
-        }
-        UserPo po = userMapper.selectById(tokenPo.getUserId());
-        if (po == null) {
-            log.error("根据token查询出的用户id查询用户失败, token is {}, user id is {}", token, tokenPo.getUserId());
-            return null;
-        }
-        StorePo storePo = storeMapper.selectById(po.getStoreId());
-        if (storePo == null) {
-            log.error("根据token查询出的用户所属门店id查询门店失败, token is {}, user id is {}, store id is {}", token,
-                    tokenPo.getUserId(), po.getStoreId());
-        }
-        UserUnion user = new UserUnion();
-        user.setId(po.getId());
-        user.setUserPo(po);
-        user.setStoreName(storePo.getName());
-        return user;
-    }
-
     @Override
     public void createUser(UserPo po) {
         StorePo storePo = storeMapper.selectById(po.getStoreId());
         ensureEntityExist(storePo, "门店错误");
         String salt = UUID.randomUUID().toString().replaceAll("-", "");
-        String password = EncryptUtils.md5(po.getAccount() + salt + "123456");
+        String password = encryptPassword(po.getAccount(), salt, DEFAULT_PASSWORD);
         po.setSalt(salt);
         po.setPassword(password);
         userMapper.insert(po);
@@ -171,6 +150,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public void batchRemove(List<Long> ids) {
         userMapper.batchDelete(ids);
+    }
+
+    private UserUnion queryUserByTokenFromDb(String token) {
+        UserTokenPo tokenPo = userTokenMapper.selectByToken(token);
+        if (tokenPo == null) {
+            log.error("根据token查询用户失败, token is {}", token);
+            return null;
+        }
+        UserPo po = userMapper.selectById(tokenPo.getUserId());
+        if (po == null) {
+            log.error("根据token查询出的用户id查询用户失败, token is {}, user id is {}", token, tokenPo.getUserId());
+            return null;
+        }
+        StorePo storePo = storeMapper.selectById(po.getStoreId());
+        if (storePo == null) {
+            log.error("根据token查询出的用户所属门店id查询门店失败, token is {}, user id is {}, store id is {}", token,
+                    tokenPo.getUserId(), po.getStoreId());
+        }
+        UserUnion user = new UserUnion();
+        user.setId(po.getId());
+        user.setUserPo(po);
+        user.setStoreName(storePo.getName());
+        return user;
+    }
+
+    private String encryptPassword(String account, String salt, String password) {
+        return EncryptUtils.md5(account + salt + password);
     }
 
 }

@@ -11,6 +11,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UserQueryParams extends QueryParams {
     
-    private String keyWord;
+    private String userKeyWord;
 
 }

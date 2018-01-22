@@ -92,7 +92,7 @@
 		LEFT JOIN store s
 		ON u.`store_id` = s.`id`
 		<if test="keyWord != null and keyWord != ''">
-			<bind name="condition" value="'%' + keyWord + '%'"/>
+			<bind name="condition" value="'%' + userKeyWord + '%'"/>
 			CONCAT(u.`account`,u.`email`,u.`mobile`,u.`name`,s.`name`) LIKE #{condition, jdbcType=VARCHAR}
 		</if>
 	</select>

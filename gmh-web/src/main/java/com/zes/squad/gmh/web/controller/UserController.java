@@ -64,6 +64,11 @@ public class UserController extends BaseController {
         userService.changePassword(union.getId(), params.getOriginalPassword(), params.getNewPassword());
         return JsonResults.success();
     }
+    
+    @RequestMapping(path = "/resetPassword", method = {RequestMethod.POST})
+    public JsonResult<Void> soResetPassword() {
+        return JsonResults.success();
+    }
 
     @RequestMapping(path = "/detail", method = { RequestMethod.GET })
     public JsonResult<UserVo> doQueryUserDetail() {
@@ -124,7 +129,7 @@ public class UserController extends BaseController {
         userService.batchRemove(params.getIds());
         return JsonResults.success();
     }
-
+    
     private UserVo buildUserVoByUnion(UserUnion union) {
         UserVo vo = CommonConverter.map(union.getUserPo(), UserVo.class);
         vo.setRole(EnumUtils.getDescByKey(union.getUserPo().getRole().intValue(), UserRoleEnum.class));

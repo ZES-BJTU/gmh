@@ -31,7 +31,7 @@ public class StockServiceImpl implements StockService {
     private StockTypeUnionMapper stockTypeUnionMapper;
 
     @Override
-    public void CreateStockType(StockTypePo po) {
+    public void createStockType(StockTypePo po) {
         UserPo currentUserPo = ThreadContext.getUser();
         ensureEntityExist(currentUserPo, "获取当前用户失败");
         ensureParameterExist(currentUserPo.getStoreId(), "获取当前用户所属门店失败");
@@ -50,13 +50,15 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void updateStockType(StockTypePo po) {
+    public void modifyStockType(StockTypePo po) {
         stockTypeMapper.updateSelective(po);
     }
 
     @Override
     public StockTypeUnion queryStockTypeDetail(Long id) {
-        return stockTypeUnionMapper.selectById(id);
+        StockTypeUnion union = stockTypeUnionMapper.selectById(id);
+        ensureEntityExist(union, "库存分类查询失败");
+        return union;
     }
 
     @Override

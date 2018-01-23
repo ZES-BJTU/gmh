@@ -14,7 +14,7 @@ public interface StockService {
      * 
      * @param po
      */
-    void CreateStockType(StockTypePo po);
+    void createStockType(StockTypePo po);
 
     /**
      * 删除单个库存分类
@@ -35,7 +35,7 @@ public interface StockService {
      * 
      * @param po
      */
-    void updateStockType(StockTypePo po);
+    void modifyStockType(StockTypePo po);
 
     /**
      * 查询单个库存分类

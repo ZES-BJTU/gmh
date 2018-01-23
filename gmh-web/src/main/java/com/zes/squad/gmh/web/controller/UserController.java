@@ -65,11 +65,6 @@ public class UserController extends BaseController {
         return JsonResults.success();
     }
     
-    @RequestMapping(path = "/resetPassword", method = {RequestMethod.POST})
-    public JsonResult<Void> soResetPassword() {
-        return JsonResults.success();
-    }
-
     @RequestMapping(path = "/detail", method = { RequestMethod.GET })
     public JsonResult<UserVo> doQueryUserDetail() {
         UserUnion union = getUser();

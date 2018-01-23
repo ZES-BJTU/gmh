@@ -64,12 +64,23 @@ public class UserController extends BaseController {
         userService.changePassword(union.getId(), params.getOriginalPassword(), params.getNewPassword());
         return JsonResults.success();
     }
-    
+
     @RequestMapping(path = "/detail", method = { RequestMethod.GET })
     public JsonResult<UserVo> doQueryUserDetail() {
         UserUnion union = getUser();
         UserVo vo = buildUserVoByUnion(union);
         return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/logout", method = { RequestMethod.DELETE })
+    public JsonResult<Void> doLogout() {
+        UserUnion user = getUser();
+        if (user == null) {
+            return JsonResults.success();
+        }
+        userService.logout(user.getId());
+        unBind();
+        return JsonResults.success();
     }
 
     @RequestMapping(path = "/create", method = { RequestMethod.PUT })
@@ -124,7 +135,7 @@ public class UserController extends BaseController {
         userService.batchRemove(params.getIds());
         return JsonResults.success();
     }
-    
+
     private UserVo buildUserVoByUnion(UserUnion union) {
         UserVo vo = CommonConverter.map(union.getUserPo(), UserVo.class);
         vo.setRole(EnumUtils.getDescByKey(union.getUserPo().getRole().intValue(), UserRoleEnum.class));

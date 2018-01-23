@@ -36,6 +36,13 @@ public interface UserService {
     UserUnion queryUserByToken(String token);
 
     /**
+     * 登出
+     * 
+     * @param userId
+     */
+    void logout(Long userId);
+
+    /**
      * 新建用户
      * 
      * @param po

@@ -108,6 +108,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void logout(Long userId) {
+        UserTokenPo tokenPo = userTokenMapper.selectByUserId(userId);
+        ensureEntityExist(tokenPo, "未找到用户");
+        boolean isCacheValid = cacheService.isValid();
+        if (isCacheValid) {
+            //删除缓存中用户信息
+            String token = tokenPo.getToken();
+            String cacheKey = String.format(CacheConsts.CACHE_KEY_USER_PREFIX, token);
+            cacheService.delete(cacheKey);
+        }
+        userTokenMapper.deleteByUserId(userId);
+    }
+
+    @Override
     public void createUser(UserPo po) {
         StorePo storePo = storeMapper.selectById(po.getStoreId());
         ensureEntityExist(storePo, "门店错误");

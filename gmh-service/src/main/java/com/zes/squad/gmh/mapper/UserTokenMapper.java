@@ -28,4 +28,12 @@ public interface UserTokenMapper {
      */
     UserTokenPo selectByUserId(Long userId);
 
+    /**
+     * 删除用户token信息
+     * 
+     * @param userId
+     * @return
+     */
+    int deleteByUserId(Long userId);
+
 }

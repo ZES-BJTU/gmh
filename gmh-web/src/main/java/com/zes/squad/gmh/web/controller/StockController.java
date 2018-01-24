@@ -23,9 +23,12 @@ import com.zes.squad.gmh.entity.union.StockTypeUnion;
 import com.zes.squad.gmh.service.StockService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.param.stock.StockCreateOrModifyParams;
+import com.zes.squad.gmh.web.param.stock.StockQueryParams;
 import com.zes.squad.gmh.web.param.stock.StockTypeCreateOrModifyParams;
 import com.zes.squad.gmh.web.param.stock.StockTypeQueryParams;
 import com.zes.squad.gmh.web.vo.StockTypeVo;
+import com.zes.squad.gmh.web.vo.StockVo;
 
 @RequestMapping(path = "/stock")
 @RestController
@@ -69,7 +72,7 @@ public class StockController {
     }
 
     @RequestMapping(path = "/type/{id}", method = { RequestMethod.GET })
-    public JsonResult<StockTypeVo> queryStockType(@PathVariable("id") Long id) {
+    public JsonResult<StockTypeVo> doQueryStockType(@PathVariable("id") Long id) {
         ensureParameterExist(id, "库存分类标识为空");
         StockTypeUnion union = stockService.queryStockTypeDetail(id);
         StockTypeVo vo = CommonConverter.map(union.getStockTypePo(), StockTypeVo.class);
@@ -78,7 +81,7 @@ public class StockController {
     }
 
     @RequestMapping(path = "/type/list", method = { RequestMethod.GET })
-    public JsonResult<PagedList<StockTypeVo>> queryStockType(@RequestBody StockTypeQueryParams params) {
+    public JsonResult<PagedList<StockTypeVo>> doQueryStockTypes(@RequestBody StockTypeQueryParams params) {
         ensureParameterExist(params, "库存分类查询条件为空");
         StockTypeQueryCondition condition = CommonConverter.map(params, StockTypeQueryCondition.class);
         PagedList<StockTypeUnion> pagedUnions = stockService.queryStockTypesByCondition(condition);
@@ -95,4 +98,34 @@ public class StockController {
                 pagedUnions.getTotalCount(), vos));
     }
 
+    @RequestMapping(path = "/create", method = { RequestMethod.PUT })
+    public JsonResult<Void> doCreateStock(@RequestBody StockCreateOrModifyParams params) {
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+    public JsonResult<Void> doRemoveStock(@PathVariable("id") Long id) {
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/modify", method = { RequestMethod.POST })
+    public JsonResult<Void> doModifyStock(@RequestBody StockCreateOrModifyParams params) {
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/{id}", method = { RequestMethod.GET })
+    public JsonResult<StockVo> doQueryStockById(@PathVariable("id") Long id) {
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/list", method = { RequestMethod.GET })
+    public JsonResult<PagedList<StockVo>> doListStocks(@RequestBody StockQueryParams params) {
+        return JsonResults.success();
+    }
+    
+    @RequestMapping(path = "/statistics", method = { RequestMethod.GET })
+    public JsonResult<PagedList<StockVo>> doStatStocks() {
+        return JsonResults.success();
+    }
+    
 }

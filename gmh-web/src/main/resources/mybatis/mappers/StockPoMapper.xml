@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.StockMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.StockPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="stock_type_id" jdbcType="BIGINT" property="stockTypeId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="unit_name" jdbcType="VARCHAR" property="unitName" />
+		<result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StockPo">
+		INSERT INTO stock
+		(`stock_type_id`,`name`,`unit_name`,`total_amount`)
+		VALUES
+		(#{stockTypeId, jdbcType=BIGINT},
+		#{name, jdbcType=VARCHAR},
+		#{unitName, jdbcType=VARCHAR},
+		#{totalAmount, jdbcType=DECIMAL})
+	</insert>
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM stock WHERE `id` = #{id, jdbcType=BIGINT}
+	</delete>
+	<delete id="batchDelete" parameterType="list">
+		DELETE FROM stock WHERE `id` IN
+		<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=BIGINT}
+		</foreach>
+	</delete>
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.StockPo">
+		UPDATE stock
+		<set>
+			<if test="stockTypeId != null">
+				`stock_type_id` = #{stockTypeId, jdbcType=BIGINT},
+			</if>
+			<if test="name != null and name != ''">
+				`name` = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="unitName != null and unitName != ''">
+				`unit_name` = #{unitName, jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				`total_amount` = #{totalAmount, jdbcType=DECIMAL},
+			</if>
+		</set>
+	</update>
+</mapper>

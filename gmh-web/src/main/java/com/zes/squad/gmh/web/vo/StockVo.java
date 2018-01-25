@@ -13,5 +13,6 @@ public class StockVo {
     private String     name;
     private String     unitName;
     private BigDecimal totalAmount;
+    private String     storeName;
 
 }

@@ -3,9 +3,12 @@ package com.zes.squad.gmh.service;
 import java.util.List;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
 import com.zes.squad.gmh.entity.union.StockTypeUnion;
+import com.zes.squad.gmh.entity.union.StockUnion;
 
 public interface StockService {
 
@@ -52,5 +55,49 @@ public interface StockService {
      * @return
      */
     PagedList<StockTypeUnion> queryStockTypesByCondition(StockTypeQueryCondition condition);
+
+    /**
+     * 新建库存
+     * 
+     * @param po
+     */
+    void createStock(StockPo po);
+
+    /**
+     * 根据id删除库存
+     * 
+     * @param id
+     */
+    void deleteStock(Long id);
+
+    /**
+     * 批量删除库存
+     * 
+     * @param ids
+     */
+    void deleteStocks(List<Long> ids);
+
+    /**
+     * 修改库存
+     * 
+     * @param po
+     */
+    void modifyStock(StockPo po);
+
+    /**
+     * 根绝id查询库存
+     * 
+     * @param id
+     * @return
+     */
+    StockUnion queryStockById(Long id);
+
+    /**
+     * 根据条件模糊搜索库存
+     * 
+     * @param condition
+     * @return
+     */
+    PagedList<StockUnion> listPagedStocks(StockQueryCondition condition);
 
 }

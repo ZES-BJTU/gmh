@@ -182,5 +182,10 @@ public class StockController {
     public JsonResult<PagedList<StockVo>> doStatStocks() {
         return JsonResults.success();
     }
+    
+    @RequestMapping(path = "/consume/record", method = {RequestMethod.PUT})
+    public JsonResult<Void> doCreateStockConsumeRecord() {
+        return JsonResults.success();
+    }
 
 }

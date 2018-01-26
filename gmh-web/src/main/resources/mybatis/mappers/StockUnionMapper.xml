@@ -14,6 +14,7 @@
 	<sql id="Base_Column_List">
 		s.`id` AS stock_id,
 		s.`stock_type_id` AS stock_stock_type_id,
+		s.`stock_code` AS stock_code,
 		s.`name` AS stock_type_id,
 		s.`unit_name` AS stock_unit_name,
 		s.`total_amount` AS stock_total_amount,

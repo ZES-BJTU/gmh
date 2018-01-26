@@ -110,6 +110,7 @@ public class StockController {
         ensureParameterExist(params, "库存信息为空");
         ensureParameterNotExist(params.getId(), "库存标识应为空");
         ensureParameterExist(params.getStockTypeId(), "库存分类为空");
+        ensureParameterExist(params.getCode(), "库存代码为空");
         ensureParameterExist(params.getName(), "库存名称为空");
         ensureParameterExist(params.getTotalAmount(), "库存余量为空");
         ensureParameterValid(params.getTotalAmount().compareTo(BigDecimal.ZERO) == 1, "库存余量错误");
@@ -147,10 +148,8 @@ public class StockController {
     public JsonResult<StockVo> doQueryStockTypeById(@PathVariable("id") Long id) {
         ensureParameterExist(id, "库存标识为空");
         StockUnion union = stockService.queryStockById(id);
-        StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
-        vo.setStockTypeName(union.getStockTypePo().getName());
-        vo.setStoreName(union.getStoreName());
-        return JsonResults.success();
+        StockVo vo = buildStockVoByUnion(union);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/list", method = { RequestMethod.GET })
@@ -169,9 +168,7 @@ public class StockController {
         }
         List<StockVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
         for (StockUnion union : pagedUnions.getData()) {
-            StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
-            vo.setStockTypeName(union.getStockTypePo().getName());
-            vo.setStoreName(union.getStoreName());
+            StockVo vo = buildStockVoByUnion(union);
             vos.add(vo);
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
@@ -186,6 +183,13 @@ public class StockController {
     @RequestMapping(path = "/consume/record", method = {RequestMethod.PUT})
     public JsonResult<Void> doCreateStockConsumeRecord() {
         return JsonResults.success();
+    }
+    
+    private StockVo buildStockVoByUnion(StockUnion union) {
+        StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
+        vo.setStockTypeName(union.getStockTypePo().getName());
+        vo.setStoreName(union.getStoreName());
+        return vo;
     }
 
 }

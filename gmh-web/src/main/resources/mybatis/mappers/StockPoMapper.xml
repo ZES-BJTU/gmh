@@ -4,6 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.StockPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="stock_type_id" jdbcType="BIGINT" property="stockTypeId" />
+		<result column="code" jdbcType="VARCHAR" property="code"/>
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="unit_name" jdbcType="VARCHAR" property="unitName" />
 		<result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
@@ -12,9 +13,10 @@
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StockPo">
 		INSERT INTO stock
-		(`stock_type_id`,`name`,`unit_name`,`total_amount`)
+		(`stock_type_id`,`code`,`name`,`unit_name`,`total_amount`)
 		VALUES
 		(#{stockTypeId, jdbcType=BIGINT},
+		#{code, jdbcType=VARCHAR}
 		#{name, jdbcType=VARCHAR},
 		#{unitName, jdbcType=VARCHAR},
 		#{totalAmount, jdbcType=DECIMAL})
@@ -33,6 +35,9 @@
 		<set>
 			<if test="stockTypeId != null">
 				`stock_type_id` = #{stockTypeId, jdbcType=BIGINT},
+			</if>
+			<if test="code != null and code != ''">
+				`code` = #{code, jdbcType=VARCHAR},
 			</if>
 			<if test="name != null and name != ''">
 				`name` = #{name, jdbcType=VARCHAR},

@@ -59,7 +59,7 @@ public class UserController extends BaseController {
         ensureParameterExist(params, "原密码为空");
         ensureParameterExist(params.getOriginalPassword(), "原密码为空");
         ensureParameterExist(params.getNewPassword(), "新密码为空");
-        ensureParameterValid(Objects.equals(params.getOriginalPassword(), params.getNewPassword()), "原密码不能和新密码相同");
+        ensureParameterValid(!Objects.equals(params.getOriginalPassword(), params.getNewPassword()), "原密码不能和新密码相同");
         UserUnion union = getUser();
         userService.changePassword(union.getId(), params.getOriginalPassword(), params.getNewPassword());
         return JsonResults.success();

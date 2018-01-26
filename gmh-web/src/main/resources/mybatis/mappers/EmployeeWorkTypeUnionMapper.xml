@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.EmployeeWorkTypeMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.EmployeeWorkTypeUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="store_name" jdbcType="VARCHAR" property="storeName" />
+		<association property="employeeWorkTypePo"
+			resultMap="com.zes.squad.gmh.mapper.EmployeeWorkTypeMapper.BaseResultMap"
+			columnPrefix="employee_word_type_" />
+	</resultMap>
+	<sql id="BaseColumnList">
+		ewt.`id` AS employee_word_type_id,
+		ewt.`top_type` AS employee_word_type_top_type,
+		ewt.`name` AS employee_word_type_name,
+		ewt.`store_id` AS employee_word_type_store_id,
+		ewt.`created_time` AS employee_word_type_created_time,
+		ewt.`modified_time` AS employee_word_type_modified_time,
+		s.`name` AS store_name
+	</sql>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList" />
+		FROM
+		employee_work_type ewt
+		LEFT JOIN store s
+		ON
+		ewt.`store_id` = s.`id`
+		WHERE ewt.`id` = #{id, jdbcType=BIGINT}
+	</select>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.EmployeeWorkTypeQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList" />
+		FROM
+		employee_work_type ewt
+		LEFT JOIN store s
+		ON
+		ewt.`store_id` = s.`id`
+		<where>
+			<if test="topType != null">
+				`top_type` = #{topType, jdbcType=INTEGER},
+			</if>
+			<if test="employeeWorkTypeKeyWord != null and employeeWorkTypeKeyWord != ''">
+				<bind name="condition" value="'%' + employeeWorkTypeKeyWord + '%'" />
+				AND CONCAT(ewt.`name`,s.`name`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

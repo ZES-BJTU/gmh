@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.vo.AppointmentVo;
+import com.zes.squad.gmh.web.entity.vo.AppointmentVo;
 
 @ServerEndpoint("/")
 @RestController

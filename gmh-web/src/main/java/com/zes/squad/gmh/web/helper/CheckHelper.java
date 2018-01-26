@@ -3,6 +3,9 @@ package com.zes.squad.gmh.web.helper;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.*;
+import com.zes.squad.gmh.web.entity.param.QueryParams;
+
 public class CheckHelper {
 
     public static boolean isValidMobile(String mobile) {
@@ -22,6 +25,14 @@ public class CheckHelper {
             return false;
         }
         return true;
+    }
+
+    public static void checkPageParams(QueryParams params) {
+        ensureParameterExist(params, "查询条件为空");
+        ensureParameterExist(params.getPageNum(), "分页页码为空");
+        ensureParameterValid(params.getPageNum() > 0, "分页页码错误");
+        ensureParameterExist(params.getPageSize(), "分页大小为空");
+        ensureParameterValid(params.getPageSize() > 0, "分页大小错误");
     }
 
 }

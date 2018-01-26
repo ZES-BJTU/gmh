@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.service.impl;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -8,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
@@ -16,7 +17,6 @@ import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
-import com.zes.squad.gmh.entity.po.UserPo;
 import com.zes.squad.gmh.entity.union.StockTypeUnion;
 import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.mapper.StockMapper;
@@ -39,10 +39,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public void createStockType(StockTypePo po) {
-        UserPo currentUserPo = ThreadContext.getUser();
-        ensureEntityExist(currentUserPo, "获取当前用户失败");
-        ensureParameterExist(currentUserPo.getStoreId(), "获取当前用户所属门店失败");
-        po.setStoreId(currentUserPo.getStoreId());
+        po.setStoreId(ThreadContext.getUserStoreId());
         stockTypeMapper.insert(po);
     }
 

@@ -60,7 +60,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                            ModelAndView modelAndView)
             throws Exception {
         try {
-            if (ThreadContext.getUser() != null) {
+            if (ThreadContext.getCurrentUser() != null) {
                 ThreadContext.removeUser();
             }
         } catch (Exception e) {

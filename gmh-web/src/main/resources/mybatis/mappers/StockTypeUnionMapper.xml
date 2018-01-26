@@ -29,7 +29,6 @@
 	<select id="selectByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.StockTypeQueryCondition"
 		resultMap="BaseResultMap">
-		<bind name="condition" value="'%' + stockTypeKeyWord + '%'" />
 		SELECT
 		<include refid="BaseColumnList" />
 		FROM
@@ -37,7 +36,11 @@
 		LEFT JOIN store s
 		ON
 		st.`store_id` = s.`id`
-		WHERE
-		st.`name` LIKE #{condition, jdbcType=VARCHAR}
+		<where>
+			<if test="stockTypeKeyWord != null and stockTypeKeyWord != ''">
+				<bind name="condition" value="'%' + stockTypeKeyWord + '%'" />
+				st.`name` LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
 	</select>
 </mapper>

@@ -27,14 +27,15 @@ import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.service.StockService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.param.stock.StockCreateOrModifyParams;
-import com.zes.squad.gmh.web.param.stock.StockDeleteParams;
-import com.zes.squad.gmh.web.param.stock.StockQueryParams;
-import com.zes.squad.gmh.web.param.stock.StockTypeCreateOrModifyParams;
-import com.zes.squad.gmh.web.param.stock.StockTypeDeleteParams;
-import com.zes.squad.gmh.web.param.stock.StockTypeQueryParams;
-import com.zes.squad.gmh.web.vo.StockTypeVo;
-import com.zes.squad.gmh.web.vo.StockVo;
+import com.zes.squad.gmh.web.entity.param.stock.StockCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.stock.StockDeleteParams;
+import com.zes.squad.gmh.web.entity.param.stock.StockQueryParams;
+import com.zes.squad.gmh.web.entity.param.stock.StockTypeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.stock.StockTypeDeleteParams;
+import com.zes.squad.gmh.web.entity.param.stock.StockTypeQueryParams;
+import com.zes.squad.gmh.web.entity.vo.StockTypeVo;
+import com.zes.squad.gmh.web.entity.vo.StockVo;
+import com.zes.squad.gmh.web.helper.CheckHelper;
 
 @RequestMapping(path = "/stock")
 @RestController
@@ -154,13 +155,7 @@ public class StockController {
 
     @RequestMapping(path = "/list", method = { RequestMethod.GET })
     public JsonResult<PagedList<StockVo>> doListPagedStocks(@RequestBody StockQueryParams params) {
-        ensureParameterExist(params, "库存查询条件为空");
-        int pageNum = params.getPageNum();
-        int pageSize = params.getPageSize();
-        ensureParameterExist(pageNum, "分页页码为空");
-        ensureParameterValid(pageNum > 0, "分页页码为空");
-        ensureParameterExist(pageSize, "分页大小为空");
-        ensureParameterValid(pageSize > 0, "分页大小为空");
+        CheckHelper.checkPageParams(params);
         StockQueryCondition condition = CommonConverter.map(params, StockQueryCondition.class);
         PagedList<StockUnion> pagedUnions = stockService.listPagedStocks(condition);
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {

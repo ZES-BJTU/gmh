@@ -24,10 +24,10 @@ import com.zes.squad.gmh.entity.union.StoreUnion;
 import com.zes.squad.gmh.service.StoreService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.store.StoreCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.store.StoreQueryParams;
+import com.zes.squad.gmh.web.entity.vo.StoreVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
-import com.zes.squad.gmh.web.param.store.StoreCreateOrModifyParams;
-import com.zes.squad.gmh.web.param.store.StoreQueryParams;
-import com.zes.squad.gmh.web.vo.StoreVo;
 
 @RequestMapping(path = "/store")
 @RestController
@@ -69,7 +69,7 @@ public class StoreController {
 
     @RequestMapping(path = "/listByPage", method = { RequestMethod.GET })
     public JsonResult<PagedList<StoreVo>> doListStoresByPage(StoreQueryParams queryParams) {
-        checkStoreQueryParams(queryParams);
+        CheckHelper.checkPageParams(queryParams);
         StoreQueryCondition condition = CommonConverter.map(queryParams, StoreQueryCondition.class);
         PagedList<StoreUnion> pagedUnions = storeService.listStoresByPage(condition);
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
@@ -99,16 +99,6 @@ public class StoreController {
         if (!Strings.isNullOrEmpty(params.getMobile())) {
             ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "手机格式错误");
         }
-    }
-
-    private void checkStoreQueryParams(StoreQueryParams queryParams) {
-        ensureParameterExist(queryParams, "门店查询条件为空");
-        Integer pageNum = queryParams.getPageNum();
-        ensureParameterExist(pageNum, "分页页码为空");
-        ensureParameterValid(pageNum.intValue() > 0, "分页页码错误");
-        Integer pageSize = queryParams.getPageSize();
-        ensureParameterExist(pageSize, "分页大小为空");
-        ensureParameterValid(pageSize.intValue() > 0, "分页大小错误");
     }
 
 }

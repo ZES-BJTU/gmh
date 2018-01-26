@@ -29,13 +29,13 @@ import com.zes.squad.gmh.entity.union.UserUnion;
 import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.user.UserCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.user.UserDeleteParams;
+import com.zes.squad.gmh.web.entity.param.user.UserLoginParams;
+import com.zes.squad.gmh.web.entity.param.user.UserPasswordParams;
+import com.zes.squad.gmh.web.entity.param.user.UserQueryParams;
+import com.zes.squad.gmh.web.entity.vo.UserVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
-import com.zes.squad.gmh.web.param.user.UserCreateOrModifyParams;
-import com.zes.squad.gmh.web.param.user.UserDeleteParams;
-import com.zes.squad.gmh.web.param.user.UserLoginParams;
-import com.zes.squad.gmh.web.param.user.UserPasswordParams;
-import com.zes.squad.gmh.web.param.user.UserQueryParams;
-import com.zes.squad.gmh.web.vo.UserVo;
 
 @RequestMapping(path = "/user")
 @RestController
@@ -101,11 +101,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(path = "/listByPage", method = { RequestMethod.GET })
     public JsonResult<PagedList<UserVo>> doListPagedUsers(@RequestBody UserQueryParams params) {
-        ensureParameterExist(params, "查询条件为空");
-        ensureParameterExist(params.getPageNum(), "分页页码为空");
-        ensureParameterValid(params.getPageNum() > 0, "分页页码错误");
-        ensureParameterExist(params.getPageSize(), "分页大小为空");
-        ensureParameterValid(params.getPageSize() > 0, "分页大小错误");
+        CheckHelper.checkPageParams(params);
         UserQueryCondition condition = CommonConverter.map(params, UserQueryCondition.class);
         PagedList<UserUnion> pagedUserUnions = userService.listPagedUsers(condition);
         if (pagedUserUnions == null || CollectionUtils.isEmpty(pagedUserUnions.getData())) {

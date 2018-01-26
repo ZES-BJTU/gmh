@@ -28,7 +28,7 @@ public class BaseController {
     }
 
     public void unBind() {
-        if (ThreadContext.getUser() != null) {
+        if (ThreadContext.getCurrentUser() != null) {
             ThreadContext.removeUser();
         }
     }

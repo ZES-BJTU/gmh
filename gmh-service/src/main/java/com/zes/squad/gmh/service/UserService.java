@@ -50,6 +50,20 @@ public interface UserService {
     void createUser(UserPo po);
 
     /**
+     * 删除单个用户
+     * 
+     * @param id
+     */
+    void removeUser(Long id);
+
+    /**
+     * 批量删除用户
+     * 
+     * @param ids
+     */
+    void removeUsers(List<Long> ids);
+
+    /**
      * 修改用户
      * 
      * @param po
@@ -63,19 +77,5 @@ public interface UserService {
      * @return
      */
     PagedList<UserUnion> listPagedUsers(UserQueryCondition condition);
-
-    /**
-     * 删除单个用户
-     * 
-     * @param id
-     */
-    void removeById(Long id);
-
-    /**
-     * 批量删除用户
-     * 
-     * @param ids
-     */
-    void batchRemove(List<Long> ids);
 
 }

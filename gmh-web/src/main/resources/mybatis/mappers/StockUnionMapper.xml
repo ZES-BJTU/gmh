@@ -47,12 +47,15 @@
 		ON
 		st.`store_id` = store.`id`
 		<where>
+			<if test="storeId != null">
+				st.`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
 			<if test="stockTypeId != null">
-				s.`store_type_id` = #{storeTypeId, jdbcType=BIGINT}
+				AND s.`store_type_id` = #{storeTypeId, jdbcType=BIGINT}
 			</if>
 			<if test="stockKeyWord != null and stockKeyWord != ''">
 				<bind name="condition" value="'%' + stockKeyWord + '%'"/>
-				CONCAT(s.`name`,st.`name`,store.`name`) LIKE #{condition, jdbcType=VARCHAR};
+				AND CONCAT(s.`name`,st.`name`,store.`name`) LIKE #{condition, jdbcType=VARCHAR};
 			</if>
 		</where>
 	</select>

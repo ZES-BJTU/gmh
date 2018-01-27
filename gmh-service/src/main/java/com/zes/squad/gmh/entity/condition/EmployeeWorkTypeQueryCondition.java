@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class EmployeeWorkTypeQueryCondition extends QueryCondition {
 
+    private Long    storeId;
     private Integer topType;
     private String  employeeWorkTypeKeyWord;
 

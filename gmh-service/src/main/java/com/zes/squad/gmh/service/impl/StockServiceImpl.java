@@ -66,10 +66,11 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public PagedList<StockTypeUnion> queryStockTypesByCondition(StockTypeQueryCondition condition) {
+    public PagedList<StockTypeUnion> listPagedStockTypes(StockTypeQueryCondition condition) {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
+        condition.setStoreId(ThreadContext.getUserStoreId());
         List<StockTypeUnion> unions = stockTypeUnionMapper.selectByCondition(condition);
         if (CollectionUtils.isEmpty(unions)) {
             return PagedLists.newPagedList(pageNum, pageSize);
@@ -99,7 +100,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public StockUnion queryStockById(Long id) {
+    public StockUnion queryStock(Long id) {
         return stockUnionMapper.selectById(id);
     }
 
@@ -108,6 +109,7 @@ public class StockServiceImpl implements StockService {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
+        condition.setStoreId(ThreadContext.getUserStoreId());
         List<StockUnion> unions = stockUnionMapper.selectByCondition(condition);
         if (CollectionUtils.isEmpty(unions)) {
             return PagedLists.newPagedList(pageNum, pageSize);

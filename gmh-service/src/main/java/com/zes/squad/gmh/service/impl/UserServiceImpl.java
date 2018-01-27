@@ -22,6 +22,7 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EncryptUtils;
 import com.zes.squad.gmh.common.util.JsonUtils;
 import com.zes.squad.gmh.constant.CacheConsts;
+import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.UserQueryCondition;
 import com.zes.squad.gmh.entity.po.StorePo;
 import com.zes.squad.gmh.entity.po.UserPo;
@@ -133,6 +134,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void removeUser(Long id) {
+        userMapper.deleteById(id);
+    }
+
+    @Override
+    public void removeUsers(List<Long> ids) {
+        userMapper.batchDelete(ids);
+    }
+
+    @Override
     public void modifyUser(UserPo po) {
         if (po.getStoreId() != null) {
             StorePo storePo = storeMapper.selectById(po.getStoreId());
@@ -146,6 +157,7 @@ public class UserServiceImpl implements UserService {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
+        condition.setStoreId(ThreadContext.getUserStoreId());
         List<Long> ids = userMapper.selectIdsByCondition(condition);
         if (CollectionUtils.isEmpty(ids)) {
             log.warn("用户信息集合为空, condition is {}", JsonUtils.toJson(condition));
@@ -154,16 +166,6 @@ public class UserServiceImpl implements UserService {
         List<UserUnion> unions = userUnionMapper.selectUserUnionsByIds(ids);
         PageInfo<Long> pageInfo = new PageInfo<>(ids);
         return PagedLists.newPagedList(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), unions);
-    }
-
-    @Override
-    public void removeById(Long id) {
-        userMapper.deleteById(id);
-    }
-
-    @Override
-    public void batchRemove(List<Long> ids) {
-        userMapper.batchDelete(ids);
     }
 
     private UserUnion queryUserByTokenFromDb(String token) {

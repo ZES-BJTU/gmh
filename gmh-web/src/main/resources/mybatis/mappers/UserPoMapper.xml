@@ -88,10 +88,15 @@
 		FROM user u
 		LEFT JOIN store s
 		ON u.`store_id` = s.`id`
-		<if test="keyWord != null and keyWord != ''">
-			<bind name="condition" value="'%' + userKeyWord + '%'"/>
-			CONCAT(u.`account`,u.`email`,u.`mobile`,u.`name`,s.`name`) LIKE #{condition, jdbcType=VARCHAR}
-		</if>
+		<where>
+			<if test="storeId != null">
+				u.`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="keyWord != null and keyWord != ''">
+				<bind name="condition" value="'%' + userKeyWord + '%'"/>
+				AND CONCAT(u.`account`,u.`email`,u.`mobile`,u.`name`,s.`name`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
 	</select>
 	<delete id="deleteById" parameterType="long">
 		DELETE FROM user WHERE `id` = #{id, jdbcType=BIGINT}

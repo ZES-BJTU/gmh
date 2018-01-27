@@ -13,8 +13,10 @@ import com.github.pagehelper.PageInfo;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
+import com.zes.squad.gmh.entity.condition.EmployeeQueryCondition;
 import com.zes.squad.gmh.entity.condition.EmployeeWorkTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.EmployeeWorkTypePo;
+import com.zes.squad.gmh.entity.union.EmployeeUnion;
 import com.zes.squad.gmh.entity.union.EmployeeWorkTypeUnion;
 import com.zes.squad.gmh.mapper.EmployeeWorkTypeMapper;
 import com.zes.squad.gmh.mapper.EmployeeWorkTypeUnionMapper;
@@ -68,6 +70,36 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         PageInfo<EmployeeWorkTypeUnion> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
+    }
+
+    @Override
+    public void createEmployee(EmployeeUnion union) {
+        
+    }
+
+    @Override
+    public void removeEmployee(Long id) {
+        
+    }
+
+    @Override
+    public void removeEmployees(List<Long> ids) {
+        
+    }
+
+    @Override
+    public void modifyEmployee(EmployeeUnion union) {
+        
+    }
+
+    @Override
+    public EmployeeUnion queryEmployeeDetail(Long id) {
+        return null;
+    }
+
+    @Override
+    public PagedList<EmployeeUnion> listPagedEmployees(EmployeeQueryCondition condition) {
+        return null;
     }
 
 }

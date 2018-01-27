@@ -54,7 +54,7 @@ public interface StockService {
      * @param condition
      * @return
      */
-    PagedList<StockTypeUnion> queryStockTypesByCondition(StockTypeQueryCondition condition);
+    PagedList<StockTypeUnion> listPagedStockTypes(StockTypeQueryCondition condition);
 
     /**
      * 新建库存
@@ -90,7 +90,7 @@ public interface StockService {
      * @param id
      * @return
      */
-    StockUnion queryStockById(Long id);
+    StockUnion queryStock(Long id);
 
     /**
      * 根据条件模糊搜索库存

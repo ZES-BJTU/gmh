@@ -37,9 +37,12 @@
 		ON
 		st.`store_id` = s.`id`
 		<where>
+			<if test="storeId != null">
+				st.`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
 			<if test="stockTypeKeyWord != null and stockTypeKeyWord != ''">
 				<bind name="condition" value="'%' + stockTypeKeyWord + '%'" />
-				st.`name` LIKE #{condition, jdbcType=VARCHAR}
+				AND st.`name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

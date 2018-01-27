@@ -80,7 +80,7 @@ public class StockController {
     }
 
     @RequestMapping(path = "/type/{id}", method = { RequestMethod.GET })
-    public JsonResult<StockTypeVo> doQueryStockType(@PathVariable("id") Long id) {
+    public JsonResult<StockTypeVo> doQueryStockTypeDetail(@PathVariable("id") Long id) {
         ensureParameterExist(id, "库存分类标识为空");
         StockTypeUnion union = stockService.queryStockTypeDetail(id);
         StockTypeVo vo = CommonConverter.map(union.getStockTypePo(), StockTypeVo.class);
@@ -89,10 +89,10 @@ public class StockController {
     }
 
     @RequestMapping(path = "/type/list", method = { RequestMethod.GET })
-    public JsonResult<PagedList<StockTypeVo>> doQueryStockTypes(@RequestBody StockTypeQueryParams params) {
+    public JsonResult<PagedList<StockTypeVo>> doListPagedStockTypes(@RequestBody StockTypeQueryParams params) {
         ensureParameterExist(params, "库存分类查询条件为空");
         StockTypeQueryCondition condition = CommonConverter.map(params, StockTypeQueryCondition.class);
-        PagedList<StockTypeUnion> pagedUnions = stockService.queryStockTypesByCondition(condition);
+        PagedList<StockTypeUnion> pagedUnions = stockService.listPagedStockTypes(condition);
         if (pagedUnions == null || CollectionUtils.isEmpty(pagedUnions.getData())) {
             return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
         }
@@ -148,7 +148,7 @@ public class StockController {
     @RequestMapping(path = "/{id}", method = { RequestMethod.GET })
     public JsonResult<StockVo> doQueryStockTypeById(@PathVariable("id") Long id) {
         ensureParameterExist(id, "库存标识为空");
-        StockUnion union = stockService.queryStockById(id);
+        StockUnion union = stockService.queryStock(id);
         StockVo vo = buildStockVoByUnion(union);
         return JsonResults.success(vo);
     }

@@ -4,17 +4,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 性别枚举
- * 
- * @author yuhuan.zhou 2018年1月14日 下午8:25:28
- */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum UserGenderEnum {
+public enum WorkingEnums {
 
-    FEMALE(0, "女"),
-    MALE(1, "男");
+    OFF(0, "离职"),
+    ON(1, "在职");
 
     private int    key;
     private String desc;

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
-import com.zes.squad.gmh.common.enums.UserGenderEnum;
+import com.zes.squad.gmh.common.enums.GenderEnum;
 import com.zes.squad.gmh.common.enums.UserRoleEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
@@ -120,7 +120,7 @@ public class UserController extends BaseController {
     @RequestMapping(path = "/remove/{id}", method = { RequestMethod.DELETE })
     public JsonResult<Void> doRemoveUser(@PathVariable("id") Long id) {
         ensureParameterExist(id, "待删除用户标识为空");
-        userService.removeById(id);
+        userService.removeUser(id);
         return JsonResults.success();
     }
 
@@ -128,14 +128,14 @@ public class UserController extends BaseController {
     public JsonResult<Void> doRemoveUser(@RequestBody UserDeleteParams params) {
         ensureParameterExist(params, "待删除用户为空");
         ensureCollectionNotEmpty(params.getIds(), "待删除用户为空");
-        userService.batchRemove(params.getIds());
+        userService.removeUsers(params.getIds());
         return JsonResults.success();
     }
 
     private UserVo buildUserVoByUnion(UserUnion union) {
         UserVo vo = CommonConverter.map(union.getUserPo(), UserVo.class);
         vo.setRole(EnumUtils.getDescByKey(union.getUserPo().getRole().intValue(), UserRoleEnum.class));
-        vo.setGender(EnumUtils.getDescByKey(union.getUserPo().getGender().intValue(), UserGenderEnum.class));
+        vo.setGender(EnumUtils.getDescByKey(union.getUserPo().getGender().intValue(), GenderEnum.class));
         vo.setToken(union.getToken());
         vo.setStoreName(union.getStoreName());
         return vo;
@@ -153,7 +153,7 @@ public class UserController extends BaseController {
         ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "用户手机号格式错误");
         ensureParameterExist(params.getName(), "用户姓名为空");
         ensureParameterExist(params.getGender(), "用户性别为空");
-        ensureParameterValid(EnumUtils.containsKey(params.getGender().intValue(), UserGenderEnum.class), "用户性别错误");
+        ensureParameterValid(EnumUtils.containsKey(params.getGender().intValue(), GenderEnum.class), "用户性别错误");
         ensureParameterExist(params.getStoreId(), "用户所属门店为空");
     }
 
@@ -167,7 +167,7 @@ public class UserController extends BaseController {
             ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "用户手机号格式错误");
         }
         if (params.getGender() != null) {
-            ensureParameterValid(EnumUtils.containsKey(params.getGender().intValue(), UserGenderEnum.class), "用户性别错误");
+            ensureParameterValid(EnumUtils.containsKey(params.getGender().intValue(), GenderEnum.class), "用户性别错误");
         }
     }
 

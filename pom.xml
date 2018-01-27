@@ -305,59 +305,11 @@
 					<encoding>${encoding}</encoding>
 				</configuration>
 			</plugin>
-			<!-- 源码打包插件 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>${source-plugin.version}</version>
-				<configuration>
-					<attach>true</attach>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- 文档打包插件 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${javadoc-plugin.version}</version>
-				<configuration>
-					<aggregate>true</aggregate>
-					<docencoding>${encoding}</docencoding>
-					<encoding>${encoding}</encoding>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- 项目打包插件, 只包含class字节码 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>${jar-plugin.version}</version>
-			</plugin>
-			<!-- 项目打包插件, 生成可执行jar包 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>${shade-plugin.version}</version>
-			</plugin>
-			<!-- 项目打包插件, 自定义打包流程 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${assembly-plugin.version}</version>
 			</plugin>
 			<!-- 测试插件 -->
 			<plugin>
@@ -370,18 +322,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
 				<version>${install-plugin.version}</version>
-			</plugin>
-			<!-- 发布插件 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>${deploy-plugin.version}</version>
-			</plugin>
-			<!-- 站点插件 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>${maven-site-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>

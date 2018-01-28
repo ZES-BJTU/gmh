@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zes.squad.gmh.mapper.EmployeeWorkTypeMapper">
+<mapper namespace="com.zes.squad.gmh.mapper.EmployeeWorkTypeUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.EmployeeWorkTypeUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="store_name" jdbcType="VARCHAR" property="storeName" />
@@ -8,7 +8,7 @@
 			resultMap="com.zes.squad.gmh.mapper.EmployeeWorkTypeMapper.BaseResultMap"
 			columnPrefix="employee_word_type_" />
 	</resultMap>
-	<sql id="BaseColumnList">
+	<sql id="Base_Column_List">
 		ewt.`id` AS employee_word_type_id,
 		ewt.`top_type` AS employee_word_type_top_type,
 		ewt.`name` AS employee_word_type_name,
@@ -19,7 +19,7 @@
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
-		<include refid="BaseColumnList" />
+		<include refid="Base_Column_List" />
 		FROM
 		employee_work_type ewt
 		LEFT JOIN store s
@@ -31,7 +31,7 @@
 		parameterType="com.zes.squad.gmh.entity.condition.EmployeeWorkTypeQueryCondition"
 		resultMap="BaseResultMap">
 		SELECT
-		<include refid="BaseColumnList" />
+		<include refid="Base_Column_List" />
 		FROM
 		employee_work_type ewt
 		LEFT JOIN store s

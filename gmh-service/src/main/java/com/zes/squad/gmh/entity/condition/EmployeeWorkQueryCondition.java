@@ -1,8 +1,6 @@
-package com.zes.squad.gmh.web.entity.param.employee;
+package com.zes.squad.gmh.entity.condition;
 
 import java.util.Date;
-
-import com.zes.squad.gmh.web.entity.param.QueryParams;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,8 +9,9 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class EmployeeQueryParams extends QueryParams {
+public class EmployeeWorkQueryCondition extends QueryCondition {
 
+    private Long    storeId;
     private Date    startEntryTime;
     private Date    endEntryTime;
     private Boolean working;

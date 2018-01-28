@@ -24,8 +24,10 @@ import com.zes.squad.gmh.common.enums.WorkingEnums;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
-import com.zes.squad.gmh.entity.condition.EmployeeQueryCondition;
+import com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition;
 import com.zes.squad.gmh.entity.condition.EmployeeWorkTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.EmployeePo;
+import com.zes.squad.gmh.entity.po.EmployeeWorkPo;
 import com.zes.squad.gmh.entity.po.EmployeeWorkTypePo;
 import com.zes.squad.gmh.entity.union.EmployeeUnion;
 import com.zes.squad.gmh.entity.union.EmployeeWorkTypeUnion;
@@ -34,7 +36,7 @@ import com.zes.squad.gmh.service.EmployeeService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.employee.EmployeeCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.employee.EmployeeQueryParams;
+import com.zes.squad.gmh.web.entity.param.employee.EmployeeWorkQueryParams;
 import com.zes.squad.gmh.web.entity.param.employee.EmployeeWorkTypeCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.employee.EmployeeWorkTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.EmployeeVo;
@@ -156,9 +158,9 @@ public class EmployeeController {
     }
 
     @RequestMapping(path = "/list", method = { RequestMethod.GET })
-    public JsonResult<PagedList<EmployeeVo>> doListPagedEmployees(@RequestBody EmployeeQueryParams params) {
+    public JsonResult<PagedList<EmployeeVo>> doListPagedEmployees(@RequestBody EmployeeWorkQueryParams params) {
         checkEmployeeQueryParams(params);
-        EmployeeQueryCondition condition = CommonConverter.map(params, EmployeeQueryCondition.class);
+        EmployeeWorkQueryCondition condition = CommonConverter.map(params, EmployeeWorkQueryCondition.class);
         PagedList<EmployeeUnion> pagedUnions = employeeService.listPagedEmployees(condition);
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
             return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
@@ -180,10 +182,21 @@ public class EmployeeController {
     }
 
     private EmployeeUnion buildEmployeeUnionByParams(EmployeeCreateOrModifyParams params) {
-        EmployeeUnion union = null;
+        EmployeePo employeePo = CommonConverter.map(params, EmployeePo.class);
+        List<EmployeeWorkUnion> workUnions = Lists.newArrayListWithCapacity(params.getEmployeeWorkTypeIds().size());
+        for (Long workTypeId : params.getEmployeeWorkTypeIds()) {
+            EmployeeWorkPo workPo = new EmployeeWorkPo();
+            workPo.setEmployeeWorkTypeId(workTypeId);;
+            EmployeeWorkUnion workUnion = new EmployeeWorkUnion();
+            workUnion.setEmployeeWorkPo(workPo);
+            workUnions.add(workUnion);
+        }
+        EmployeeUnion union = new EmployeeUnion();
+        union.setEmployeePo(employeePo);
+        union.setEmployeeWorkUnions(workUnions);
         return union;
     }
-    
+
     private void checkEmployeCreateParams(EmployeeCreateOrModifyParams params) {
         ensureParameterExist(params, "员工信息为空");
         ensureParameterNotExist(params.getId(), "员工标识应为空");
@@ -192,9 +205,12 @@ public class EmployeeController {
         ensureParameterValid(EnumUtils.containsKey(params.getGender(), GenderEnum.class), "员工性别错误");
         ensureParameterExist(params.getMobile(), "员工手机号为空");
         ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "员工手机号格式错误");
+        if (params.getEntryTime() != null) {
+            ensureParameterValid(params.getEntryTime().before(new Date()), "员工入职时间错误");
+        }
         ensureCollectionNotEmpty(params.getEmployeeWorkTypeIds(), "员工工种为空");
     }
-    
+
     private void checkEmployeModifyParams(EmployeeCreateOrModifyParams params) {
         ensureParameterExist(params, "员工修改信息为空");
         ensureParameterExist(params.getId(), "员工标识为空");
@@ -209,7 +225,7 @@ public class EmployeeController {
         }
     }
 
-    private void checkEmployeeQueryParams(EmployeeQueryParams params) {
+    private void checkEmployeeQueryParams(EmployeeWorkQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getStartEntryTime() != null) {
             ensureParameterValid(params.getStartEntryTime().before(new Date()), "员工入职查询时间段不能晚于现在");

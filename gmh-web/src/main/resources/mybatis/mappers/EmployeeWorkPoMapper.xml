@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.EmployeeWorkMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.EmployeeWorkPo">
+		<id column="id" jdbcType="BIGINT" property="id"/>
+		<result column="employee_id" jdbcType="BIGINT" property="employeeId"/>
+		<result column="employee_work_type_id" jdbcType="BIGINT" property="employeeWorkTypeId"/>
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+	</resultMap>
+	<insert id="batchInsert" parameterType="com.zes.squad.gmh.entity.po.EmployeeWorkPo">
+		INSERT INTO employee_work
+		(`employee_id`, `employee_work_type_id`)
+		VALUES
+		<foreach collection="list" item="po" separator=",">
+			(#{po.employeeId, jdbcType=BIGINT},
+			#{po.employeeWorkTypeId, jdbcType=BIGINT})
+		</foreach>
+	</insert>
+	<delete id="batchDelete" parameterType="long">
+		DELETE FROM employee_work WHERE `employee_id` = #{employeeId, jdbcType=BIGINT}
+	</delete>
+	<select id="selectEmployeeIdsByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition"
+		resultType="list">
+		SELECT 
+		ew.`employee_id` 
+		FROM employee_work ew
+		LEFT JOIN
+		employee e
+		ON
+		ew.`employee_id` = e.`id`
+		LEFT JOIN
+		employee_work_type ewt
+		ON
+		ew.`employee_work_type_id` = ewt.`id`
+		<where>
+			<if test="storeId != null">
+				e.`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="startEntryTime != null and endEntryTime == null">
+				AND e.`entry_time` <![CDATA[>]]> #{startEntryTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="startEntryTime == null and endEntryTime != null">
+				AND e.`entry_time` <![CDATA[<]]> #{endEntryTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="startEntryTime != null and endEntryTime != null">
+				AND (e.`entry_time` BETWEEN #{startEntryTime, jdbcType=TIMESTAMP} AND #{endEntryTime, jdbcType=TIMESTAMP}) 
+			</if>
+			<if test="working != null">
+				AND e.`is_working` = #{working, jdbcType=TINYINT}
+			</if>
+			<if test="topType != null">
+				AND ewt.`top_type` = #{topType, jdbcType=INTEGER}
+			</if>
+			<if test="employeeKeyWord != null and employeeKeyWord != ''">
+				<bind name="condition" value="'%' + employeeKeyWord + '%'"/>
+				CONCAT(e.`name`,e.`mobile`,e.`remark`,ewt.`name`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

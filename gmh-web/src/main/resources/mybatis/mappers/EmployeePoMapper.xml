@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.EmployeeMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.EmployeePo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="gender" jdbcType="TINYINT" property="gender" />
+		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="entry_time" jdbcType="TIMESTAMP" property="entryTime" />
+		<result column="is_working" jdbcType="TINYINT" property="working" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.EmployeePo">
+		<selectKey keyProperty="id" resultType="long" order="AFTER">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO employee
+		(`name`, `gender`, `mobile`, `entry_time`,
+		`is_working`, `store_id`, `remark`)
+		VALUES
+		(#{name, jdbcType=VARCHAR},
+		#{gender, jdbcType=TINYINT},
+		#{mobile, jdbcType=VARCHAR},
+		#{entryTime,
+		jdbcType=TIMESTAMP},
+		#{working, jdbcType=TINYINT},
+		#{storeId,
+		jdbcType=BIGINT},
+		#{remark, jdbcType=VARCHAR})
+	</insert>
+	<update id="updateWorkingById" parameterType="long">
+		UPDATE employee SET
+		`is_working` = 0
+	</update>
+	<update id="batchUpdateWorkingByIds" parameterType="list">
+		UPDATE employee SET `is_working` = 0 WHERE `id` IN
+		<foreach collection="list" item="id" separator="," open="("
+			close=")">
+			#{id, jdbcType=BIGINT}
+		</foreach>
+	</update>
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.EmployeePo">
+		UPDATE employee
+		<set>
+			<if test="name != null and name != ''">
+				`name` = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				`gender` = #{gender, jdbcType=TINYINT},
+			</if>
+			<if test="mobile != null and mobile != ''">
+				`mobile` = #{mobile, jdbcType=VARCHAR},
+			</if>
+			<if test="entryTime != null">
+				`entry_time` = #{entryTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="working != null">
+				`is_working` = #{working, jdbcType=TINYINT},
+			</if>
+			<if test="remark != null and remark != ''">
+				`remark` = #{remark, jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</update>
+</mapper>

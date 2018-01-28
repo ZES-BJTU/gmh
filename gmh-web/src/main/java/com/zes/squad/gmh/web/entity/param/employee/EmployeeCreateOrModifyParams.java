@@ -13,6 +13,7 @@ public class EmployeeCreateOrModifyParams {
     private Integer    gender;
     private String     mobile;
     private Date       entryTime;
+    private Boolean    working;
     private String     remark;
     private List<Long> employeeWorkTypeIds;
 

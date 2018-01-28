@@ -3,7 +3,7 @@ package com.zes.squad.gmh.service;
 import java.util.List;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
-import com.zes.squad.gmh.entity.condition.EmployeeQueryCondition;
+import com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition;
 import com.zes.squad.gmh.entity.condition.EmployeeWorkTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.EmployeeWorkTypePo;
 import com.zes.squad.gmh.entity.union.EmployeeUnion;
@@ -97,6 +97,6 @@ public interface EmployeeService {
      * @param condition
      * @return
      */
-    PagedList<EmployeeUnion> listPagedEmployees(EmployeeQueryCondition condition);
+    PagedList<EmployeeUnion> listPagedEmployees(EmployeeWorkQueryCondition condition);
 
 }

@@ -3,9 +3,11 @@ package com.zes.squad.gmh.service;
 import java.util.List;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.entity.condition.ProjectQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
 import com.zes.squad.gmh.entity.union.ProjectTypeUnion;
+import com.zes.squad.gmh.entity.union.ProjectUnion;
 
 public interface ProjectService {
 
@@ -52,5 +54,49 @@ public interface ProjectService {
      * @return
      */
     PagedList<ProjectTypeUnion> listPagedProjectTypes(ProjectTypeQueryCondition condition);
+
+    /**
+     * 新建项目
+     * 
+     * @param union
+     */
+    void createProject(ProjectUnion union);
+
+    /**
+     * 删除单个项目
+     * 
+     * @param id
+     */
+    void removeProject(Long id);
+
+    /**
+     * 删除多个项目
+     * 
+     * @param ids
+     */
+    void removeProjects(List<Long> ids);
+
+    /**
+     * 修改项目
+     * 
+     * @param union
+     */
+    void modifyProject(ProjectUnion union);
+
+    /**
+     * 查询单个项目详情
+     * 
+     * @param id
+     * @return
+     */
+    ProjectUnion queryProjectDetail(Long id);
+
+    /**
+     * 分页模糊搜索项目
+     * 
+     * @param condition
+     * @return
+     */
+    PagedList<ProjectUnion> listPagedProjects(ProjectQueryCondition condition);
 
 }

@@ -1,6 +1,4 @@
-package com.zes.squad.gmh.web.entity.param.store;
-
-import com.zes.squad.gmh.web.entity.param.QueryParams;
+package com.zes.squad.gmh.web.entity.param;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,4 +1,4 @@
-package com.zes.squad.gmh.web.entity.param.stock;
+package com.zes.squad.gmh.web.entity.param;
 
 import java.util.List;
 

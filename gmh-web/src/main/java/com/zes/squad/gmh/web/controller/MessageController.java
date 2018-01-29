@@ -10,7 +10,7 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 import com.zes.squad.gmh.service.MessageService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.message.MessageParams;
+import com.zes.squad.gmh.web.entity.param.MessageParams;
 
 @RequestMapping(path = "/message")
 @RestController

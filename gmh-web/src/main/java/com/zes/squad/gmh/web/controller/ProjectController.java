@@ -27,8 +27,8 @@ import com.zes.squad.gmh.entity.union.ProjectTypeUnion;
 import com.zes.squad.gmh.service.ProjectService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.project.ProjectTypeCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.project.ProjectTypeQueryParams;
+import com.zes.squad.gmh.web.entity.param.ProjectTypeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.ProjectTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.ProjectTypeVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 

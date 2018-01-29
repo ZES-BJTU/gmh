@@ -1,8 +1,6 @@
-package com.zes.squad.gmh.web.entity.param.employee;
+package com.zes.squad.gmh.web.entity.param;
 
 import java.util.Date;
-
-import com.zes.squad.gmh.web.entity.param.QueryParams;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

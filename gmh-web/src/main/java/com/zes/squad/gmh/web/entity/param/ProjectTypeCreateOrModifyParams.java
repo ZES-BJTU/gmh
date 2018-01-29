@@ -1,4 +1,4 @@
-package com.zes.squad.gmh.web.entity.param.project;
+package com.zes.squad.gmh.web.entity.param;
 
 import lombok.Data;
 

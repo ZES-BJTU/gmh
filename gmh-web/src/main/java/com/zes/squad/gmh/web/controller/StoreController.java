@@ -24,8 +24,8 @@ import com.zes.squad.gmh.entity.union.StoreUnion;
 import com.zes.squad.gmh.service.StoreService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.store.StoreCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.store.StoreQueryParams;
+import com.zes.squad.gmh.web.entity.param.StoreCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.StoreQueryParams;
 import com.zes.squad.gmh.web.entity.vo.StoreVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 

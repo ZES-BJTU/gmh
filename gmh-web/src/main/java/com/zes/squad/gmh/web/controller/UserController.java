@@ -29,11 +29,11 @@ import com.zes.squad.gmh.entity.union.UserUnion;
 import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.user.UserCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.user.UserDeleteParams;
-import com.zes.squad.gmh.web.entity.param.user.UserLoginParams;
-import com.zes.squad.gmh.web.entity.param.user.UserPasswordParams;
-import com.zes.squad.gmh.web.entity.param.user.UserQueryParams;
+import com.zes.squad.gmh.web.entity.param.UserCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.UserDeleteParams;
+import com.zes.squad.gmh.web.entity.param.UserLoginParams;
+import com.zes.squad.gmh.web.entity.param.UserPasswordParams;
+import com.zes.squad.gmh.web.entity.param.UserQueryParams;
 import com.zes.squad.gmh.web.entity.vo.UserVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 

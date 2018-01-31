@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.*;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
@@ -30,7 +31,6 @@ import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.UserCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.UserDeleteParams;
 import com.zes.squad.gmh.web.entity.param.UserLoginParams;
 import com.zes.squad.gmh.web.entity.param.UserPasswordParams;
 import com.zes.squad.gmh.web.entity.param.UserQueryParams;
@@ -99,6 +99,20 @@ public class UserController extends BaseController {
         return JsonResults.success();
     }
 
+    @RequestMapping(path = "/remove/{id}", method = { RequestMethod.DELETE })
+    public JsonResult<Void> doRemoveUser(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择待删除用户");
+        userService.removeUser(id);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/remove", method = { RequestMethod.DELETE })
+    public JsonResult<Void> doRemoveUser(@RequestBody List<Long> ids) {
+        ensureCollectionNotEmpty(ids, "请选择待删除用户");
+        userService.removeUsers(ids);
+        return JsonResults.success();
+    }
+
     @RequestMapping(path = "/listByPage", method = { RequestMethod.GET })
     public JsonResult<PagedList<UserVo>> doListPagedUsers(@RequestBody UserQueryParams params) {
         CheckHelper.checkPageParams(params);
@@ -115,21 +129,6 @@ public class UserController extends BaseController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUserUnions.getPageNum(), pagedUserUnions.getPageSize(),
                 pagedUserUnions.getTotalCount(), vos));
-    }
-
-    @RequestMapping(path = "/remove/{id}", method = { RequestMethod.DELETE })
-    public JsonResult<Void> doRemoveUser(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "待删除用户标识为空");
-        userService.removeUser(id);
-        return JsonResults.success();
-    }
-
-    @RequestMapping(path = "/batchRemove", method = { RequestMethod.DELETE })
-    public JsonResult<Void> doRemoveUser(@RequestBody UserDeleteParams params) {
-        ensureParameterExist(params, "待删除用户为空");
-        ensureCollectionNotEmpty(params.getIds(), "待删除用户为空");
-        userService.removeUsers(params.getIds());
-        return JsonResults.success();
     }
 
     private UserVo buildUserVoByUnion(UserUnion union) {

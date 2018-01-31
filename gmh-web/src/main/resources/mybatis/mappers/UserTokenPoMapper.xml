@@ -24,7 +24,7 @@
 		`token` = #{token, jdbcType=VARCHAR},
 		`login_time` = #{loginTime, jdbcType=TIMESTAMP}
 	</insert>
-	<select id="selectByToken" parameterType="string">
+	<select id="selectByToken" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="BaseColumnList"/>
 		FROM user_token

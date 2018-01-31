@@ -91,13 +91,6 @@ public class UserController extends BaseController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/remove/{id}", method = { RequestMethod.POST })
-    public JsonResult<Void> doModifyUser(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "请选择待删除用户");
-        userService.removeUser(id);
-        return JsonResults.success();
-    }
-    
     @RequestMapping(path = "/modify", method = { RequestMethod.POST })
     public JsonResult<Void> doModifyUser(@RequestBody UserCreateOrModifyParams params) {
         checkUserModifyParams(params);

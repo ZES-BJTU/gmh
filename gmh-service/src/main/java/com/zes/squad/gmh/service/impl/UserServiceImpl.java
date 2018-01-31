@@ -187,7 +187,6 @@ public class UserServiceImpl implements UserService {
         UserUnion user = new UserUnion();
         user.setId(po.getId());
         user.setUserPo(po);
-        user.setStoreName(storePo.getName());
         return user;
     }
 

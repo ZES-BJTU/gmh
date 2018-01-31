@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50624
 File Encoding         : 65001
 
-Date: 2018-01-28 22:55:42
+Date: 2018-01-31 21:54:25
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -35,6 +35,10 @@ CREATE TABLE `employee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of employee
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for employee_work
 -- ----------------------------
 DROP TABLE IF EXISTS `employee_work`;
@@ -46,6 +50,10 @@ CREATE TABLE `employee_work` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of employee_work
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for employee_work_type
@@ -60,6 +68,10 @@ CREATE TABLE `employee_work_type` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of employee_work_type
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for member_card
@@ -83,6 +95,10 @@ CREATE TABLE `member_card` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of member_card
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for product
 -- ----------------------------
 DROP TABLE IF EXISTS `product`;
@@ -99,6 +115,10 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of product
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for product_consume
 -- ----------------------------
 DROP TABLE IF EXISTS `product_consume`;
@@ -111,6 +131,10 @@ CREATE TABLE `product_consume` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of product_consume
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for product_stock_unit_map
@@ -129,6 +153,10 @@ CREATE TABLE `product_stock_unit_map` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of product_stock_unit_map
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for product_type
 -- ----------------------------
 DROP TABLE IF EXISTS `product_type`;
@@ -142,6 +170,10 @@ CREATE TABLE `product_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of product_type
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for project
 -- ----------------------------
 DROP TABLE IF EXISTS `project`;
@@ -152,10 +184,16 @@ CREATE TABLE `project` (
   `unit_price` decimal(10,0) DEFAULT NULL COMMENT '项目单价',
   `integral` decimal(10,0) DEFAULT NULL COMMENT '项目积分',
   `intern_integral` decimal(10,0) DEFAULT NULL COMMENT '项目实习生积分',
+  `store_id` bigint(20) DEFAULT NULL COMMENT '项目所属门店id',
+  `remark` varchar(255) DEFAULT NULL COMMENT '项目备注',
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for project_stock
@@ -165,11 +203,15 @@ CREATE TABLE `project_stock` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) DEFAULT NULL COMMENT '项目id',
   `stock_id` bigint(20) DEFAULT NULL COMMENT '库存id',
-  `stock_consume_amount` bigint(20) DEFAULT NULL COMMENT '库存消耗数量',
+  `stock_consume_amount` decimal(10,0) DEFAULT NULL COMMENT '库存消耗数量',
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project_stock
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for project_type
@@ -184,6 +226,10 @@ CREATE TABLE `project_type` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of project_type
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for stock
@@ -203,6 +249,10 @@ CREATE TABLE `stock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of stock
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for stock_consume
 -- ----------------------------
 DROP TABLE IF EXISTS `stock_consume`;
@@ -217,6 +267,10 @@ CREATE TABLE `stock_consume` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of stock_consume
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for stock_type
 -- ----------------------------
 DROP TABLE IF EXISTS `stock_type`;
@@ -228,6 +282,10 @@ CREATE TABLE `stock_type` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of stock_type
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for store
@@ -248,11 +306,17 @@ CREATE TABLE `store` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of store
+-- ----------------------------
+INSERT INTO `store` VALUES ('1', '1', '2', '3', '4', '5', '6', '2018-01-18 22:19:48', '2018-01-18 22:19:48');
+
+-- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户id',
+  `role` tinyint(4) DEFAULT NULL,
   `account` varchar(255) DEFAULT NULL COMMENT '用户名',
   `email` varchar(255) DEFAULT NULL COMMENT '用户邮箱',
   `mobile` varchar(255) DEFAULT NULL COMMENT '用户手机号',
@@ -268,7 +332,13 @@ CREATE TABLE `user` (
   UNIQUE KEY `uk_account` (`account`) USING BTREE,
   UNIQUE KEY `uk_email` (`email`) USING BTREE,
   UNIQUE KEY `uk_mobile` (`mobile`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES ('1', '1', '893074711@qq.com', '893074711@qq.com', '18813091990', '863CB8C83BF4DD438F78E8163F190D6A', 'ef13f23ccab44f27aad7250a6a5efdb0', '章琦', '1', null, null, '2018-01-31 21:11:30', '2018-01-31 21:53:46');
+INSERT INTO `user` VALUES ('2', '1', '1120726720@qq.com', '1120726720@qq.com', '15910946435', '4CD2AEB279B14B27A3D84DE5F57BA0C5', 'a766bd54dfca46459f8b7c0a1c15991c', '周宇环', '1', null, null, '2018-01-31 21:14:47', '2018-01-31 21:53:48');
 
 -- ----------------------------
 -- Table structure for user_token
@@ -284,4 +354,9 @@ CREATE TABLE `user_token` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_id` (`user_id`) USING BTREE,
   UNIQUE KEY `uk_token` (`token`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of user_token
+-- ----------------------------
+INSERT INTO `user_token` VALUES ('1', '2', '3e259ad09b2e4e9abc33cf0fce027272', '2018-01-31 21:53:57', '2018-01-31 21:53:56', '2018-01-31 21:53:56');

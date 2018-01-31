@@ -44,7 +44,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(path = "/login", method = { RequestMethod.GET })
+    @RequestMapping(path = "/login", method = { RequestMethod.POST })
     public JsonResult<UserVo> doLoginWithAccount(@RequestBody UserLoginParams params) {
         ensureParameterExist(params, "登录信息为空");
         ensureParameterExist(params.getAccount(), "账号为空");

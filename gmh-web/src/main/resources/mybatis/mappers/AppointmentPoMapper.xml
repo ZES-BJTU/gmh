@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.AppointmentMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.AppointmentPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="customer_mobile" jdbcType="VARCHAR" property="customerMobile" />
+		<result column="customer_gender" jdbcType="INTEGER" property="customerGender" />
+		<result column="is_vip" jdbcType="INTEGER" property="isVip" />
+		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="is_line" jdbcType="INTEGER" property="isLine" />
+		<result column="status" jdbcType="VARCHAR" property="status" />
+		<result column="remarks" jdbcType="VARCHAR" property="remarks" />
+		<result column="store_id" jdbcType="INTEGER" property="storeId" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+
+<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentPo" useGeneratedKeys="true" keyProperty="id">
+
+		INSERT INTO appointment
+		(`customer_name`,`customer_mobile`,`customer_gender`,`is_vip`,`customer_id`,`is_line`,`status`,`remarks`,`store_id`)
+		VALUES
+		(#{customerName, jdbcType=VARCHAR},
+		#{customerMobile, jdbcType=VARCHAR},
+		#{customerGender, jdbcType=INTEGER},
+		#{isVip, jdbcType=INTEGER},
+		#{customerId, jdbcType=INTEGER},
+		#{isLine, jdbcType=INTEGER},
+		#{status, jdbcType=VARCHAR},
+		#{remarks, jdbcType=VARCHAR},
+		#{storeId, jdbcType=INTEGER})
+	</insert>
+<update id="cancel" parameterType="long">
+		UPDATE appointment SET
+		`status` = 3
+	</update>
+	<update id="finish" parameterType="long">
+		UPDATE appointment SET
+		`status` = 2
+	</update>
+</mapper>

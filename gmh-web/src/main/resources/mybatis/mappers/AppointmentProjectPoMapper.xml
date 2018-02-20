@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.AppointmentProjectMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.AppointmentProjectPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="appointment_id" jdbcType="INTEGER" property="appointmentId" />
+		<result column="project_id" jdbcType="INTEGER" property="projectId" />
+		<result column="employee_id" jdbcType="INTEGER" property="employeeId" />
+		<result column="begin_time" jdbcType="DATE" property="beginTime" />
+		<result column="end_time" jdbcType="DATE" property="endTime" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo">
+		INSERT INTO appointment_project
+		(`appointment_id`,`project_id`,`employee_id`,`begin_time`,`end_time`)
+		VALUES
+		(#{appointmentId, jdbcType=INTEGER},
+		#{projectId, jdbcType=INTEGER},
+		#{employeeId, jdbcType=INTEGER},
+		#{beginTime, jdbcType=DATE},
+		#{endTime, jdbcType=DATE})
+	</insert>
+
+</mapper>

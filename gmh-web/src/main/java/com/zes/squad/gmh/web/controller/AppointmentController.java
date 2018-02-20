@@ -22,6 +22,7 @@ import com.zes.squad.gmh.service.AppointmentService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.AppointmentCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.AppointmentQueryParams;
 import com.zes.squad.gmh.web.entity.param.EmployeeWorkQueryParams;
 import com.zes.squad.gmh.web.entity.vo.AppointmentVo;
 import com.zes.squad.gmh.web.entity.vo.EmployeeVo;
@@ -54,5 +55,9 @@ public class AppointmentController {
     	appointmentService.finishAppointment(appointmentId);
     	return JsonResults.success();
     }
-   
+    @RequestMapping(path = "/list", method = { RequestMethod.GET })
+    public JsonResult<PagedList<AppointmentVo>> doListPagedAppointment(@RequestBody AppointmentQueryParams params) {
+       
+        return JsonResults.success();
+    }
 }

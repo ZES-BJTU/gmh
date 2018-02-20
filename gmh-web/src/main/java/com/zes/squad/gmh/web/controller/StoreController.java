@@ -89,7 +89,6 @@ public class StoreController {
         ensureParameterExist(params, "门店信息为空");
         ensureParameterExist(params.getName(), "门店名称为空");
         ensureParameterExist(params.getAddress(), "门店名称为空");
-        ensureParameterExist(params.getPrincipalId(), "门店负责人标识为空");
     }
 
     private void checkModifyStoreParams(StoreCreateOrModifyParams params) {

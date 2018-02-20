@@ -360,3 +360,27 @@ CREATE TABLE `user_token` (
 -- Records of user_token
 -- ----------------------------
 INSERT INTO `user_token` VALUES ('1', '2', '3e259ad09b2e4e9abc33cf0fce027272', '2018-01-31 21:53:57', '2018-01-31 21:53:56', '2018-01-31 21:53:56');
+
+
+-- ----------------------------
+-- Table structure for appointment
+-- ----------------------------
+DROP TABLE IF EXISTS `appointment`;
+CREATE TABLE `appointment` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `customer_name` varchar(255) DEFAULT NULL COMMENT '客户姓名',
+  `customer_mobile` varchar(255) DEFAULT NULL COMMENT '客户联系电话',
+  `customer_gender` tinyint(4) DEFAULT NULL COMMENT '客户性别',
+  `is_vip` tinyint(4) DEFAULT NULL COMMENT '是否会员',
+  `customer_id` bigint(20) DEFAULT NULL COMMENT '客户id',
+  `is_line` tinyint(4) DEFAULT NULL COMMENT '是否点排',
+  `status` tinyint(4) DEFAULT NULL COMMENT '预约状态',
+  `store_id` bigint(20) DEFAULT NULL COMMENT '预约所属门店id',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of appointment
+-- ----------------------------

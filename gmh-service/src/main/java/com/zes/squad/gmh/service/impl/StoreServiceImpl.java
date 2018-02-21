@@ -32,8 +32,13 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void deleteStore(Long id) {
+    public void removeStore(Long id) {
         storeMapper.deleteById(id);
+    }
+    
+    @Override
+    public void removeStores(List<Long> ids) {
+        storeMapper.batchDelete(ids);
     }
 
     @Override
@@ -46,7 +51,7 @@ public class StoreServiceImpl implements StoreService {
         StoreUnion union = storeUnionMapper.selectById(id);
         ensureEntityExist(union, "获取门店详情失败");
         ensureEntityExist(union.getStorePo(), "获取门店信息失败");
-        ensureEntityExist(union.getPrincipalName(), "获取门店负责人信息失败");
+        ensureEntityExist(union.getUserPo(), "获取门店负责人信息失败");
         return union;
     }
 

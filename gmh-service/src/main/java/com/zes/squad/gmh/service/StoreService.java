@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.service;
 
+import java.util.List;
+
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StoreQueryCondition;
 import com.zes.squad.gmh.entity.po.StorePo;
@@ -15,11 +17,18 @@ public interface StoreService {
     void createStore(StorePo po);
 
     /**
-     * 删除门店
+     * 删除单个门店
      * 
      * @param id
      */
-    void deleteStore(Long id);
+    void removeStore(Long id);
+
+    /**
+     * 删除多个门店
+     * 
+     * @param ids
+     */
+    void removeStores(List<Long> ids);
 
     /**
      * 修改门店

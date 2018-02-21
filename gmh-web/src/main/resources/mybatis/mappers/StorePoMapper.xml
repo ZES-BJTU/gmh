@@ -17,36 +17,35 @@
 		`mobile`, `phone`, `remark`,
 		`created_time`, `modified_time`
 	</sql>
-	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
-		SELECT
-		<include refid="BaseColumnList"/>
-		FROM store
-		WHERE id = #{id, jdbcType=BIGINT}
-	</select>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StorePo">
 		INSERT INTO store
-		(`name`,
-		`address`, `principal_id`,
+		(`name`, `address`, `principal_id`,
 		`mobile`, `phone`, `remark`)
 		VALUES
 		(#{name, jdbcType=VARCHAR},
-		#{address
-		jdbcType=VARCHAR},
-		#{principalId jdbcType=BIGINT},
-		#{mobile}
-		jdbcType=VARCHAR,
-		#{phone} jdbcType=VARCHAR,
-		#{remark} jdbcType=VARCHAR)
+		#{address, jdbcType=VARCHAR},
+		#{principalId, jdbcType=BIGINT},
+		#{mobile, jdbcType=VARCHAR},
+		#{phone, jdbcType=VARCHAR},
+		#{remark, jdbcType=VARCHAR})
 	</insert>
 	<delete id="deleteById" parameterType="long">
-		DELETE FROM store WHERE id
-		= #{id, jdbcType=BIGINT}
+		DELETE FROM store WHERE id = #{id, jdbcType=BIGINT}
+	</delete>
+	<delete id="batchDelete" parameterType="long">
+		DELETE FROM store
+		<where>
+			`id` IN 
+			<foreach collection="list" item="id" separator="," open="(" close=")">
+				#{id, jdbcType=BIGINT}
+			</foreach>
+		</where>
 	</delete>
 	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.StorePo">
 		UPDATE store
 		<set>
 			<if test="name != null and name != ''">
-				`name = `#{name, jdbcType=VARCHAR},
+				`name` = #{name, jdbcType=VARCHAR},
 			</if>
 			<if test="address != null and address != ''">
 				`address` = #{address, jdbcType=VARCHAR},
@@ -61,8 +60,14 @@
 				`phone` = #{phone, jdbcType=VARCHAR},
 			</if>
 			<if test="remark != null and remark != ''">
-				`remark` = #{remark, jdbcType=VARCHAR},
+				`remark` = #{remark, jdbcType=VARCHAR}
 			</if>
 		</set>
 	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList"/>
+		FROM store
+		WHERE id = #{id, jdbcType=BIGINT}
+	</select>
 </mapper>

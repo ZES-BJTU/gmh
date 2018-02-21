@@ -3,22 +3,24 @@
 <mapper namespace="com.zes.squad.gmh.mapper.StoreUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.StoreUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="user_name" jdbcType="VARCHAR" property="principalName" />
+		<association property="userPo" jdbcType="com.zes.squad.gmh.entity.po.UserPo"
+			columnPrefix="user_" />
 		<association property="storePo"
 			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
 			columnPrefix="store_" />
 	</resultMap>
 	<sql id="BaseColumnList">
-		s.id AS store_id,
-		s.name AS store_name,
-		s.address AS store_address,
-		s.principal_id AS store_principal_id,
-		s.mobile AS store_mobile,
-		s.phone AS store_phone,
-		s.remark = store_remark,
-		s.created_time AS store_created_time,
-		s.modified_time AS store_modified_time,
-		u.name AS user_name
+		s.`id` AS store_id,
+		s.`name` AS store_name,
+		s.`address` AS store_address,
+		s.`principal_id` AS store_principal_id,
+		s.`mobile` AS store_mobile,
+		s.`phone` AS store_phone,
+		s.`remark` = store_remark,
+		s.`created_time` AS store_created_time,
+		s.`modified_time` AS store_modified_time,
+		u.`id` AS user_id,
+		u.`name` AS user_name,
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
@@ -28,7 +30,7 @@
 		LEFT JOIN 
 		user u
 		ON
-		s.principal_id = u.id
+		s.`principal_id` = u.`id`
 	</select>
 	<select id="selectByCondition"
 	parameterType="com.zes.squad.gmh.entity.condition.StoreQueryCondition"
@@ -40,11 +42,11 @@
 		LEFT JOIN
 		user u
 		ON
-		s.principal_id = u.id
+		s.`principal_id` = u.`id`
 		<if test="storeKeyWord != null and storeKeyWord != ''">
 			<bind name="condition" value="'%' + keyWord + '%'"/>
 			<where>
-				concat_ws(',',s.`name`,s.`address`,u.`name`,s.`mobile`,s.`phone`,s.`remark`)
+				CONCAT(s.`name`,s.`address`,u.`name`,s.`mobile`,s.`phone`,s.`remark`)
 				LIKE
 				#{condition, jdbcType=VARCHAR}
 			</where>

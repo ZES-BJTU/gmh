@@ -15,9 +15,7 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-
-<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentPo" useGeneratedKeys="true" keyProperty="id">
-
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO appointment
 		(`customer_name`,`customer_mobile`,`customer_gender`,`is_vip`,`customer_id`,`is_line`,`status`,`remarks`,`store_id`)
 		VALUES
@@ -31,11 +29,11 @@
 		#{remarks, jdbcType=VARCHAR},
 		#{storeId, jdbcType=INTEGER})
 	</insert>
-<update id="cancel" parameterType="long">
+	<update id="cancelAppointment" parameterType="long">
 		UPDATE appointment SET
 		`status` = 3
 	</update>
-	<update id="finish" parameterType="long">
+	<update id="finishAppointment" parameterType="long">
 		UPDATE appointment SET
 		`status` = 2
 	</update>

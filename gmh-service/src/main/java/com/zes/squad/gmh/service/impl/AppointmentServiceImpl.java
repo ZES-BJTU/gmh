@@ -33,7 +33,7 @@ public class AppointmentServiceImpl implements AppointmentService{
 	}
 	@Override
 	public void cancelAppointment(Long appointmentId) {
-		appointmentMapper.cancleAppointment(appointmentId);
+		appointmentMapper.cancelAppointment(appointmentId);
 	}
 	@Override
 	public void finishAppointment(Long appointmentId) {

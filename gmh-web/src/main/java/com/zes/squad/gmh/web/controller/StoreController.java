@@ -1,7 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 
 import java.util.List;
 
@@ -44,9 +44,17 @@ public class StoreController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/delete/{id}", method = { RequestMethod.DELETE })
-    public JsonResult<Void> doDeleteStore(@PathVariable("id") Long id) {
-        storeService.deleteStore(id);
+    @RequestMapping(path = "/remove/{id}", method = { RequestMethod.DELETE })
+    public JsonResult<Void> doRemoveStore(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择待删除门店");
+        storeService.removeStore(id);
+        return JsonResults.success();
+    }
+    
+    @RequestMapping(path = "/remove", method = {RequestMethod.DELETE})
+    public JsonResult<Void> doRemoveStores(@RequestBody List<Long> ids) {
+        ensureCollectionNotEmpty(ids, "请选择待删除门店");
+        storeService.removeStores(ids);
         return JsonResults.success();
     }
 
@@ -60,10 +68,10 @@ public class StoreController {
 
     @RequestMapping(path = "/detail/{id}", method = { RequestMethod.GET })
     public JsonResult<StoreVo> doQueryStoreDetail(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "门店标识为空");
+        ensureParameterExist(id, "请选择门店");
         StoreUnion union = storeService.queryStoreDetail(id);
         StoreVo vo = CommonConverter.map(union.getStorePo(), StoreVo.class);
-        vo.setPrincipalName(union.getPrincipalName());
+        vo.setPrincipalName(union.getUserPo().getName());
         return JsonResults.success(vo);
     }
 
@@ -78,7 +86,7 @@ public class StoreController {
         List<StoreVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
         for (StoreUnion union : pagedUnions.getData()) {
             StoreVo vo = CommonConverter.map(union.getStorePo(), StoreVo.class);
-            vo.setPrincipalName(union.getPrincipalName());
+            vo.setPrincipalName(union.getUserPo().getName());
             vos.add(vo);
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
@@ -86,16 +94,14 @@ public class StoreController {
     }
 
     private void checkCreateStoreParams(StoreCreateOrModifyParams params) {
-        ensureParameterExist(params, "门店信息为空");
+        ensureParameterExist(params, "请选择待修改门店");
         ensureParameterExist(params.getName(), "门店名称为空");
-        ensureParameterExist(params.getAddress(), "门店名称为空");
-        ensureParameterExist(params.getPrincipalId(), "门店负责人标识为空");
+        ensureParameterExist(params.getAddress(), "门店地址为空");
     }
 
     private void checkModifyStoreParams(StoreCreateOrModifyParams params) {
-        ensureParameterExist(params, "门店信息为空");
-        ensureParameterExist(params.getId(), "门店标识为空");
-        ensureParameterExist(params.getPrincipalId(), "门店名称为空");
+        ensureParameterExist(params, "请选择待修改门店");
+        ensureParameterExist(params.getId(), "请选择待修改门店");
         if (!Strings.isNullOrEmpty(params.getMobile())) {
             ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "手机格式错误");
         }

@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.entity.condition;
 
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

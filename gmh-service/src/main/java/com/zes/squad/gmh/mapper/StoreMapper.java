@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.mapper;
 
+import java.util.List;
+
 import com.zes.squad.gmh.entity.po.StorePo;
 
 public interface StoreMapper {
@@ -19,6 +21,14 @@ public interface StoreMapper {
      * @return
      */
     int deleteById(Long id);
+
+    /**
+     * 批量删除门店
+     * 
+     * @param ids
+     * @return
+     */
+    int batchDelete(List<Long> ids);
 
     /**
      * 修改门店信息

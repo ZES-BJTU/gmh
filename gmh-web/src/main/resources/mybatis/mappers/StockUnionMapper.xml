@@ -33,6 +33,9 @@
 		LEFT JOIN store store
 		ON
 		st.`store_id` = store.`id`
+		<where>
+			s.`id` = #{id, jdbcType=BIGINT}
+		</where>
 	</select>
 	<select id="selectByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.StockQueryCondition"

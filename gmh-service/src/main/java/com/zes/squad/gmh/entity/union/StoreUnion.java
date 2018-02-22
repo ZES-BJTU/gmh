@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.entity.union;
 
 import com.zes.squad.gmh.entity.po.StorePo;
+import com.zes.squad.gmh.entity.po.UserPo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,6 @@ public class StoreUnion extends Union {
     private static final long serialVersionUID = 1L;
 
     private StorePo           storePo;
-    private String            principalName;
+    private UserPo            userPo;
 
 }

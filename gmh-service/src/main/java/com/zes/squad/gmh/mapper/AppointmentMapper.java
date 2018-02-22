@@ -9,7 +9,7 @@ public interface AppointmentMapper {
 
 	int insert(AppointmentPo appointmentPo);
 	
-	int cancleAppointment(Long id);
+	int cancelAppointment(Long id);
 
 	int finishAppointment(Long id);
 	

@@ -19,7 +19,6 @@ import com.zes.squad.gmh.entity.po.AppointmentProjectPo;
 import com.zes.squad.gmh.entity.union.AppointmentProjectParams;
 import com.zes.squad.gmh.entity.union.AppointmentProjectUnion;
 import com.zes.squad.gmh.entity.union.AppointmentUnion;
-import com.zes.squad.gmh.entity.union.EmployeeUnion;
 import com.zes.squad.gmh.mapper.AppointmentMapper;
 import com.zes.squad.gmh.mapper.AppointmentProjectMapper;
 import com.zes.squad.gmh.service.AppointmentService;

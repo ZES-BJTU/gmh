@@ -1,5 +1,8 @@
 package com.zes.squad.gmh.mapper;
 
+import java.util.List;
+
+import com.zes.squad.gmh.entity.condition.AppointmentQueryCondition;
 import com.zes.squad.gmh.entity.po.AppointmentPo;
 
 public interface AppointmentMapper {
@@ -10,4 +13,5 @@ public interface AppointmentMapper {
 
 	int finishAppointment(Long id);
 	
+	List<AppointmentPo> listAppointmentByCondition(AppointmentQueryCondition condition);
 }

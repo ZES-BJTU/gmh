@@ -12,11 +12,9 @@ import lombok.ToString;
 public class AppointmentQueryCondition extends QueryCondition{
 
 	private Long storeId;
-	private String customerName;
-	private String CustomerMobile;
 	private Integer customerGender;
 	private Integer isVip;
 	private Integer isLine;
 	private Integer status;
-	private String remarks;
+	private String appointmentKeyWords;
 }

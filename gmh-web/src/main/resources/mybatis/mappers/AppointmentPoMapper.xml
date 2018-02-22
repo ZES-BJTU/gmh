@@ -39,4 +39,34 @@
 		UPDATE appointment SET
 		`status` = 2
 	</update>
+	
+	<select id="listAppointmentByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.AppointmentQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT 
+		id, customer_name, customer_mobile, customer_gender, is_vip, customer_id, is_line, status, remarks
+		from 
+		appointment
+		<where>
+			<if test="storeId != null">
+				`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="customerGender != null ">
+				AND `customer_gender` = #{customerGender, jdbcType=TINYINT}
+			</if>
+			<if test="isVip != null">
+				AND `is_vip` = #{isVip, jdbcType=TINYINT}
+			</if>
+			<if test="isLine != null">
+				AND `is_line` = #{isLine, jdbcType=TINYINT}
+			</if>
+			<if test="status != null">
+				AND `status` = #{topType, jdbcType=INTEGER}
+			</if>
+			<if test="appointmentKeyWords != null and appointmentKeyWords != ''">
+			<bind name="condition" value="'%' + appointmentKeyWords + '%'"/>
+				CONCAT(`customer_name`,`customer_mobile`,`remarks`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
 </mapper>

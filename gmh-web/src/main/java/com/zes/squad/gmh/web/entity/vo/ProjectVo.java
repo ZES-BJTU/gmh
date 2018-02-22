@@ -9,6 +9,7 @@ import lombok.Data;
 public class ProjectVo {
 
     private Long                 id;
+    private String               code;
     private String               topTypeDesc;
     private String               projectTypeName;
     private BigDecimal           unitPrice;

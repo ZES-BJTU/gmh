@@ -14,6 +14,7 @@ public class ProjectPo extends Po {
     private static final long serialVersionUID = 1L;
 
     private Long              projectTypeId;
+    private String            code;
     private String            name;
     private BigDecimal        unitPrice;
     private BigDecimal        integral;

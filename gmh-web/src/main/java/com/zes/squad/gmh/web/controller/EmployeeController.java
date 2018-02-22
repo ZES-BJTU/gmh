@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
-import com.zes.squad.gmh.common.enums.TopTypeEnums;
+import com.zes.squad.gmh.common.enums.TopTypeEnum;
 import com.zes.squad.gmh.common.enums.GenderEnum;
-import com.zes.squad.gmh.common.enums.WorkingEnums;
+import com.zes.squad.gmh.common.enums.WorkingEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
@@ -57,7 +57,7 @@ public class EmployeeController {
         ensureParameterNotExist(params.getId(), "员工工种标识应为空");
         ensureParameterExist(params.getTopType(), "员工工种顶层分类为空");
         ensureParameterExist(params.getName(), "员工工种名称为空");
-        ensureParameterValid(EnumUtils.containsKey(params.getTopType().intValue(), TopTypeEnums.class), "员工工种顶层分类错误");
+        ensureParameterValid(EnumUtils.containsKey(params.getTopType().intValue(), TopTypeEnum.class), "员工工种顶层分类错误");
         EmployeeWorkTypePo po = CommonConverter.map(params, EmployeeWorkTypePo.class);
         employeeService.createEmployeeWorkType(po);
         return JsonResults.success();
@@ -82,7 +82,7 @@ public class EmployeeController {
         ensureParameterExist(params, "员工工种信息为空");
         ensureParameterExist(params.getId(), "员工工种标识为空");
         if (params.getTopType() != null) {
-            ensureParameterValid(EnumUtils.containsKey(params.getTopType().intValue(), TopTypeEnums.class),
+            ensureParameterValid(EnumUtils.containsKey(params.getTopType().intValue(), TopTypeEnum.class),
                     "员工工种顶层分类错误");
         }
         EmployeeWorkTypePo po = CommonConverter.map(params, EmployeeWorkTypePo.class);
@@ -102,7 +102,7 @@ public class EmployeeController {
     public JsonResult<PagedList<EmployeeWorkTypeVo>> doListPagedEmployeeWorkTypes(@RequestBody EmployeeWorkTypeQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getTopType() != null) {
-            ensureParameterValid(EnumUtils.containsKey(params.getTopType().intValue(), TopTypeEnums.class),
+            ensureParameterValid(EnumUtils.containsKey(params.getTopType().intValue(), TopTypeEnum.class),
                     "员工工种顶层分类错误");
         }
         EmployeeWorkTypeQueryCondition condition = CommonConverter.map(params, EmployeeWorkTypeQueryCondition.class);
@@ -176,7 +176,7 @@ public class EmployeeController {
 
     private EmployeeWorkTypeVo buildEmployeeWorkTypeVoByUnion(EmployeeWorkTypeUnion union) {
         EmployeeWorkTypeVo vo = CommonConverter.map(union.getEmployeeWorkTypePo(), EmployeeWorkTypeVo.class);
-        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getEmployeeWorkTypePo().getTopType(), TopTypeEnums.class));
+        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getEmployeeWorkTypePo().getTopType(), TopTypeEnum.class));
         vo.setStoreName(union.getStoreName());
         return vo;
     }
@@ -237,20 +237,20 @@ public class EmployeeController {
             ensureParameterValid(params.getStartEntryTime().before(params.getEndEntryTime()), "员工入职查询起止时间段错误");
         }
         if (params.getTopType() != null) {
-            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnums.class), "员工顶层分类错误");
+            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "员工顶层分类错误");
         }
     }
 
     private EmployeeVo buildEmployeeVoByUnion(EmployeeUnion union) {
         EmployeeVo vo = CommonConverter.map(union.getEmployeePo(), EmployeeVo.class);
         vo.setGender(EnumUtils.getDescByKey(union.getEmployeePo().getGender(), GenderEnum.class));
-        vo.setWorking(EnumUtils.getDescByKey(union.getEmployeePo().getWorking(), WorkingEnums.class));
+        vo.setWorking(EnumUtils.getDescByKey(union.getEmployeePo().getWorking(), WorkingEnum.class));
         List<EmployeeWorkVo> workVos = Lists.newArrayListWithCapacity(union.getEmployeeWorkUnions().size());
         for (EmployeeWorkUnion workUnion : union.getEmployeeWorkUnions()) {
             EmployeeWorkVo workVo = CommonConverter.map(workUnion.getEmployeeWorkTypePo(), EmployeeWorkVo.class);
             workVo.setEmployeeWorkTypeId(workUnion.getEmployeeWorkTypePo().getId());
             workVo.setTopTypeDesc(
-                    EnumUtils.getDescByKey(workUnion.getEmployeeWorkTypePo().getTopType(), TopTypeEnums.class));
+                    EnumUtils.getDescByKey(workUnion.getEmployeeWorkTypePo().getTopType(), TopTypeEnum.class));
             workVos.add(workVo);
         }
         vo.setEmployeeWorkVos(workVos);

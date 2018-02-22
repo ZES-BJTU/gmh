@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
-import com.zes.squad.gmh.common.enums.TopTypeEnums;
+import com.zes.squad.gmh.common.enums.TopTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
@@ -55,7 +55,7 @@ public class ProjectController {
         ensureParameterExist(params, "项目分类为空");
         ensureParameterNotExist(params.getId(), "项目分类标识应为空");
         ensureParameterExist(params.getTopType(), "项目分类顶层分类为空");
-        ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnums.class), "项目分类顶层分类错误");
+        ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "项目分类顶层分类错误");
         ensureParameterExist(params.getName(), "项目分类名称为空");
         ProjectTypePo po = CommonConverter.map(params, ProjectTypePo.class);
         projectService.createProjectType(po);
@@ -81,7 +81,7 @@ public class ProjectController {
         ensureParameterExist(params, "项目分类为空");
         ensureParameterExist(params.getId(), "库存分类标识为空");
         if (params.getTopType() != null) {
-            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnums.class), "项目分类顶层分类错误");
+            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "项目分类顶层分类错误");
         }
         ProjectTypePo po = CommonConverter.map(params, ProjectTypePo.class);
         projectService.modifyProjectType(po);
@@ -100,7 +100,7 @@ public class ProjectController {
     public JsonResult<PagedList<ProjectTypeVo>> doListPagedProjectTypes(@RequestBody ProjectTypeQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getTopType() != null) {
-            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnums.class), "项目分类顶层分类错误");
+            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "项目分类顶层分类错误");
         }
         ProjectTypeQueryCondition condition = CommonConverter.map(params, ProjectTypeQueryCondition.class);
         PagedList<ProjectTypeUnion> pagedUnions = projectService.listPagedProjectTypes(condition);
@@ -158,7 +158,7 @@ public class ProjectController {
     public JsonResult<PagedList<ProjectVo>> doListPagedProjects(@RequestBody ProjectQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getTopType() != null) {
-            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnums.class), "顶层分类错误");
+            ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "顶层分类错误");
         }
         ProjectQueryCondition condition = CommonConverter.map(params, ProjectQueryCondition.class);
         PagedList<ProjectUnion> pagedUnions = projectService.listPagedProjects(condition);
@@ -176,7 +176,7 @@ public class ProjectController {
 
     private ProjectTypeVo buildProjectTypeVoByUnion(ProjectTypeUnion union) {
         ProjectTypeVo vo = CommonConverter.map(union.getProjectTypePo(), ProjectTypeVo.class);
-        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getProjectTypePo().getTopType(), TopTypeEnums.class));
+        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getProjectTypePo().getTopType(), TopTypeEnum.class));
         vo.setStoreName(union.getStorePo().getName());
         return vo;
     }

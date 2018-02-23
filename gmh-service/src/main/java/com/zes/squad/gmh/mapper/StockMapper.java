@@ -37,5 +37,5 @@ public interface StockMapper {
      * @return
      */
     int updateSelective(StockPo po);
-    
+
 }

@@ -3,7 +3,8 @@
 <mapper namespace="com.zes.squad.gmh.mapper.StoreUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.StoreUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<association property="userPo" jdbcType="com.zes.squad.gmh.entity.po.UserPo"
+		<association property="userPo"
+			resultMap="com.zes.squad.gmh.mapper.UserMapper.BaseResultMap"
 			columnPrefix="user_" />
 		<association property="storePo"
 			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"

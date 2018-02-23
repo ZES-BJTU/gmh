@@ -174,12 +174,12 @@ public class StockController {
     public JsonResult<PagedList<StockVo>> doStatStocks() {
         return JsonResults.success();
     }
-    
-    @RequestMapping(path = "/consume/record", method = {RequestMethod.PUT})
+
+    @RequestMapping(path = "/consume/record", method = { RequestMethod.PUT })
     public JsonResult<Void> doCreateStockConsumeRecord() {
         return JsonResults.success();
     }
-    
+
     private StockVo buildStockVoByUnion(StockUnion union) {
         StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
         vo.setStockTypeName(union.getStockTypePo().getName());

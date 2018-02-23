@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class UserDeleteParams {
-    
+
     private List<Long> ids;
 
 }

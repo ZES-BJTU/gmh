@@ -62,7 +62,7 @@
 				AND `status` = #{topType, jdbcType=INTEGER}
 			</if>
 			<if test="appointmentKeyWords != null and appointmentKeyWords != ''">
-			<bind name="condition" value="'%' + appointmentKeyWords + '%'"/>
+				<bind name="condition" value="'%' + appointmentKeyWords + '%'"/>
 				CONCAT(`customer_name`,`customer_mobile`,`remarks`) LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>

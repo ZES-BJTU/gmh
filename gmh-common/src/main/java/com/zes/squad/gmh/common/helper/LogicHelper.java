@@ -48,7 +48,7 @@ public class LogicHelper {
     public static void ensureParameterValid(boolean condition, String message) {
         ensureConditionValid(condition, message);
     }
-    
+
     public static void ensureAttributeExist(Object attribute, String message) {
         if (attribute == null) {
             throw new GmhException(BUSINESS_EXCEPTION_ENTITY_NOT_FOUND, message);

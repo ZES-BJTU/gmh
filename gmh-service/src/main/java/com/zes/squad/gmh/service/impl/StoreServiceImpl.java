@@ -35,7 +35,7 @@ public class StoreServiceImpl implements StoreService {
     public void removeStore(Long id) {
         storeMapper.deleteById(id);
     }
-    
+
     @Override
     public void removeStores(List<Long> ids) {
         storeMapper.batchDelete(ids);

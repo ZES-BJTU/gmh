@@ -10,13 +10,12 @@ import com.zes.squad.gmh.entity.union.AppointmentUnion;
 
 public interface AppointmentService {
 
-	void createAppointment(AppointmentPo appointmentPo, List<AppointmentProjectParams> appointmentPorjectParams);
-	
-	void cancelAppointment(Long appointmentId);
-	
-	void finishAppointment(Long appointmentId);
+    void createAppointment(AppointmentPo appointmentPo, List<AppointmentProjectParams> appointmentPorjectParams);
 
-	PagedList<AppointmentUnion> listPagedAppointments(AppointmentQueryCondition condition);
-	
-	
+    void cancelAppointment(Long appointmentId);
+
+    void finishAppointment(Long appointmentId);
+
+    PagedList<AppointmentUnion> listPagedAppointments(AppointmentQueryCondition condition);
+
 }

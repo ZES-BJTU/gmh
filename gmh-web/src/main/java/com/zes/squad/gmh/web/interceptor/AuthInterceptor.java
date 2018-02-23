@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    private UserService         userService;
+    private UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)

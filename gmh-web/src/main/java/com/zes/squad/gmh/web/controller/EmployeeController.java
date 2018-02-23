@@ -186,7 +186,8 @@ public class EmployeeController {
         List<EmployeeWorkUnion> workUnions = Lists.newArrayListWithCapacity(params.getEmployeeWorkTypeIds().size());
         for (Long workTypeId : params.getEmployeeWorkTypeIds()) {
             EmployeeWorkPo workPo = new EmployeeWorkPo();
-            workPo.setEmployeeWorkTypeId(workTypeId);;
+            workPo.setEmployeeWorkTypeId(workTypeId);
+            ;
             EmployeeWorkUnion workUnion = new EmployeeWorkUnion();
             workUnion.setEmployeeWorkPo(workPo);
             workUnions.add(workUnion);

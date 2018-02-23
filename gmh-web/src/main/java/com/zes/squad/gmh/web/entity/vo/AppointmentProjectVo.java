@@ -6,8 +6,10 @@ import lombok.Data;
 
 @Data
 public class AppointmentProjectVo {
-	private String projectName;
-	private String employeeName;
-	private Date beginTime;
-	private Date endTime;
+
+    private String projectName;
+    private String employeeName;
+    private Date   beginTime;
+    private Date   endTime;
+
 }

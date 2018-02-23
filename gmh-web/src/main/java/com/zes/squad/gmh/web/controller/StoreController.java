@@ -50,8 +50,8 @@ public class StoreController {
         storeService.removeStore(id);
         return JsonResults.success();
     }
-    
-    @RequestMapping(path = "/remove", method = {RequestMethod.DELETE})
+
+    @RequestMapping(path = "/remove", method = { RequestMethod.DELETE })
     public JsonResult<Void> doRemoveStores(@RequestBody List<Long> ids) {
         ensureCollectionNotEmpty(ids, "请选择待删除门店");
         storeService.removeStores(ids);

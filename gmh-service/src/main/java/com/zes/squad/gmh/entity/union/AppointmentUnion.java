@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class AppointmentUnion {
-	
-	private AppointmentPo appointmentPo;
-	private List<AppointmentProjectUnion> appointmentProjects;
+
+    private AppointmentPo                 appointmentPo;
+    private List<AppointmentProjectUnion> appointmentProjects;
 }

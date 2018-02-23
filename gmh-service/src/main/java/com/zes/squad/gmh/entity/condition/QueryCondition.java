@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class QueryCondition {
-    
+
     private Integer pageNum;
     private Integer pageSize;
 

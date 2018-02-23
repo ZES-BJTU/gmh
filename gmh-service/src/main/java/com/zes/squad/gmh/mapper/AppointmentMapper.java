@@ -7,11 +7,11 @@ import com.zes.squad.gmh.entity.po.AppointmentPo;
 
 public interface AppointmentMapper {
 
-	int insert(AppointmentPo appointmentPo);
-	
-	int cancelAppointment(Long id);
+    int insert(AppointmentPo appointmentPo);
 
-	int finishAppointment(Long id);
-	
-	List<AppointmentPo> listAppointmentByCondition(AppointmentQueryCondition condition);
+    int cancelAppointment(Long id);
+
+    int finishAppointment(Long id);
+
+    List<AppointmentPo> listAppointmentByCondition(AppointmentQueryCondition condition);
 }

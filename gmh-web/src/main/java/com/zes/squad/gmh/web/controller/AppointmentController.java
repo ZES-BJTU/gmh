@@ -33,9 +33,10 @@ import com.zes.squad.gmh.web.helper.CheckHelper;
 @RequestMapping(path = "/appointment")
 @RestController
 public class AppointmentController {
-	@Autowired
+
+    @Autowired
     private AppointmentService appointmentService;
-	
+
     @OnMessage
     public JsonResult<AppointmentVo> doRemindReception() {
         return JsonResults.success();
@@ -43,45 +44,51 @@ public class AppointmentController {
 
     @RequestMapping(path = "/create", method = { RequestMethod.PUT })
     public JsonResult<Void> doCreateAppointment(@RequestBody AppointmentCreateOrModifyParams params) {
-    	AppointmentPo appointmentPo = CommonConverter.map(params, AppointmentPo.class);
-    	appointmentService.createAppointment(appointmentPo, params.getAppointmentProjectParams());;
+        AppointmentPo appointmentPo = CommonConverter.map(params, AppointmentPo.class);
+        appointmentService.createAppointment(appointmentPo, params.getAppointmentProjectParams());
+        ;
         return JsonResults.success();
     }
-    
-    @RequestMapping(path = "/cancel", method = {RequestMethod.POST})
-    public JsonResult<Void> doCancleAppointment(@RequestBody Long appointmentId){
-    	appointmentService.cancelAppointment(appointmentId);
-    	return JsonResults.success();
+
+    @RequestMapping(path = "/cancel", method = { RequestMethod.POST })
+    public JsonResult<Void> doCancleAppointment(@RequestBody Long appointmentId) {
+        appointmentService.cancelAppointment(appointmentId);
+        return JsonResults.success();
     }
-    @RequestMapping(path = "/finish", method = {RequestMethod.POST})
-    public JsonResult<Void> doFinishAppointment(@RequestBody Long appointmentId){
-    	appointmentService.finishAppointment(appointmentId);
-    	return JsonResults.success();
+
+    @RequestMapping(path = "/finish", method = { RequestMethod.POST })
+    public JsonResult<Void> doFinishAppointment(@RequestBody Long appointmentId) {
+        appointmentService.finishAppointment(appointmentId);
+        return JsonResults.success();
     }
+
     @RequestMapping(path = "/list", method = { RequestMethod.PUT })
     public JsonResult<PagedList<AppointmentVo>> doListPagedAppointment(@RequestBody AppointmentQueryParams params) {
-    	CheckHelper.checkPageParams(params);
-    	AppointmentQueryCondition appointmentQueryCondition = CommonConverter.map(params, AppointmentQueryCondition.class);
-    	 PagedList<AppointmentUnion> pagedUnions = appointmentService.listPagedAppointments(appointmentQueryCondition);
-         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
-             return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
-         }
-         List<AppointmentVo> appointmentVos = new ArrayList<AppointmentVo>();
-         for(AppointmentUnion appointmentUnion:pagedUnions.getData()){
-        	 AppointmentVo appontmentVo =  buildAppointmentVoByUnion(appointmentUnion);
-        	 appointmentVos.add(appontmentVo);
-         }
+        CheckHelper.checkPageParams(params);
+        AppointmentQueryCondition appointmentQueryCondition = CommonConverter.map(params,
+                AppointmentQueryCondition.class);
+        PagedList<AppointmentUnion> pagedUnions = appointmentService.listPagedAppointments(appointmentQueryCondition);
+        if (CollectionUtils.isEmpty(pagedUnions.getData())) {
+            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+        }
+        List<AppointmentVo> appointmentVos = new ArrayList<AppointmentVo>();
+        for (AppointmentUnion appointmentUnion : pagedUnions.getData()) {
+            AppointmentVo appontmentVo = buildAppointmentVoByUnion(appointmentUnion);
+            appointmentVos.add(appontmentVo);
+        }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), appointmentVos));
     }
 
-	private AppointmentVo buildAppointmentVoByUnion(AppointmentUnion appointmentUnion) {
-		AppointmentVo vo = CommonConverter.map(appointmentUnion.getAppointmentPo(), AppointmentVo.class);
-		vo.setCustomerGender(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getCustomerGender(), GenderEnum.class));
-		vo.setIsVip(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsVip(), YesOrNoEnum.class));
-		vo.setIsLine(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsLine(), YesOrNoEnum.class));
-		vo.setStatus(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getStatus(), AppointmentStatusEnum.class));
-		vo.setAppointmentProjects(appointmentUnion.getAppointmentProjects());
-		return vo;
-	}
+    private AppointmentVo buildAppointmentVoByUnion(AppointmentUnion appointmentUnion) {
+        AppointmentVo vo = CommonConverter.map(appointmentUnion.getAppointmentPo(), AppointmentVo.class);
+        vo.setCustomerGender(
+                EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getCustomerGender(), GenderEnum.class));
+        vo.setIsVip(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsVip(), YesOrNoEnum.class));
+        vo.setIsLine(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsLine(), YesOrNoEnum.class));
+        vo.setStatus(
+                EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getStatus(), AppointmentStatusEnum.class));
+        vo.setAppointmentProjects(appointmentUnion.getAppointmentProjects());
+        return vo;
+    }
 }

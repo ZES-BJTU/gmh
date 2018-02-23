@@ -6,7 +6,7 @@ public class AppointmentTaskServiceImpl implements AppointmentTaskService {
 
     @Override
     public void remindCustomers() {
-        
+
     }
 
 }

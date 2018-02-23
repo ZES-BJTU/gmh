@@ -8,7 +8,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class StockTypeQueryParams extends QueryParams {
-    
+
     private String stockTypeKeyWord;
 
 }

@@ -7,8 +7,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum YesOrNoEnum {
-	YES(0, "否"),
-    NO(1, "是");
+
+    YES(1, "是"),
+    NO(0, "否");
 
     private int    key;
     private String desc;

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class StockTypeDeleteParams {
-    
+
     private List<Long> ids;
 
 }

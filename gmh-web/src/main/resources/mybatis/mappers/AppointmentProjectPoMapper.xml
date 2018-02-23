@@ -18,7 +18,7 @@
 		<result column="begin_time" jdbcType="DATE" property="beginTime" />
 		<result column="end_time" jdbcType="DATE" property="endTime" />
 	</resultMap>
-<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo">
 		INSERT INTO appointment_project
 		(`appointment_id`,`project_id`,`employee_id`,`begin_time`,`end_time`)
 		VALUES
@@ -28,7 +28,7 @@
 		#{beginTime, jdbcType=DATE},
 		#{endTime, jdbcType=DATE})
 	</insert>
-<select id="getAppointmentProjectUnionByAppId" parameterType="long" resultMap="AppointmentProjectUnionMap">
+	<select id="getAppointmentProjectUnionByAppId" parameterType="long" resultMap="AppointmentProjectUnionMap">
 		SELECT
 		p.name as project_name, e.name as employee_name, begin_time, end_time from 
 		appointment_project ap
@@ -38,6 +38,5 @@
 		on ap.`employee_id` = e.`id`
         where
         ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
-		
 	</select>
 </mapper>

@@ -7,9 +7,8 @@ import com.zes.squad.gmh.entity.union.AppointmentProjectUnion;
 
 public interface AppointmentProjectMapper {
 
-	int insert(AppointmentProjectPo appointmentProjectPo);
-	
-	List<AppointmentProjectUnion> getAppointmentProjectUnionByAppId(Long appoentmentId);
-	
-}
+    int insert(AppointmentProjectPo appointmentProjectPo);
 
+    List<AppointmentProjectUnion> getAppointmentProjectUnionByAppId(Long appoentmentId);
+
+}

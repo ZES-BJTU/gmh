@@ -30,9 +30,9 @@ import com.zes.squad.gmh.entity.union.UserUnion;
 import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.UserChangePasswordParams;
 import com.zes.squad.gmh.web.entity.param.UserCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.UserLoginParams;
-import com.zes.squad.gmh.web.entity.param.UserPasswordParams;
 import com.zes.squad.gmh.web.entity.param.UserQueryParams;
 import com.zes.squad.gmh.web.entity.vo.UserVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
@@ -44,7 +44,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(path = "/login", method = { RequestMethod.POST })
+    @RequestMapping(path = "/login", method = { RequestMethod.GET, RequestMethod.POST })
     public JsonResult<UserVo> doLoginWithAccount(@RequestBody UserLoginParams params) {
         ensureParameterExist(params, "登录信息为空");
         ensureParameterExist(params.getAccount(), "账号为空");
@@ -55,7 +55,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(path = "/changePassword", method = { RequestMethod.POST })
-    public JsonResult<UserVo> doChangePassword(@RequestBody UserPasswordParams params) {
+    public JsonResult<Void> doChangePassword(@RequestBody UserChangePasswordParams params) {
         ensureParameterExist(params, "原密码为空");
         ensureParameterExist(params.getOriginalPassword(), "原密码为空");
         ensureParameterExist(params.getNewPassword(), "新密码为空");

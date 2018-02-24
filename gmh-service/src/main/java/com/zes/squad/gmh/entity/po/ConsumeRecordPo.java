@@ -16,7 +16,7 @@ public class ConsumeRecordPo extends Po {
 
 	private String tradeSerialNumber;
 	private Long customerId;
-	private Integer customerMobile;
+	private String customerMobile;
 	private Integer consumeType;
 	private BigDecimal consumeMoney;
 	private Integer paymentWay;

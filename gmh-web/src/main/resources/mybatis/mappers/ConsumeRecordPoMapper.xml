@@ -4,31 +4,33 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />
-		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
+		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
+		<result column="customer_mobile" jdbcType="VARCHAR" property="customerMobile" />
 		<result column="consume_type" jdbcType="INTEGER" property="consumeType" />
 		<result column="consume_money" jdbcType="DECIMAL" property="consumeMoney" />
 		<result column="payment_way" jdbcType="INTEGER" property="paymentWay" />
-		<result column="activity_id" jdbcType="INTEGER" property="activityId" />
+		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
 		<result column="is_modified" jdbcType="INTEGER" property="isModified" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="store_id" jdbcType="INTEGER" property="storeId" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="consume_time" jdbcType="TIMESTAMP" property="consumeTime" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO consume_record
-		(`trade_serial_number`,`customer_id`,`consume_type`,`consume_money`,`payment_way`,`activity_id`,`is_modified`,`remark`,`store_id`,`consume_time`)
+		(`trade_serial_number`,`customer_id`,`customer_mobile`,`consume_type`,`consume_money`,`payment_way`,`activity_id`,`is_modified`,`remark`,`store_id`,`consume_time`)
 		VALUES
 		(#{tradeSerialNumber, jdbcType=VARCHAR},
-		#{customerId, jdbcType=INTEGER},
+		#{customerId, jdbcType=BIGINT},
+		#{customerMobile, jdbcType=VARCHAR},
 		#{consumeType, jdbcType=INTEGER},
 		#{consumeMoney, jdbcType=DECIMAL},
 		#{paymentWay, jdbcType=INTEGER},
-		#{activityId, jdbcType=INTEGER},
+		#{activityId, jdbcType=BIGINT},
 		#{isModified, jdbcType=INTEGER},
 		#{remark, jdbcType=VARCHAR},
-		#{storeId, jdbcType=INTEGER},
+		#{storeId, jdbcType=BIGINT},
 		#{consumeTime, jdbcType=TIMESTAMP})
 	</insert>
 

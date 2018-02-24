@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.CustomerMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="gender" jdbcType="INTEGER" property="gender"/>
+		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="birthday" jdbcType="DATE" property="birthday" />
+		<result column="input_time" jdbcType="TIMESTAMP" property="inputTime" />
+		<result column="source" jdbcType="VARCHAR" property="source" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerPo">
+		INSERT INTO customer
+		(`name`,`gender`,`mobile`,`birthday`,`source`,`store_id`,`remark`)
+		VALUES
+		(#{name, jdbcType=VARCHAR},
+		#{gender, jdbcType=INTEGER},
+		#{mobile, jdbcType=VARCHAR},
+		#{birthday, jdbcType=DATE},
+		#{source, jdbcType=INTEGER},
+		#{storeId, jdbcType=BIGINT},
+		#{remark, jdbcType=VARCHAR})
+	</insert>
+
+</mapper>

@@ -14,7 +14,6 @@ public class StorePo extends Po {
     private String            name;
     private String            address;
     private Long              principalId;
-    private String            mobile;
     private String            phone;
     private String            remark;
 

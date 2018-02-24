@@ -6,26 +6,24 @@
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="address" jdbcType="VARCHAR" property="address" />
 		<result column="principal_id" jdbcType="BIGINT" property="principalId" />
-		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
 		<result column="phone" jdbcType="VARCHAR" property="phone" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="BaseColumnList">
-		`id`, `name`, `address`, `principal_id`,
-		`mobile`, `phone`, `remark`,
+		`id`, `name`, `address`, 
+		`principal_id`, `phone`, `remark`,
 		`created_time`, `modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StorePo">
 		INSERT INTO store
-		(`name`, `address`, `principal_id`,
-		`mobile`, `phone`, `remark`)
+		(`name`, `address`, 
+		`principal_id`, `phone`, `remark`)
 		VALUES
 		(#{name, jdbcType=VARCHAR},
 		#{address, jdbcType=VARCHAR},
 		#{principalId, jdbcType=BIGINT},
-		#{mobile, jdbcType=VARCHAR},
 		#{phone, jdbcType=VARCHAR},
 		#{remark, jdbcType=VARCHAR})
 	</insert>
@@ -52,9 +50,6 @@
 			</if>
 			<if test="principalId != null">
 				`principal_id` = #{principalId, jdbcType=BIGINT},
-			</if>
-			<if test="mobile != null mobile mobile != ''">
-				`mobile` = #{mobile, jdbcType=VARCHAR},
 			</if>
 			<if test="phone != null and phone != ''">
 				`phone` = #{phone, jdbcType=VARCHAR},

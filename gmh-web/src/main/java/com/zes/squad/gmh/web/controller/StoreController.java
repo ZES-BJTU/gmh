@@ -1,7 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
-import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.page.PagedLists;
@@ -102,9 +101,6 @@ public class StoreController {
     private void checkModifyStoreParams(StoreCreateOrModifyParams params) {
         ensureParameterExist(params, "请选择待修改门店");
         ensureParameterExist(params.getId(), "请选择待修改门店");
-        if (!Strings.isNullOrEmpty(params.getMobile())) {
-            ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "手机格式错误");
-        }
     }
 
 }

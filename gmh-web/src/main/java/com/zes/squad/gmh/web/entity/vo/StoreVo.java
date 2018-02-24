@@ -9,7 +9,6 @@ public class StoreVo {
     private String address;
     private Long   principalId;
     private String principalName;
-    private String mobile;
     private String phone;
     private String remark;
 

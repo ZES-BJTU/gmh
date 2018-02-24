@@ -9,7 +9,9 @@ public class StoreCreateOrModifyParams {
     private String name;
     private String address;
     private Long   principalId;
-    private String mobile;
+    /**
+     * 门店座机
+     */
     private String phone;
     private String remark;
 

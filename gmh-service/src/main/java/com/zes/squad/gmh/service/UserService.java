@@ -28,6 +28,13 @@ public interface UserService {
     void changePassword(Long id, String originalPassword, String newPassword);
 
     /**
+     * 充值密码
+     * 
+     * @param mobile
+     */
+    void resetPassword(String mobile);
+
+    /**
      * 根据token获取用户信息
      * 
      * @param token

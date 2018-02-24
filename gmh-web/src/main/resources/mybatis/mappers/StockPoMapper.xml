@@ -50,4 +50,15 @@
 			</if>
 		</set>
 	</update>
+	<select id="getById" parameterType="long" resultMap="BaseResultMap">
+		select * from stock
+		where
+		id=#{id,jdbcType=BIGINT}	
+	</select>
+		<update id="updateTotalAmount" parameterType="java.util.Map">
+		update stock set
+		total_amount=#{totalAmount,jdbcType=DECIMAL}
+		where
+		id=#{id,jdbcType=BIGINT}
+	</update>
 </mapper>

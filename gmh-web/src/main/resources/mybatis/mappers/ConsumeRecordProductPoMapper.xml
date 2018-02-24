@@ -6,6 +6,7 @@
 		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />
 		<result column="product_id" jdbcType="VARCHAR" property="productId" />
 		<result column="product_amount" jdbcType="INTEGER" property="productAmount" />
+		<result column="operator_id" jdbcType="INTEGER" property="operatorId" />
 		<result column="consultant_id" jdbcType="INTEGER" property="consultantId" />
 		<result column="sales_man_id" jdbcType="DECIMAL" property="salesManId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
@@ -13,11 +14,12 @@
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordProductPo">
 		INSERT INTO consume_record_product
-		(`trade_serial_number`,`product_id`,`product_amount`,`consultant_id`,`sales_man_id`)
+		(`trade_serial_number`,`product_id`,`product_amount`,`operator_id`,`consultant_id`,`sales_man_id`)
 		VALUES
 		(#{tradeSerialNumber, jdbcType=INTEGER},
 		#{productId, jdbcType=INTEGER},
 		#{productAmount, jdbcType=INTEGER},
+		#{operatorId, jdbcType=INTEGER},
 		#{consultantId, jdbcType=INTEGER},
 		#{salesManId, jdbcType=INTEGER})
 	</insert>

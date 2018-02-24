@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.zes.squad.gmh.entity.po.StockPo;
 
@@ -38,4 +39,7 @@ public interface StockMapper {
      */
     int updateSelective(StockPo po);
 
+    StockPo getById(Long id);
+    
+    int updateTotalAmount(Map map);
 }

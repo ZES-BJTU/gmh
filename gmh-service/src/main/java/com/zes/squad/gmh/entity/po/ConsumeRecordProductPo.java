@@ -11,6 +11,7 @@ public class ConsumeRecordProductPo extends Po{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private String tradeSerialNumber;
 	private Integer productId;
 	private Integer productAmount;
 	private Integer consultantId;

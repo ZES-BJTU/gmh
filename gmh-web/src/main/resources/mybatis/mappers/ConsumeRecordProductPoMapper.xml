@@ -4,32 +4,22 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordProductPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />
-		<result column="customer_id" jdbcType="INTEGER" property="customerId" />
-		<result column="consume_type" jdbcType="INTEGER" property="consumeType" />
-		<result column="consume_money" jdbcType="DECIMAL" property="consumeMoney" />
-		<result column="payment_way" jdbcType="INTEGER" property="paymentWay" />
-		<result column="activity_name" jdbcType="VARCHAR" property="activityName" />
-		<result column="is_modified" jdbcType="INTEGER" property="isModified" />
-		<result column="remark" jdbcType="VARCHAR" property="remark" />
-		<result column="store_id" jdbcType="INTEGER" property="storeId" />
-		<result column="consume_time" jdbcType="TIMESTAMP" property="consumeTime" />
+		<result column="product_id" jdbcType="VARCHAR" property="productId" />
+		<result column="product_amount" jdbcType="INTEGER" property="productAmount" />
+		<result column="consultant_id" jdbcType="INTEGER" property="consultantId" />
+		<result column="sales_man_id" jdbcType="DECIMAL" property="salesManId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordPo" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO consume_record
-		(`trade_serial_number`,`customer_id`,`consume_type`,`consume_money`,`payment_way`,`activity_name`,`is_modified`,`remark`,`store_id`,`consume_time`)
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordProductPo">
+		INSERT INTO consume_record_product
+		(`trade_serial_number`,`product_id`,`product_amount`,`consultant_id`,`sales_man_id`)
 		VALUES
-		(#{tradeSerialNumber, jdbcType=VARCHAR},
-		#{customerId, jdbcType=INTEGER},
-		#{consumeType, jdbcType=INTEGER},
-		#{consumeMoney, jdbcType=DECIMAL},
-		#{paymentWay, jdbcType=INTEGER},
-		#{activityName, jdbcType=VARCHAR},
-		#{isModified, jdbcType=INTEGER},
-		#{remark, jdbcType=VARCHAR},
-		#{storeId, jdbcType=INTEGER},
-		#{consumeTime, jdbcType=TIMESTAMP})
+		(#{tradeSerialNumber, jdbcType=INTEGER},
+		#{productId, jdbcType=INTEGER},
+		#{productAmount, jdbcType=INTEGER},
+		#{consultantId, jdbcType=INTEGER},
+		#{salesManId, jdbcType=INTEGER},
 	</insert>
 
 </mapper>

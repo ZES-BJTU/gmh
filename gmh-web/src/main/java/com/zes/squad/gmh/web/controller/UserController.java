@@ -27,9 +27,11 @@ import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.entity.condition.UserQueryCondition;
 import com.zes.squad.gmh.entity.po.UserPo;
 import com.zes.squad.gmh.entity.union.UserUnion;
+import com.zes.squad.gmh.service.MessageService;
 import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.MessageParams;
 import com.zes.squad.gmh.web.entity.param.UserChangePasswordParams;
 import com.zes.squad.gmh.web.entity.param.UserCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.UserLoginParams;
@@ -42,7 +44,9 @@ import com.zes.squad.gmh.web.helper.CheckHelper;
 public class UserController extends BaseController {
 
     @Autowired
-    private UserService userService;
+    private UserService    userService;
+    @Autowired
+    private MessageService messageService;
 
     @RequestMapping(path = "/login", method = { RequestMethod.GET, RequestMethod.POST })
     public JsonResult<UserVo> doLoginWithAccount(@RequestBody UserLoginParams params) {
@@ -62,6 +66,16 @@ public class UserController extends BaseController {
         ensureParameterValid(!Objects.equals(params.getOriginalPassword(), params.getNewPassword()), "原密码不能和新密码相同");
         UserUnion union = getUser();
         userService.changePassword(union.getId(), params.getOriginalPassword(), params.getNewPassword());
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/resetPassword", method = { RequestMethod.POST })
+    public JsonResult<Void> doResetPassword(@RequestBody MessageParams params) {
+        ensureParameterExist(params, "短信参数为空");
+        ensureParameterExist(params.getMobile(), "手机号为空");
+        ensureParameterExist(params.getAuthCode(), "验证码为空");
+        messageService.validateAuthCode(params.getMobile(), params.getAuthCode());
+        userService.resetPassword(params.getMobile());
         return JsonResults.success();
     }
 

@@ -58,12 +58,20 @@ public interface UserMapper {
     UserPo selectById(Long id);
 
     /**
-     * 根据emailOrAccount查询
+     * 根据account查询
      * 
      * @param emailOrAccount
      * @return
      */
     UserPo selectByAccount(@Param("account") String account);
+
+    /**
+     * 根据mobile查询
+     * 
+     * @param mobile
+     * @return
+     */
+    UserPo selectByMobile(@Param("mobile") String mobile);
 
     /**
      * 查询用户id集合

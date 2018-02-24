@@ -21,21 +21,6 @@
 		`password`, `salt`, `name`, `gender`,
 		`store_id`, `remark`, `created_time`, `modified_time`
 	</sql>
-	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM user
-		WHERE id = #{id, jdbcType=BIGINT}
-	</select>
-	<select id="selectByAccount" parameterType="string" resultMap="BaseResultMap">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM user
-		WHERE account = #{account, jdbcType=VARCHAR}
-	</select>
-	<update id="updatePassword" parameterType="string">
-		UPDATE user SET `password` = #{password, jdbcType=VARCHAR}
-	</update>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.UserPo">
 		INSERT INTO user
 		(`role`, `account`, `email`, `mobile`,
@@ -53,6 +38,9 @@
 		#{storeId, jdbcType=BIGINT},
 		#{remark, jdbcType=VARCHAR})
 	</insert>
+	<update id="updatePassword" parameterType="string">
+		UPDATE user SET `password` = #{password, jdbcType=VARCHAR}
+	</update>
 	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.UserPo">
 		UPDATE user
 		<set>
@@ -65,9 +53,6 @@
 			<if test="mobile != null and mobile != ''">
 				`mobile` = #{mobile, jdbcType=VARCHAR},
 			</if>
-			<if test="email != null and email != ''">
-				`email` = #{email, jdbcType=VARCHAR},
-			</if>
 			<if test="name != null and name != ''">
 				`name` = #{name, jdbcType=VARCHAR},
 			</if>
@@ -78,7 +63,7 @@
 				`store_id` = #{storeId, jdbcType=VARCHAR}
 			</if>
 		</set>
-		WHERE id = #{id, jdbcType=BIGINT}
+		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
 	<delete id="deleteById" parameterType="long">
 		DELETE FROM user WHERE `id` = #{id, jdbcType=BIGINT}
@@ -89,4 +74,22 @@
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM user
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</select>
+	<select id="selectByAccount" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM user
+		WHERE `account` = #{account, jdbcType=VARCHAR}
+	</select>
+	<select id="selectByMobile" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM user
+		WHERE `mobile` = #{mobile, jdbcType=VARCHAR}
+	</select>
 </mapper>

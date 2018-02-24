@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zes.squad.gmh.mapper.ConsumerRecordProductMapper">
+<mapper namespace="com.zes.squad.gmh.mapper.ConsumeRecordProductMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordProductPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />

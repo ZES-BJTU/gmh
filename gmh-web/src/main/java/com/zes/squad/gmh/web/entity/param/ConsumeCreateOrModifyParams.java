@@ -8,7 +8,7 @@ import com.zes.squad.gmh.entity.po.ConsumeRecordProductPo;
 import lombok.Data;
 
 @Data
-public class ConsumeCreateOrModifyParams {
+public class ConsumeCreateOrModifyParams extends QueryParams{
 	
 	private ConsumeRecordPo consumeRecordPo;
 	private List<ConsumeRecordProductPo> consumeRecordProducts;

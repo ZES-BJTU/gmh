@@ -19,7 +19,7 @@
 		#{productId, jdbcType=INTEGER},
 		#{productAmount, jdbcType=INTEGER},
 		#{consultantId, jdbcType=INTEGER},
-		#{salesManId, jdbcType=INTEGER},
+		#{salesManId, jdbcType=INTEGER})
 	</insert>
 
 </mapper>

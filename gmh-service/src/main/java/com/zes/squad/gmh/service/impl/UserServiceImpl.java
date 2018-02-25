@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
         UserUnion userUnion = new UserUnion();
         userUnion.setId(po.getId());
         userUnion.setUserPo(po);
-        userUnion.setToken(token);
+        userUnion.setUserTokenPo(tokenPo);
         return userUnion;
     }
 
@@ -186,19 +186,21 @@ public class UserServiceImpl implements UserService {
             log.error("根据token查询用户失败, token is {}", token);
             return null;
         }
-        UserPo po = userMapper.selectById(tokenPo.getUserId());
-        if (po == null) {
+        UserPo userPo = userMapper.selectById(tokenPo.getUserId());
+        if (userPo == null) {
             log.error("根据token查询出的用户id查询用户失败, token is {}, user id is {}", token, tokenPo.getUserId());
             return null;
         }
-        StorePo storePo = storeMapper.selectById(po.getStoreId());
+        StorePo storePo = storeMapper.selectById(userPo.getStoreId());
         if (storePo == null) {
             log.error("根据token查询出的用户所属门店id查询门店失败, token is {}, user id is {}, store id is {}", token,
-                    tokenPo.getUserId(), po.getStoreId());
+                    tokenPo.getUserId(), userPo.getStoreId());
         }
         UserUnion user = new UserUnion();
-        user.setId(po.getId());
-        user.setUserPo(po);
+        user.setId(userPo.getId());
+        user.setUserPo(userPo);
+        user.setUserTokenPo(tokenPo);
+        user.setStorePo(storePo);
         return user;
     }
 

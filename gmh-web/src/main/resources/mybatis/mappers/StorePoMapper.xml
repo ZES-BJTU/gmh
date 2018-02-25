@@ -64,5 +64,6 @@
 		<include refid="BaseColumnList"/>
 		FROM store
 		WHERE id = #{id, jdbcType=BIGINT}
+		LIMIT 1
 	</select>
 </mapper>

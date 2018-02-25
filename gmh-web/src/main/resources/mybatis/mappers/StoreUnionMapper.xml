@@ -31,10 +31,14 @@
 		user u
 		ON
 		s.`principal_id` = u.`id`
+		<where>
+			s.`id` = #{id, jdbcType=BIGINT}
+		</where>
+		LIMIT 1
 	</select>
 	<select id="selectByCondition"
-	parameterType="com.zes.squad.gmh.entity.condition.StoreQueryCondition"
-	resultMap="BaseResultMap">
+		parameterType="com.zes.squad.gmh.entity.condition.StoreQueryCondition"
+		resultMap="BaseResultMap">
 		SELECT
 		<include refid="BaseColumnList" />
 		FROM
@@ -44,7 +48,7 @@
 		ON
 		s.`principal_id` = u.`id`
 		<if test="storeKeyWord != null and storeKeyWord != ''">
-			<bind name="condition" value="'%' + keyWord + '%'"/>
+			<bind name="condition" value="'%' + keyWord + '%'" />
 			<where>
 				CONCAT(s.`name`,s.`address`,u.`name`,s.`phone`,s.`remark`)
 				LIKE

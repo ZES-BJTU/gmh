@@ -149,8 +149,8 @@ public class UserController extends BaseController {
         UserVo vo = CommonConverter.map(union.getUserPo(), UserVo.class);
         vo.setRole(EnumUtils.getDescByKey(union.getUserPo().getRole().intValue(), UserRoleEnum.class));
         vo.setGender(EnumUtils.getDescByKey(union.getUserPo().getGender().intValue(), GenderEnum.class));
-        vo.setToken(union.getToken());
-        vo.setStoreName(union.getStoreName());
+        vo.setToken(union.getUserTokenPo().getToken());
+        vo.setStoreName(union.getStorePo().getName());
         return vo;
     }
 

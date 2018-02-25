@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.CustomerMemberCardMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerMemberCardPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
+		<result column="member_card_id" jdbcType="BIGINT" property="memberCardId" />
+		<result column="remaining_money" jdbcType="DECIMAL" property="remainingMoney" />
+		<result column="remaining_times" jdbcType="DATE" property="remainingTimes" />
+		<result column="is_valid" jdbcType="TINYINT" property="isValid" />
+		<result column="is_returned" jdbcType="TINYINT" property="isReturned" />
+		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
+		<result column="returned_time" jdbcType="TIMESTAMP" property="returnedTime" />
+		<result column="returned_money" jdbcType="DECIMAL" property="returnedMoney" />
+		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
+		<result column="is_turned" jdbcType="TINYINT" property="isTurned" />
+		<result column="turned_reason" jdbcType="VARCHAR" property="turnedReason" />
+		<result column="turned_time" jdbcType="TIMESTAMP" property="turnedTime" />
+		<result column="turned_money" jdbcType="DECIMAL" property="turned_money" />
+		<result column="unique_identifier" jdbcType="VARCHAR" property="uniqueIdentifier" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+
+</mapper>

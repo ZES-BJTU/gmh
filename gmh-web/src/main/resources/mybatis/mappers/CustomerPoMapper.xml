@@ -4,7 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
-		<result column="gender" jdbcType="INTEGER" property="gender"/>
+		<result column="gender" jdbcType="TINYINT" property="gender" />
 		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
 		<result column="birthday" jdbcType="DATE" property="birthday" />
 		<result column="input_time" jdbcType="TIMESTAMP" property="inputTime" />
@@ -22,9 +22,66 @@
 		#{gender, jdbcType=INTEGER},
 		#{mobile, jdbcType=VARCHAR},
 		#{birthday, jdbcType=DATE},
-		#{source, jdbcType=INTEGER},
+		#{source,
+		jdbcType=INTEGER},
 		#{storeId, jdbcType=BIGINT},
-		#{remark, jdbcType=VARCHAR})
+		#{remark,
+		jdbcType=VARCHAR})
 	</insert>
-
+	<update id="update" parameterType="com.zes.squad.gmh.entity.po.CustomerPo">
+		update customer
+		<set>
+			<if test="name != null and name != ''">
+				`name`=#{name, jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				`gender`=#{gender, jdbcType=TINYINT},			
+			</if>
+			<if test="mobile != null and mobile != ''">
+				`mobile`=#{mobile, jdbcType=VARCHAR},
+			</if>
+			<if test="birthday !=null">
+				`birthday` = #{birthday,jdbcType=DATE},
+			</if>
+			<if test="source != null">
+				`source`= #{source,jdbcType=INTEGER},
+			</if>
+			<if test="stoerId != null">
+				`store_id`= #{storeId,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null and remark != ''">
+				`remark`= #{remark,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where 
+		`id`= #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="delete" parameterType="long">
+		delete from customer 
+		where
+		`id` = #{id,jdbcType=INTEGER}
+	</delete>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.CustomerQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT 
+		*
+		from 
+		customer
+		<where>
+			<if test="storeId != null">
+				`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="gender != null ">
+				AND `gender` = #{gender, jdbcType=TINYINT}
+			</if>
+			<if test="source != null">
+				AND `source` = #{source, jdbcType=VARCHAR}
+			</if>
+			<if test="keyWords != null and keyWords != ''">
+				<bind name="condition" value="'%' + keyWords + '%'"/>
+				CONCAT(`name`,`mobile`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
 </mapper>

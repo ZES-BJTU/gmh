@@ -5,7 +5,6 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -17,7 +16,7 @@ public class CustomerPo extends Po{
 	private Integer gender;
 	private String mobile;
 	private Date birthday;
-	private DateTime inputTime;
+	private Date inputTime;
 	private Integer source;
 	private Long storeId;
 	private String remark;

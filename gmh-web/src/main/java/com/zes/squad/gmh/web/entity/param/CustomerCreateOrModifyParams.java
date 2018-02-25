@@ -8,8 +8,9 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @ToString(callSuper = true)
-public class CustomerCreateOrModifyParams extends QueryParams{
+public class CustomerCreateOrModifyParams{
 
+	private Long id;
 	private String name;
 	private Integer gender;
 	private String mobile;

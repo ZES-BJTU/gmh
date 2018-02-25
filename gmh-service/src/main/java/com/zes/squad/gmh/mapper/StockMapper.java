@@ -41,5 +41,5 @@ public interface StockMapper {
 
     StockPo getById(Long id);
     
-    int updateTotalAmount(Map map);
+    int updateTotalAmount(Map<String, Number> map);
 }

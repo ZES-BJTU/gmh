@@ -16,7 +16,7 @@
 		<result column="is_turned" jdbcType="TINYINT" property="isTurned" />
 		<result column="turned_reason" jdbcType="VARCHAR" property="turnedReason" />
 		<result column="turned_time" jdbcType="TIMESTAMP" property="turnedTime" />
-		<result column="turned_money" jdbcType="DECIMAL" property="turned_money" />
+		<result column="turned_money" jdbcType="DECIMAL" property="turnedMoney" />
 		<result column="unique_identifier" jdbcType="VARCHAR" property="uniqueIdentifier" />
 		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />

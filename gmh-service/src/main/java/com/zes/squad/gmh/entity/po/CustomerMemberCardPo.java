@@ -24,8 +24,9 @@ public class CustomerMemberCardPo extends Po{
 	private Date returnedTime;
 	private BigDecimal returnedMoney;
 	private Integer isTurned;
-	private String turnedReason;
+	private Date turnedTime;
 	private BigDecimal turnedMoney;
+	private String turnedReason;
 	private String uniqueIdentifier;
 	private Long storeId;
 }

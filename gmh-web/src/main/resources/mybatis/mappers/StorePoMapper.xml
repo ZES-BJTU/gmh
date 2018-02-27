@@ -17,6 +17,9 @@
 		`created_time`, `modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StorePo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INERT_ID()
+		</selectKey>
 		INSERT INTO store
 		(`name`, `address`, 
 		`principal_id`, `phone`, `remark`)

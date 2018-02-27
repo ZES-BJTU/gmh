@@ -27,8 +27,9 @@ public class StoreServiceImpl implements StoreService {
     private StoreUnionMapper storeUnionMapper;
 
     @Override
-    public void createStore(StorePo po) {
+    public StorePo createStore(StorePo po) {
         storeMapper.insert(po);
+        return po;
     }
 
     @Override
@@ -42,8 +43,11 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void modifyStore(StorePo po) {
+    public StorePo modifyStore(StorePo po) {
         storeMapper.updateSelective(po);
+        StorePo newStorePo = storeMapper.selectById(po.getId());
+        ensureEntityExist(newStorePo, "该门店不存在");
+        return newStorePo;
     }
 
     @Override

@@ -7,10 +7,12 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
@@ -28,44 +30,49 @@ import com.zes.squad.gmh.web.entity.param.StoreQueryParams;
 import com.zes.squad.gmh.web.entity.vo.StoreVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
-@RequestMapping(path = "/store")
+@RequestMapping(path = "/stores/v1")
 @RestController
 public class StoreController {
 
     @Autowired
     private StoreService storeService;
 
-    @RequestMapping(path = "/create", method = { RequestMethod.PUT })
-    public JsonResult<Void> doCreateStore(@RequestBody StoreCreateOrModifyParams params) {
+    @RequestMapping(method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<StoreVo> doCreateStore(@RequestBody StoreCreateOrModifyParams params) {
         checkCreateStoreParams(params);
         StorePo po = CommonConverter.map(params, StorePo.class);
-        storeService.createStore(po);
-        return JsonResults.success();
+        StorePo newStorePo = storeService.createStore(po);
+        StoreVo vo = CommonConverter.map(newStorePo, StoreVo.class);
+        return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/remove/{id}", method = { RequestMethod.DELETE })
+    @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveStore(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择待删除门店");
         storeService.removeStore(id);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/remove", method = { RequestMethod.DELETE })
+    @RequestMapping(method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveStores(@RequestBody List<Long> ids) {
         ensureCollectionNotEmpty(ids, "请选择待删除门店");
         storeService.removeStores(ids);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/modify", method = { RequestMethod.POST })
-    public JsonResult<Void> doModifyStore(@RequestBody StoreCreateOrModifyParams params) {
+    @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
+    public JsonResult<StoreVo> doModifyStore(@RequestBody StoreCreateOrModifyParams params) {
         checkModifyStoreParams(params);
         StorePo po = CommonConverter.map(params, StorePo.class);
-        storeService.modifyStore(po);
-        return JsonResults.success();
+        StorePo newStorePo = storeService.modifyStore(po);
+        StoreVo vo = CommonConverter.map(newStorePo, StoreVo.class);
+        return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/detail/{id}", method = { RequestMethod.GET })
+    @RequestMapping(path = "/{id}", method = { RequestMethod.GET })
     public JsonResult<StoreVo> doQueryStoreDetail(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择门店");
         StoreUnion union = storeService.queryStoreDetail(id);
@@ -74,7 +81,7 @@ public class StoreController {
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/listByPage", method = { RequestMethod.GET })
+    @RequestMapping(method = { RequestMethod.GET })
     public JsonResult<PagedList<StoreVo>> doListStoresByPage(StoreQueryParams queryParams) {
         CheckHelper.checkPageParams(queryParams);
         StoreQueryCondition condition = CommonConverter.map(queryParams, StoreQueryCondition.class);

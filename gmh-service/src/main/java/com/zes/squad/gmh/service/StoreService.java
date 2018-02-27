@@ -14,7 +14,7 @@ public interface StoreService {
      * 
      * @param po
      */
-    void createStore(StorePo po);
+    StorePo createStore(StorePo po);
 
     /**
      * 删除单个门店
@@ -35,7 +35,7 @@ public interface StoreService {
      * 
      * @param po
      */
-    void modifyStore(StorePo po);
+    StorePo modifyStore(StorePo po);
 
     /**
      * 查询门店详情

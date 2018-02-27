@@ -1,24 +1,171 @@
-/*
-Navicat MySQL Data Transfer
+-- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
+--
+-- Host: localhost    Database: gmh
+-- ------------------------------------------------------
+-- Server version	5.7.21-log
 
-Source Server         : 本机
-Source Server Version : 50624
-Source Host           : localhost:3306
-Source Database       : gmh
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-Target Server Type    : MYSQL
-Target Server Version : 50624
-File Encoding         : 65001
+--
+-- Table structure for table `appointment`
+--
 
-Date: 2018-02-04 23:32:21
-*/
+DROP TABLE IF EXISTS `appointment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `appointment` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `customer_name` varchar(255) DEFAULT NULL COMMENT '客户姓名',
+  `customer_mobile` varchar(255) DEFAULT NULL COMMENT '客户联系电话',
+  `customer_gender` tinyint(4) DEFAULT NULL COMMENT '客户性别',
+  `is_vip` tinyint(4) DEFAULT NULL COMMENT '是否会员',
+  `customer_id` bigint(20) DEFAULT NULL COMMENT '客户id',
+  `is_line` tinyint(4) DEFAULT NULL COMMENT '是否点排',
+  `status` tinyint(4) DEFAULT NULL COMMENT '预约状态',
+  `remarks` varchar(255) DEFAULT NULL,
+  `store_id` bigint(20) DEFAULT NULL COMMENT '预约所属门店id',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-SET FOREIGN_KEY_CHECKS=0;
+--
+-- Table structure for table `appointment_project`
+--
 
--- ----------------------------
--- Table structure for employee
--- ----------------------------
+DROP TABLE IF EXISTS `appointment_project`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `appointment_project` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `appointment_id` bigint(20) DEFAULT NULL COMMENT '预约id',
+  `project_id` bigint(20) DEFAULT NULL COMMENT '预约项目id',
+  `employee_id` bigint(20) DEFAULT NULL COMMENT '预约操作员(美容师、美甲师或美睫师)id',
+  `begin_time` datetime DEFAULT NULL COMMENT '预约项目开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '预约项目结束时间',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `consume_record`
+--
+
+DROP TABLE IF EXISTS `consume_record`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `consume_record` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `trade_serial_number` varchar(255) DEFAULT NULL COMMENT '交易流水号',
+  `customer_id` bigint(20) DEFAULT NULL COMMENT '客户id',
+  `customer_mobile` varchar(255) DEFAULT NULL,
+  `consume_type` tinyint(4) DEFAULT NULL COMMENT '消费类型\n1：办卡\n2：买产品\n3：做项目',
+  `consume_money` decimal(10,0) DEFAULT NULL COMMENT '消费金额',
+  `payment_way` tinyint(4) DEFAULT NULL COMMENT '支付方式',
+  `activity_id` bigint(20) DEFAULT NULL COMMENT '活动名称(打印单据使用)',
+  `is_modified` tinyint(4) DEFAULT NULL COMMENT '是否已经被修改',
+  `remark` varchar(255) DEFAULT NULL COMMENT '消费记录备注',
+  `consume_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '消费时间',
+  `store_id` bigint(20) DEFAULT NULL,
+  `created_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `consume_record_product`
+--
+
+DROP TABLE IF EXISTS `consume_record_product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `consume_record_product` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `trade_serial_number` varchar(200) DEFAULT NULL,
+  `product_id` bigint(20) DEFAULT NULL COMMENT '产品id',
+  `product_amount` int(11) DEFAULT NULL COMMENT '产品购买数量',
+  `operator_id` bigint(20) DEFAULT NULL,
+  `consultant_id` bigint(20) DEFAULT NULL,
+  `sales_man_id` bigint(20) DEFAULT NULL,
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `customer`
+--
+
+DROP TABLE IF EXISTS `customer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `customer` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL COMMENT '客户姓名',
+  `gender` tinyint(4) DEFAULT NULL COMMENT '客户性别',
+  `mobile` varchar(255) DEFAULT NULL COMMENT '客户联系电话',
+  `birthday` date DEFAULT NULL COMMENT '客户生日',
+  `input_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '客户信息录入时间',
+  `source` varchar(255) DEFAULT NULL COMMENT '客户来源',
+  `store_id` bigint(20) DEFAULT NULL COMMENT '客户所属门店',
+  `remark` varchar(255) DEFAULT NULL,
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `customer_member_card`
+--
+
+DROP TABLE IF EXISTS `customer_member_card`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `customer_member_card` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `customer_id` bigint(20) DEFAULT NULL COMMENT '客户id',
+  `member_card_id` bigint(20) DEFAULT NULL COMMENT '会员卡id',
+  `remaining_money` decimal(10,0) DEFAULT NULL COMMENT '会员卡剩余金额',
+  `remaining_times` int(11) DEFAULT NULL COMMENT '会员卡剩余项目次数',
+  `is_valid` tinyint(4) DEFAULT NULL COMMENT '当前卡是否有效',
+  `is_returned` tinyint(4) DEFAULT NULL COMMENT '是否已退',
+  `returned_reason` varchar(255) DEFAULT NULL COMMENT '退卡原因',
+  `returned_time` datetime DEFAULT NULL COMMENT '退卡时间',
+  `returned_money` decimal(10,0) DEFAULT NULL COMMENT '退还金额',
+  `is_turned` tinyint(4) DEFAULT NULL COMMENT '是否为转出卡',
+  `turned_reason` varchar(255) DEFAULT NULL COMMENT '转卡原因',
+  `turned_time` datetime DEFAULT NULL COMMENT '转卡时间',
+  `turned_money` varchar(255) DEFAULT NULL COMMENT '转卡退还或补交金额',
+  `unique_identifier` varchar(255) DEFAULT NULL COMMENT '会员卡的唯一标识(针对转卡过程中逻辑卡唯一定位)',
+  `store_id` bigint(20) DEFAULT NULL COMMENT '客户会员卡当前所属门店',
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `employee`
+--
+
 DROP TABLE IF EXISTS `employee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `employee` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL COMMENT '员工姓名',
@@ -32,16 +179,16 @@ CREATE TABLE `employee` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_entry_time` (`entry_time`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of employee
--- ----------------------------
+--
+-- Table structure for table `employee_work`
+--
 
--- ----------------------------
--- Table structure for employee_work
--- ----------------------------
 DROP TABLE IF EXISTS `employee_work`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `employee_work` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `employee_id` bigint(20) DEFAULT NULL COMMENT '员工id',
@@ -50,15 +197,15 @@ CREATE TABLE `employee_work` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of employee_work
--- ----------------------------
+--
+-- Table structure for table `employee_work_type`
+--
 
--- ----------------------------
--- Table structure for employee_work_type
--- ----------------------------
 DROP TABLE IF EXISTS `employee_work_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `employee_work_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `top_type` int(11) DEFAULT NULL COMMENT '员工工种所属顶层分类',
@@ -68,15 +215,15 @@ CREATE TABLE `employee_work_type` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of employee_work_type
--- ----------------------------
+--
+-- Table structure for table `member_card`
+--
 
--- ----------------------------
--- Table structure for member_card
--- ----------------------------
 DROP TABLE IF EXISTS `member_card`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `member_card` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `type` tinyint(4) DEFAULT NULL COMMENT '会员卡类型',
@@ -93,15 +240,15 @@ CREATE TABLE `member_card` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of member_card
--- ----------------------------
+--
+-- Table structure for table `product`
+--
 
--- ----------------------------
--- Table structure for product
--- ----------------------------
 DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `product_type_id` bigint(20) DEFAULT NULL COMMENT '产品类型id',
@@ -112,16 +259,16 @@ CREATE TABLE `product` (
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of product
--- ----------------------------
+--
+-- Table structure for table `product_consume`
+--
 
--- ----------------------------
--- Table structure for product_consume
--- ----------------------------
 DROP TABLE IF EXISTS `product_consume`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product_consume` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `product_id` bigint(20) DEFAULT NULL COMMENT '产品id',
@@ -131,15 +278,15 @@ CREATE TABLE `product_consume` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of product_consume
--- ----------------------------
+--
+-- Table structure for table `product_stock_unit_map`
+--
 
--- ----------------------------
--- Table structure for product_stock_unit_map
--- ----------------------------
 DROP TABLE IF EXISTS `product_stock_unit_map`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product_stock_unit_map` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `product_id` bigint(20) DEFAULT NULL COMMENT '产品id',
@@ -151,15 +298,15 @@ CREATE TABLE `product_stock_unit_map` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of product_stock_unit_map
--- ----------------------------
+--
+-- Table structure for table `product_type`
+--
 
--- ----------------------------
--- Table structure for product_type
--- ----------------------------
 DROP TABLE IF EXISTS `product_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL COMMENT '产品分类名称',
@@ -167,16 +314,16 @@ CREATE TABLE `product_type` (
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of product_type
--- ----------------------------
+--
+-- Table structure for table `project`
+--
 
--- ----------------------------
--- Table structure for project
--- ----------------------------
 DROP TABLE IF EXISTS `project`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `project` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_type_id` bigint(20) DEFAULT NULL COMMENT '项目类型id',
@@ -189,16 +336,16 @@ CREATE TABLE `project` (
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of project
--- ----------------------------
+--
+-- Table structure for table `project_stock`
+--
 
--- ----------------------------
--- Table structure for project_stock
--- ----------------------------
 DROP TABLE IF EXISTS `project_stock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `project_stock` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `project_id` bigint(20) DEFAULT NULL COMMENT '项目id',
@@ -207,16 +354,16 @@ CREATE TABLE `project_stock` (
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of project_stock
--- ----------------------------
+--
+-- Table structure for table `project_type`
+--
 
--- ----------------------------
--- Table structure for project_type
--- ----------------------------
 DROP TABLE IF EXISTS `project_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `project_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `top_type` int(11) DEFAULT NULL COMMENT '项目顶层分类',
@@ -225,16 +372,16 @@ CREATE TABLE `project_type` (
   `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of project_type
--- ----------------------------
+--
+-- Table structure for table `stock`
+--
 
--- ----------------------------
--- Table structure for stock
--- ----------------------------
 DROP TABLE IF EXISTS `stock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stock` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '库存id',
   `stock_type_id` bigint(20) DEFAULT NULL COMMENT '库存分类id',
@@ -246,16 +393,16 @@ CREATE TABLE `stock` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_code` (`code`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of stock
--- ----------------------------
+--
+-- Table structure for table `stock_consume`
+--
 
--- ----------------------------
--- Table structure for stock_consume
--- ----------------------------
 DROP TABLE IF EXISTS `stock_consume`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stock_consume` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `stock_id` bigint(20) DEFAULT NULL COMMENT '库存id',
@@ -265,15 +412,15 @@ CREATE TABLE `stock_consume` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of stock_consume
--- ----------------------------
+--
+-- Table structure for table `stock_type`
+--
 
--- ----------------------------
--- Table structure for stock_type
--- ----------------------------
 DROP TABLE IF EXISTS `stock_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stock_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '库存类型id',
   `name` varchar(255) DEFAULT NULL COMMENT '库存分类名称',
@@ -282,15 +429,15 @@ CREATE TABLE `stock_type` (
   `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of stock_type
--- ----------------------------
+--
+-- Table structure for table `store`
+--
 
--- ----------------------------
--- Table structure for store
--- ----------------------------
 DROP TABLE IF EXISTS `store`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `store` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '门店id',
   `name` varchar(255) DEFAULT NULL COMMENT '门店名称',
@@ -304,16 +451,32 @@ CREATE TABLE `store` (
   PRIMARY KEY (`id`),
   KEY `idx_principal_id` (`principal_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of store
--- ----------------------------
-INSERT INTO `store` VALUES ('1', '1', '2', '3', '4', '5', '6', '2018-01-18 22:19:48', '2018-01-18 22:19:48');
+--
+-- Table structure for table `trade_serial_number`
+--
 
--- ----------------------------
--- Table structure for user
--- ----------------------------
+DROP TABLE IF EXISTS `trade_serial_number`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `trade_serial_number` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `number_type` varchar(20) DEFAULT NULL,
+  `number` int(11) DEFAULT NULL,
+  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user`
+--
+
 DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户id',
   `role` tinyint(4) DEFAULT NULL,
@@ -333,17 +496,15 @@ CREATE TABLE `user` (
   UNIQUE KEY `uk_email` (`email`) USING BTREE,
   UNIQUE KEY `uk_mobile` (`mobile`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of user
--- ----------------------------
-INSERT INTO `user` VALUES ('1', '1', '893074711@qq.com', '893074711@qq.com', '18813091990', '863CB8C83BF4DD438F78E8163F190D6A', 'ef13f23ccab44f27aad7250a6a5efdb0', '章琦', '1', null, null, '2018-01-31 21:11:30', '2018-01-31 21:53:46');
-INSERT INTO `user` VALUES ('2', '1', '1120726720@qq.com', '1120726720@qq.com', '15910946435', '4CD2AEB279B14B27A3D84DE5F57BA0C5', 'a766bd54dfca46459f8b7c0a1c15991c', '周宇环', '1', null, null, '2018-01-31 21:14:47', '2018-01-31 21:53:48');
+--
+-- Table structure for table `user_token`
+--
 
--- ----------------------------
--- Table structure for user_token
--- ----------------------------
 DROP TABLE IF EXISTS `user_token`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_token` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户tokenid',
   `user_id` bigint(20) DEFAULT NULL COMMENT '系统登录用户id',
@@ -355,32 +516,15 @@ CREATE TABLE `user_token` (
   UNIQUE KEY `uk_user_id` (`user_id`) USING BTREE,
   UNIQUE KEY `uk_token` (`token`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
--- ----------------------------
--- Records of user_token
--- ----------------------------
-INSERT INTO `user_token` VALUES ('1', '2', '3e259ad09b2e4e9abc33cf0fce027272', '2018-01-31 21:53:57', '2018-01-31 21:53:56', '2018-01-31 21:53:56');
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-
--- ----------------------------
--- Table structure for appointment
--- ----------------------------
-DROP TABLE IF EXISTS `appointment`;
-CREATE TABLE `appointment` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `customer_name` varchar(255) DEFAULT NULL COMMENT '客户姓名',
-  `customer_mobile` varchar(255) DEFAULT NULL COMMENT '客户联系电话',
-  `customer_gender` tinyint(4) DEFAULT NULL COMMENT '客户性别',
-  `is_vip` tinyint(4) DEFAULT NULL COMMENT '是否会员',
-  `customer_id` bigint(20) DEFAULT NULL COMMENT '客户id',
-  `is_line` tinyint(4) DEFAULT NULL COMMENT '是否点排',
-  `status` tinyint(4) DEFAULT NULL COMMENT '预约状态',
-  `store_id` bigint(20) DEFAULT NULL COMMENT '预约所属门店id',
-  `created_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of appointment
--- ----------------------------
+-- Dump completed on 2018-02-27 15:32:57

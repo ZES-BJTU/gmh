@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(UserPo po) {
+    public UserPo createUser(UserPo po) {
         StorePo storePo = storeMapper.selectById(po.getStoreId());
         ensureEntityExist(storePo, "门店错误");
         String salt = UUID.randomUUID().toString().replaceAll("-", "");
@@ -143,6 +143,7 @@ public class UserServiceImpl implements UserService {
         po.setSalt(salt);
         po.setPassword(password);
         userMapper.insert(po);
+        return po;
     }
 
     @Override
@@ -156,12 +157,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void modifyUser(UserPo po) {
+    public UserPo modifyUser(UserPo po) {
         if (po.getStoreId() != null) {
             StorePo storePo = storeMapper.selectById(po.getStoreId());
             ensureEntityExist(storePo, "门店错误");
         }
         userMapper.updateSelective(po);
+        UserPo newUserPo = userMapper.selectById(po.getId());
+        ensureEntityExist(newUserPo, "用户信息不存在");
+        return newUserPo;
     }
 
     @Override

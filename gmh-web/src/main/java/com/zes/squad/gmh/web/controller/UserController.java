@@ -10,10 +10,12 @@ import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Strings;
@@ -39,7 +41,7 @@ import com.zes.squad.gmh.web.entity.param.UserQueryParams;
 import com.zes.squad.gmh.web.entity.vo.UserVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
-@RequestMapping(path = "/user")
+@RequestMapping(path = "/users/v1")
 @RestController
 public class UserController extends BaseController {
 
@@ -48,8 +50,9 @@ public class UserController extends BaseController {
     @Autowired
     private MessageService messageService;
 
-    @RequestMapping(path = "/login", method = { RequestMethod.GET, RequestMethod.POST })
-    public JsonResult<UserVo> doLoginWithAccount(@RequestBody UserLoginParams params) {
+    //TODO 登录保证密码安全,接口符合rest风格
+    @RequestMapping(path = "/login", method = { RequestMethod.GET })
+    public JsonResult<UserVo> doLoginWithAccount(UserLoginParams params) {
         ensureParameterExist(params, "登录信息为空");
         ensureParameterExist(params.getAccount(), "账号为空");
         ensureParameterExist(params.getPassword(), "密码为空");
@@ -58,18 +61,20 @@ public class UserController extends BaseController {
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/changePassword", method = { RequestMethod.POST })
-    public JsonResult<Void> doChangePassword(@RequestBody UserChangePasswordParams params) {
+    @RequestMapping(path = "/password/modification", method = { RequestMethod.PATCH })
+    public JsonResult<Void> doChangePassword(@PathVariable Long id, @RequestBody UserChangePasswordParams params) {
+        ensureParameterExist(id, "请选择更改密码的用户");
         ensureParameterExist(params, "原密码为空");
         ensureParameterExist(params.getOriginalPassword(), "原密码为空");
         ensureParameterExist(params.getNewPassword(), "新密码为空");
         ensureParameterValid(!Objects.equals(params.getOriginalPassword(), params.getNewPassword()), "原密码不能和新密码相同");
         UserUnion union = getUser();
+        ensureParameterValid(id.equals(union.getUserPo().getId()), "用户身份验证失败");
         userService.changePassword(union.getId(), params.getOriginalPassword(), params.getNewPassword());
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/resetPassword", method = { RequestMethod.POST })
+    @RequestMapping(path = "/password/reset", method = { RequestMethod.PATCH })
     public JsonResult<Void> doResetPassword(@RequestBody MessageParams params) {
         ensureParameterExist(params, "短信参数为空");
         ensureParameterExist(params.getMobile(), "手机号为空");
@@ -97,38 +102,43 @@ public class UserController extends BaseController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/create", method = { RequestMethod.PUT })
-    public JsonResult<Void> doCreateUser(@RequestBody UserCreateOrModifyParams params) {
+    @RequestMapping(method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<UserVo> doCreateUser(@RequestBody UserCreateOrModifyParams params) {
         checkUserCreateParams(params);
         UserPo po = CommonConverter.map(params, UserPo.class);
-        userService.createUser(po);
-        return JsonResults.success();
+        UserPo newUserPo = userService.createUser(po);
+        UserVo vo = buildUserVoByPo(newUserPo);
+        return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/modify", method = { RequestMethod.POST })
-    public JsonResult<Void> doModifyUser(@RequestBody UserCreateOrModifyParams params) {
-        checkUserModifyParams(params);
-        UserPo po = CommonConverter.map(params, UserPo.class);
-        userService.modifyUser(po);
-        return JsonResults.success();
-    }
-
-    @RequestMapping(path = "/remove/{id}", method = { RequestMethod.DELETE })
+    @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveUser(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择待删除用户");
         userService.removeUser(id);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/remove", method = { RequestMethod.DELETE })
+    @RequestMapping(method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveUser(@RequestBody List<Long> ids) {
         ensureCollectionNotEmpty(ids, "请选择待删除用户");
         userService.removeUsers(ids);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/listByPage", method = { RequestMethod.GET })
-    public JsonResult<PagedList<UserVo>> doListPagedUsers(@RequestBody UserQueryParams params) {
+    @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
+    public JsonResult<UserVo> doModifyUser(@PathVariable Long id, @RequestBody UserCreateOrModifyParams params) {
+        checkUserModifyParams(id, params);
+        UserPo po = CommonConverter.map(params, UserPo.class);
+        UserPo newUserPo = userService.modifyUser(po);
+        UserVo vo = buildUserVoByPo(newUserPo);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(method = { RequestMethod.GET })
+    public JsonResult<PagedList<UserVo>> doListPagedUsers(UserQueryParams params) {
         CheckHelper.checkPageParams(params);
         UserQueryCondition condition = CommonConverter.map(params, UserQueryCondition.class);
         PagedList<UserUnion> pagedUserUnions = userService.listPagedUsers(condition);
@@ -143,6 +153,13 @@ public class UserController extends BaseController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUserUnions.getPageNum(), pagedUserUnions.getPageSize(),
                 pagedUserUnions.getTotalCount(), vos));
+    }
+
+    private UserVo buildUserVoByPo(UserPo po) {
+        UserVo vo = CommonConverter.map(po, UserVo.class);
+        vo.setRole(EnumUtils.getDescByKey(po.getRole().intValue(), UserRoleEnum.class));
+        vo.setGender(EnumUtils.getDescByKey(po.getGender().intValue(), GenderEnum.class));
+        return vo;
     }
 
     private UserVo buildUserVoByUnion(UserUnion union) {
@@ -170,9 +187,10 @@ public class UserController extends BaseController {
         ensureParameterExist(params.getStoreId(), "用户所属门店为空");
     }
 
-    private void checkUserModifyParams(UserCreateOrModifyParams params) {
+    private void checkUserModifyParams(Long id, UserCreateOrModifyParams params) {
+        ensureParameterExist(id, "用户信息为空");
         ensureParameterExist(params, "用户信息为空");
-        ensureParameterExist(params.getId(), "用户标识不能为空");
+        ensureParameterValid(id.equals(params.getId()), "用户信息错误");
         if (!Strings.isNullOrEmpty(params.getEmail())) {
             ensureParameterValid(CheckHelper.isValidEmail(params.getEmail()), "用户邮箱格式错误");
         }

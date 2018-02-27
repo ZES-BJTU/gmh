@@ -7,10 +7,10 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class CustomerQueryCondition extends QueryCondition{
+public class CustomerQueryCondition extends QueryCondition {
 
-	private Long storeId;
-	private Integer gender;
-	private Integer source;
-	private String keyWords;
+    private Long    storeId;
+    private Integer gender;
+    private Integer source;
+    private String  keyWords;
 }

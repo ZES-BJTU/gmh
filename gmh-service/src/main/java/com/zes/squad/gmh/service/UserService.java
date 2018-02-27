@@ -54,7 +54,7 @@ public interface UserService {
      * 
      * @param po
      */
-    void createUser(UserPo po);
+    UserPo createUser(UserPo po);
 
     /**
      * 删除单个用户
@@ -75,7 +75,7 @@ public interface UserService {
      * 
      * @param po
      */
-    void modifyUser(UserPo po);
+    UserPo modifyUser(UserPo po);
 
     /**
      * 用户模糊搜索

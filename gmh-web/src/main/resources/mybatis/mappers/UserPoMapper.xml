@@ -22,6 +22,9 @@
 		`store_id`, `remark`, `created_time`, `modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.UserPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
 		INSERT INTO user
 		(`role`, `account`, `email`, `mobile`,
 		`password`, `salt`, `name`, `gender`,

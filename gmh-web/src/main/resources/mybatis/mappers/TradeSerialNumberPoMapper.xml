@@ -21,4 +21,16 @@
 	number=#{number,jdbcType=INTEGER}
 	where number_type="product"
 	</update>
+	<update id="cardNumberAdd" parameterType="Integer">
+	update trade_serial_number
+	set
+	number=#{number,jdbcType=INTEGER}
+	where number_type="card"
+	</update>
+	<update id="projectNumberAdd" parameterType="Integer">
+	update trade_serial_number
+	set
+	number=#{number,jdbcType=INTEGER}
+	where number_type="project"
+	</update>
 </mapper>

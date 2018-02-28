@@ -17,9 +17,19 @@ public class ConsumeController {
 	@Autowired
     private ConsumeRecordService consumeRecordService;
 
+	 @RequestMapping(path = "/createProductConsume", method = { RequestMethod.PUT })
+	    public JsonResult<Void> doCreateProductConsume(@RequestBody ConsumeCreateOrModifyParams params) {
+		 	consumeRecordService.createProductConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails());
+	        return JsonResults.success();
+	    }
 	 @RequestMapping(path = "/createCardConsume", method = { RequestMethod.PUT })
 	    public JsonResult<Void> doCreateCardConsume(@RequestBody ConsumeCreateOrModifyParams params) {
-		 	consumeRecordService.createProductConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordProducts());
+		 consumeRecordService.createCardConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts());
+	        return JsonResults.success();
+	    }
+	 @RequestMapping(path = "/createProjectConsume", method = { RequestMethod.PUT })
+	    public JsonResult<Void> doCreateProjectConsume(@RequestBody ConsumeCreateOrModifyParams params) {
+		 consumeRecordService.createProjectConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails());
 	        return JsonResults.success();
 	    }
 }

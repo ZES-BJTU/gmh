@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zes.squad.gmh.mapper.ConsumeRecordProductMapper">
-	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordProductPo">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />
-		<result column="product_id" jdbcType="VARCHAR" property="productId" />
-		<result column="product_amount" jdbcType="INTEGER" property="productAmount" />
+		<result column="product_id" jdbcType="BIGINT" property="productId" />
+		<result column="project_id" jdbcType="BIGINT" property="projectId" />
+		<result column="card_id" jdbcType="BIGINT" property="cardId" />
+		<result column="amount" jdbcType="INTEGER" property="amount" />
 		<result column="operator_id" jdbcType="INTEGER" property="operatorId" />
 		<result column="consultant_id" jdbcType="INTEGER" property="consultantId" />
 		<result column="sales_man_id" jdbcType="DECIMAL" property="salesManId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordProductPo">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo">
 		INSERT INTO consume_record_product
-		(`trade_serial_number`,`product_id`,`product_amount`,`operator_id`,`consultant_id`,`sales_man_id`)
+		(`trade_serial_number`,`product_id`,`project_id`,`card_id`,`amount`,`operator_id`,`consultant_id`,`sales_man_id`)
 		VALUES
-		(#{tradeSerialNumber, jdbcType=INTEGER},
-		#{productId, jdbcType=INTEGER},
-		#{productAmount, jdbcType=INTEGER},
+		(#{tradeSerialNumber, jdbcType=VARCHAR},
+		#{productId, jdbcType=BIGINT},
+		#{projectId, jdbcType=BIGINT},
+		#{cardId, jdbcType=BIGINT},
+		#{amount, jdbcType=INTEGER},
 		#{operatorId, jdbcType=INTEGER},
 		#{consultantId, jdbcType=INTEGER},
 		#{salesManId, jdbcType=INTEGER})

@@ -7,13 +7,15 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ConsumeRecordProductPo extends Po{
+public class ConsumeRecordDetailPo extends Po{
 	
 	private static final long serialVersionUID = 1L;
 	
 	private String tradeSerialNumber;
 	private Long productId;
-	private Integer productAmount;
+	private Long projectId;
+	private Long cardId;
+	private Integer amount;
 	private Long operatorId;
 	private Long consultantId;
 	private Long salesManId;

@@ -12,6 +12,7 @@ public class EmployeeWorkPo extends Po {
     private static final long serialVersionUID = 1L;
 
     private Long              employeeId;
-    private Long              employeeWorkTypeId;
+    private Integer           topType;
+    private Integer           workType;
 
 }

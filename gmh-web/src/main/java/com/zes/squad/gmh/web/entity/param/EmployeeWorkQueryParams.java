@@ -15,6 +15,7 @@ public class EmployeeWorkQueryParams extends QueryParams {
     private Date    endEntryTime;
     private Boolean working;
     private Integer topType;
+    private Integer workType;
     private String  employeeKeyWord;
 
 }

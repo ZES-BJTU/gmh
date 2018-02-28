@@ -25,11 +25,9 @@
 		(#{name, jdbcType=VARCHAR},
 		#{gender, jdbcType=TINYINT},
 		#{mobile, jdbcType=VARCHAR},
-		#{entryTime,
-		jdbcType=TIMESTAMP},
+		#{entryTime, jdbcType=TIMESTAMP},
 		#{working, jdbcType=TINYINT},
-		#{storeId,
-		jdbcType=BIGINT},
+		#{storeId, jdbcType=BIGINT},
 		#{remark, jdbcType=VARCHAR})
 	</insert>
 	<update id="updateWorkingById" parameterType="long">

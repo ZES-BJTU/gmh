@@ -3,17 +3,18 @@
 <mapper namespace="com.zes.squad.gmh.mapper.EmployeeUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.EmployeeUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="store_name" jdbcType="VARCHAR" property="storeName" />
 		<association property="employeePo"
 			resultMap="com.zes.squad.gmh.mapper.EmployeeMapper.BaseResultMap"
 			columnPrefix="e_" />
-		<collection property="employeeWorkUnions"
-			resultMap="com.zes.squad.gmh.mapper.EmployeeWorkUnionMapper.BaseResultMap"
-			columnPrefix="ewu_" />
+		<association property="storePo"
+			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
+			columnPrefix="s_" />
+		<collection property="employeeWorkPos"
+			resultMap="com.zes.squad.gmh.mapper.EmployeeWorkMapper.BaseResultMap"
+			columnPrefix="ew_" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		e.`id`,
-		s.`name` AS store_name,
 		e.`id` AS e_id,
 		e.`name` AS e_name,
 		e.`gender` AS e_gender,
@@ -24,18 +25,13 @@
 		e.`remark` AS e_remark,
 		e.`created_time` AS e_created_time,
 		e.`modified_time` AS e_modified_time,
-		ew.`id` AS ewu_id,
-		ew.`id` AS ewu_ew_id,
-		ew.`employee_id` AS ewu_ew_employee_id,
-		ew.`employee_work_type_id` AS ewu_ew_employee_work_type_id,
+		s.`name` AS s_name,
+		ew.`id` AS ew_id,
+		ew.`employee_id` AS ew_employee_id,
+		ew.`top_type` AS ew_top_type,
+		ew.`work_type` AS ew_work_type,
 		ew.`created_time` AS ewu_ew_created_time,
 		ew.`modified_time` AS ewu_ew_modified_time,
-		ewt.`id` AS ewu_ewt_id,
-		ewt.`top_type` AS ewu_ewt_top_type,
-		ewt.`name` AS ewu_ewt_name,
-		ewt.`store_id` AS ewu_ewt_store_id,
-		ewt.`created_time` AS ewu_ewt_created_time,
-		ewt.`modified_time` AS ewu_ewt_modified_time,
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
@@ -49,10 +45,6 @@
 		employee_work ew
 		ON
 		e.`id` = ew.`employee_id`
-		LEFT JOIN
-		employee_work_type ewt
-		ON
-		ew.`employee_work_type_id` = ewt.`id`
 		WHERE e.`id` = #{id, jdbcType=BIGINT}
 	</select>
 	<select id="selectByIds" parameterType="long" resultMap="BaseResultMap">
@@ -67,10 +59,6 @@
 		employee_work ew
 		ON
 		e.`id` = ew.`employee_id`
-		LEFT JOIN
-		employee_work_type ewt
-		ON
-		ew.`employee_work_type_id` = ewt.`id`
 		WHERE e.`id` IN
 		<foreach collection="list" item="id" separator="," open="(" close=")">
 			#{id, jdbcType=BIGINT}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ConsumeRecordGiftMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />
+		<result column="type" jdbcType="INTEGER" property="type" />
+		<result column="project_id" jdbcType="BIGINT" property="projectId" />
+		<result column="project_amount" jdbcType="INTEGER" property="projectAmount" />
+		<result column="product_id" jdbcType="BIGINT" property="productId" />
+		<result column="product_amount" jdbcType="INTEGER" property="productAmount" />
+		<result column="coupon_money" jdbcType="DECIMAL" property="couponMoney" />
+		<result column="coupon_amount" jdbcType="INTEGER" property="couponAmount" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo">
+		INSERT INTO consume_record_product
+		(`trade_serial_number`,`type`,`product_id`,`product_amount`,`project_id`,`project_amount`,`coupon_money`,`coupon_amount`)
+		VALUES
+		(#{tradeSerialNumber, jdbcType=VARCHAR},
+		#{type, jdbcType=INTEGER},
+		#{productId, jdbcType=BIGINT},
+		#{productAmount, jdbcType=INTEGER},
+		#{projectId, jdbcType=BIGINT},
+		#{projectAmount, jdbcType=INTEGER},
+		#{couponMoney, jdbcType=DECIMAL},
+		#{couponAmount, jdbcType=INTEGER})
+	</insert>
+
+</mapper>

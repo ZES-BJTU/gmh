@@ -53,9 +53,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-
+		
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.productNumberAdd(oldNumber + 1);
+		//TODO 根据支付方式扣除会员卡或赠内容
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
 			consumeRecordProductMapper.insert(crpp);
@@ -78,6 +79,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setIsModified(0);
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
+		//TODO 根据支付方式扣除会员卡或赠内容
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
 			consumeRecordProductMapper.insert(crpp);
@@ -105,6 +107,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.productNumberAdd(oldNumber + 1);
+		//TODO 根据支付方式扣除会员卡或赠内容
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
 			consumeRecordProductMapper.insert(crpp);

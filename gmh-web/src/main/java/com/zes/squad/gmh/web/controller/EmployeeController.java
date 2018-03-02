@@ -10,10 +10,12 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Strings;
@@ -21,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.GenderEnum;
 import com.zes.squad.gmh.common.enums.TopTypeEnum;
+import com.zes.squad.gmh.common.enums.WorkTypeEnum;
 import com.zes.squad.gmh.common.enums.WorkingEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
@@ -29,50 +32,52 @@ import com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition;
 import com.zes.squad.gmh.entity.po.EmployeePo;
 import com.zes.squad.gmh.entity.po.EmployeeWorkPo;
 import com.zes.squad.gmh.entity.union.EmployeeUnion;
-import com.zes.squad.gmh.entity.union.EmployeeWorkTypeUnion;
-import com.zes.squad.gmh.entity.union.EmployeeWorkUnion;
 import com.zes.squad.gmh.service.EmployeeService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.EmployeeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.EmployeeWorkParams;
 import com.zes.squad.gmh.web.entity.param.EmployeeWorkQueryParams;
 import com.zes.squad.gmh.web.entity.vo.EmployeeVo;
-import com.zes.squad.gmh.web.entity.vo.EmployeeWorkTypeVo;
 import com.zes.squad.gmh.web.entity.vo.EmployeeWorkVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
-@RequestMapping(path = "/employee")
+@RequestMapping(path = "/employees")
 @RestController
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
-    @RequestMapping(path = "/create", method = { RequestMethod.PUT })
-    public JsonResult<Void> doCreateEmployee(EmployeeCreateOrModifyParams params) {
+    @RequestMapping(method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<EmployeeVo> doCreateEmployee(@RequestBody EmployeeCreateOrModifyParams params) {
         checkEmployeCreateParams(params);
         EmployeeUnion union = buildEmployeeUnionByParams(params);
         employeeService.createEmployee(union);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+    @RequestMapping(path = "/{id}", method = { RequestMethod.PATCH })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveEmployee(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择离职员工");
         employeeService.removeEmployee(id);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/remove", method = { RequestMethod.DELETE })
+    @RequestMapping(method = { RequestMethod.PATCH })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveEmployees(@RequestBody List<Long> ids) {
         ensureCollectionNotEmpty(ids, "请选择离职员工");
         employeeService.removeEmployees(ids);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/modify", method = { RequestMethod.POST })
-    public JsonResult<Void> doModifyEmployee(@RequestBody EmployeeCreateOrModifyParams params) {
-        checkEmployeModifyParams(params);
+    @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
+    public JsonResult<Void> doModifyEmployee(@PathVariable("id") Long id,
+                                             @RequestBody EmployeeCreateOrModifyParams params) {
+        checkEmployeModifyParams(id, params);
         EmployeeUnion union = buildEmployeeUnionByParams(params);
         employeeService.modifyEmployee(union);
         return JsonResults.success();
@@ -86,8 +91,8 @@ public class EmployeeController {
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/list", method = { RequestMethod.GET })
-    public JsonResult<PagedList<EmployeeVo>> doListPagedEmployees(@RequestBody EmployeeWorkQueryParams params) {
+    @RequestMapping(method = { RequestMethod.GET })
+    public JsonResult<PagedList<EmployeeVo>> doListPagedEmployees(EmployeeWorkQueryParams params) {
         checkEmployeeQueryParams(params);
         EmployeeWorkQueryCondition condition = CommonConverter.map(params, EmployeeWorkQueryCondition.class);
         PagedList<EmployeeUnion> pagedUnions = employeeService.listPagedEmployees(condition);
@@ -103,25 +108,16 @@ public class EmployeeController {
                 pagedUnions.getTotalCount(), vos));
     }
 
-    private EmployeeWorkTypeVo buildEmployeeWorkTypeVoByUnion(EmployeeWorkTypeUnion union) {
-        EmployeeWorkTypeVo vo = CommonConverter.map(union.getEmployeeWorkTypePo(), EmployeeWorkTypeVo.class);
-        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getEmployeeWorkTypePo().getTopType(), TopTypeEnum.class));
-        vo.setStoreName(union.getStoreName());
-        return vo;
-    }
-
     private EmployeeUnion buildEmployeeUnionByParams(EmployeeCreateOrModifyParams params) {
         EmployeePo employeePo = CommonConverter.map(params, EmployeePo.class);
-        List<EmployeeWorkUnion> workUnions = Lists.newArrayListWithCapacity(params.getEmployeeWorkTypes().size());
-        for (Integer workTypeId : params.getEmployeeWorkTypes()) {
-            EmployeeWorkPo workPo = new EmployeeWorkPo();
-            EmployeeWorkUnion workUnion = new EmployeeWorkUnion();
-            workUnion.setEmployeeWorkPo(workPo);
-            workUnions.add(workUnion);
+        List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(params.getEmployeeWorkParams().size());
+        for (EmployeeWorkParams workParams : params.getEmployeeWorkParams()) {
+            EmployeeWorkPo workPo = CommonConverter.map(workParams, EmployeeWorkPo.class);
+            workPos.add(workPo);
         }
         EmployeeUnion union = new EmployeeUnion();
         union.setEmployeePo(employeePo);
-        union.setEmployeeWorkUnions(workUnions);
+        union.setEmployeeWorkPos(workPos);
         return union;
     }
 
@@ -136,12 +132,20 @@ public class EmployeeController {
         if (params.getEntryTime() != null) {
             ensureParameterValid(params.getEntryTime().before(new Date()), "员工入职时间错误");
         }
-        //        ensureCollectionNotEmpty(params.getEmployeeWorkTypeIds(), "员工工种为空");
+        ensureCollectionNotEmpty(params.getEmployeeWorkParams(), "员工工种为空");
+        for (EmployeeWorkParams workParams : params.getEmployeeWorkParams()) {
+            ensureParameterExist(workParams, "员工工种为空");
+            ensureParameterExist(workParams.getTopType(), "员工工种顶层分类为空");
+            ensureParameterValid(EnumUtils.containsKey(workParams.getTopType(), TopTypeEnum.class), "员工工种顶层分类错误");
+            ensureParameterExist(workParams.getWorkType(), "员工工种分类为空");
+            ensureParameterValid(EnumUtils.containsKey(workParams.getWorkType(), WorkTypeEnum.class), "员工工种分类错误");
+        }
     }
 
-    private void checkEmployeModifyParams(EmployeeCreateOrModifyParams params) {
+    private void checkEmployeModifyParams(Long id, EmployeeCreateOrModifyParams params) {
         ensureParameterExist(params, "员工修改信息为空");
-        ensureParameterExist(params.getId(), "员工标识为空");
+        ensureParameterExist(id, "员工信息缺失");
+        ensureParameterValid(id.equals(params.getId()), "员工信息错误");
         if (params.getGender() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getGender(), GenderEnum.class), "员工性别错误");
         }
@@ -150,6 +154,15 @@ public class EmployeeController {
         }
         if (params.getEntryTime() != null) {
             ensureParameterValid(params.getEntryTime().before(new Date()), "员工入职时间错误");
+        }
+        if (CollectionUtils.isNotEmpty(params.getEmployeeWorkParams())) {
+            for (EmployeeWorkParams workParams : params.getEmployeeWorkParams()) {
+                ensureParameterExist(workParams, "员工工种为空");
+                ensureParameterExist(workParams.getTopType(), "员工工种顶层分类为空");
+                ensureParameterValid(EnumUtils.containsKey(workParams.getTopType(), TopTypeEnum.class), "员工工种顶层分类错误");
+                ensureParameterExist(workParams.getWorkType(), "员工工种分类为空");
+                ensureParameterValid(EnumUtils.containsKey(workParams.getWorkType(), WorkTypeEnum.class), "员工工种分类错误");
+            }
         }
     }
 
@@ -167,18 +180,20 @@ public class EmployeeController {
         if (params.getTopType() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "员工顶层分类错误");
         }
+        if (params.getWorkType() != null) {
+            ensureParameterValid(EnumUtils.containsKey(params.getWorkType(), WorkTypeEnum.class), "员工工种分类错误");
+        }
     }
 
     private EmployeeVo buildEmployeeVoByUnion(EmployeeUnion union) {
         EmployeeVo vo = CommonConverter.map(union.getEmployeePo(), EmployeeVo.class);
         vo.setGender(EnumUtils.getDescByKey(union.getEmployeePo().getGender(), GenderEnum.class));
         vo.setWorking(EnumUtils.getDescByKey(union.getEmployeePo().getWorking(), WorkingEnum.class));
-        List<EmployeeWorkVo> workVos = Lists.newArrayListWithCapacity(union.getEmployeeWorkUnions().size());
-        for (EmployeeWorkUnion workUnion : union.getEmployeeWorkUnions()) {
-            EmployeeWorkVo workVo = CommonConverter.map(workUnion.getEmployeeWorkTypePo(), EmployeeWorkVo.class);
-            workVo.setEmployeeWorkTypeId(workUnion.getEmployeeWorkTypePo().getId());
-            workVo.setTopTypeDesc(
-                    EnumUtils.getDescByKey(workUnion.getEmployeeWorkTypePo().getTopType(), TopTypeEnum.class));
+        List<EmployeeWorkVo> workVos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
+        for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
+            EmployeeWorkVo workVo = CommonConverter.map(workPo, EmployeeWorkVo.class);
+            workVo.setTopTypeDesc(EnumUtils.getDescByKey(workPo.getTopType(), TopTypeEnum.class));
+            workVo.setWorkTypeDesc(EnumUtils.getDescByKey(workPo.getWorkType(), WorkTypeEnum.class));
             workVos.add(workVo);
         }
         vo.setEmployeeWorkVos(workVos);

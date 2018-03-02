@@ -22,7 +22,6 @@ import com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition;
 import com.zes.squad.gmh.entity.po.EmployeePo;
 import com.zes.squad.gmh.entity.po.EmployeeWorkPo;
 import com.zes.squad.gmh.entity.union.EmployeeUnion;
-import com.zes.squad.gmh.entity.union.EmployeeWorkUnion;
 import com.zes.squad.gmh.mapper.EmployeeMapper;
 import com.zes.squad.gmh.mapper.EmployeeUnionMapper;
 import com.zes.squad.gmh.mapper.EmployeeWorkMapper;
@@ -32,11 +31,11 @@ import com.zes.squad.gmh.service.EmployeeService;
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
-    private EmployeeMapper              employeeMapper;
+    private EmployeeMapper      employeeMapper;
     @Autowired
-    private EmployeeWorkMapper          employeeWorkMapper;
+    private EmployeeWorkMapper  employeeWorkMapper;
     @Autowired
-    private EmployeeUnionMapper         employeeUnionMapper;
+    private EmployeeUnionMapper employeeUnionMapper;
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
@@ -45,14 +44,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeePo.getEntryTime() == null) {
             employeePo.setEntryTime(new Date());
         }
+        employeePo.setWorking(true);
         employeePo.setStoreId(ThreadContext.getUserStoreId());
         employeeMapper.insert(employeePo);
         ensureParameterExist(employeePo.getId(), "添加员工失败");
-        List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkUnions().size());
-        for (EmployeeWorkUnion workUnion : union.getEmployeeWorkUnions()) {
-            EmployeeWorkPo workPo = new EmployeeWorkPo();
+        List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
+        for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
             workPo.setEmployeeId(employeePo.getId());
-            workPo.setEmployeeWorkTypeId(workUnion.getEmployeeWorkPo().getEmployeeWorkTypeId());
             workPos.add(workPo);
         }
         employeeWorkMapper.batchInsert(workPos);
@@ -73,16 +71,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void modifyEmployee(EmployeeUnion union) {
         EmployeePo employeePo = union.getEmployeePo();
+        employeeMapper.updateSelective(employeePo);
         Long employeeId = employeePo.getId();
         employeeWorkMapper.batchDelete(employeeId);
-        employeePo.setId(null);
-        employeeMapper.insert(employeePo);
-        ensureParameterExist(employeePo.getId(), "修改员工信息失败");
-        List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkUnions().size());
-        for (EmployeeWorkUnion workUnion : union.getEmployeeWorkUnions()) {
-            EmployeeWorkPo workPo = new EmployeeWorkPo();
+        List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
+        for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
             workPo.setEmployeeId(employeePo.getId());
-            workPo.setEmployeeWorkTypeId(workUnion.getEmployeeWorkPo().getEmployeeWorkTypeId());
             workPos.add(workPo);
         }
         employeeWorkMapper.batchInsert(workPos);
@@ -93,7 +87,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeUnion union = employeeUnionMapper.selectById(id);
         ensureEntityExist(union, "未找到员工详细信息");
         ensureEntityExist(union.getEmployeePo(), "未找到员工详细信息");
-        ensureCollectionNotEmpty(union.getEmployeeWorkUnions(), "未找到员工工种信息");
+        ensureCollectionNotEmpty(union.getEmployeeWorkPos(), "未找到员工工种信息");
         return union;
     }
 
@@ -102,6 +96,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
+        condition.setStoreId(ThreadContext.getUserStoreId());
         List<Long> ids = employeeWorkMapper.selectEmployeeIdsByCondition(condition);
         if (CollectionUtils.isEmpty(ids)) {
             return PagedLists.newPagedList(pageNum, pageSize);

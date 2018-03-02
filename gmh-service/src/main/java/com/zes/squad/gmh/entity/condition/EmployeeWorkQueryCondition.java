@@ -16,6 +16,7 @@ public class EmployeeWorkQueryCondition extends QueryCondition {
     private Date    endEntryTime;
     private Boolean working;
     private Integer topType;
+    private Integer workType;
     private String  employeeKeyWord;
 
 }

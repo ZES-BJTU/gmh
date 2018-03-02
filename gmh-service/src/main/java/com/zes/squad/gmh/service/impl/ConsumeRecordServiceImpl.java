@@ -10,14 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zes.squad.gmh.context.ThreadContext;
+import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
-import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
+import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.StockPo;
+import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordGiftMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordMapper;
-import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
+import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
 import com.zes.squad.gmh.mapper.StockMapper;
 import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
@@ -38,7 +40,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private StockMapper stockMapper;
 	@Autowired
 	private ConsumeRecordGiftMapper giftMapper;
-
+	@Autowired
+	private CustomerMemberCardMapper memberCardMapper;
 	@Override
 	public void createProductConsumeRecord(ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordProducts) {
@@ -79,7 +82,14 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setIsModified(0);
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
-		//TODO 根据支付方式扣除会员卡或赠内容
+		CustomerMemberCardPo memberCardPo = new CustomerMemberCardPo();
+		for(ConsumeRecordDetailPo crdp : consumeRecordProducts){
+			memberCardPo.setCustomerId(consumeRecord.getCustomerId());
+			memberCardPo.setMemberCardId(crdp.getCardId());
+			
+			memberCardMapper.insert(memberCardPo);
+		}
+		
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
 			consumeRecordProductMapper.insert(crpp);

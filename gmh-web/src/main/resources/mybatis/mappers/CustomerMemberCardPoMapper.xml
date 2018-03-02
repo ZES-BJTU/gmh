@@ -22,5 +22,17 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardPo">
+		INSERT INTO customer_member_card
+		(`customer_id`,`member_card_id`,`remaining_money`,`remaining_times`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
+		VALUES
+		(#{customerId, jdbcType=BIGINT},
+		#{memberCardId, jdbcType=BIGINT},
+		#{remainingMoney, jdbcType=DECIMAL},
+		#{remainintTimes, jdbcType=INTEGER},
+		#{isValid, jdbcType=INTEGER},
+		#{isTurned, jdbcType=INTEGER},
+		#{uniqueIdentifier, jdbcType=VARCHAR},
+		#{storeId, jdbcType=BIGINT})
+	</insert>
 </mapper>

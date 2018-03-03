@@ -15,7 +15,7 @@
 			expression="org.springframework.web.bind.annotation.RestControllerAdvice" />
 	</context:component-scan>
 
-	<mvc:annotation-driven conversion-service="customConcersionService">
+	<mvc:annotation-driven conversion-service="customConversionService">
 		<!-- controller层使用@ResponseBody注解或@RestController注解将返回对象json化时过滤null值 -->
 		<mvc:message-converters>
 			<bean
@@ -31,7 +31,7 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
-	<bean id="customConcersionService"
+	<bean id="customConversionService"
 		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 		<property name="converters">
 			<set>

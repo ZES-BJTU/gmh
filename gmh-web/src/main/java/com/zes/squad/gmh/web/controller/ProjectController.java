@@ -10,10 +10,12 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
@@ -43,15 +45,16 @@ import com.zes.squad.gmh.web.entity.vo.ProjectTypeVo;
 import com.zes.squad.gmh.web.entity.vo.ProjectVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
-@RequestMapping(path = "/project")
+@RequestMapping(path = "/projects")
 @RestController
 public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
 
-    @RequestMapping(path = "/type/create", method = { RequestMethod.PUT })
-    public JsonResult<Void> doCreateProjectType(@RequestBody ProjectTypeCreateOrModifyParams params) {
+    @RequestMapping(path = "/types", method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<ProjectTypeVo> doCreateProjectType(@RequestBody ProjectTypeCreateOrModifyParams params) {
         ensureParameterExist(params, "项目分类为空");
         ensureParameterNotExist(params.getId(), "项目分类标识应为空");
         ensureParameterExist(params.getTopType(), "项目分类顶层分类为空");
@@ -62,14 +65,16 @@ public class ProjectController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/type/{id}", method = { RequestMethod.DELETE })
+    @RequestMapping(path = "/types/{id}", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProjectType(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择待删除项目分类");
         projectService.removeProjectType(id);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/type/remove", method = { RequestMethod.DELETE })
+    @RequestMapping(path = "/types", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProjectTypes(@RequestBody List<Long> ids) {
         ensureCollectionNotEmpty(ids, "请选择待删除项目分类");
         projectService.removeProjectTypes(ids);
@@ -77,7 +82,7 @@ public class ProjectController {
     }
 
     @RequestMapping(path = "/type/modify", method = { RequestMethod.POST })
-    public JsonResult<Void> doModifyProjectType(@RequestBody ProjectTypeCreateOrModifyParams params) {
+    public JsonResult<ProjectTypeVo> doModifyProjectType(@RequestBody ProjectTypeCreateOrModifyParams params) {
         ensureParameterExist(params, "项目分类为空");
         ensureParameterExist(params.getId(), "库存分类标识为空");
         if (params.getTopType() != null) {

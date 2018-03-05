@@ -4,26 +4,24 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.StockTypePo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
-		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-	<sql id="BaseColumnList">
-		`id`, `name`, `store_id`,
+	<sql id="Base_Column_List">
+		`id`, `name`,
 		`created_time`, `modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StockTypePo">
-		INSERT INTO stock_type
-		(`name`, `store_id`)
-		VALUES
-		(#{name, jdbcType=VARCHAR},
-		#{storeId, jdbcType=BIGINT})
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO stock_type(`name`) VALUES (#{name, jdbcType=VARCHAR})
 	</insert>
 	<delete id="deleteById" parameterType="long">
-		DELETE FROM stock_type WHERE id = #{id, jdbcType=BIGINT}
+		DELETE FROM stock_type WHERE `id` = #{id, jdbcType=BIGINT}
 	</delete>
-	<delete id="batchDelete" parameterType="list">
-		DELETE FROM stock_type WHERE id IN
+	<delete id="batchDelete" parameterType="long">
+		DELETE FROM stock_type WHERE `id` IN
 		<foreach collection="list" item="id" separator="," open="(" close=")">
 			#{id, jdbcType=BIGINT}
 		</foreach>
@@ -34,10 +32,27 @@
 			<if test="name != null and name != ''">
 				`name` = #{name, jdbcType=VARCHAR},
 			</if>
-			<if test="storeId != null">
-				`store_id` = `#{storeId, jdbcType=BIGINT}
-			</if>
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM stock_type
+		WHERE `id` = #{id, jdbcType=BIGINT}
+		LIMIT 1
+	</select>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.StockTypeQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM stock_type st
+		<where>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				CONCAT(st.`name`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
 </mapper>

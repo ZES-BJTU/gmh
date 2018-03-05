@@ -7,7 +7,6 @@ import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
-import com.zes.squad.gmh.entity.union.StockTypeUnion;
 import com.zes.squad.gmh.entity.union.StockUnion;
 
 public interface StockService {
@@ -17,7 +16,7 @@ public interface StockService {
      * 
      * @param po
      */
-    void createStockType(StockTypePo po);
+    StockTypePo createStockType(StockTypePo po);
 
     /**
      * 删除单个库存分类
@@ -38,7 +37,7 @@ public interface StockService {
      * 
      * @param po
      */
-    void modifyStockType(StockTypePo po);
+    StockTypePo modifyStockType(StockTypePo po);
 
     /**
      * 查询单个库存分类
@@ -46,7 +45,7 @@ public interface StockService {
      * @param id
      * @return
      */
-    StockTypeUnion queryStockTypeDetail(Long id);
+    StockTypePo queryStockTypeDetail(Long id);
 
     /**
      * 条件查询库存分类(分页)
@@ -54,7 +53,7 @@ public interface StockService {
      * @param condition
      * @return
      */
-    PagedList<StockTypeUnion> listPagedStockTypes(StockTypeQueryCondition condition);
+    PagedList<StockTypePo> listPagedStockTypes(StockTypeQueryCondition condition);
 
     /**
      * 新建库存

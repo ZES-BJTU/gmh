@@ -26,7 +26,6 @@ import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
-import com.zes.squad.gmh.entity.union.StockTypeUnion;
 import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.service.StockService;
 import com.zes.squad.gmh.web.common.JsonResults;
@@ -55,14 +54,15 @@ public class StockController {
         ensureParameterExist(params.getName(), "库存分类名称为空");
         ensureParameterNotExist(params.getId(), "库存分类标识应为空");
         StockTypePo po = CommonConverter.map(params, StockTypePo.class);
-        stockService.createStockType(po);
-        return JsonResults.success();
+        StockTypePo newTypePo = stockService.createStockType(po);
+        StockTypeVo vo = CommonConverter.map(newTypePo, StockTypeVo.class);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doDeleteStockType(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "库存分类标识为空");
+        ensureParameterExist(id, "请选择待删除库存分类");
         stockService.deleteStockType(id);
         return JsonResults.success();
     }
@@ -70,48 +70,43 @@ public class StockController {
     @RequestMapping(path = "/types", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doDeleteStockTypes(@RequestBody StockTypeDeleteParams params) {
-        ensureParameterExist(params, "库存分类标识为空");
-        ensureCollectionNotEmpty(params.getIds(), "库存分类标识为空");
+        ensureParameterExist(params, "请选择待删除库存分类");
+        ensureCollectionNotEmpty(params.getIds(), "请选择待删除库存分类");
         stockService.deleteStockTypes(params.getIds());
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/types/{id}")
+    @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
     public JsonResult<StockTypeVo> doModifyStockType(@PathVariable("id") Long id,
                                                      @RequestBody StockTypeCreateOrModifyParams params) {
         ensureParameterExist(params, "库存分类为空");
-        ensureParameterExist(params.getId(), "库存分类标识为空");
+        ensureParameterExist(id, "请选择待修改库存分类");
+        ensureParameterValid(id.equals(params.getId()), "库存分类错误");
         ensureParameterExist(params.getName(), "库存分类名称为空");
         StockTypePo po = CommonConverter.map(params, StockTypePo.class);
-        stockService.modifyStockType(po);
-        return JsonResults.success();
+        StockTypePo newTypePo = stockService.modifyStockType(po);
+        StockTypeVo vo = CommonConverter.map(newTypePo, StockTypeVo.class);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.GET })
     public JsonResult<StockTypeVo> doQueryStockTypeDetail(@PathVariable("id") Long id) {
         ensureParameterExist(id, "库存分类标识为空");
-        StockTypeUnion union = stockService.queryStockTypeDetail(id);
-        StockTypeVo vo = CommonConverter.map(union.getStockTypePo(), StockTypeVo.class);
-        vo.setStoreName(union.getStoreName());
+        StockTypePo po = stockService.queryStockTypeDetail(id);
+        StockTypeVo vo = CommonConverter.map(po, StockTypeVo.class);
         return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/types", method = { RequestMethod.GET })
-    public JsonResult<PagedList<StockTypeVo>> doListPagedStockTypes(StockTypeQueryParams params) {
-        ensureParameterExist(params, "库存分类查询条件为空");
-        StockTypeQueryCondition condition = CommonConverter.map(params, StockTypeQueryCondition.class);
-        PagedList<StockTypeUnion> pagedUnions = stockService.listPagedStockTypes(condition);
-        if (pagedUnions == null || CollectionUtils.isEmpty(pagedUnions.getData())) {
-            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+    public JsonResult<PagedList<StockTypeVo>> doListPagedStockTypes(StockTypeQueryParams queryParams) {
+        ensureParameterExist(queryParams, "库存分类查询条件为空");
+        StockTypeQueryCondition condition = CommonConverter.map(queryParams, StockTypeQueryCondition.class);
+        PagedList<StockTypePo> pagedPos = stockService.listPagedStockTypes(condition);
+        if (pagedPos == null || CollectionUtils.isEmpty(pagedPos.getData())) {
+            return JsonResults.success(PagedLists.newPagedList(pagedPos.getPageNum(), pagedPos.getPageSize()));
         }
-        List<StockTypeVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
-        for (StockTypeUnion union : pagedUnions.getData()) {
-            StockTypeVo vo = CommonConverter.map(union.getStockTypePo(), StockTypeVo.class);
-            vo.setStoreName(union.getStoreName());
-            vos.add(vo);
-        }
-        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
-                pagedUnions.getTotalCount(), vos));
+        PagedList<StockTypeVo> pagedVos = CommonConverter.mapPagedList(pagedPos, StockTypeVo.class);
+        return JsonResults.success(pagedVos);
     }
 
     @RequestMapping(method = { RequestMethod.POST })

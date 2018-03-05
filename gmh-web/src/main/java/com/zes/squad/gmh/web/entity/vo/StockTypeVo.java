@@ -7,6 +7,5 @@ public class StockTypeVo {
 
     private Long   id;
     private String name;
-    private String storeName;
 
 }

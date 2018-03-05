@@ -9,7 +9,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class StockTypeQueryCondition extends QueryCondition {
 
-    private Long   storeId;
-    private String stockTypeKeyWord;
+    private String search;
 
 }

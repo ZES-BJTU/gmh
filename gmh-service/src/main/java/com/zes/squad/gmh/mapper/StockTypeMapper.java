@@ -2,6 +2,7 @@ package com.zes.squad.gmh.mapper;
 
 import java.util.List;
 
+import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.StockTypePo;
 
 public interface StockTypeMapper {
@@ -37,5 +38,21 @@ public interface StockTypeMapper {
      * @return
      */
     int updateSelective(StockTypePo po);
+
+    /**
+     * 根据id查询库存分类
+     * 
+     * @param id
+     * @return
+     */
+    StockTypePo selectById(Long id);
+
+    /**
+     * 根据搜索条件查询
+     * 
+     * @param condition
+     * @return
+     */
+    List<StockTypePo> selectByCondition(StockTypeQueryCondition condition);
 
 }

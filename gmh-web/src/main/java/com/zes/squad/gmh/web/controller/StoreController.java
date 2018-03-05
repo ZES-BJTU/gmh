@@ -32,7 +32,7 @@ import com.zes.squad.gmh.web.entity.vo.StoreVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 import com.zes.squad.gmh.web.helper.PaginationHelper;
 
-@RequestMapping(path = "/stores/v1")
+@RequestMapping(path = "/stores")
 @RestController
 public class StoreController {
 

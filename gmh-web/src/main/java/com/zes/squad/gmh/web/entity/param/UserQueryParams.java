@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UserQueryParams extends QueryParams {
 
-    private String userKeyWord;
+    private Long   storeId;
+    private String search;
 
 }

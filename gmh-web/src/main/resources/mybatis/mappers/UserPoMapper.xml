@@ -82,17 +82,46 @@
 		<include refid="Base_Column_List" />
 		FROM user
 		WHERE `id` = #{id, jdbcType=BIGINT}
+		LIMIT 1
 	</select>
 	<select id="selectByAccount" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM user
 		WHERE `account` = #{account, jdbcType=VARCHAR}
+		LIMIT 1
 	</select>
 	<select id="selectByMobile" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM user
 		WHERE `mobile` = #{mobile, jdbcType=VARCHAR}
+		LIMIT 1
+	</select>
+	<select id="selectByMobile" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM user
+		WHERE `mobile` = #{mobile, jdbcType=VARCHAR}
+		LIMIT 1
+	</select>
+	<select id="selectIdsByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.UserQueryCondition"
+		resultType="long">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM user u
+		LEFT JOIN store s
+		ON u.`store_id` = s.`id`
+		<where>
+			<if test="storeId != null">
+				u.`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				AND CONCAT(u.`account`, u.`email`, u.`mobile`, u.`name`, s.`name`) 
+				LIKE #{condition, jdbcType=VARCHAR}		
+			</if>
+		</where>
 	</select>
 </mapper>

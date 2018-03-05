@@ -40,8 +40,9 @@ import com.zes.squad.gmh.web.entity.param.UserLoginParams;
 import com.zes.squad.gmh.web.entity.param.UserQueryParams;
 import com.zes.squad.gmh.web.entity.vo.UserVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
+import com.zes.squad.gmh.web.helper.PaginationHelper;
 
-@RequestMapping(path = "/users/v1")
+@RequestMapping(path = "/users")
 @RestController
 public class UserController extends BaseController {
 
@@ -50,8 +51,7 @@ public class UserController extends BaseController {
     @Autowired
     private MessageService messageService;
 
-    //TODO 登录保证密码安全,接口符合rest风格
-    @RequestMapping(path = "/login", method = { RequestMethod.GET })
+    @RequestMapping(path = "/login", method = { RequestMethod.POST })
     public JsonResult<UserVo> doLoginWithAccount(UserLoginParams params) {
         ensureParameterExist(params, "登录信息为空");
         ensureParameterExist(params.getAccount(), "账号为空");
@@ -122,7 +122,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public JsonResult<Void> doRemoveUser(@RequestBody List<Long> ids) {
+    public JsonResult<Void> doRemoveUsers(@RequestBody List<Long> ids) {
         ensureCollectionNotEmpty(ids, "请选择待删除用户");
         userService.removeUsers(ids);
         return JsonResults.success();
@@ -138,12 +138,15 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(method = { RequestMethod.GET })
-    public JsonResult<PagedList<UserVo>> doListPagedUsers(UserQueryParams params) {
-        CheckHelper.checkPageParams(params);
-        UserQueryCondition condition = CommonConverter.map(params, UserQueryCondition.class);
+    public JsonResult<PagedList<UserVo>> doListPagedUsers(UserQueryParams queryParams) {
+        ensureParameterExist(queryParams, "用户查询条件为空");
+        queryParams.setPageNum(PaginationHelper.toPageNum(queryParams.getOffset(), queryParams.getLimit()));
+        queryParams.setPageSize(queryParams.getLimit());
+        CheckHelper.checkPageParams(queryParams);
+        UserQueryCondition condition = CommonConverter.map(queryParams, UserQueryCondition.class);
         PagedList<UserUnion> pagedUserUnions = userService.listPagedUsers(condition);
         if (pagedUserUnions == null || CollectionUtils.isEmpty(pagedUserUnions.getData())) {
-            return JsonResults.success(PagedLists.newPagedList(params.getPageNum(), params.getPageSize()));
+            return JsonResults.success(PagedLists.newPagedList(queryParams.getPageNum(), queryParams.getPageSize()));
         }
         List<UserVo> vos = Lists.newArrayListWithCapacity(pagedUserUnions.getData().size());
         for (UserUnion union : pagedUserUnions.getData()) {

@@ -13,7 +13,7 @@
 			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
 			columnPrefix="store_"/>
 	</resultMap>
-	<select id="selectUserUnionsByIds" parameterType="list" resultMap="BaseResultMap">
+	<select id="selectUserUnionsByIds" parameterType="long" resultMap="BaseResultMap">
 		SELECT
 		u.`id` AS user_id,
 		u.`role` AS u_role,

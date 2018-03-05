@@ -30,6 +30,7 @@ import com.zes.squad.gmh.web.entity.param.StoreCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.StoreQueryParams;
 import com.zes.squad.gmh.web.entity.vo.StoreVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
+import com.zes.squad.gmh.web.helper.PaginationHelper;
 
 @RequestMapping(path = "/stores/v1")
 @RestController
@@ -85,6 +86,9 @@ public class StoreController {
 
     @RequestMapping(method = { RequestMethod.GET })
     public JsonResult<PagedList<StoreVo>> doListStoresByPage(StoreQueryParams queryParams) {
+        ensureParameterExist(queryParams, "门店查询条件为空");
+        queryParams.setPageNum(PaginationHelper.toPageNum(queryParams.getOffset(), queryParams.getLimit()));
+        queryParams.setPageSize(queryParams.getLimit());
         CheckHelper.checkPageParams(queryParams);
         StoreQueryCondition condition = CommonConverter.map(queryParams, StoreQueryCondition.class);
         PagedList<StoreUnion> pagedUnions = storeService.listStoresByPage(condition);

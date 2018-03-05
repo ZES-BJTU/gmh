@@ -9,6 +9,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class StoreQueryCondition extends QueryCondition {
 
-    private String storeKeyWord;
+    private String search;
 
 }

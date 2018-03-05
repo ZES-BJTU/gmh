@@ -28,7 +28,6 @@ public class CheckHelper {
     }
 
     public static void checkPageParams(QueryParams params) {
-        ensureParameterExist(params, "查询条件为空");
         ensureParameterExist(params.getPageNum(), "分页页码为空");
         ensureParameterValid(params.getPageNum() > 0, "分页页码错误");
         ensureParameterExist(params.getPageSize(), "分页大小为空");

@@ -47,8 +47,8 @@
 		user u
 		ON
 		s.`principal_id` = u.`id`
-		<if test="storeKeyWord != null and storeKeyWord != ''">
-			<bind name="condition" value="'%' + keyWord + '%'" />
+		<if test="search != null and search != ''">
+			<bind name="condition" value="'%' + search + '%'" />
 			<where>
 				CONCAT(s.`name`,s.`address`,u.`name`,s.`phone`,s.`remark`)
 				LIKE

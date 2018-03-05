@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zes.squad.gmh.mapper.StockTypeMapper">
-	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.StockTypePo">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductTypeMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProductTypePo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
@@ -11,23 +11,23 @@
 		`id`, `name`,
 		`created_time`, `modified_time`
 	</sql>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StockTypePo">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductTypePo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO stock_type(`name`) VALUES (#{name, jdbcType=VARCHAR})
+		INSERT INTO product_type(`name`) VALUES (#{name, jdbcType=VARCHAR})
 	</insert>
 	<delete id="deleteById" parameterType="long">
-		DELETE FROM stock_type WHERE `id` = #{id, jdbcType=BIGINT}
+		DELETE FROM product_type WHERE `id` = #{id, jdbcType=BIGINT}
 	</delete>
 	<delete id="batchDelete" parameterType="long">
-		DELETE FROM stock_type WHERE `id` IN
+		DELETE FROM product_type WHERE `id` IN
 		<foreach collection="list" item="id" separator="," open="(" close=")">
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
-	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.StockTypePo">
-		UPDATE stock_type
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProductTypePo">
+		UPDATE product_type
 		<set>
 			<if test="name != null and name != ''">
 				`name` = #{name, jdbcType=VARCHAR},
@@ -38,20 +38,20 @@
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM stock_type
+		FROM product_type
 		WHERE `id` = #{id, jdbcType=BIGINT}
 		LIMIT 1
 	</select>
 	<select id="selectByCondition"
-		parameterType="com.zes.squad.gmh.entity.condition.StockTypeQueryCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition"
 		resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />
-		FROM stock_type st
+		FROM product_type pt
 		<where>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(st.`name`) LIKE #{condition, jdbcType=VARCHAR}
+				CONCAT(pt.`name`) LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

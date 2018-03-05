@@ -31,10 +31,8 @@ import com.zes.squad.gmh.service.StockService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.StockCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.StockDeleteParams;
 import com.zes.squad.gmh.web.entity.param.StockQueryParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.StockTypeDeleteParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.StockTypeVo;
 import com.zes.squad.gmh.web.entity.vo.StockVo;
@@ -69,10 +67,10 @@ public class StockController {
 
     @RequestMapping(path = "/types", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public JsonResult<Void> doDeleteStockTypes(@RequestBody StockTypeDeleteParams params) {
-        ensureParameterExist(params, "请选择待删除库存分类");
-        ensureCollectionNotEmpty(params.getIds(), "请选择待删除库存分类");
-        stockService.deleteStockTypes(params.getIds());
+    public JsonResult<Void> doDeleteStockTypes(@RequestBody List<Long> ids) {
+        ensureParameterExist(ids, "请选择待删除库存分类");
+        ensureCollectionNotEmpty(ids, "请选择待删除库存分类");
+        stockService.deleteStockTypes(ids);
         return JsonResults.success();
     }
 
@@ -134,10 +132,10 @@ public class StockController {
 
     @RequestMapping(method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public JsonResult<Void> doRemoveStocks(@RequestBody StockDeleteParams params) {
-        ensureParameterExist(params, "请选择要删除的库存");
-        ensureCollectionNotEmpty(params.getIds(), "请选择要删除的库存");
-        stockService.deleteStocks(params.getIds());
+    public JsonResult<Void> doRemoveStocks(@RequestBody List<Long> ids) {
+        ensureParameterExist(ids, "请选择要删除的库存");
+        ensureCollectionNotEmpty(ids, "请选择要删除的库存");
+        stockService.deleteStocks(ids);
         return JsonResults.success();
     }
 

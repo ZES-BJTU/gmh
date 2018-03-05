@@ -41,6 +41,7 @@ import com.zes.squad.gmh.web.entity.param.EmployeeWorkQueryParams;
 import com.zes.squad.gmh.web.entity.vo.EmployeeVo;
 import com.zes.squad.gmh.web.entity.vo.EmployeeWorkVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
+import com.zes.squad.gmh.web.helper.PaginationHelper;
 
 @RequestMapping(path = "/employees")
 @RestController
@@ -92,9 +93,12 @@ public class EmployeeController {
     }
 
     @RequestMapping(method = { RequestMethod.GET })
-    public JsonResult<PagedList<EmployeeVo>> doListPagedEmployees(EmployeeWorkQueryParams params) {
-        checkEmployeeQueryParams(params);
-        EmployeeWorkQueryCondition condition = CommonConverter.map(params, EmployeeWorkQueryCondition.class);
+    public JsonResult<PagedList<EmployeeVo>> doListPagedEmployees(EmployeeWorkQueryParams queryParams) {
+        ensureParameterExist(queryParams, "员工查询条件为空");
+        queryParams.setPageNum(PaginationHelper.toPageNum(queryParams.getOffset(), queryParams.getLimit()));
+        queryParams.setPageSize(queryParams.getLimit());
+        checkEmployeeQueryParams(queryParams);
+        EmployeeWorkQueryCondition condition = CommonConverter.map(queryParams, EmployeeWorkQueryCondition.class);
         PagedList<EmployeeUnion> pagedUnions = employeeService.listPagedEmployees(condition);
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
             return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));

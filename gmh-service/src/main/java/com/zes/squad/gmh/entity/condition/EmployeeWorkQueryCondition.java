@@ -17,6 +17,6 @@ public class EmployeeWorkQueryCondition extends QueryCondition {
     private Boolean working;
     private Integer topType;
     private Integer workType;
-    private String  employeeKeyWord;
+    private String  search;
 
 }

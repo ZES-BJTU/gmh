@@ -98,13 +98,6 @@
 		WHERE `mobile` = #{mobile, jdbcType=VARCHAR}
 		LIMIT 1
 	</select>
-	<select id="selectByMobile" parameterType="string" resultMap="BaseResultMap">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM user
-		WHERE `mobile` = #{mobile, jdbcType=VARCHAR}
-		LIMIT 1
-	</select>
 	<select id="selectIdsByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.UserQueryCondition"
 		resultType="long">

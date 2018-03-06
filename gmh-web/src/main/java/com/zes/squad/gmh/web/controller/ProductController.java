@@ -3,6 +3,7 @@ package com.zes.squad.gmh.web.controller;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
 import java.util.List;
 
@@ -40,9 +41,9 @@ public class ProductController {
     @RequestMapping(path = "/types", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<ProductTypeVo> doCreateProductType(@RequestBody ProductTypeCreateOrModifyParams params) {
-        ensureParameterExist(params, "产品为空");
-        ensureParameterNotExist(params.getId(), "产品应为空");
-        ensureParameterExist(params.getName(), "产品名称为空");
+        ensureParameterExist(params, "产品分类为空");
+        ensureParameterNotExist(params.getId(), "产品分类应为空");
+        ensureParameterExist(params.getName(), "产品分类名称为空");
         ProductTypePo po = CommonConverter.map(params, ProductTypePo.class);
         ProductTypePo newTypePo = productService.createProductType(po);
         ProductTypeVo vo = CommonConverter.map(newTypePo, ProductTypeVo.class);
@@ -52,7 +53,7 @@ public class ProductController {
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProductType(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "请选择待删除产品");
+        ensureParameterExist(id, "请选择待删除产品分类");
         productService.removeProductType(id);
         return JsonResults.success();
     }
@@ -60,32 +61,34 @@ public class ProductController {
     @RequestMapping(path = "/types", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProductTypes(@RequestBody List<Long> ids) {
-        ensureParameterExist(ids, "请选择待删除产品");
-        ensureCollectionNotEmpty(ids, "请选择待删除产品");
+        ensureParameterExist(ids, "请选择待删除产品分类");
+        ensureCollectionNotEmpty(ids, "请选择待删除产品分类");
         productService.removeProductTypes(ids);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/types", method = { RequestMethod.PUT })
-    public JsonResult<ProductTypeVo> doModifyProductType(@RequestBody ProductTypeCreateOrModifyParams params) {
-        ensureParameterExist(params, "产品为空");
-        ensureParameterExist(params.getId(), "产品为空");
-        ensureParameterExist(params.getName(), "产品名称为空");
+    @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
+    public JsonResult<ProductTypeVo> doModifyProductType(@PathVariable("id") Long id,
+                                                         @RequestBody ProductTypeCreateOrModifyParams params) {
+        ensureParameterExist(id, "产品分类为空");
+        ensureParameterExist(params, "产品分类为空");
+        ensureParameterValid(id.equals(params.getId()), "产品分类错误");
+        ensureParameterExist(params.getName(), "产品分类名称为空");
         ProductTypePo po = CommonConverter.map(params, ProductTypePo.class);
         ProductTypePo newTypePo = productService.modifyProductType(po);
         ProductTypeVo vo = CommonConverter.map(newTypePo, ProductTypeVo.class);
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/types/{id}", method = { RequestMethod.POST })
+    @RequestMapping(path = "/types/{id}", method = { RequestMethod.GET })
     public JsonResult<ProductTypeVo> doQueryProductTypeDetail(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "请选择待删除产品");
+        ensureParameterExist(id, "请选择待删除产品分类");
         ProductTypePo po = productService.queryProductTypeDetail(id);
         ProductTypeVo vo = CommonConverter.map(po, ProductTypeVo.class);
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/types", method = { RequestMethod.POST })
+    @RequestMapping(path = "/types", method = { RequestMethod.GET })
     public JsonResult<PagedList<ProductTypeVo>> doListPagedProductTypes(StockTypeQueryParams queryParams) {
         ensureParameterExist(queryParams, "产品分类查询条件为空");
         queryParams.setPageNum(PaginationHelper.toPageNum(queryParams.getOffset(), queryParams.getLimit()));

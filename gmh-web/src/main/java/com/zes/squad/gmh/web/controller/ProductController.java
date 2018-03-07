@@ -5,6 +5,7 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,13 +22,16 @@ import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.ProductCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.ProductTypeCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.ProductTypeVo;
+import com.zes.squad.gmh.web.entity.vo.ProductVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 import com.zes.squad.gmh.web.helper.PaginationHelper;
 
@@ -101,6 +105,24 @@ public class ProductController {
         }
         PagedList<ProductTypeVo> pagedVos = CommonConverter.mapPagedList(pagedPos, ProductTypeVo.class);
         return JsonResults.success(pagedVos);
+    }
+
+    @RequestMapping(method = { RequestMethod.POST })
+    public JsonResult<ProductVo> doCreateProduct(@RequestBody ProductCreateOrModifyParams params) {
+        ensureParameterExist(params, "产品信息为空");
+        ensureParameterNotExist(params.getId(), "产品已存在");
+        ensureParameterExist(params.getProductTypeId(), "产品分类为空");
+        ensureParameterExist(params.getName(), "产品名称为空");
+        ensureParameterExist(params.getUnitName(), "产品计量单位为空");
+        ensureParameterExist(params.getUnitPrice(), "产品单价为空");
+        ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "产品单价不能小于0");
+        ensureParameterExist(params.getTotalAmount(), "产品总量为空");
+        ensureParameterValid((params.getTotalAmount().compareTo(BigDecimal.ZERO) == 0)
+                || (params.getTotalAmount().compareTo(BigDecimal.ZERO) == 1), "产品总量不能小于0");
+        ProductPo po = CommonConverter.map(params, ProductPo.class);
+        ProductPo newPo = productService.createProduct(po);
+        ProductVo vo = CommonConverter.map(newPo, ProductVo.class);
+        return JsonResults.success(vo);
     }
 
 }

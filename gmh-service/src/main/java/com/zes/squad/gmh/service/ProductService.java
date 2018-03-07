@@ -3,13 +3,16 @@ package com.zes.squad.gmh.service;
 import java.util.List;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
+import com.zes.squad.gmh.entity.union.ProductUnion;
 
 public interface ProductService {
 
     /**
-     * 创建库存分类
+     * 创建产品分类
      * 
      * @param po
      * @return
@@ -17,21 +20,21 @@ public interface ProductService {
     ProductTypePo createProductType(ProductTypePo po);
 
     /**
-     * 删除单个库存分类
+     * 删除单个产品分类
      * 
      * @param id
      */
     void removeProductType(Long id);
 
     /**
-     * 删除多个库存分类
+     * 删除多个产品分类
      * 
      * @param ids
      */
     void removeProductTypes(List<Long> ids);
 
     /**
-     * 修改库存分类
+     * 修改产品分类
      * 
      * @param po
      * @return
@@ -39,7 +42,7 @@ public interface ProductService {
     ProductTypePo modifyProductType(ProductTypePo po);
 
     /**
-     * 查询单个库存分类详情
+     * 查询单个产品分类详情
      * 
      * @param id
      * @return
@@ -47,11 +50,57 @@ public interface ProductService {
     ProductTypePo queryProductTypeDetail(Long id);
 
     /**
-     * 根据条件查询多个库存分类详情
+     * 根据条件查询多个产品分类详情
      * 
      * @param condition
      * @return
      */
     PagedList<ProductTypePo> listPagedProductTypes(ProductTypeQueryCondition condition);
+
+    /**
+     * 新建产品
+     * 
+     * @param po
+     * @return
+     */
+    ProductPo createProduct(ProductPo po);
+
+    /**
+     * 删除单个产品
+     * 
+     * @param id
+     */
+    void removeProduct(Long id);
+
+    /**
+     * 删除多个产品
+     * 
+     * @param ids
+     */
+    void removeProducts(List<Long> ids);
+
+    /**
+     * 修改产品
+     * 
+     * @param po
+     * @return
+     */
+    ProductPo modifyProduct(ProductPo po);
+
+    /**
+     * 查询产品详情
+     * 
+     * @param id
+     * @return
+     */
+    ProductUnion queryProductDetail(Long id);
+
+    /**
+     * 根据搜索条件分页显示产品
+     * 
+     * @param condition
+     * @return
+     */
+    PagedList<ProductUnion> listPagedProducts(ProductQueryCondition condition);
 
 }

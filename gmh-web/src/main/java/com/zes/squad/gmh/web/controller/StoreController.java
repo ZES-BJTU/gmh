@@ -18,26 +18,32 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
+import com.zes.squad.gmh.common.enums.UserRoleEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StoreQueryCondition;
 import com.zes.squad.gmh.entity.po.StorePo;
 import com.zes.squad.gmh.entity.union.StoreUnion;
+import com.zes.squad.gmh.entity.union.UserUnion;
 import com.zes.squad.gmh.service.StoreService;
+import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.StoreCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.StoreQueryParams;
 import com.zes.squad.gmh.web.entity.vo.StoreVo;
+import com.zes.squad.gmh.web.entity.vo.UserVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 import com.zes.squad.gmh.web.helper.PaginationHelper;
 
 @RequestMapping(path = "/stores")
 @RestController
-public class StoreController {
+public class StoreController extends BaseController{
 
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private UserService  userService;
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
@@ -82,6 +88,20 @@ public class StoreController {
         StoreVo vo = CommonConverter.map(union.getStorePo(), StoreVo.class);
         vo.setPrincipalName(union.getUserPo().getName());
         return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/principals", method = { RequestMethod.GET })
+    public JsonResult<List<UserVo>> doListStorePrincipals() {
+        List<UserUnion> unions = userService.listUsersByRole(UserRoleEnum.MANAGER.getKey());
+        if (CollectionUtils.isEmpty(unions)) {
+            return JsonResults.success(Lists.newArrayList());
+        }
+        List<UserVo> vos = Lists.newArrayListWithCapacity(unions.size());
+        for (UserUnion union : unions) {
+            UserVo vo = buildUserVoByUnion(union);
+            vos.add(vo);
+        }
+        return JsonResults.success(vos);
     }
 
     @RequestMapping(method = { RequestMethod.GET })

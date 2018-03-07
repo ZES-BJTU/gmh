@@ -182,6 +182,11 @@ public class UserServiceImpl implements UserService {
         return PagedLists.newPagedList(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), unions);
     }
 
+    @Override
+    public List<UserUnion> listUsersByRole(Integer role) {
+        return userUnionMapper.selectUserUnionsByRole(role);
+    }
+
     private UserUnion queryUserByTokenFromDb(String token) {
         UserTokenPo tokenPo = userTokenMapper.selectByToken(token);
         if (tokenPo == null) {

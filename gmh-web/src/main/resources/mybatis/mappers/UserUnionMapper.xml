@@ -13,8 +13,7 @@
 			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
 			columnPrefix="store_"/>
 	</resultMap>
-	<select id="selectUserUnionsByIds" parameterType="long" resultMap="BaseResultMap">
-		SELECT
+	<sql id="Base_Column_List">
 		u.`id` AS user_id,
 		u.`role` AS u_role,
 		u.`account` AS user_account,
@@ -26,23 +25,38 @@
 		u.`remark` AS user_remark,
 		u.`created_time` AS user_created_time,
 		u.`modified_time` AS user_modified_time,
-		s.`name` AS store_name,
-		ut.`token` AS user_token_token
+		s.`name` AS store_name
+	</sql>
+	<select id="selectUserUnionsByIds" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
 		FROM 
 		user u
 		LEFT JOIN 
 		store s
 		ON
 		u.`store_id` = s.`id`
-		LEFT JOIN 
-		user_token ut
-		ON
-		u.`id` = ut.`user_id`
 		<where>
 			u.`id` IN 
 			<foreach collection="list" item="id" open="(" close=")" separator=",">
 				#{id, jdbcType=BIGINT}
 			</foreach>
+		</where>
+	</select>
+	<select id="selectUserUnionsByRole" parameterType="int" resultMap="BaseResultMap">
+		SELECT
+		u.`id` AS user_id,
+		u.`name` AS user_name, 
+		u.`store_id` AS user_store_id,
+		s.`name` AS store_name 
+		FROM 
+		user u
+		LEFT JOIN
+		store s
+		ON
+		u.`store_id` = s.`id`
+		<where>
+			u.`role` = #{role, jdbcType=INTEGER}
 		</where>
 	</select>
 </mapper>

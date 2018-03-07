@@ -4,12 +4,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.zes.squad.gmh.common.converter.CommonConverter;
+import com.zes.squad.gmh.common.enums.GenderEnum;
+import com.zes.squad.gmh.common.enums.UserRoleEnum;
 import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
 import com.zes.squad.gmh.common.exception.GmhException;
+import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.union.UserUnion;
 import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.constant.WebConsts;
+import com.zes.squad.gmh.web.entity.vo.UserVo;
 
 public class BaseController {
 
@@ -31,6 +36,16 @@ public class BaseController {
         if (ThreadContext.getCurrentUser() != null) {
             ThreadContext.removeUser();
         }
+    }
+    
+    public UserVo buildUserVoByUnion(UserUnion union) {
+        UserVo vo = CommonConverter.map(union.getUserPo(), UserVo.class);
+        vo.setRole(EnumUtils.getDescByKey(union.getUserPo().getRole().intValue(), UserRoleEnum.class));
+        vo.setGender(EnumUtils.getDescByKey(union.getUserPo().getGender().intValue(), GenderEnum.class));
+        if (union.getUserTokenPo() != null) {
+            vo.setToken(union.getUserTokenPo().getToken());
+        }
+        return vo;
     }
 
 }

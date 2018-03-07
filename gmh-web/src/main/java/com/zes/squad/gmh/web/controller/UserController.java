@@ -151,7 +151,6 @@ public class UserController extends BaseController {
         List<UserVo> vos = Lists.newArrayListWithCapacity(pagedUserUnions.getData().size());
         for (UserUnion union : pagedUserUnions.getData()) {
             UserVo vo = buildUserVoByUnion(union);
-            vo.setToken(null);
             vos.add(vo);
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUserUnions.getPageNum(), pagedUserUnions.getPageSize(),
@@ -162,14 +161,6 @@ public class UserController extends BaseController {
         UserVo vo = CommonConverter.map(po, UserVo.class);
         vo.setRole(EnumUtils.getDescByKey(po.getRole().intValue(), UserRoleEnum.class));
         vo.setGender(EnumUtils.getDescByKey(po.getGender().intValue(), GenderEnum.class));
-        return vo;
-    }
-
-    private UserVo buildUserVoByUnion(UserUnion union) {
-        UserVo vo = CommonConverter.map(union.getUserPo(), UserVo.class);
-        vo.setRole(EnumUtils.getDescByKey(union.getUserPo().getRole().intValue(), UserRoleEnum.class));
-        vo.setGender(EnumUtils.getDescByKey(union.getUserPo().getGender().intValue(), GenderEnum.class));
-        vo.setToken(union.getUserTokenPo().getToken());
         return vo;
     }
 

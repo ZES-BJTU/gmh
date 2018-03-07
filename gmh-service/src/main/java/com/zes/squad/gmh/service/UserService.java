@@ -85,4 +85,12 @@ public interface UserService {
      */
     PagedList<UserUnion> listPagedUsers(UserQueryCondition condition);
 
+    /**
+     * 根据角色查询用户
+     * 
+     * @param role
+     * @return
+     */
+    List<UserUnion> listUsersByRole(Integer role);
+
 }

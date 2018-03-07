@@ -14,4 +14,12 @@ public interface UserUnionMapper {
      */
     List<UserUnion> selectUserUnionsByIds(List<Long> ids);
 
+    /**
+     * 根据用户角色查询用户详细信息
+     * 
+     * @param role
+     * @return
+     */
+    List<UserUnion> selectUserUnionsByRole(Integer role);
+
 }

@@ -45,7 +45,7 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
-			<mvc:exclude-mapping path="/user/login" />
+			<mvc:exclude-mapping path="/users/login" />
 			<bean class="com.zes.squad.gmh.web.interceptor.AuthInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>

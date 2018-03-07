@@ -52,7 +52,7 @@ public class UserController extends BaseController {
     private MessageService messageService;
 
     @RequestMapping(path = "/login", method = { RequestMethod.POST })
-    public JsonResult<UserVo> doLoginWithAccount(UserLoginParams params) {
+    public JsonResult<UserVo> doLoginWithAccount(@RequestBody UserLoginParams params) {
         ensureParameterExist(params, "登录信息为空");
         ensureParameterExist(params.getAccount(), "账号为空");
         ensureParameterExist(params.getPassword(), "密码为空");

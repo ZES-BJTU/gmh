@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ControllerExceptionHandler {
 
     @ExceptionHandler({ GmhException.class })
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public JsonResult<Void> handleGmhException(GmhException gmhException) {
         log.error("controller层捕获异常", gmhException);
         return JsonResults.fail(gmhException.getCode(), gmhException.getMessage());

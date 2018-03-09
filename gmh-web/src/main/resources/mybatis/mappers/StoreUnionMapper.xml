@@ -14,7 +14,6 @@
 		s.`id` AS store_id,
 		s.`name` AS store_name,
 		s.`address` AS store_address,
-		s.`principal_id` AS store_principal_id,
 		s.`phone` AS store_phone,
 		s.`remark` = store_remark,
 		s.`created_time` AS store_created_time,
@@ -30,7 +29,7 @@
 		LEFT JOIN 
 		user u
 		ON
-		s.`principal_id` = u.`id`
+		u.`store_id` = s.`id`
 		<where>
 			s.`id` = #{id, jdbcType=BIGINT}
 		</where>
@@ -46,7 +45,7 @@
 		LEFT JOIN
 		user u
 		ON
-		s.`principal_id` = u.`id`
+		u.`store_id` = s.`id`
 		<if test="search != null and search != ''">
 			<bind name="condition" value="'%' + search + '%'" />
 			<where>

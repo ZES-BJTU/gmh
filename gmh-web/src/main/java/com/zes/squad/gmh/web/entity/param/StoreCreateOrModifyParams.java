@@ -8,7 +8,6 @@ public class StoreCreateOrModifyParams {
     private Long   id;
     private String name;
     private String address;
-    private Long   principalId;
     /**
      * 门店座机
      */

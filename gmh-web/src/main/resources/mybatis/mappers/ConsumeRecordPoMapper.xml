@@ -33,5 +33,32 @@
 		#{storeId, jdbcType=BIGINT},
 		#{consumeTime, jdbcType=TIMESTAMP})
 	</insert>
-
+	<select id="listConsumeRecordByCondition" parameterType="com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition" resultMap="BaseResultMap">
+		SELECT 
+		*
+		from
+		consume_record
+		<where>
+			<if test="storeId != null">
+				`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="consumeType != null ">
+				AND `consume_type` = #{consumeType, jdbcType=INTEGER}
+			</if>
+			<if test="beginTime != null and endTime != null">
+				AND <![CDATA[#{beginTime,jdbcType=TIMESTAMP}<= consume_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="beginTime != null and endTime == null">
+				AND <![CDATA[ consume_time >= #{beginTime,jdbcType=TIMESTAMP}  ]]>
+			</if>
+			<if test="beginTime == null and endTime != null">
+				AND <![CDATA[ consume_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
+			</if>
+			<if test="keyWrods != null and keyWrods != ''">
+				<bind name="condition" value="'%' + keyWrods + '%'"/>
+				CONCAT(`trade_serial_number`,`customer_mobile`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	
+	</select>
 </mapper>

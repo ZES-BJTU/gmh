@@ -1,22 +1,34 @@
 package com.zes.squad.gmh.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.zes.squad.gmh.common.converter.CommonConverter;
+import com.zes.squad.gmh.common.page.PagedLists;
+import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
+import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.StockPo;
+import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
+import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
+import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
+import com.zes.squad.gmh.mapper.ConsumeRecordDetailUnionMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordGiftMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
@@ -33,7 +45,11 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	@Autowired
 	private TradeSerialNumberMapper tradeSerialNumberMapper;
 	@Autowired
-	private ConsumeRecordDetailMapper consumeRecordProductMapper;
+	private ConsumeRecordDetailMapper consumeRecordDetailMapper;
+	@Autowired
+	private ConsumeRecordDetailUnionMapper consumeRecordDetailUnionMapper;
+	@Autowired
+	private ConsumeRecordGiftMapper consumeRecordGiftMapper;
 	@Autowired
 	private ProjectStockMapper projectStockMapper;
 	@Autowired
@@ -62,7 +78,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		//TODO 根据支付方式扣除会员卡或赠内容
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
-			consumeRecordProductMapper.insert(crpp);
+			consumeRecordDetailMapper.insert(crpp);
 			//TODO 产品中扣除相应数量
 		}
 	}
@@ -92,7 +108,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
-			consumeRecordProductMapper.insert(crpp);
+			consumeRecordDetailMapper.insert(crpp);
 		}
 		for(ConsumeRecordGiftPo gift : gifts){
 			gift.setTradeSerialNumber(tradeSerialNumber);
@@ -120,7 +136,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		//TODO 根据支付方式扣除会员卡或赠内容
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
-			consumeRecordProductMapper.insert(crpp);
+			consumeRecordDetailMapper.insert(crpp);
 		}
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			List<ProjectStockPo> psps = projectStockMapper.getProjectStockByProId(crpp.getProductId());
@@ -132,6 +148,32 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				stockMapper.updateTotalAmount(map);
 			}
 		}
+		
+	}
+
+	@Override
+	public PagedList<ConsumeRecordUnion> listPagedConsumeRecords(ConsumeRecordQueryCondition condition) {
+		int pageNum = condition.getPageNum();
+        int pageSize = condition.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+        ConsumeRecordUnion consumeRecordUnion = new ConsumeRecordUnion();
+        List<ConsumeRecordUnion> consumeRecordUnions = new ArrayList<ConsumeRecordUnion>();
+        List<ConsumeRecordPo> consumeRecordPos = consumeRecordMapper.listConsumeRecordByCondition(condition);
+        List<ConsumeRecordDetailUnion> consumeRecordDetailUnioins = new ArrayList<ConsumeRecordDetailUnion>();
+        List<ConsumeRecordGiftUnion> consumeRecordGiftUnions = new ArrayList<ConsumeRecordGiftUnion>();
+        if (CollectionUtils.isEmpty(consumeRecordPos)) {
+            return PagedLists.newPagedList(pageNum, pageSize);
+        }
+        for(ConsumeRecordPo consumeRecordPo : consumeRecordPos){
+        	consumeRecordUnion.setConsumeRecordPo(consumeRecordPo);
+        	consumeRecordDetailUnioins = consumeRecordDetailUnionMapper.getRecordDetailUnionByTradeSerialNumber(consumeRecordPo.getTradeSerialNumber());
+        	consumeRecordGiftUnions = consumeRecordGiftMapper.getRecordGiftUnionByTradeSerialNumber(consumeRecordPo.getTradeSerialNumber());
+        	consumeRecordUnion.setConsumeRecordDetailUnion(consumeRecordDetailUnioins);
+        	consumeRecordUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
+        	consumeRecordUnions.add(CommonConverter.map(consumeRecordUnion, ConsumeRecordUnion.class));
+        }
+        PageInfo<ConsumeRecordUnion> info = new PageInfo<>(consumeRecordUnions);
+        return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), consumeRecordUnions);
 		
 	}
 

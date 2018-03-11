@@ -24,6 +24,7 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
+import com.zes.squad.gmh.entity.union.ProductUnion;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
@@ -52,7 +53,7 @@ public class ProductController {
         ProductTypePo newTypePo = productService.createProductType(po);
         ProductTypeVo vo = CommonConverter.map(newTypePo, ProductTypeVo.class);
         return JsonResults.success(vo);
-    } 
+    }
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -65,7 +66,6 @@ public class ProductController {
     @RequestMapping(path = "/types", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProductTypes(@RequestBody List<Long> ids) {
-        ensureParameterExist(ids, "请选择待删除产品分类");
         ensureCollectionNotEmpty(ids, "请选择待删除产品分类");
         productService.removeProductTypes(ids);
         return JsonResults.success();
@@ -115,14 +115,62 @@ public class ProductController {
         ensureParameterExist(params.getName(), "产品名称为空");
         ensureParameterExist(params.getUnitName(), "产品计量单位为空");
         ensureParameterExist(params.getUnitPrice(), "产品单价为空");
-        ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "产品单价不能小于0");
-        ensureParameterExist(params.getTotalAmount(), "产品总量为空");
-        ensureParameterValid((params.getTotalAmount().compareTo(BigDecimal.ZERO) == 0)
-                || (params.getTotalAmount().compareTo(BigDecimal.ZERO) == 1), "产品总量不能小于0");
+        ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "产品单价必须大于0");
         ProductPo po = CommonConverter.map(params, ProductPo.class);
         ProductPo newPo = productService.createProduct(po);
         ProductVo vo = CommonConverter.map(newPo, ProductVo.class);
         return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public JsonResult<Void> doRemoveProduct(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择待删除商品");
+        productService.removeProduct(id);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public JsonResult<Void> doRemoveProducts(@RequestBody List<Long> ids) {
+        ensureCollectionNotEmpty(ids, "请选择待删除商品");
+        productService.removeProducts(ids);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
+    public JsonResult<ProductVo> doModifyProducts(@PathVariable("id") Long id,
+                                                  @RequestBody ProductCreateOrModifyParams params) {
+        ensureParameterExist(id, "请选择待修改商品");
+        ensureParameterExist(params, "请选择待修改商品");
+        ensureParameterValid(id.equals(params.getId()), "待修改商品不存在");
+        if (params.getUnitPrice() != null) {
+            ensureParameterExist(params.getUnitPrice(), "产品单价为空");
+            ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "产品单价必须大于0");
+        }
+        ProductPo po = CommonConverter.map(params, ProductPo.class);
+        ProductPo newPo = productService.modifyProduct(po);
+        ProductVo vo = CommonConverter.map(newPo, ProductVo.class);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/{id}", method = { RequestMethod.GET })
+    public JsonResult<ProductVo> doQueryProductDetail(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择商品");
+        ProductUnion union = productService.queryProductDetail(id);
+        ProductVo vo = buildProductVoByUnion(union);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(method = { RequestMethod.GET })
+    public JsonResult<Void> doListPagedProducts() {
+        return JsonResults.success();
+    }
+    
+    private ProductVo buildProductVoByUnion(ProductUnion union) {
+        ProductVo vo = CommonConverter.map(union.getProductPo(), ProductVo.class);
+        vo.setProductTypeName(union.getProductTypePo().getName());
+        return vo;
     }
 
 }

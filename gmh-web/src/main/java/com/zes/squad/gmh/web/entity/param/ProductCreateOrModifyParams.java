@@ -12,6 +12,5 @@ public class ProductCreateOrModifyParams {
     private String     name;
     private String     unitName;
     private BigDecimal unitPrice;
-    private BigDecimal totalAmount;
 
 }

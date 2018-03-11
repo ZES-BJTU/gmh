@@ -1,9 +1,11 @@
 package com.zes.squad.gmh.web.helper;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 import com.zes.squad.gmh.web.entity.param.QueryParams;
 
 public class CheckHelper {

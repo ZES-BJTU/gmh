@@ -1,12 +1,13 @@
 package com.zes.squad.gmh.web.controller;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 import com.zes.squad.gmh.service.MessageService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;

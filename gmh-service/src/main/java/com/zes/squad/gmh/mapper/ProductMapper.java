@@ -15,14 +15,6 @@ public interface ProductMapper {
     int insert(ProductPo po);
 
     /**
-     * 批量增加产品
-     * 
-     * @param pos
-     * @return
-     */
-    int batchInsert(List<ProductPo> pos);
-
-    /**
      * 根据id删除产品
      * 
      * @param id

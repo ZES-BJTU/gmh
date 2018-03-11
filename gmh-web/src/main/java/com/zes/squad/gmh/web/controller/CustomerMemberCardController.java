@@ -22,7 +22,6 @@ import com.zes.squad.gmh.service.CustomerMemberCardService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.CustomerMemberCardQueryParams;
-import com.zes.squad.gmh.web.entity.vo.AppointmentVo;
 import com.zes.squad.gmh.web.entity.vo.CustomerMemberCardVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 

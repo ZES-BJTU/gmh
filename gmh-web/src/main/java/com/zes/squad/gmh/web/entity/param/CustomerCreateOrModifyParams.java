@@ -15,6 +15,6 @@ public class CustomerCreateOrModifyParams{
 	private Integer gender;
 	private String mobile;
 	private Date birthday;
-	private Integer source;
+	private String source;
 	private String remark;
 }

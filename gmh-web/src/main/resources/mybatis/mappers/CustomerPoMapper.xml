@@ -22,8 +22,7 @@
 		#{gender, jdbcType=INTEGER},
 		#{mobile, jdbcType=VARCHAR},
 		#{birthday, jdbcType=DATE},
-		#{source,
-		jdbcType=INTEGER},
+		#{source,jdbcType=VARCHAR},
 		#{storeId, jdbcType=BIGINT},
 		#{remark,
 		jdbcType=VARCHAR})
@@ -35,7 +34,7 @@
 				`name`=#{name, jdbcType=VARCHAR},
 			</if>
 			<if test="gender != null">
-				`gender`=#{gender, jdbcType=TINYINT},			
+				`gender`=#{gender, jdbcType=TINYINT},
 			</if>
 			<if test="mobile != null and mobile != ''">
 				`mobile`=#{mobile, jdbcType=VARCHAR},
@@ -53,20 +52,20 @@
 				`remark`= #{remark,jdbcType=VARCHAR}
 			</if>
 		</set>
-		where 
+		where
 		`id`= #{id,jdbcType=INTEGER}
 	</update>
 	<delete id="delete" parameterType="long">
-		delete from customer 
+		delete from customer
 		where
 		`id` = #{id,jdbcType=INTEGER}
 	</delete>
 	<select id="selectByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.CustomerQueryCondition"
 		resultMap="BaseResultMap">
-		SELECT 
+		SELECT
 		*
-		from 
+		from
 		customer
 		<where>
 			<if test="storeId != null">
@@ -79,7 +78,7 @@
 				AND `source` = #{source, jdbcType=VARCHAR}
 			</if>
 			<if test="keyWords != null and keyWords != ''">
-				<bind name="condition" value="'%' + keyWords + '%'"/>
+				<bind name="condition" value="'%' + keyWords + '%'" />
 				CONCAT(`name`,`mobile`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>

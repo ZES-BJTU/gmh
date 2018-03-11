@@ -17,7 +17,7 @@ public class CustomerPo extends Po{
 	private String mobile;
 	private Date birthday;
 	private Date inputTime;
-	private Integer source;
+	private String source;
 	private Long storeId;
 	private String remark;
 }

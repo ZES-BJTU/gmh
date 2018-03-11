@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.entity.union;
 
+import com.zes.squad.gmh.entity.po.ProductAmountPo;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
 import com.zes.squad.gmh.entity.po.StorePo;
@@ -15,8 +16,9 @@ public class ProductUnion extends Union {
 
     private static final long serialVersionUID = 1L;
 
-    private ProductPo         productPo;
     private ProductTypePo     productTypePo;
+    private ProductPo         productPo;
+    private ProductAmountPo   productAmountPo;
     private StorePo           storePo;
 
 }

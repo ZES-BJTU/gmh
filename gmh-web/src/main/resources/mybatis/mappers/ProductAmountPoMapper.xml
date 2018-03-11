@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductAmountMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="product_id" jdbcType="BIGINT" property="productId" />
+		<result column="amount" jdbcType="DECIMAL" property="amount" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `product_id`, `amount`, `store_id`,
+		`created_time`, `modified_time`
+	</sql>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO product_amount(`product_id`, `amount`, `store_id`) 
+		VALUES 
+		(#{productId, jdbcType=BIGINT},
+		#{amount, jdbcType=DECIMAL},
+		#{storeId, jdbcType=BIGINT})
+	</insert>
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM product_amount WHERE `id` = #{id, jdbcType=BIGINT}
+	</delete>
+	<delete id="batchDelete" parameterType="long">
+		DELETE FROM product_amount WHERE `id` IN
+		<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=BIGINT}
+		</foreach>
+	</delete>
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		UPDATE product_type
+		<set>
+			<if test="productId != null">
+				`product_id` = #{productId, jdbcType=BIGINT},
+			</if>
+			<if test="amount != null">
+				`amount` = #{amount, jdbcType=DECIMAL},
+			</if>
+		</set>
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</update>
+</mapper>

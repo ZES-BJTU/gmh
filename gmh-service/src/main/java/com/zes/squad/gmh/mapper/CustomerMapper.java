@@ -14,4 +14,6 @@ public interface CustomerMapper {
 	int delete(Long id);
 
 	List<CustomerPo> selectByCondition(CustomerQueryCondition condition);
+	
+	CustomerPo getById(Long id);
 }

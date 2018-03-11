@@ -54,8 +54,8 @@
 			<if test="beginTime == null and endTime != null">
 				AND <![CDATA[ consume_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
 			</if>
-			<if test="keyWrods != null and keyWrods != ''">
-				<bind name="condition" value="'%' + keyWrods + '%'"/>
+			<if test="keyWords != null and keyWords != ''">
+				<bind name="condition" value="'%' + keyWords + '%'"/>
 				CONCAT(`trade_serial_number`,`customer_mobile`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>

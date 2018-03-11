@@ -16,6 +16,7 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
+import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
@@ -29,7 +30,8 @@ import com.zes.squad.gmh.web.helper.CheckHelper;
 public class ConsumeController {
 	@Autowired
     private ConsumeRecordService consumeRecordService;
-
+	@Autowired
+    private CustomerMapper customerMapper;
 	 @RequestMapping(path = "/createProductConsume", method = { RequestMethod.PUT })
 	    public JsonResult<Void> doCreateProductConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		 	consumeRecordService.createProductConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails());
@@ -67,6 +69,7 @@ public class ConsumeController {
 		ConsumeRecordVo vo = CommonConverter.map(consumeRecordUnion.getConsumeRecordPo(), ConsumeRecordVo.class);
 		vo.setConsumeRecordDetailUnions(consumeRecordUnion.getConsumeRecordDetailUnion());
 		vo.setConsumeRecordGiftUnions(consumeRecordUnion.getConsumeRecordGiftUnion());
+		vo.setCustomerName(customerMapper.getById(consumeRecordUnion.getConsumeRecordPo().getCustomerId()).getName());
 		return vo;
 	}
 }

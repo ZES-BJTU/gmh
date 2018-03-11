@@ -22,6 +22,23 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<resultMap type="com.zes.squad.gmh.entity.union.CustomerMemberCardUnion" id="union">
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="member_card_name" jdbcType="VARCHAR" property="memberCardName" />
+		<result column="remaining_money" jdbcType="DECIMAL" property="remainingMoney" />
+		<result column="remaining_times" jdbcType="DATE" property="remainingTimes" />
+		<result column="is_valid" jdbcType="TINYINT" property="isValid" />
+		<result column="is_returned" jdbcType="TINYINT" property="isReturned" />
+		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
+		<result column="returned_time" jdbcType="TIMESTAMP" property="returnedTime" />
+		<result column="returned_money" jdbcType="DECIMAL" property="returnedMoney" />
+		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
+		<result column="is_turned" jdbcType="TINYINT" property="isTurned" />
+		<result column="turned_reason" jdbcType="VARCHAR" property="turnedReason" />
+		<result column="turned_time" jdbcType="TIMESTAMP" property="turnedTime" />
+		<result column="turned_money" jdbcType="DECIMAL" property="turnedMoney" />
+		<result column="unique_identifier" jdbcType="VARCHAR" property="uniqueIdentifier" />	
+	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardPo">
 		INSERT INTO customer_member_card
 		(`customer_id`,`member_card_id`,`remaining_money`,`remaining_times`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
@@ -35,4 +52,35 @@
 		#{uniqueIdentifier, jdbcType=VARCHAR},
 		#{storeId, jdbcType=BIGINT})
 	</insert>
+	<select id="listCustomerMemberCardByCondition" parameterType="com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition" resultMap="union">
+		select 
+		cus.`name` as `customer_name`,
+		cmd.`remaining_money` as `remaining_money`,
+		cmd.`remaining_times` as `remaining_times`,
+		cmd.`is_valid` as `is_valid`,
+		cmd.`is_returned` as `is_returned`,
+		cmd.`returned_reason` as `returned_reason`,
+		cmd.`returned_time` as `returned_time`,
+		cmd.`returned_money` as `returned_money`,
+		cmd.`is_turned` as `is_turned`,
+		cmd.`turned_reason` as `turned_reason`,
+		cmd.`turned_time` as `turned_time`,
+		cmd.`turned_money` as `turned_money`,
+		cmd.`unique_identifier` as `unique_identifier`
+		from 
+		customer_member_card cmd
+		left join customer cus on cus.`id`=cmd.`customer_id`
+		<where>
+		<if test="storeId != null">
+				cmd.`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+		<if test="keyWords != null and keyWords != ''">
+				<bind name="condition" value="'%' + keyWords + '%'"/>
+				`customer_name` LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	
+	</select>
+	
+	
 </mapper>

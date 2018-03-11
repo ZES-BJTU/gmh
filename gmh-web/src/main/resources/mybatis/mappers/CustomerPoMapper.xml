@@ -83,4 +83,9 @@
 			</if>
 		</where>
 	</select>
+	<select id="getById" parameterType="long" resultMap="BaseResultMap">
+		select * from customer
+		where
+		id=#{id,jdbcType=INTEGER}
+	</select>
 </mapper>

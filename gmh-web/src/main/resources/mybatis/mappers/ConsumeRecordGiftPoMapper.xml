@@ -47,7 +47,7 @@
 		from 
 		consume_record_gift g
 		left join product d on d.`id`=g.`product_id`
-		left join project j on j.`id`=g.`porject_id`
+		left join project j on j.`id`=g.`project_id`
 		where
 		g.`trade_serial_number`=#{tradeSerialNumber,jdbcType=VARCHAR}
 	</select>

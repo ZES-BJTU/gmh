@@ -47,11 +47,19 @@ public interface ProductMapper {
     int updateSelective(ProductPo po);
 
     /**
-     * 查询产品
+     * 根据id查询产品
      * 
      * @param id
      * @return
      */
     ProductPo selectById(Long id);
+
+    /**
+     * 根据名称查询产品
+     * 
+     * @param name
+     * @return
+     */
+    ProductPo selectByName(String name);
 
 }

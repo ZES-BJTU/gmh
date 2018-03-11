@@ -42,6 +42,13 @@
 		WHERE `id` = #{id, jdbcType=BIGINT}
 		LIMIT 1
 	</select>
+	<select id="selectByName" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM product_type
+		WHERE `name` = #{name, jdbcType=VARCHAR}
+		LIMIT 1
+	</select>
 	<select id="selectByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition"
 		resultMap="BaseResultMap">

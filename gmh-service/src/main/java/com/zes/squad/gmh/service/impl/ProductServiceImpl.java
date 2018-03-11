@@ -1,6 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 
 import java.util.List;
 
@@ -35,6 +35,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductTypePo createProductType(ProductTypePo po) {
+        ProductTypePo existedTypePo = productTypeMapper.selectByName(po.getName());
+        ensureEntityNotExist(existedTypePo, "产品分类已存在");
         productTypeMapper.insert(po);
         return po;
     }

@@ -52,7 +52,7 @@ public class ProductController {
         ProductTypePo newTypePo = productService.createProductType(po);
         ProductTypeVo vo = CommonConverter.map(newTypePo, ProductTypeVo.class);
         return JsonResults.success(vo);
-    }
+    } 
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)

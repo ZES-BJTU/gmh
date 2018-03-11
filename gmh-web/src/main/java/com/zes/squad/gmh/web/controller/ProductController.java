@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
@@ -30,6 +32,7 @@ import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ProductCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.ProductTypeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.ProductTypeQueryParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.ProductTypeVo;
 import com.zes.squad.gmh.web.entity.vo.ProductVo;
@@ -163,10 +166,25 @@ public class ProductController {
     }
 
     @RequestMapping(method = { RequestMethod.GET })
-    public JsonResult<Void> doListPagedProducts() {
-        return JsonResults.success();
+    public JsonResult<PagedList<ProductVo>> doListPagedProducts(ProductTypeQueryParams params) {
+        ensureParameterExist(params, "产品查询条件为空");
+        params.setPageNum(PaginationHelper.toPageNum(params.getOffset(), params.getLimit()));
+        params.setLimit(params.getLimit());
+        CheckHelper.checkPageParams(params);
+        ProductQueryCondition condition = CommonConverter.map(params, ProductQueryCondition.class);
+        PagedList<ProductUnion> pagedUnions = productService.listPagedProducts(condition);
+        if (CollectionUtils.isEmpty(pagedUnions.getData())) {
+            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+        }
+        List<ProductVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
+        for (ProductUnion union : pagedUnions.getData()) {
+            ProductVo vo = buildProductVoByUnion(union);
+            vos.add(vo);
+        }
+        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
+                pagedUnions.getTotalCount(), vos));
     }
-    
+
     private ProductVo buildProductVoByUnion(ProductUnion union) {
         ProductVo vo = CommonConverter.map(union.getProductPo(), ProductVo.class);
         vo.setProductTypeName(union.getProductTypePo().getName());

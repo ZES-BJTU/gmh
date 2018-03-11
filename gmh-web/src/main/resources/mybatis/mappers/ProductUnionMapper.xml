@@ -3,8 +3,73 @@
 <mapper namespace="com.zes.squad.gmh.mapper.ProductUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.ProductUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="productTypePo"
+			resultMap="com.zes.squad.gmh.mapper.ProductTypeMapper.BaseResultMap"
+			columnPrefix="pt_"/>
+		<association property="productPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductMapper.BaseResultMap"
+			columnPrefix="p_"/>
+		<association property="productAmountPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductAmountMapper.BaseResultMap"
+			columnPrefix="pa_"/>
+		<association property="storePo"
+			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
+			columnPrefix="s_"/>
 	</resultMap>
-	<sql id="Base_Column_List">
-		`id`
-	</sql>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		p.`id` AS id,
+		pt.`id` AS pt_id,
+		pt.`name` AS pt_name,
+		p.`id` AS p_id,
+		p.`product_type_id` AS p_product_type_id,
+		p.`name` AS p_name,
+		p.`unit_name` AS p_unit_name,
+		p.`unit_price` AS p_unit_price,
+		pa.`id` AS pa_id,
+		pa.`product` AS pa_product_id,
+		pa.`amount` AS pa_amount,
+		pa.`store_id` AS pa_store_id,
+		s.`id` AS s_id,
+		s.`name` AS s_name
+		FROM
+		product p
+		LEFT JOIN
+		product_type pt
+		ON
+		p.`product_type_id` = pt.`id`
+		<where>
+			p.`id` = #{id, jdbcType=BIGINT}
+		</where>
+	</select>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ProductQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		p.`id` AS id,
+		pt.`id` AS pt_id,
+		pt.`name` AS pt_name,
+		p.`id` AS p_id,
+		p.`product_type_id` AS p_product_type_id,
+		p.`name` AS p_name,
+		p.`unit_name` AS p_unit_name,
+		p.`unit_price` AS p_unit_price
+		FROM
+		product p
+		LEFT JOIN
+		product_type pt
+		ON
+		p.`product_type_id` = pt.`id`
+		<where>
+			<if test="productTypeId != null">
+				p.`product_type_id` = #{productTypeId}
+			</if>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				CONCAT(pt.`name`, p.`name`)
+				LIKE
+				#{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
 </mapper>

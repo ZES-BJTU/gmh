@@ -111,12 +111,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductUnion queryProductDetail(Long id) {
-        return productUnionMapper.selectById(id);
+        ProductUnion union = productUnionMapper.selectById(id);
+        ensureEntityExist(union, "产品不存在");
+        ensureEntityExist(union.getId(), "产品不存在");
+        ensureEntityExist(union.getProductTypePo(), "产品分类不存在");
+        ensureEntityExist(union.getProductPo(), "产品不存在");
+        return union;
     }
 
     @Override
     public PagedList<ProductUnion> listPagedProducts(ProductQueryCondition condition) {
-        return null;
+        int pageNum = condition.getPageNum();
+        int pageSize = condition.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+        List<ProductUnion> unions = productUnionMapper.selectByCondition(condition);
+        if (CollectionUtils.isEmpty(unions)) {
+            return PagedLists.newPagedList(pageNum, pageSize);
+        }
+        PageInfo<ProductUnion> info = new PageInfo<>(unions);
+        return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
 
 }

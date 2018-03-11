@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 
 import java.util.List;
 
@@ -12,7 +13,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
-import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProductPo;
@@ -35,6 +35,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductTypePo createProductType(ProductTypePo po) {
+        ProductTypePo existingTypePo = productTypeMapper.selectByName(po.getName());
+        ensureEntityNotExist(existingTypePo, "产品分类已存在");
         productTypeMapper.insert(po);
         return po;
     }
@@ -77,7 +79,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductPo createProduct(ProductPo po) {
-        po.setStoreId(ThreadContext.getUserStoreId());
+        ProductPo existingPo = productMapper.selectByName(po.getName());
+        ensureEntityNotExist(existingPo, "产品已存在");
         ProductTypePo typePo = productTypeMapper.selectById(po.getProductTypeId());
         ensureEntityExist(typePo, "产品分类不存在");
         productMapper.insert(po);
@@ -96,6 +99,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductPo modifyProduct(ProductPo po) {
+        if (po.getProductTypeId() != null) {
+            ProductTypePo typePo = productTypeMapper.selectById(po.getProductTypeId());
+            ensureEntityExist(typePo, "产品分类不存在");
+        }
         productMapper.updateSelective(po);
         ProductPo newPo = productMapper.selectById(po.getId());
         ensureEntityExist(newPo, "产品不存在");

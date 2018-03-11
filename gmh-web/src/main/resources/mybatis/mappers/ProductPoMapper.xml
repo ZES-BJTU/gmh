@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zes.squad.gmh.mapper.ProductTypeMapper">
-	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProductTypePo">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProductPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
+		<id column="product_type_id" jdbcType="BIGINT" property="productTypeId" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="unit_name" jdbcType="VARCHAR" property="unitName" />
+		<result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		`id`, `name`,
+		`id`, `product_type_id`,
+		`name`, `unit_name`, `unit_price`,
 		`created_time`, `modified_time`
 	</sql>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductTypePo">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO product_type(`name`) VALUES (#{name, jdbcType=VARCHAR})
+		INSERT INTO product(`product_type_id`, `name`, `unit_name`, `unit_price`) 
+		VALUES 
+		(#{productTypeId, jdbcType=BIGINT},
+		#{name, jdbcType=VARCHAR}
+		#{unitName, jdbcType=VARCHAR}
+		#{unitPrice, jdbcType=DECIMAL})
 	</insert>
 	<delete id="deleteById" parameterType="long">
-		DELETE FROM product_type WHERE `id` = #{id, jdbcType=BIGINT}
+		DELETE FROM product WHERE `id` = #{id, jdbcType=BIGINT}
 	</delete>
 	<delete id="batchDelete" parameterType="long">
-		DELETE FROM product_type WHERE `id` IN
+		DELETE FROM product WHERE `id` IN
 		<foreach collection="list" item="id" separator="," open="(" close=")">
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
-	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProductTypePo">
-		UPDATE product_type
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProductPo">
+		UPDATE product
 		<set>
+			<if test="productTypeId != null">
+				`product_type_id` = #{productTypeId, jdbcType=BIGINT},
+			</if>
 			<if test="name != null and name != ''">
 				`name` = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="unitName != null and unitName != ''">
+				`unit_name` = #{unitName, jdbcType=VARCHAR},
+			</if>
+			<if test="unitPrice != null">
+				`unit_price` = #{unitPrice, jdbcType=DECIMAL},
 			</if>
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}
@@ -38,28 +56,15 @@
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM product_type
+		FROM product
 		WHERE `id` = #{id, jdbcType=BIGINT}
 		LIMIT 1
 	</select>
 	<select id="selectByName" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List"/>
-		FROM product_type
+		FROM product
 		WHERE `name` = #{name, jdbcType=VARCHAR}
 		LIMIT 1
-	</select>
-	<select id="selectByCondition"
-		parameterType="com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition"
-		resultMap="BaseResultMap">
-		SELECT
-		<include refid="Base_Column_List" />
-		FROM product_type pt
-		<where>
-			<if test="search != null and search != ''">
-				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(pt.`name`) LIKE #{condition, jdbcType=VARCHAR}
-			</if>
-		</where>
 	</select>
 </mapper>

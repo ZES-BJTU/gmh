@@ -9,6 +9,7 @@ public class ProductVo {
 
     private Long       id;
     private Long       productTypeId;
+    private String     productTypeName;
     private String     name;
     private String     unitName;
     private BigDecimal unitPrice;

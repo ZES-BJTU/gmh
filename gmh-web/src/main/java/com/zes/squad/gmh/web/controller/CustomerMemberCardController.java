@@ -17,42 +17,60 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
+import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.CustomerMemberCardQueryParams;
+import com.zes.squad.gmh.web.entity.param.ReturnCardParams;
+import com.zes.squad.gmh.web.entity.param.TurnCardParams;
 import com.zes.squad.gmh.web.entity.vo.CustomerMemberCardVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
 @RequestMapping(path = "/customerMemberCard")
 @RestController
 public class CustomerMemberCardController {
-	
+
 	@Autowired
-    private CustomerMemberCardService customerMemberCardService;
-	
-	 @RequestMapping(path = "/list", method = { RequestMethod.PUT })
-	    public JsonResult<PagedList<CustomerMemberCardVo>> doListPagedConsumeRecord(@RequestBody CustomerMemberCardQueryParams params) {
-	        CheckHelper.checkPageParams(params);
-	        CustomerMemberCardQueryCondition customerMemberCardQueryCondition = CommonConverter.map(params,
-	        		CustomerMemberCardQueryCondition.class);
-	        customerMemberCardQueryCondition.setStoreId(ThreadContext.getUserStoreId());
-	        PagedList<CustomerMemberCardUnion> pagedUnions = customerMemberCardService.listPagedCustomerMemberCard(customerMemberCardQueryCondition);
-	        if (CollectionUtils.isEmpty(pagedUnions.getData())) {
-	            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
-	        }
-	        List<CustomerMemberCardVo> customerMemberCardVos = new ArrayList<CustomerMemberCardVo>();
-	        for (CustomerMemberCardUnion customerMemberCardUnion : pagedUnions.getData()) {
-	        	CustomerMemberCardVo customerMemberCardVo = buildAppointmentVoByUnion(customerMemberCardUnion);
-	        	customerMemberCardVos.add(customerMemberCardVo);
-	        }
-	        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
-	                pagedUnions.getTotalCount(), customerMemberCardVos));
-	    }
+	private CustomerMemberCardService customerMemberCardService;
+
+	@RequestMapping(path = "/list", method = { RequestMethod.PUT })
+	public JsonResult<PagedList<CustomerMemberCardVo>> doListPagedConsumeRecord(
+			@RequestBody CustomerMemberCardQueryParams params) {
+		CheckHelper.checkPageParams(params);
+		CustomerMemberCardQueryCondition customerMemberCardQueryCondition = CommonConverter.map(params,
+				CustomerMemberCardQueryCondition.class);
+		customerMemberCardQueryCondition.setStoreId(ThreadContext.getUserStoreId());
+		PagedList<CustomerMemberCardUnion> pagedUnions = customerMemberCardService
+				.listPagedCustomerMemberCard(customerMemberCardQueryCondition);
+		if (CollectionUtils.isEmpty(pagedUnions.getData())) {
+			return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+		}
+		List<CustomerMemberCardVo> customerMemberCardVos = new ArrayList<CustomerMemberCardVo>();
+		for (CustomerMemberCardUnion customerMemberCardUnion : pagedUnions.getData()) {
+			CustomerMemberCardVo customerMemberCardVo = buildAppointmentVoByUnion(customerMemberCardUnion);
+			customerMemberCardVos.add(customerMemberCardVo);
+		}
+		return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
+				pagedUnions.getTotalCount(), customerMemberCardVos));
+	}
+
+	@RequestMapping(path = "/return", method = { RequestMethod.POST })
+	public JsonResult<Void> doReturnCard(@RequestBody ReturnCardParams returnCardParams) {
+		CustomerMemberCardPo po = CommonConverter.map(returnCardParams, CustomerMemberCardPo.class);
+		customerMemberCardService.returnCard(po);
+		return JsonResults.success();
+	}
+	@RequestMapping(path = "/turn", method = { RequestMethod.POST })
+	public JsonResult<Void> doturnCard(@RequestBody TurnCardParams turnCardParams) {
+		CustomerMemberCardPo po = CommonConverter.map(turnCardParams, CustomerMemberCardPo.class);
+		customerMemberCardService.turnCard(po);
+		return JsonResults.success();
+	}
 
 	private CustomerMemberCardVo buildAppointmentVoByUnion(CustomerMemberCardUnion customerMemberCardUnion) {
-		
+
 		CustomerMemberCardVo vo = CommonConverter.map(customerMemberCardUnion, CustomerMemberCardVo.class);
 		vo.setIsReturned(EnumUtils.getDescByKey(customerMemberCardUnion.getIsReturned(), YesOrNoEnum.class));
 		vo.setIsValid(EnumUtils.getDescByKey(customerMemberCardUnion.getIsValid(), YesOrNoEnum.class));

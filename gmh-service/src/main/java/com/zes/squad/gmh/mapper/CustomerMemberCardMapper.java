@@ -12,4 +12,10 @@ public interface CustomerMemberCardMapper {
 
 	List<CustomerMemberCardUnion> listCustomerMemberCardByCondition(CustomerMemberCardQueryCondition condition);
 	
+	int returnCard(CustomerMemberCardPo po);
+
+	int turnCard(CustomerMemberCardPo po);
+	
+	CustomerMemberCardPo getById(Long id);
+	
 }

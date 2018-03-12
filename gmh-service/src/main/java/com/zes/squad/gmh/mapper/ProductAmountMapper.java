@@ -2,6 +2,7 @@ package com.zes.squad.gmh.mapper;
 
 import java.util.List;
 
+import com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition;
 import com.zes.squad.gmh.entity.po.ProductAmountPo;
 
 public interface ProductAmountMapper {
@@ -29,13 +30,20 @@ public interface ProductAmountMapper {
      * @return
      */
     int batchDelete(List<Long> ids);
-
+    
     /**
-     * 更新产品数量
      * 
      * @param po
      * @return
      */
-    int updateSelective(ProductAmountPo po);
+    int updateAmount(ProductAmountPo po);
+
+    /**
+     * 根据条件查询产品数量
+     * 
+     * @param condition
+     * @return
+     */
+    ProductAmountPo selectByCondition(ProductAmountQueryCondition condition);
 
 }

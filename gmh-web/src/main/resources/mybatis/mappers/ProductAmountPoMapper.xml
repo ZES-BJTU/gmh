@@ -15,33 +15,45 @@
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
-			SELECT LAST_INSERT_ID()
+			SELECT
+			LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO product_amount(`product_id`, `amount`, `store_id`) 
-		VALUES 
+		INSERT INTO product_amount(`product_id`, `amount`, `store_id`)
+		VALUES
 		(#{productId, jdbcType=BIGINT},
 		#{amount, jdbcType=DECIMAL},
 		#{storeId, jdbcType=BIGINT})
 	</insert>
 	<delete id="deleteById" parameterType="long">
-		DELETE FROM product_amount WHERE `id` = #{id, jdbcType=BIGINT}
+		DELETE FROM product_amount
+		WHERE `id` = #{id, jdbcType=BIGINT}
 	</delete>
 	<delete id="batchDelete" parameterType="long">
 		DELETE FROM product_amount WHERE `id` IN
-		<foreach collection="list" item="id" separator="," open="(" close=")">
+		<foreach collection="list" item="id" separator="," open="("
+			close=")">
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
-	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
-		UPDATE product_type
+	<update id="updateAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		UPDATE product_amount
 		<set>
-			<if test="productId != null">
-				`product_id` = #{productId, jdbcType=BIGINT},
-			</if>
 			<if test="amount != null">
 				`amount` = #{amount, jdbcType=DECIMAL},
 			</if>
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		product_amount
+		WHERE
+		`product_id` = #{productId, jdbcType=BIGINT}
+		AND
+		`store_id` = #{storeId, jdbcType=BIGINT}
+	</select>
 </mapper>

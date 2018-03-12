@@ -24,16 +24,19 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.ProductAmountPo;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
 import com.zes.squad.gmh.entity.union.ProductUnion;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.ProductAmountCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.ProductCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.ProductQueryParams;
 import com.zes.squad.gmh.web.entity.param.ProductTypeCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.ProductTypeQueryParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeQueryParams;
+import com.zes.squad.gmh.web.entity.vo.ProductAmountVo;
 import com.zes.squad.gmh.web.entity.vo.ProductTypeVo;
 import com.zes.squad.gmh.web.entity.vo.ProductVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
@@ -166,7 +169,7 @@ public class ProductController {
     }
 
     @RequestMapping(method = { RequestMethod.GET })
-    public JsonResult<PagedList<ProductVo>> doListPagedProducts(ProductTypeQueryParams params) {
+    public JsonResult<PagedList<ProductVo>> doListPagedProducts(ProductQueryParams params) {
         ensureParameterExist(params, "产品查询条件为空");
         params.setPageNum(PaginationHelper.toPageNum(params.getOffset(), params.getLimit()));
         params.setLimit(params.getLimit());
@@ -185,9 +188,73 @@ public class ProductController {
                 pagedUnions.getTotalCount(), vos));
     }
 
+    @RequestMapping(path = "/amount", method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<ProductAmountVo> doCreateProductAmount(@RequestBody ProductAmountCreateOrModifyParams params) {
+        ensureParameterExist(params, "产品数量为空");
+        ensureParameterExist(params.getProductId(), "请选择产品");
+        ensureParameterExist(params.getAmount(), "产品数量为空");
+        ProductAmountPo po = CommonConverter.map(params, ProductAmountPo.class);
+        ProductAmountPo newPo = productService.createProductAmount(po);
+        ProductAmountVo vo = CommonConverter.map(newPo, ProductAmountVo.class);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public JsonResult<Void> doRemoveProductAmount(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择待删除产品数量");
+        productService.removeProductAmount(id);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/amount", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public JsonResult<Void> doRemoveProductAmounts(@RequestBody List<Long> ids) {
+        ensureCollectionNotEmpty(ids, "请选择待删除产品数量");
+        productService.removeProductAmounts(ids);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.GET })
+    public JsonResult<ProductVo> doQueryProductDetailWithAmount(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择待查询产品数量");
+        ProductUnion union = productService.queryProductDetailWithAmount(id);
+        ProductVo vo = buildProductVoByUnion(union);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/amount", method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<PagedList<ProductVo>> doListPagedProductsWithAmount(ProductQueryParams params) {
+        ensureParameterExist(params, "产品查询条件为空");
+        params.setPageNum(PaginationHelper.toPageNum(params.getOffset(), params.getLimit()));
+        params.setLimit(params.getLimit());
+        CheckHelper.checkPageParams(params);
+        ProductQueryCondition condition = CommonConverter.map(params, ProductQueryCondition.class);
+        PagedList<ProductUnion> pagedUnions = productService.listPagedProductsWithAmount(condition);
+        if (CollectionUtils.isEmpty(pagedUnions.getData())) {
+            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+        }
+        List<ProductVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
+        for (ProductUnion union : pagedUnions.getData()) {
+            ProductVo vo = buildProductVoByUnion(union);
+            vos.add(vo);
+        }
+        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
+                pagedUnions.getTotalCount(), vos));
+    }
+
     private ProductVo buildProductVoByUnion(ProductUnion union) {
         ProductVo vo = CommonConverter.map(union.getProductPo(), ProductVo.class);
         vo.setProductTypeName(union.getProductTypePo().getName());
+        if (union.getProductAmountPo() != null) {
+            vo.setAmount(union.getProductAmountPo().getAmount());
+            vo.setStoreId(union.getProductAmountPo().getStoreId());
+        }
+        if (union.getStorePo() != null) {
+            vo.setStoreName(union.getStorePo().getName());
+        }
         return vo;
     }
 

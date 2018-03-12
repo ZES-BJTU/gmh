@@ -5,6 +5,7 @@ import java.util.List;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.ProductAmountPo;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
 import com.zes.squad.gmh.entity.union.ProductUnion;
@@ -102,5 +103,37 @@ public interface ProductService {
      * @return
      */
     PagedList<ProductUnion> listPagedProducts(ProductQueryCondition condition);
+
+    /**
+     * @param po
+     * @return
+     */
+    ProductAmountPo createProductAmount(ProductAmountPo po);
+
+    /**
+     * @param id
+     */
+    void removeProductAmount(Long id);
+
+    /**
+     * @param ids
+     */
+    void removeProductAmounts(List<Long> ids);
+
+    /**
+     * 查询产品详情(带数量)
+     * 
+     * @param id
+     * @return
+     */
+    ProductUnion queryProductDetailWithAmount(Long id);
+
+    /**
+     * 分页查询产品详情(带数量)
+     * 
+     * @param condition
+     * @return
+     */
+    PagedList<ProductUnion> listPagedProductsWithAmount(ProductQueryCondition condition);
 
 }

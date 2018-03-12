@@ -13,7 +13,8 @@ public class ProductVo {
     private String     name;
     private String     unitName;
     private BigDecimal unitPrice;
-    private BigDecimal totalAmount;
+    private BigDecimal amount;
     private Long       storeId;
+    private String     storeName;
 
 }

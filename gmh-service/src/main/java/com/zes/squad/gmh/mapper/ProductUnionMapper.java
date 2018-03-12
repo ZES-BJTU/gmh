@@ -23,4 +23,20 @@ public interface ProductUnionMapper {
      */
     List<ProductUnion> selectByCondition(ProductQueryCondition condition);
 
+    /**
+     * 查询产品详情(带产品数量)
+     * 
+     * @param id
+     * @return
+     */
+    ProductUnion selectWithAmountByAmountId(Long id);
+
+    /**
+     * 根据条件查询产品详情(带产品数量)
+     * 
+     * @param condition
+     * @return
+     */
+    List<ProductUnion> selectWithAmountByCondition(ProductQueryCondition condition);
+
 }

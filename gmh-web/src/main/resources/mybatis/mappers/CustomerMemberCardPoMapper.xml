@@ -117,7 +117,7 @@
 		`id`=#{id,jdbcType=INTEGER}
 	</update>
 	
-	<select id="getById" parameterType="long" resultMap="resultMap">
+	<select id="getById" parameterType="long" resultMap="BaseResultMap">
 		select * from customer_member_card
 		where
 		`id`=#{id,jdbcType=INTEGER}

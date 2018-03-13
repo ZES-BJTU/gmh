@@ -224,7 +224,7 @@ public class ProductController {
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/amount", method = { RequestMethod.POST })
+    @RequestMapping(path = "/amount", method = { RequestMethod.GET })
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<PagedList<ProductVo>> doListPagedProductsWithAmount(ProductQueryParams params) {
         ensureParameterExist(params, "产品查询条件为空");

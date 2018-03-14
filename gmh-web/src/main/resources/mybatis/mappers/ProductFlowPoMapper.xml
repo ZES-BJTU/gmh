@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductFlowMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProductFlowPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="product_id" jdbcType="BIGINT" property="productId" />
+		<result column="type" jdbcType="TINYINT" property="type" />
+		<result column="amount" jdbcType="DECIMAL" property="amount" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductFlowPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO product_flow(`product_id`, `type`, `amount`, `store_id`, `status`)
+		VALUES
+		(#{productId, jdbcType=BIGINT},
+		#{type, jdbcType=TINYINT},
+		#{amount, jdbcType=DECIMAL},
+		#{storeId, jdbcType=BIGINT},1)
+	</insert>
+	<update id="updateStatus" parameterType="long">
+		UPDATE product_flow SET `status` = 0
+	</update>
+</mapper>

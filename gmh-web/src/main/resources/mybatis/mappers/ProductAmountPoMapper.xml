@@ -35,15 +35,23 @@
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
-	<update id="updateAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+	<update id="addAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
 		UPDATE product_amount
-		<set>
-			<if test="amount != null">
-				`amount` = #{amount, jdbcType=DECIMAL},
-			</if>
-		</set>
+		SET `amount` = `amount` + #{amount, jdbcType=DECIMAL}
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
+	<update id="reduceAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		UPDATE product_amount
+		SET `amount` = `amount` - #{amount, jdbcType=DECIMAL}
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM
+		product_amount
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</select>
 	<select id="selectByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition"
 		resultMap="BaseResultMap">

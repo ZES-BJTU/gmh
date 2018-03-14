@@ -30,13 +30,26 @@ public interface ProductAmountMapper {
      * @return
      */
     int batchDelete(List<Long> ids);
-    
+
     /**
-     * 
      * @param po
      * @return
      */
-    int updateAmount(ProductAmountPo po);
+    int addAmount(ProductAmountPo po);
+
+    /**
+     * @param po
+     * @return
+     */
+    int reduceAmount(ProductAmountPo po);
+
+    /**
+     * 根据id查询产品数量
+     * 
+     * @param id
+     * @return
+     */
+    ProductAmountPo selectById(Long id);
 
     /**
      * 根据条件查询产品数量

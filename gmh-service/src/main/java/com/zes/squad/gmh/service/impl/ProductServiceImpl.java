@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zes.squad.gmh.common.converter.CommonConverter;
+import com.zes.squad.gmh.common.enums.FlowTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
@@ -20,10 +22,12 @@ import com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProductAmountPo;
+import com.zes.squad.gmh.entity.po.ProductFlowPo;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
 import com.zes.squad.gmh.entity.union.ProductUnion;
 import com.zes.squad.gmh.mapper.ProductAmountMapper;
+import com.zes.squad.gmh.mapper.ProductFlowMapper;
 import com.zes.squad.gmh.mapper.ProductMapper;
 import com.zes.squad.gmh.mapper.ProductTypeMapper;
 import com.zes.squad.gmh.mapper.ProductUnionMapper;
@@ -40,6 +44,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductUnionMapper  productUnionMapper;
     @Autowired
     private ProductAmountMapper productAmountMapper;
+    @Autowired
+    private ProductFlowMapper   productFlowMapper;
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
@@ -176,6 +182,19 @@ public class ProductServiceImpl implements ProductService {
     public void removeProductAmounts(List<Long> ids) {
         int rows = productAmountMapper.batchDelete(ids);
         ensureConditionValid(rows == ids.size(), "产品数量删除失败");
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public ProductAmountPo modifyProductAmount(ProductAmountPo po) {
+        po.setStoreId(ThreadContext.getUserStoreId());
+        productAmountMapper.addAmount(po);
+        ProductAmountPo newPo = productAmountMapper.selectById(po.getId());
+        ensureEntityExist(newPo, "产品数量不存在");
+        ProductFlowPo flowPo = CommonConverter.map(po, ProductFlowPo.class);
+        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
+        productFlowMapper.insert(flowPo);
+        return newPo;
     }
 
     @Override

@@ -121,6 +121,14 @@ public interface ProductService {
     void removeProductAmounts(List<Long> ids);
 
     /**
+     * 添加产品数量(进货)
+     * 
+     * @param po
+     * @return
+     */
+    ProductAmountPo modifyProductAmount(ProductAmountPo po);
+
+    /**
      * 查询产品详情(带数量)
      * 
      * @param id

@@ -203,7 +203,7 @@ public class ProductController {
     @RequestMapping(path = "/amount/{id}", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProductAmount(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "请选择待删除产品数量");
+        ensureParameterExist(id, "请选择待删除数量产品");
         productService.removeProductAmount(id);
         return JsonResults.success();
     }
@@ -211,9 +211,24 @@ public class ProductController {
     @RequestMapping(path = "/amount", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProductAmounts(@RequestBody List<Long> ids) {
-        ensureCollectionNotEmpty(ids, "请选择待删除产品数量");
+        ensureCollectionNotEmpty(ids, "请选择待删除数量产品");
         productService.removeProductAmounts(ids);
         return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PATCH })
+    public JsonResult<ProductAmountVo> doModifyProductAmount(@PathVariable("id") Long id,
+                                                             @RequestBody ProductAmountCreateOrModifyParams params) {
+        ensureParameterExist(id, "请选择待修改数量产品");
+        ensureParameterExist(params, "请选择待修改数量产品");
+        ensureParameterValid(id.equals(params.getId()), "请选择待修改数量产品");
+        ensureParameterExist(params.getProductId(), "待修改产品为空");
+        ensureParameterExist(params.getAmount(), "待修改产品数量为空");
+        ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO)==1,"待修改产品数量应大于0");
+        ProductAmountPo po = CommonConverter.map(params, ProductAmountPo.class);
+        ProductAmountPo newPo = productService.modifyProductAmount(po);
+        ProductAmountVo vo = CommonConverter.map(newPo, ProductAmountVo.class);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/amount/{id}", method = { RequestMethod.GET })

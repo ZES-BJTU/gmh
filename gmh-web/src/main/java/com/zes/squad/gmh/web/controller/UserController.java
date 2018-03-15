@@ -74,7 +74,7 @@ public class UserController extends BaseController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/password/reset", method = { RequestMethod.PATCH })
+    @RequestMapping(path = "/resetPassword", method = { RequestMethod.PATCH })
     public JsonResult<Void> doResetPassword(@RequestBody MessageParams params) {
         ensureParameterExist(params, "短信参数为空");
         ensureParameterExist(params.getMobile(), "手机号为空");

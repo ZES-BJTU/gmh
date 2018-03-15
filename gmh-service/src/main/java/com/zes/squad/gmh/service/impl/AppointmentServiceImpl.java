@@ -1,7 +1,11 @@
 package com.zes.squad.gmh.service.impl;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +23,11 @@ import com.zes.squad.gmh.entity.po.AppointmentProjectPo;
 import com.zes.squad.gmh.entity.union.AppointmentProjectParams;
 import com.zes.squad.gmh.entity.union.AppointmentProjectUnion;
 import com.zes.squad.gmh.entity.union.AppointmentUnion;
+import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
 import com.zes.squad.gmh.mapper.AppointmentMapper;
 import com.zes.squad.gmh.mapper.AppointmentProjectMapper;
 import com.zes.squad.gmh.service.AppointmentService;
+
 
 @Service("appointmentService")
 public class AppointmentServiceImpl implements AppointmentService {
@@ -76,5 +82,19 @@ public class AppointmentServiceImpl implements AppointmentService {
         PageInfo<AppointmentUnion> info = new PageInfo<>(appointmentUnions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), appointmentUnions);
     }
+
+	@Override
+	public List<EmployeeTimeTable> QueryEmployeeTimeTable(Long employeeId, Date date) {
+		Date startTime = date;
+		
+		Date endTime = date;
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("employeeId", employeeId);
+		map.put("startTime", startTime);
+		map.put("endTime", endTime);
+		List<EmployeeTimeTable> tableList = appointmentMapper.queryEmployeeTimeTable(map);
+		
+		return null;
+	}
 
 }

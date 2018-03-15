@@ -22,6 +22,7 @@ import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.entity.condition.AppointmentQueryCondition;
 import com.zes.squad.gmh.entity.po.AppointmentPo;
 import com.zes.squad.gmh.entity.union.AppointmentUnion;
+import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
 import com.zes.squad.gmh.service.AppointmentService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
@@ -78,6 +79,12 @@ public class AppointmentController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), appointmentVos));
+    }
+    
+    @RequestMapping(path = "/queryEmployeeTimeTable", method = { RequestMethod.PUT })
+    public JsonResult<List<EmployeeTimeTable>> queryEmployeeTimeTable(@RequestBody Long employeeId) {
+    	List<EmployeeTimeTable> timeTableList = new ArrayList<EmployeeTimeTable>();
+        return JsonResults.success(timeTableList);
     }
 
     private AppointmentVo buildAppointmentVoByUnion(AppointmentUnion appointmentUnion) {

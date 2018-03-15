@@ -15,6 +15,12 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	
+	<resultMap type="com.zes.squad.gmh.entity.union.EmployeeTimeTable" id="TimeTable">
+		<result column="begin_time" jdbcType="DATE" property="beginTime" />
+		<result column="end_time" jdbcType="DATE" property="endTime" />
+	</resultMap>
+	
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO appointment
 		(`customer_name`,`customer_mobile`,`customer_gender`,`is_vip`,`customer_id`,`is_line`,`status`,`remarks`,`store_id`)
@@ -67,4 +73,14 @@
 			</if>
 		</where>
 	</select>
+	<select id="queryEmployeeTimeTable" parameterType="map" relustMap="TimeTable">
+		select `begin_time`, `end_time` from appointment_project
+		where
+		employee_id=#{employeeId,jdbcType=INTEGER}
+		and
+		begin_time &gt;=#{startWork,jdbcType=TIMESTAMP}
+		and
+		end_time &glt;=#{endWork,jdbcType=TIMESTAMP}
+	</select>
+	
 </mapper>

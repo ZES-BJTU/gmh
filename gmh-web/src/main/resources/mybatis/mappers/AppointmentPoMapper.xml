@@ -73,14 +73,14 @@
 			</if>
 		</where>
 	</select>
-	<select id="queryEmployeeTimeTable" parameterType="map" relustMap="TimeTable">
+	<select id="queryEmployeeTimeTable" parameterType="map" resultMap="TimeTable">
 		select `begin_time`, `end_time` from appointment_project
 		where
 		employee_id=#{employeeId,jdbcType=INTEGER}
 		and
-		begin_time &gt;=#{startWork,jdbcType=TIMESTAMP}
+		<![CDATA[ betin_time >= #{startTime,jdbcType=TIMESTAMP}  ]]>
 		and
-		end_time &glt;=#{endWork,jdbcType=TIMESTAMP}
+		<![CDATA[ end_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
 	</select>
 	
 </mapper>

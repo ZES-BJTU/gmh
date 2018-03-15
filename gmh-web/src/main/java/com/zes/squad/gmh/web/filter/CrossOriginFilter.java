@@ -22,6 +22,7 @@ public class CrossOriginFilter implements Filter {
             throws IOException, ServletException {
         HttpServletResponse servletResponse = (HttpServletResponse) response;
         servletResponse.addHeader("Access-Control-Allow-Origin", "http://localhost:8090");
+        servletResponse.addHeader("Access-Control-Allow-Credentials", "true");
         servletResponse.addHeader("Access-Control-Allow-Headers",
                 "X-token,X-Requested-With,Content-Type,Authorization,Accept");
         servletResponse.addHeader("Access-Control-Allow-Methods", "Head,Options,Get,Post,Put,Delete");

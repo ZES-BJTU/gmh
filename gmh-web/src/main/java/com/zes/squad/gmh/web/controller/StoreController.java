@@ -116,8 +116,10 @@ public class StoreController extends BaseController {
         List<StoreVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
         for (StoreUnion union : pagedUnions.getData()) {
             StoreVo vo = CommonConverter.map(union.getStorePo(), StoreVo.class);
-            vo.setPrincipalId(union.getUserPo().getId());
-            vo.setPrincipalName(union.getUserPo().getName());
+            if (union.getUserPo() != null) {
+                vo.setPrincipalId(union.getUserPo().getId());
+                vo.setPrincipalName(union.getUserPo().getName());
+            }
             vos.add(vo);
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),

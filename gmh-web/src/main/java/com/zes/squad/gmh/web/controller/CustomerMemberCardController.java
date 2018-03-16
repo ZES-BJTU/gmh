@@ -22,6 +22,7 @@ import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.ChangeCardStoreParams;
 import com.zes.squad.gmh.web.entity.param.CustomerMemberCardQueryParams;
 import com.zes.squad.gmh.web.entity.param.ReturnCardParams;
 import com.zes.squad.gmh.web.entity.param.TurnCardParams;
@@ -63,9 +64,15 @@ public class CustomerMemberCardController {
 		return JsonResults.success();
 	}
 	@RequestMapping(path = "/turn", method = { RequestMethod.POST })
-	public JsonResult<Void> doturnCard(@RequestBody TurnCardParams turnCardParams) {
+	public JsonResult<Void> doTurnCard(@RequestBody TurnCardParams turnCardParams) {
 		CustomerMemberCardPo po = CommonConverter.map(turnCardParams, CustomerMemberCardPo.class);
 		customerMemberCardService.turnCard(po);
+		return JsonResults.success();
+	}
+	@RequestMapping(path ="/changeStore", method = {RequestMethod.POST})
+	public JsonResult<Void> doChangeStore(@RequestBody ChangeCardStoreParams params){
+		CustomerMemberCardPo po = CommonConverter.map(params, CustomerMemberCardPo.class);
+		customerMemberCardService.changeStore(po);
 		return JsonResults.success();
 	}
 

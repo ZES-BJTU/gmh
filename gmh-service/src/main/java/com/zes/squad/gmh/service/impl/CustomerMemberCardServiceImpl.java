@@ -55,5 +55,21 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService{
 		customerMemberCardMapper.insert(newCard);
 		
 	}
+	@Override
+	public void changeStore(CustomerMemberCardPo po) {
+		CustomerMemberCardPo oldCard = customerMemberCardMapper.getById(po.getId());
+		CustomerMemberCardPo newCard = new CustomerMemberCardPo();
+		po.setIsTurned(1);
+		po.setIsValid(0);
+		po.setTurnedTime(new Date());
+		customerMemberCardMapper.turnCard(po);
+		newCard.setCustomerId(oldCard.getCustomerId());
+		newCard.setIsValid(1);
+		newCard.setMemberCardId(po.getMemberCardId());
+		newCard.setUniqueIdentifier(po.getUniqueIdentifier());
+		newCard.setStoreId(po.getStoreId());
+		customerMemberCardMapper.insert(newCard);
+		
+	}
 
 }

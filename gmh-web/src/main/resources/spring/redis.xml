@@ -28,20 +28,16 @@
 		<property name="timeout" value="${redis.timeout}" />
 	</bean>
 
-	<bean id="jackson2JsonRedisSerializer"
-		class="org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer">
-		<constructor-arg name="type">
-			<value>java.io.Serializable</value>
-		</constructor-arg>
-	</bean>
-
 	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
 		<property name="connectionFactory" ref="jedisConnectionFactory" />
 		<property name="keySerializer">
 			<bean
 				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
 		</property>
-		<property name="valueSerializer" ref="jackson2JsonRedisSerializer" />
+		<property name="valueSerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+		</property>
 	</bean>
 
 </beans>

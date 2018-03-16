@@ -195,12 +195,12 @@ public class UserServiceImpl implements UserService {
         }
         UserPo userPo = userMapper.selectById(tokenPo.getUserId());
         if (userPo == null) {
-            log.error("根据token查询出的用户id查询用户失败, token is {}, user id is {}", token, tokenPo.getUserId());
+            log.error("根据用户id查询用户失败, token is {}, user id is {}", token, tokenPo.getUserId());
             return null;
         }
         StorePo storePo = storeMapper.selectById(userPo.getStoreId());
         if (storePo == null) {
-            log.error("根据token查询出的用户所属门店id查询门店失败, token is {}, user id is {}, store id is {}", token,
+            log.error("根据门店id查询门店失败, token is {}, user id is {}, store id is {}", token,
                     tokenPo.getUserId(), userPo.getStoreId());
         }
         UserUnion user = new UserUnion();

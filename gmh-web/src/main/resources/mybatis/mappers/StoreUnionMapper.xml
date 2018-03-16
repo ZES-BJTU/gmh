@@ -15,11 +15,11 @@
 		s.`name` AS store_name,
 		s.`address` AS store_address,
 		s.`phone` AS store_phone,
-		s.`remark` = store_remark,
+		s.`remark` AS store_remark,
 		s.`created_time` AS store_created_time,
 		s.`modified_time` AS store_modified_time,
 		u.`id` AS user_id,
-		u.`name` AS user_name,
+		u.`name` AS user_name
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
@@ -45,7 +45,7 @@
 		LEFT JOIN
 		user u
 		ON
-		u.`store_id` = s.`id`
+		s.`id` = u.`store_id`
 		<if test="search != null and search != ''">
 			<bind name="condition" value="'%' + search + '%'" />
 			<where>

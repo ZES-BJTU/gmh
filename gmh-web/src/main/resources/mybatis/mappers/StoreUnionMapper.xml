@@ -50,9 +50,11 @@
 		<if test="search != null and search != ''">
 			<bind name="condition" value="'%' + search + '%'" />
 			<where>
-				CONCAT(s.`name`,s.`address`,u.`name`,s.`phone`,s.`remark`)
+				CONCAT(s.`name`,s.`address`,s.`phone`,s.`remark`)
 				LIKE
 				#{condition, jdbcType=VARCHAR}
+				OR
+				u.`name` LIKE #{condition, jdbcType=VARCHAR}
 			</where>
 		</if>
 	</select>

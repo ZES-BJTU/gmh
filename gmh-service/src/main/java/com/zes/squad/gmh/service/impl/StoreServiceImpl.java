@@ -4,6 +4,7 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +66,7 @@ public class StoreServiceImpl implements StoreService {
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
         List<StoreUnion> unions = storeUnionMapper.selectByCondition(condition);
-        if (unions.isEmpty()) {
+        if (CollectionUtils.isEmpty(unions)) {
             return PagedLists.newPagedList(pageNum, pageSize);
         }
         PageInfo<StoreUnion> pageInfo = new PageInfo<>(unions);

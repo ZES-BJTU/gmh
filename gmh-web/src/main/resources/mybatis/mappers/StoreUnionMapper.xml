@@ -19,7 +19,8 @@
 		s.`created_time` AS store_created_time,
 		s.`modified_time` AS store_modified_time,
 		u.`id` AS user_id,
-		u.`name` AS user_name
+		u.`name` AS user_name,
+		u.`store_id` AS user_store_id
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT

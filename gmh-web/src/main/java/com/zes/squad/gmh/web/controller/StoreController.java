@@ -37,7 +37,7 @@ import com.zes.squad.gmh.web.helper.CheckHelper;
 
 @RequestMapping(path = "/stores")
 @RestController
-public class StoreController extends BaseController{
+public class StoreController extends BaseController {
 
     @Autowired
     private StoreService storeService;
@@ -85,6 +85,7 @@ public class StoreController extends BaseController{
         ensureParameterExist(id, "请选择门店");
         StoreUnion union = storeService.queryStoreDetail(id);
         StoreVo vo = CommonConverter.map(union.getStorePo(), StoreVo.class);
+        vo.setPrincipalId(union.getUserPo().getId());
         vo.setPrincipalName(union.getUserPo().getName());
         return JsonResults.success(vo);
     }
@@ -110,11 +111,12 @@ public class StoreController extends BaseController{
         StoreQueryCondition condition = CommonConverter.map(queryParams, StoreQueryCondition.class);
         PagedList<StoreUnion> pagedUnions = storeService.listStoresByPage(condition);
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
-            return JsonResults.success();
+            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
         }
         List<StoreVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
         for (StoreUnion union : pagedUnions.getData()) {
             StoreVo vo = CommonConverter.map(union.getStorePo(), StoreVo.class);
+            vo.setPrincipalId(union.getUserPo().getId());
             vo.setPrincipalName(union.getUserPo().getName());
             vos.add(vo);
         }

@@ -12,4 +12,6 @@ public interface CustomerMemberCardService {
 	void returnCard(CustomerMemberCardPo po);
 
 	void turnCard(CustomerMemberCardPo po);
+	
+	void changeStore(CustomerMemberCardPo po);
 }

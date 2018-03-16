@@ -40,7 +40,6 @@ import com.zes.squad.gmh.web.entity.param.UserLoginParams;
 import com.zes.squad.gmh.web.entity.param.UserQueryParams;
 import com.zes.squad.gmh.web.entity.vo.UserVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
-import com.zes.squad.gmh.web.helper.PaginationHelper;
 
 @RequestMapping(path = "/users")
 @RestController
@@ -140,8 +139,6 @@ public class UserController extends BaseController {
     @RequestMapping(method = { RequestMethod.GET })
     public JsonResult<PagedList<UserVo>> doListPagedUsers(UserQueryParams queryParams) {
         ensureParameterExist(queryParams, "用户查询条件为空");
-        queryParams.setPageNum(PaginationHelper.toPageNum(queryParams.getOffset(), queryParams.getLimit()));
-        queryParams.setPageSize(queryParams.getLimit());
         CheckHelper.checkPageParams(queryParams);
         UserQueryCondition condition = CommonConverter.map(queryParams, UserQueryCondition.class);
         PagedList<UserUnion> pagedUserUnions = userService.listPagedUsers(condition);

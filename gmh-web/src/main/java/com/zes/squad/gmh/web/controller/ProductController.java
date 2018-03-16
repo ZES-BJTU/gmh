@@ -40,7 +40,6 @@ import com.zes.squad.gmh.web.entity.vo.ProductAmountVo;
 import com.zes.squad.gmh.web.entity.vo.ProductTypeVo;
 import com.zes.squad.gmh.web.entity.vo.ProductVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
-import com.zes.squad.gmh.web.helper.PaginationHelper;
 
 @RequestMapping(path = "/products")
 @RestController
@@ -101,8 +100,6 @@ public class ProductController {
     @RequestMapping(path = "/types", method = { RequestMethod.GET })
     public JsonResult<PagedList<ProductTypeVo>> doListPagedProductTypes(StockTypeQueryParams queryParams) {
         ensureParameterExist(queryParams, "产品分类查询条件为空");
-        queryParams.setPageNum(PaginationHelper.toPageNum(queryParams.getOffset(), queryParams.getLimit()));
-        queryParams.setPageSize(queryParams.getLimit());
         CheckHelper.checkPageParams(queryParams);
         ProductTypeQueryCondition condition = CommonConverter.map(queryParams, ProductTypeQueryCondition.class);
         PagedList<ProductTypePo> pagedPos = productService.listPagedProductTypes(condition);
@@ -171,8 +168,6 @@ public class ProductController {
     @RequestMapping(method = { RequestMethod.GET })
     public JsonResult<PagedList<ProductVo>> doListPagedProducts(ProductQueryParams params) {
         ensureParameterExist(params, "产品查询条件为空");
-        params.setPageNum(PaginationHelper.toPageNum(params.getOffset(), params.getLimit()));
-        params.setLimit(params.getLimit());
         CheckHelper.checkPageParams(params);
         ProductQueryCondition condition = CommonConverter.map(params, ProductQueryCondition.class);
         PagedList<ProductUnion> pagedUnions = productService.listPagedProducts(condition);
@@ -243,8 +238,6 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<PagedList<ProductVo>> doListPagedProductsWithAmount(ProductQueryParams params) {
         ensureParameterExist(params, "产品查询条件为空");
-        params.setPageNum(PaginationHelper.toPageNum(params.getOffset(), params.getLimit()));
-        params.setLimit(params.getLimit());
         CheckHelper.checkPageParams(params);
         ProductQueryCondition condition = CommonConverter.map(params, ProductQueryCondition.class);
         PagedList<ProductUnion> pagedUnions = productService.listPagedProductsWithAmount(condition);

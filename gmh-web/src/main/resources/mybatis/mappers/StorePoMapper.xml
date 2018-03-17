@@ -56,6 +56,9 @@
 				`remark` = #{remark, jdbcType=VARCHAR}
 			</if>
 		</set>
+		<where>
+			`id` = #{id, jdbcType=BIGINT}
+		</where>
 	</update>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT

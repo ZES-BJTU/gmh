@@ -135,7 +135,11 @@ public class StoreController extends BaseController {
     private void checkModifyStoreParams(Long id, StoreCreateOrModifyParams params) {
         ensureParameterExist(id, "请选择待修改门店");
         ensureParameterExist(params, "请选择待修改门店");
-        ensureParameterValid(id.equals(params.getId()), "门店信息错误");
+        if (params.getId() != null) {
+            ensureParameterValid(id.equals(params.getId()), "门店信息错误");
+        } else {
+            params.setId(id);
+        }
     }
 
 }

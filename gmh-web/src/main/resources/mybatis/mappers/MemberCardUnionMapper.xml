@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.MemberCardUnionMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.union.MemberCardUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="memberCardPo"
+			resultMap="com.zes.squad.gmh.mapper.MemberCardMapper.BaseResultMap"
+			columnPrefix="mc_" />
+		<association property="projectPo"
+			resultMap="com.zes.squad.gmh.mapper.ProjectMapper.BaseResultMap"
+			columnPrefix="p_" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		mc.`id` AS id,
+		mc.`type` AS mc_type,
+		mc.`name` AS mc_name,
+		mc.`price` AS mc_price,
+		mc.`project_id` AS mc_project_id,
+		mc.`times` AS mc_times,
+		mc.`amount` AS mc_amount,
+		mc.`project_discount` AS mc_project_discount,
+		mc.`product_discount` AS mc_product_discount,
+		mc.`store_id` AS mc_store_id,
+		mc.`remark` AS mc_remark,
+		p.`id` AS p_id,
+		p.`name` AS p`name`
+	</sql>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		member_card mc
+		LEFT JOIN
+		project p
+		ON
+		mc.`project_id` = p.`id`
+		<where>
+			mc.`id` = #{id, jdbcType=BIGINT}
+		</where>
+	</select>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.MemberCardQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		member_card mc
+		LEFT JOIN
+		project p
+		ON
+		mc.`project_id` = p.`id`
+		<where>
+			mc.`type` = #{type, jdbcType=BIGINT}
+			AMD
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				CONCAT(mc.`name`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
+				OR
+				p.`name` LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

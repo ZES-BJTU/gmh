@@ -25,7 +25,8 @@ public class CrossOriginFilter implements Filter {
         servletResponse.addHeader("Access-Control-Allow-Credentials", "true");
         servletResponse.addHeader("Access-Control-Allow-Headers",
                 "X-token,X-Requested-With,Content-Type,Authorization,Accept");
-        servletResponse.addHeader("Access-Control-Allow-Methods", "Head,Options,Get,Post,Put,Delete");
+        servletResponse.addHeader("Access-Control-Allow-Methods",
+                "Head,HEAD,Options,OPTIONS,Get,GET,Post,POST,Put,PUT,Delete,DELETE");
         servletResponse.addHeader("Access-Control-Max-Age", String.valueOf(DEFAULT_MAX_AGE));
         chain.doFilter(request, response);
     }

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.MemberCardMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.MemberCardPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<id column="type" jdbcType="INTEGER" property="type" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="price" jdbcType="DECIMAL" property="price" />
+		<result column="project_id" jdbcType="BIGINT" property="projectId" />
+		<result column="times" jdbcType="INTEGER" property="times" />
+		<result column="amount" jdbcType="DECIMAL" property="amount" />
+		<result column="project_discount" jdbcType="DECIMAL" property="projectDiscount" />
+		<result column="product_discount" jdbcType="DECIMAL" property="productDiscount" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `type`, `name`, `price`, `project_id`,
+		`times`, `amount`, `project_discount`, `product_discount`,
+		`store_id`, `remark`, `created_time`, `modified_time`
+	</sql>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.MemberCardPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO member_card(`type`, `name`, `price`, `project_id`,
+		`times`, `amount`, `project_discount`, `product_discount`, `store_id`, `remark`) 
+		VALUES 
+		(#{type, jdbcType=INTEGER},
+		#{name, jdbcType=VARCHAR},
+		#{price, jdbcType=DECIMAL},
+		#{projectId, jdbcType=BIGINT},
+		#{times, jdbcType=INTEGER},
+		#{amount, jdbcType=DECIMAL},
+		#{projectDiscount, jdbcType=DECIMAL},
+		#{productDiscount, jdbcType=DECIMAL},
+		#{storeId, jdbcType=BIGINT},
+		#{remark, jdbcType=VARCHAR})
+	</insert>
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM member_card WHERE `id` = #{id, jdbcType=BIGINT}
+	</delete>
+	<delete id="batchDelete" parameterType="long">
+		DELETE FROM member_card WHERE `id` IN
+		<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=BIGINT}
+		</foreach>
+	</delete>
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProductPo">
+		UPDATE member_card
+		<set>
+			<if test="type != null">
+				`type` = #{type, jdbcType=INTEGER},
+			</if>
+			<if test="name != null and name != ''">
+				`name` = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				`price` = #{price, jdbcType=DECIMAL},
+			</if>
+			<if test="projectId != null">
+				`project_id` = #{projectId, jdbcType=BIGINT},
+			</if>
+			<if test="times != null">
+				`times` = #{times, jdbcType=INTEGER},
+			</if>
+			<if test="amount != null">
+				`amount` = #{amount, jdbcType=DECIMAL},
+			</if>
+			<if test="projectDiscount != null">
+				`project_discount` = #{projectDiscount, jdbcType=DECIMAL},
+			</if>
+			<if test="productDiscount != null">
+				`product_discount` = #{productDiscount, jdbcType=DECIMAL},
+			</if>
+			<if test="storeId != null">
+				`store_id` = #{storeId, jdbcType=BIGINT},
+			</if>
+			<if test="remark != null and remark != ''">
+				`remark` = #{remark, jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		member_card
+		<where>
+			`id` = #{id:BIGINT}
+		</where>
+	</select>
+</mapper>

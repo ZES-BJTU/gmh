@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProjectMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProjectPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="project_type_id" jdbcType="BIGINT" property="projectTypeId"/>
+		<result column="code" jdbcType="VARCHAR" property="code"/>
+		<result column="name" jdbcType="VARCHAR" property="name"/>
+		<result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
+		<result column="integral" jdbcType="DECIMAL" property="integral"/>
+		<result column="intern_integral" jdbcType="DECIMAL" property="internIntegral"/>
+		<result column="store_id" jdbcType="BIGINT" property="storeId"/>
+		<result column="remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+</mapper>

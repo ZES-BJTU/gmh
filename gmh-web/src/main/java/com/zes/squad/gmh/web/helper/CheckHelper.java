@@ -29,11 +29,11 @@ public class CheckHelper {
         return true;
     }
 
-    public static void checkPageParams(QueryParams params) {
-        ensureParameterExist(params.getPageNum(), "分页页码为空");
-        ensureParameterValid(params.getPageNum() > 0, "分页页码错误");
-        ensureParameterExist(params.getPageSize(), "分页大小为空");
-        ensureParameterValid(params.getPageSize() > 0, "分页大小错误");
+    public static void checkPageParams(QueryParams queryParams) {
+        ensureParameterExist(queryParams.getPageNum(), "分页页码为空");
+        ensureParameterValid(queryParams.getPageNum() > 0, "分页页码错误");
+        ensureParameterExist(queryParams.getPageSize(), "分页大小为空");
+        ensureParameterValid(queryParams.getPageSize() > 0, "分页大小错误");
     }
 
 }

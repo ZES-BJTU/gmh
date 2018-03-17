@@ -22,8 +22,8 @@
 		INSERT INTO product(`product_type_id`, `name`, `unit_name`, `unit_price`) 
 		VALUES 
 		(#{productTypeId, jdbcType=BIGINT},
-		#{name, jdbcType=VARCHAR}
-		#{unitName, jdbcType=VARCHAR}
+		#{name, jdbcType=VARCHAR},
+		#{unitName, jdbcType=VARCHAR},
 		#{unitPrice, jdbcType=DECIMAL})
 	</insert>
 	<delete id="deleteById" parameterType="long">

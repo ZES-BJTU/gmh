@@ -28,6 +28,7 @@ import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.AppointmentCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.AppointmentQueryParams;
+import com.zes.squad.gmh.web.entity.param.QueryEmployeeTimeTableParams;
 import com.zes.squad.gmh.web.entity.vo.AppointmentVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
@@ -81,9 +82,9 @@ public class AppointmentController {
                 pagedUnions.getTotalCount(), appointmentVos));
     }
     
-    @RequestMapping(path = "/queryEmployeeTimeTable", method = { RequestMethod.PUT })
-    public JsonResult<List<EmployeeTimeTable>> queryEmployeeTimeTable(@RequestBody Long employeeId) {
-    	List<EmployeeTimeTable> timeTableList = new ArrayList<EmployeeTimeTable>();
+    @RequestMapping(path = "/queryEmployeeTimeTable", method = { RequestMethod.POST })
+    public JsonResult<List<EmployeeTimeTable>> queryEmployeeTimeTable(@RequestBody QueryEmployeeTimeTableParams params) {
+    	List<EmployeeTimeTable> timeTableList = appointmentService.queryEmployeeTimeTable(params.getEmployeeId(), params.getDate());
         return JsonResults.success(timeTableList);
     }
 

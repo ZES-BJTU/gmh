@@ -20,5 +20,5 @@ public interface AppointmentService {
 
     PagedList<AppointmentUnion> listPagedAppointments(AppointmentQueryCondition condition);
 
-    List<EmployeeTimeTable> QueryEmployeeTimeTable(Long employeeId,Date date);
+    List<EmployeeTimeTable> queryEmployeeTimeTable(Long employeeId,Date date);
 }

@@ -9,5 +9,5 @@ public class EmployeeTimeTable {
 	private Date beginTime;
 	private Date endTime;
 	private Integer isFree;
-	private Float percent;
+	private Double percent;
 }

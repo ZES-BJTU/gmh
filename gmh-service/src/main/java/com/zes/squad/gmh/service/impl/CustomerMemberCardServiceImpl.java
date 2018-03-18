@@ -32,6 +32,15 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService{
         PageInfo<CustomerMemberCardUnion> info = new PageInfo<>(customerMemberCardUnions);
 		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), customerMemberCardUnions);
 	}
+	public PagedList<CustomerMemberCardUnion> changedListPagedCustomerMemberCard(
+			CustomerMemberCardQueryCondition condition) {
+		int pageNum = condition.getPageNum();
+        int pageSize = condition.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+        List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper.changedListCustomerMemberCardByCondition(condition);
+        PageInfo<CustomerMemberCardUnion> info = new PageInfo<>(customerMemberCardUnions);
+		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), customerMemberCardUnions);
+	}
 	@Override
 	public void returnCard(CustomerMemberCardPo po) {
 		po.setIsReturned(1);

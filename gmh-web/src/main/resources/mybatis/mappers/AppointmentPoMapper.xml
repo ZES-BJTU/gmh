@@ -17,8 +17,8 @@
 	</resultMap>
 	
 	<resultMap type="com.zes.squad.gmh.entity.union.EmployeeTimeTable" id="TimeTable">
-		<result column="begin_time" jdbcType="DATE" property="beginTime" />
-		<result column="end_time" jdbcType="DATE" property="endTime" />
+		<result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
 	</resultMap>
 	
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentPo" useGeneratedKeys="true" keyProperty="id">
@@ -78,9 +78,10 @@
 		where
 		employee_id=#{employeeId,jdbcType=INTEGER}
 		and
-		<![CDATA[ betin_time >= #{startTime,jdbcType=TIMESTAMP}  ]]>
+		<![CDATA[ begin_time >= #{startTime,jdbcType=TIMESTAMP}  ]]>
 		and
 		<![CDATA[ end_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
+		order by begin_time asc
 	</select>
-	
+		
 </mapper>

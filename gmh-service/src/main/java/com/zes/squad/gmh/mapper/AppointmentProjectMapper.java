@@ -10,5 +10,7 @@ public interface AppointmentProjectMapper {
     int insert(AppointmentProjectPo appointmentProjectPo);
 
     List<AppointmentProjectUnion> getAppointmentProjectUnionByAppId(Long appoentmentId);
+    
+    int delById(Long id);
 
 }

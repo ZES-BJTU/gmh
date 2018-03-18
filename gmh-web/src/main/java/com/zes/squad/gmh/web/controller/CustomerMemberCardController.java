@@ -56,6 +56,26 @@ public class CustomerMemberCardController {
 		return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
 				pagedUnions.getTotalCount(), customerMemberCardVos));
 	}
+	@RequestMapping(path = "/changedList", method = { RequestMethod.PUT })
+	public JsonResult<PagedList<CustomerMemberCardVo>> doChangedListPagedConsumeRecord(
+			@RequestBody CustomerMemberCardQueryParams params) {
+		CheckHelper.checkPageParams(params);
+		CustomerMemberCardQueryCondition customerMemberCardQueryCondition = CommonConverter.map(params,
+				CustomerMemberCardQueryCondition.class);
+		customerMemberCardQueryCondition.setStoreId(ThreadContext.getUserStoreId());
+		PagedList<CustomerMemberCardUnion> pagedUnions = customerMemberCardService
+				.changedListPagedCustomerMemberCard(customerMemberCardQueryCondition);
+		if (CollectionUtils.isEmpty(pagedUnions.getData())) {
+			return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+		}
+		List<CustomerMemberCardVo> customerMemberCardVos = new ArrayList<CustomerMemberCardVo>();
+		for (CustomerMemberCardUnion customerMemberCardUnion : pagedUnions.getData()) {
+			CustomerMemberCardVo customerMemberCardVo = buildAppointmentVoByUnion(customerMemberCardUnion);
+			customerMemberCardVos.add(customerMemberCardVo);
+		}
+		return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
+				pagedUnions.getTotalCount(), customerMemberCardVos));
+	}
 
 	@RequestMapping(path = "/return", method = { RequestMethod.POST })
 	public JsonResult<Void> doReturnCard(@RequestBody ReturnCardParams returnCardParams) {

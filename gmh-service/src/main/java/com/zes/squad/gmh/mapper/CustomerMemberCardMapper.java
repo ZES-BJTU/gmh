@@ -12,6 +12,8 @@ public interface CustomerMemberCardMapper {
 
 	List<CustomerMemberCardUnion> listCustomerMemberCardByCondition(CustomerMemberCardQueryCondition condition);
 	
+	List<CustomerMemberCardUnion> changedListCustomerMemberCardByCondition(CustomerMemberCardQueryCondition condition);
+	
 	int returnCard(CustomerMemberCardPo po);
 
 	int turnCard(CustomerMemberCardPo po);

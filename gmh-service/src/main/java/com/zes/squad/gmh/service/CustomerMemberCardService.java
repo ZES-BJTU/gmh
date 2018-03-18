@@ -8,6 +8,8 @@ import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 public interface CustomerMemberCardService {
 
 	PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition customerMemberCardQueryCondition);
+	
+	PagedList<CustomerMemberCardUnion> changedListPagedCustomerMemberCard(CustomerMemberCardQueryCondition customerMemberCardQueryCondition);
 
 	void returnCard(CustomerMemberCardPo po);
 

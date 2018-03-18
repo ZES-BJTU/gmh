@@ -45,7 +45,7 @@ public interface ProjectMapper {
      * @param code
      * @return
      */
-    List<ProjectPo> selectByCode(String code);
+    ProjectPo selectByCode(String code);
 
     /**
      * 根据id查询

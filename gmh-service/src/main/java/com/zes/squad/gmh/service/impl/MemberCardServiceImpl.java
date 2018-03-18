@@ -1,9 +1,8 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
 import java.util.List;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Strings;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.MemberCardQueryCondition;
@@ -35,8 +35,8 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public MemberCardPo createMemberCard(MemberCardPo po) {
-        List<MemberCardPo> existingPos = memberCardMapper.selectByCode(po.getCode());
-        ensureCollectionEmpty(existingPos, "会员卡已存在");
+        MemberCardPo existingPo = memberCardMapper.selectByCode(po.getCode());
+        ensureEntityNotExist(existingPo, "会员卡已存在");
         int result = memberCardMapper.insert(po);
         ensureConditionValid(result == 1, "添加会员卡失败");
         return po;
@@ -59,12 +59,15 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public MemberCardPo modifyMemberCard(MemberCardPo po) {
+        if (!Strings.isNullOrEmpty(po.getCode())) {
+            MemberCardPo cardPo = memberCardMapper.selectByCode(po.getCode());
+            if (cardPo != null) {
+                ensureConditionValid(cardPo.getId().equals(po.getId()), "会员卡重复");
+            }
+        }
         memberCardMapper.updateSelective(po);
         MemberCardPo newPo = memberCardMapper.selectById(po.getId());
         ensureEntityExist(newPo, "会员卡不存在");
-        List<MemberCardPo> pos = memberCardMapper.selectByCode(newPo.getCode());
-        ensureCollectionNotEmpty(pos, "会员卡不存在");
-        ensureConditionValid(pos.size() == 1, "会员卡重复");
         return newPo;
     }
 
@@ -79,9 +82,7 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Override
     public Long queryMemberCardIdByCode(String code) {
         ensureParameterExist(code, "会员卡编码为空");
-        List<MemberCardPo> pos = memberCardMapper.selectByCode(code);
-        ensureCollectionNotEmpty(pos, "会员卡不存在");
-        MemberCardPo po = pos.get(0);
+        MemberCardPo po = memberCardMapper.selectByCode(code);
         ensureEntityExist(po, "会员卡不存在");
         return po.getId();
     }

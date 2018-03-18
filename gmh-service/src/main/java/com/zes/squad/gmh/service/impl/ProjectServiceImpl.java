@@ -1,10 +1,11 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.*;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureAttributeExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
@@ -99,8 +101,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectUnion createProject(ProjectUnion union) {
         ProjectPo projectPo = union.getProjectPo();
-        List<ProjectPo> pos = projectMapper.selectByCode(projectPo.getCode());
-        ensureCollectionEmpty(pos, "项目已存在");
+        ProjectPo po = projectMapper.selectByCode(projectPo.getCode());
+        ensureEntityNotExist(po, "项目已存在");
         projectMapper.insert(projectPo);
         Long projectId = projectPo.getId();
         ensureAttributeExist(projectId, "添加项目失败");
@@ -149,6 +151,13 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectUnion modifyProject(ProjectUnion union) {
         ProjectPo projectPo = union.getProjectPo();
         Long projectId = projectPo.getId();
+        String code = projectPo.getCode();
+        if (!Strings.isNullOrEmpty(code)) {
+            ProjectPo po = projectMapper.selectByCode(code);
+            if (po != null) {
+                ensureConditionValid(po.getId().equals(projectId), "会员卡编码重复");
+            }
+        }
         int row = projectMapper.updateSelective(projectPo);
         ensureConditionValid(row == 1, "修改项目失败");
         ProjectPo newPo = projectMapper.selectById(projectId);
@@ -192,9 +201,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Long queryProjectByCode(String code) {
         ensureParameterExist(code, "项目编码为空");
-        List<ProjectPo> pos = projectMapper.selectByCode(code);
-        ensureCollectionNotEmpty(pos, "项目不存在");
-        ProjectPo po = pos.get(0);
+        ProjectPo po = projectMapper.selectByCode(code);
+        if (po == null) {
+            return null;
+        }
         return po.getId();
     }
 

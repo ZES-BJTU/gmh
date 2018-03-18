@@ -52,6 +52,6 @@ public interface MemberCardMapper {
      * @param code
      * @return
      */
-    List<MemberCardPo> selectByCode(String code);
+    MemberCardPo selectByCode(String code);
     
 }

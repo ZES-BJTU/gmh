@@ -52,6 +52,17 @@
 		product_amount
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</select>
+	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM
+		product_amount pa
+		LEFT JOIN 
+		product p
+		ON
+		pa.`product_id` = p.`id`
+		WHERE p.`code` = #{code, jdbcType=VARCHAR}
+	</select>
 	<select id="selectByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition"
 		resultMap="BaseResultMap">

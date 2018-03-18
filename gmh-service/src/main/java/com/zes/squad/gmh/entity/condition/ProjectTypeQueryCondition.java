@@ -10,6 +10,6 @@ import lombok.ToString;
 public class ProjectTypeQueryCondition extends QueryCondition {
 
     private Integer topType;
-    private String  projectTypeKeyWord;
+    private String  search;
 
 }

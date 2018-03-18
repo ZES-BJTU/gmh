@@ -2,6 +2,7 @@ package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureAttributeExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 
 import java.util.List;
@@ -16,19 +17,16 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
-import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ProjectQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProjectPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
 import com.zes.squad.gmh.entity.union.ProjectStockUnion;
-import com.zes.squad.gmh.entity.union.ProjectTypeUnion;
 import com.zes.squad.gmh.entity.union.ProjectUnion;
 import com.zes.squad.gmh.mapper.ProjectMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
 import com.zes.squad.gmh.mapper.ProjectTypeMapper;
-import com.zes.squad.gmh.mapper.ProjectTypeUnionMapper;
 import com.zes.squad.gmh.mapper.ProjectUnionMapper;
 import com.zes.squad.gmh.service.ProjectService;
 
@@ -36,58 +34,63 @@ import com.zes.squad.gmh.service.ProjectService;
 public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
-    private ProjectTypeMapper      projectTypeMapper;
+    private ProjectTypeMapper  projectTypeMapper;
     @Autowired
-    private ProjectTypeUnionMapper projectTypeUnionMapper;
+    private ProjectMapper      projectMapper;
     @Autowired
-    private ProjectMapper          projectMapper;
+    private ProjectUnionMapper projectUnionMapper;
     @Autowired
-    private ProjectUnionMapper     projectUnionMapper;
-    @Autowired
-    private ProjectStockMapper     projectStockMapper;
+    private ProjectStockMapper projectStockMapper;
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void createProjectType(ProjectTypePo po) {
-        po.setStoreId(ThreadContext.getUserStoreId());
+    public ProjectTypePo createProjectType(ProjectTypePo po) {
+        List<ProjectTypePo> pos = projectTypeMapper.selectByTopTypeAndName(po.getTopType(), po.getName());
+        ensureCollectionNotEmpty(pos, "项目分类已存在");
         projectTypeMapper.insert(po);
+        return po;
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProjectType(Long id) {
-        projectTypeMapper.deleteById(id);
+        int row = projectTypeMapper.deleteById(id);
+        ensureConditionValid(row == 1, "项目分类删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProjectTypes(List<Long> ids) {
-        projectTypeMapper.batchDelete(ids);
+        int rows = projectTypeMapper.batchDelete(ids);
+        ensureConditionValid(rows == ids.size(), "项目分类删除失败");
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void modifyProjectType(ProjectTypePo po) {
+    public ProjectTypePo modifyProjectType(ProjectTypePo po) {
         projectTypeMapper.updateSelective(po);
+        ProjectTypePo newPo = projectTypeMapper.selectById(po.getId());
+        ensureEntityExist(newPo, "项目分类不存在");
+        return newPo;
     }
 
     @Override
-    public ProjectTypeUnion queryProjectTypeDetail(Long id) {
-        ProjectTypeUnion union = projectTypeUnionMapper.selectById(id);
-        ensureEntityExist(union, "未找到项目分类");
-        ensureAttributeExist(union.getId(), "未找到项目分类标识");
-        ensureEntityExist(union.getProjectTypePo(), "未找到项目分类");
-        ensureEntityExist(union.getStorePo(), "未找到项目分类所属门店");
-        return union;
+    public ProjectTypePo queryProjectTypeDetail(Long id) {
+        ProjectTypePo po = projectTypeMapper.selectById(id);
+        ensureEntityExist(po, "未找到项目分类");
+        return po;
     }
 
     @Override
-    public PagedList<ProjectTypeUnion> listPagedProjectTypes(ProjectTypeQueryCondition condition) {
+    public PagedList<ProjectTypePo> listPagedProjectTypes(ProjectTypeQueryCondition condition) {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
-        List<ProjectTypeUnion> unions = projectTypeUnionMapper.selectByCondition(condition);
+        List<ProjectTypePo> unions = projectTypeMapper.selectByCondition(condition);
         if (CollectionUtils.isEmpty(unions)) {
             return PagedLists.newPagedList(pageNum, pageSize);
         }
-        PageInfo<ProjectTypeUnion> info = new PageInfo<>(unions);
+        PageInfo<ProjectTypePo> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
 

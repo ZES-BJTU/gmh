@@ -5,24 +5,29 @@
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="top_type" jdbcType="INTEGER" property="topType" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
-		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `top_type`, `name`, `created_time`, `modified_time`
+	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProjectTypePo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSER_ID()
+		</selectKey>
 		INSERT INTO project_type
-		(`top_type`, `name`, `store_id`)
+		(`top_type`, `name`)
 		VALUES
 		(#{topType, jdbcType=INTEGER},
-		#{name, jdbcType=VARCHAR},
-		#{storeId, jdbcType=BIGINT})
+		#{name, jdbcType=VARCHAR})
 	</insert>
 	<delete id="deleteById" parameterType="long">
 		DELETE FROM project_type WHERE `id` = #{id, jdbcType=BIGINT}
 	</delete>
 	<delete id="batchDelete" parameterType="long">
 		DELETE FROM project_type WHERE `id` IN
-		<foreach collection="list" item="id" separator="," open="(" close=")">
+		<foreach collection="list" item="id" separator="," open="("
+			close=")">
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
@@ -36,11 +41,45 @@
 				`name` = #{name, jdbcType=VARCHAR}
 			</if>
 		</set>
+		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
-	<select id="selectByIds" parameterType="long" resultType="list">
-		SELECT `id` FROM project_type WHERE `id` IN
-		<foreach collection="list" item="id" separator="," open="(" close=",">
-			#{id, jdbcType=BIGINT}
-		</foreach>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project_type
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</select>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project_type
+		<where>
+			<if test="topType != null">
+				`top_type` = #{topType, jdbcType=INTEGER}
+			</if>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				`name` LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="selectByTopTypeAndName"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project_type
+		<where>
+			<if test="topType != null">
+				`top_type` = #{topType, jdbcType=INTEGER}
+			</if>
+			<if test="name != null and name != ''">
+				`name` = #{name, jdbcType=VARCHAR}
+			</if>
+		</where>
 	</select>
 </mapper>

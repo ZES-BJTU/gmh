@@ -6,7 +6,6 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProjectQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
-import com.zes.squad.gmh.entity.union.ProjectTypeUnion;
 import com.zes.squad.gmh.entity.union.ProjectUnion;
 
 public interface ProjectService {
@@ -16,7 +15,7 @@ public interface ProjectService {
      * 
      * @param po
      */
-    void createProjectType(ProjectTypePo po);
+    ProjectTypePo createProjectType(ProjectTypePo po);
 
     /**
      * 删除单个项目分类
@@ -37,7 +36,7 @@ public interface ProjectService {
      * 
      * @param po
      */
-    void modifyProjectType(ProjectTypePo po);
+    ProjectTypePo modifyProjectType(ProjectTypePo po);
 
     /**
      * 查询项目分类详情
@@ -45,7 +44,7 @@ public interface ProjectService {
      * @param id
      * @return
      */
-    ProjectTypeUnion queryProjectTypeDetail(Long id);
+    ProjectTypePo queryProjectTypeDetail(Long id);
 
     /**
      * 分页模糊搜索项目分类
@@ -53,7 +52,7 @@ public interface ProjectService {
      * @param condition
      * @return
      */
-    PagedList<ProjectTypeUnion> listPagedProjectTypes(ProjectTypeQueryCondition condition);
+    PagedList<ProjectTypePo> listPagedProjectTypes(ProjectTypeQueryCondition condition);
 
     /**
      * 新建项目

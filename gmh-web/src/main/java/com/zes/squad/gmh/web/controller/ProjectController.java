@@ -31,7 +31,6 @@ import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
 import com.zes.squad.gmh.entity.union.ProjectStockParams;
 import com.zes.squad.gmh.entity.union.ProjectStockUnion;
-import com.zes.squad.gmh.entity.union.ProjectTypeUnion;
 import com.zes.squad.gmh.entity.union.ProjectUnion;
 import com.zes.squad.gmh.service.ProjectService;
 import com.zes.squad.gmh.web.common.JsonResults;
@@ -56,13 +55,14 @@ public class ProjectController {
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<ProjectTypeVo> doCreateProjectType(@RequestBody ProjectTypeCreateOrModifyParams params) {
         ensureParameterExist(params, "项目分类为空");
-        ensureParameterNotExist(params.getId(), "项目分类标识应为空");
+        ensureParameterNotExist(params.getId(), "项目分类已存在");
         ensureParameterExist(params.getTopType(), "项目分类顶层分类为空");
         ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "项目分类顶层分类错误");
         ensureParameterExist(params.getName(), "项目分类名称为空");
         ProjectTypePo po = CommonConverter.map(params, ProjectTypePo.class);
-        projectService.createProjectType(po);
-        return JsonResults.success();
+        ProjectTypePo newPo = projectService.createProjectType(po);
+        ProjectTypeVo vo = CommonConverter.map(newPo, ProjectTypeVo.class);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.DELETE })
@@ -81,44 +81,47 @@ public class ProjectController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/type/modify", method = { RequestMethod.POST })
-    public JsonResult<ProjectTypeVo> doModifyProjectType(@RequestBody ProjectTypeCreateOrModifyParams params) {
+    @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
+    public JsonResult<ProjectTypeVo> doModifyProjectType(@PathVariable("id") Long id,
+                                                         @RequestBody ProjectTypeCreateOrModifyParams params) {
         ensureParameterExist(params, "项目分类为空");
-        ensureParameterExist(params.getId(), "库存分类标识为空");
+        ensureParameterExist(id, "项目分类为空");
+        params.setId(id);
         if (params.getTopType() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "项目分类顶层分类错误");
         }
         ProjectTypePo po = CommonConverter.map(params, ProjectTypePo.class);
-        projectService.modifyProjectType(po);
-        return JsonResults.success();
-    }
-
-    @RequestMapping(path = "/type/{id}", method = { RequestMethod.GET })
-    public JsonResult<ProjectTypeVo> doQueryProjectTypeDetail(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "项目分类标识为空");
-        ProjectTypeUnion union = projectService.queryProjectTypeDetail(id);
-        ProjectTypeVo vo = buildProjectTypeVoByUnion(union);
+        ProjectTypePo newPo = projectService.modifyProjectType(po);
+        ProjectTypeVo vo = CommonConverter.map(newPo, ProjectTypeVo.class);
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/type/list", method = { RequestMethod.PUT })
+    @RequestMapping(path = "/types/{id}", method = { RequestMethod.GET })
+    public JsonResult<ProjectTypeVo> doQueryProjectTypeDetail(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "项目分类不存在");
+        ProjectTypePo po = projectService.queryProjectTypeDetail(id);
+        ProjectTypeVo vo = buildProjectTypeVoByPo(po);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/types", method = { RequestMethod.GET })
     public JsonResult<PagedList<ProjectTypeVo>> doListPagedProjectTypes(@RequestBody ProjectTypeQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getTopType() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "项目分类顶层分类错误");
         }
         ProjectTypeQueryCondition condition = CommonConverter.map(params, ProjectTypeQueryCondition.class);
-        PagedList<ProjectTypeUnion> pagedUnions = projectService.listPagedProjectTypes(condition);
-        if (CollectionUtils.isEmpty(pagedUnions.getData())) {
-            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+        PagedList<ProjectTypePo> pagedPos = projectService.listPagedProjectTypes(condition);
+        if (CollectionUtils.isEmpty(pagedPos.getData())) {
+            return JsonResults.success(PagedLists.newPagedList(pagedPos.getPageNum(), pagedPos.getPageSize()));
         }
-        List<ProjectTypeVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
-        for (ProjectTypeUnion union : pagedUnions.getData()) {
-            ProjectTypeVo vo = buildProjectTypeVoByUnion(union);
+        List<ProjectTypeVo> vos = Lists.newArrayListWithCapacity(pagedPos.getData().size());
+        for (ProjectTypePo po : pagedPos.getData()) {
+            ProjectTypeVo vo = buildProjectTypeVoByPo(po);
             vos.add(vo);
         }
-        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
-                pagedUnions.getTotalCount(), vos));
+        return JsonResults.success(
+                PagedLists.newPagedList(pagedPos.getPageNum(), pagedPos.getPageSize(), pagedPos.getTotalCount(), vos));
     }
 
     @RequestMapping(path = "/create", method = { RequestMethod.PUT })
@@ -179,10 +182,9 @@ public class ProjectController {
                 pagedUnions.getTotalCount(), vos));
     }
 
-    private ProjectTypeVo buildProjectTypeVoByUnion(ProjectTypeUnion union) {
-        ProjectTypeVo vo = CommonConverter.map(union.getProjectTypePo(), ProjectTypeVo.class);
-        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getProjectTypePo().getTopType(), TopTypeEnum.class));
-        vo.setStoreName(union.getStorePo().getName());
+    private ProjectTypeVo buildProjectTypeVoByPo(ProjectTypePo po) {
+        ProjectTypeVo vo = CommonConverter.map(po, ProjectTypeVo.class);
+        vo.setTopTypeDesc(EnumUtils.getDescByKey(po.getTopType(), TopTypeEnum.class));
         return vo;
     }
 

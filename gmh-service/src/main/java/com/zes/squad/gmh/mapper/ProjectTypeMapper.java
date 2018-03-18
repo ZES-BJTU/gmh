@@ -2,6 +2,9 @@ package com.zes.squad.gmh.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
 
 public interface ProjectTypeMapper {
@@ -39,11 +42,28 @@ public interface ProjectTypeMapper {
     int updateSelective(ProjectTypePo po);
 
     /**
-     * 根据id集合查询
+     * 根据id查询
      * 
-     * @param ids
+     * @param id
      * @return
      */
-    int selectByIds(List<Long> ids);
+    ProjectTypePo selectById(Long id);
+
+    /**
+     * 根据查询条件查询
+     * 
+     * @param condition
+     * @return
+     */
+    List<ProjectTypePo> selectByCondition(ProjectTypeQueryCondition condition);
+
+    /**
+     * 根据顶层分类和名称查询
+     * 
+     * @param topType
+     * @param name
+     * @return
+     */
+    List<ProjectTypePo> selectByTopTypeAndName(@Param("topType") Integer topType, @Param("name") String name);
 
 }

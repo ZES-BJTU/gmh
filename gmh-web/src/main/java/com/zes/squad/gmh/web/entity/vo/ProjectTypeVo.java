@@ -9,7 +9,5 @@ public class ProjectTypeVo {
     private Integer topType;
     private String  topTypeDesc;
     private String  name;
-    private Long    storeId;
-    private String  storeName;
 
 }

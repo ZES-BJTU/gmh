@@ -13,6 +13,5 @@ public class ProjectTypePo extends Po {
 
     private Integer           topType;
     private String            name;
-    private Long              storeId;
 
 }

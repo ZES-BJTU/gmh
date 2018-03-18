@@ -4,6 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.MemberCardPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<id column="type" jdbcType="INTEGER" property="type" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="price" jdbcType="DECIMAL" property="price" />
 		<result column="project_id" jdbcType="BIGINT" property="projectId" />
@@ -17,7 +18,7 @@
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		`id`, `type`, `name`, `price`, `project_id`,
+		`id`, `type`, `code`, `name`, `price`, `project_id`,
 		`times`, `amount`, `project_discount`, `product_discount`,
 		`store_id`, `remark`, `created_time`, `modified_time`
 	</sql>
@@ -25,10 +26,11 @@
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO member_card(`type`, `name`, `price`, `project_id`,
+		INSERT INTO member_card(`type`, `code`, `name`, `price`, `project_id`,
 		`times`, `amount`, `project_discount`, `product_discount`, `store_id`, `remark`) 
 		VALUES 
 		(#{type, jdbcType=INTEGER},
+		#{code, jdbcType=VARCHAR},
 		#{name, jdbcType=VARCHAR},
 		#{price, jdbcType=DECIMAL},
 		#{projectId, jdbcType=BIGINT},
@@ -53,6 +55,9 @@
 		<set>
 			<if test="type != null">
 				`type` = #{type, jdbcType=INTEGER},
+			</if>
+			<if test="code != null and code != ''">
+				`code` = #{code, jdbcType=VARCHAR},
 			</if>
 			<if test="name != null and name != ''">
 				`name` = #{name, jdbcType=VARCHAR},
@@ -90,7 +95,14 @@
 		FROM
 		member_card
 		<where>
-			`id` = #{id:BIGINT}
+			`id` = #{id, jdbcType=BIGINT}
 		</where>
+	</select>
+	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM 
+		member_card 
+		WHERE `code` = {code, jdbcType=VARCHAR}
 	</select>
 </mapper>

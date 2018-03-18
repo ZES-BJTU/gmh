@@ -3,7 +3,7 @@ package com.zes.squad.gmh.entity.union;
 import java.util.List;
 
 import com.zes.squad.gmh.entity.po.ProjectPo;
-import com.zes.squad.gmh.entity.po.StorePo;
+import com.zes.squad.gmh.entity.po.ProjectTypePo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,8 +16,8 @@ public class ProjectUnion extends Union {
 
     private static final long       serialVersionUID = 1L;
 
+    private ProjectTypePo           projectTypePo;
     private ProjectPo               projectPo;
-    private StorePo                 storePo;
     private List<ProjectStockUnion> projectStockUnions;
 
 }

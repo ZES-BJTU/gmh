@@ -12,6 +12,7 @@ public class ProjectCreateOrModifyParams {
 
     private Long                     id;
     private Long                     projectTypeId;
+    private String                   code;
     private String                   name;
     private BigDecimal               unitPrice;
     private BigDecimal               integral;

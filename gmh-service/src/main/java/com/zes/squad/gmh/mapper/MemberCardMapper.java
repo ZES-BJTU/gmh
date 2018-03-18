@@ -46,4 +46,12 @@ public interface MemberCardMapper {
      */
     MemberCardPo selectById(Long id);
 
+    /**
+     * 根据会员卡编码查询id
+     * 
+     * @param code
+     * @return
+     */
+    List<MemberCardPo> selectByCode(String code);
+    
 }

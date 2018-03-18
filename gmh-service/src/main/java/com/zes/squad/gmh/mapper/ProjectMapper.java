@@ -40,6 +40,22 @@ public interface ProjectMapper {
     int updateSelective(ProjectPo po);
 
     /**
+     * 根据项目编码查询
+     * 
+     * @param code
+     * @return
+     */
+    List<ProjectPo> selectByCode(String code);
+
+    /**
+     * 根据id查询
+     * 
+     * @param id
+     * @return
+     */
+    ProjectPo selectById(Long id);
+
+    /**
      * 根据条件查询id集合
      * 
      * @param condition

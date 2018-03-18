@@ -21,6 +21,15 @@ public interface ProjectStockMapper {
      * @return
      */
     int batchDeleteByProjectIds(List<Long> projectIds);
+
+    /**
+     * 根据项目id查询
+     * 
+     * @param projectId
+     * @return
+     */
+    List<ProjectStockPo> selectByProjectId(Long projectId);
+
     /**
      * 根据项目id查找所需消耗库存
      * 

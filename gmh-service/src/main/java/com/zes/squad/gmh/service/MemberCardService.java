@@ -48,6 +48,14 @@ public interface MemberCardService {
     MemberCardUnion queryMemberCardDetail(Long id);
 
     /**
+     * 根据项目编码查询会员卡id
+     * 
+     * @param code
+     * @return
+     */
+    Long queryMemberCardIdByCode(String code);
+
+    /**
      * 根据查询条件查询会员卡
      * 
      * @param condition

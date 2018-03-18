@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProjectUnionMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.ProjectUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="projectTypePo"
+			resultMap="com.zes.squad.gmh.mapper.ProjectTypeMapper.BaseResultMap"
+			columnPrefix="pt_" />
+		<association property="projectPo"
+			resultMap="com.zes.squad.gmh.mapper.ProjectMapper.BaseResultMap"
+			columnPrefix="p_" />
+		<collection property="projectStockUnions"
+			resultMap="com.zes.squad.gmh.mapper.ProjectStockUnionMapper.BaseResultMap"
+			columnPrefix="psu_" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		p.`id` AS id,
+		pt.`id` AS pt_id,
+		pt.`top_type` AS pt_top_type,
+		pt.`name` AS pt_name,
+		p.`id` AS p_id,
+		p.`project_type_id` AS p_project_type_id,
+		p.`code` AS p_code,
+		p.`name` AS p_name,
+		p.`unit_price` AS p_unit_price,
+		p.`integral` AS p_integral,
+		p.`intern_integral` AS p_intern_integral,
+		p.`remark` AS p_remark,
+		ps.`id` AS psu_ps_id,
+		ps.`project_id` AS psu_ps_project_id,
+		ps.`stock_id` AS psu_ps_stock_id,
+		ps.`stock_consumption_amount` AS psu_ps_stock_consumption_amount,
+		s.`id` AS psu_su_id,
+		s.`id` AS psu_su_stock_id,
+		s.`stock_type_id` AS psu_su_stock_stock_type_id,
+		s.`code` AS psu_su_stock_code,
+		s.`name` AS psu_su_stock_name,
+		st.`id` AS psu_su_stock_type_id,
+		st.`name` AS psu_su_stock_type_name
+	</sql>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project p
+		LEFT JOIN
+		project_type pt
+		ON
+		p.`project_type_id` = pt.`id`
+		LEFT JOIN
+		project_stock ps
+		ON
+		p.`id` = ps.`project_id`
+		LEFT JOIN
+		stock s
+		ON
+		ps.`stock_id` = s.`id`
+		LEFT JOIN
+		stock_type st
+		ON
+		s.`stock_type_id` = st.`id`
+		<where>
+			p.`id` = #{id, jdbcType=BIGINT}
+		</where>
+	</select>
+	<select id="selectByIds" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project p
+		LEFT JOIN
+		project_type pt
+		ON
+		p.`project_type_id` = pt.`id`
+		LEFT JOIN
+		project_stock ps
+		ON
+		p.`id` = ps.`project_id`
+		LEFT JOIN
+		stock s
+		ON
+		ps.`stock_id` = s.`id`
+		LEFT JOIN
+		stock_type st
+		ON
+		s.`stock_type_id` = st.`id`
+		<where>
+			p.`id` IN 
+			<foreach collection="list" item="id" separator="," open="(" close=")">
+				#{id, jdbcType=BIGINT}
+			</foreach>
+		</where>
+	</select>
+</mapper>

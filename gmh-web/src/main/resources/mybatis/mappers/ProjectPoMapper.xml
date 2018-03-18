@@ -9,9 +9,96 @@
 		<result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
 		<result column="integral" jdbcType="DECIMAL" property="integral"/>
 		<result column="intern_integral" jdbcType="DECIMAL" property="internIntegral"/>
-		<result column="store_id" jdbcType="BIGINT" property="storeId"/>
 		<result column="remark" jdbcType="VARCHAR" property="remark"/>
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `project_type_id`, `code`, `name`,
+		`unit_price`, `integral`, `intern_integral`,
+		`remark`, `created_time`, `modified_time`
+	</sql>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProjectPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO project
+		(`project_type_id`, `code`, `name`, `unit_price`,
+		`integral`, `intern_integral`, `remark`) 
+		VALUES(#{projectTypeId, jdbcType=BIGINT},
+		#{code, jdbcType=VARCHAR},
+		#{name, jdbcType=VARCHAR},
+		#{unit_price, jdbcType=DECIMAL},
+		#{integral, jdbcType=DECIMAL},
+		#{intern_integral, jdbcType=DECIMAL},
+		#{remark, jdbcType=VARCHAR})
+	</insert>
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM project WHERE `id` = #{id, jdbcType=BIGINT}
+	</delete>
+	<delete id="batchDelete" parameterType="long">
+		DELETE FROM project WHERE `id` IN
+		<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id, jdbcType=BIGINT}
+		</foreach>
+	</delete>
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProjectPo">
+		UPDATE project
+		<set>
+			<if test="projectTypeId != null">
+				`project_type_id` = #{projectTypeId, jdbcType=BIGINT},
+			</if>
+			<if test="code != null and code != ''">
+				`code` = #{code, jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				`name` = #{name, jdbcType=VARCHAR},
+			</if>
+			<if test="unitPrice != null">
+				`unit_price` = #{unitPrice, jdbcType=DECIMAL},
+			</if>
+			<if test="integral != null">
+				`integral` = #{integral, jdbcType=DECIMAL},
+			</if>
+			<if test="internIntegral != null">
+				`intern_integral` = #{internIntegral, jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null and remark = ''">
+				`remark` = #{remark, jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE `id` = #{id, jdbcType=BIGINT}
+	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project
+		<where>
+			`id` = #{id, jdbcType=BIGINT}
+		</where>
+	</select>
+	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project
+		<where>
+			`code` = #{code, jdbcType=VARCHAR}
+		</where>
+	</select>
+	<select id="selectIdsByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ProjectQueryCondition"
+		resultType="long">
+		SELECT `id` FROM project
+		<where>
+			<if test="projectTypeId != null">
+				`project_type_id` = #{projectTypeId, jdbcType=BIGINT}
+			</if>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				AND CONCAT(`code`, `name`, `remark`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
 </mapper>

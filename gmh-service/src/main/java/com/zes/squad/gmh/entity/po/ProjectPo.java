@@ -19,7 +19,6 @@ public class ProjectPo extends Po {
     private BigDecimal        unitPrice;
     private BigDecimal        integral;
     private BigDecimal        internIntegral;
-    private Long              storeId;
     private String            remark;
 
 }

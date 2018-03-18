@@ -9,6 +9,7 @@ public class MemberCardCreateOrModifyParams {
 
     private Long       id;
     private Integer    type;
+    private String     code;
     private String     name;
     private BigDecimal price;
     private Long       projectId;

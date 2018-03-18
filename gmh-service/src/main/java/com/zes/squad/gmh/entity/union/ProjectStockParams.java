@@ -8,6 +8,6 @@ import lombok.Data;
 public class ProjectStockParams {
 
     private Long       stockId;
-    private BigDecimal stockConsumeAmount;
+    private BigDecimal stockConsumptionAmount;
 
 }

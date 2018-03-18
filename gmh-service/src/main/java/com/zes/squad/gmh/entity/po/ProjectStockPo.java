@@ -15,6 +15,6 @@ public class ProjectStockPo extends Po {
 
     private Long              projectId;
     private Long              stockId;
-    private BigDecimal        stockConsumeAmount;
+    private BigDecimal        stockConsumptionAmount;
 
 }

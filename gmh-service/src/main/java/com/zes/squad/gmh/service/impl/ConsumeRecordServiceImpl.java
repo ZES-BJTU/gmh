@@ -144,7 +144,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				StockPo stock = stockMapper.getById(psp.getStockId());
 				Map<String, Number> map = new HashMap<String, Number>();
 				map.put("id", stock.getId());
-				map.put("totalAmount", stock.getTotalAmount().subtract(psp.getStockConsumeAmount()));
+				map.put("totalAmount", stock.getTotalAmount().subtract(psp.getStockConsumptionAmount()));
 				stockMapper.updateTotalAmount(map);
 			}
 		}

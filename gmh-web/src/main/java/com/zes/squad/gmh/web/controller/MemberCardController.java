@@ -115,6 +115,8 @@ public class MemberCardController {
         ensureParameterNotExist(params.getId(), "会员卡已存在");
         ensureParameterExist(params.getType(), "请输入会员卡类别");
         ensureParameterValid(EnumUtils.containsKey(params.getType(), MemberCardTypeEnum.class), "会员卡类别错误");
+        ensureParameterExist(params.getCode(), "请输入会员卡编码");
+        ensureParameterExist(params.getName(), "请输入会员卡名称");
         ensureParameterExist(params.getPrice(), "请输入会员卡价格");
         ensureParameterValid(params.getPrice().compareTo(BigDecimal.ZERO) == 1, "会员卡价格应大于0");
         if (params.getProjectId() != null) {

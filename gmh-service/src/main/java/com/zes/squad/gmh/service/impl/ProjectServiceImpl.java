@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureAttributeExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.*;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
@@ -96,8 +97,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void createProject(ProjectUnion union) {
+    public ProjectUnion createProject(ProjectUnion union) {
         ProjectPo projectPo = union.getProjectPo();
+        List<ProjectPo> pos = projectMapper.selectByCode(projectPo.getCode());
+        ensureCollectionEmpty(pos, "项目已存在");
         projectMapper.insert(projectPo);
         Long projectId = projectPo.getId();
         ensureAttributeExist(projectId, "添加项目失败");
@@ -107,29 +110,49 @@ public class ProjectServiceImpl implements ProjectService {
             stockPo.setProjectId(projectId);
             stockPos.add(stockPo);
         }
-        projectStockMapper.batchInsert(stockPos);
+        int rows = projectStockMapper.batchInsert(stockPos);
+        ensureConditionValid(rows == stockPos.size(), "添加项目失败");
+        ProjectUnion newUnion = new ProjectUnion();
+        newUnion.setId(projectPo.getId());
+        newUnion.setProjectPo(projectPo);
+        List<ProjectStockPo> newStockPos = projectStockMapper.selectByProjectId(projectId);
+        ensureCollectionNotEmpty(newStockPos, "添加项目失败");
+        List<ProjectStockUnion> newStockUnions = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
+        for (ProjectStockPo stockPo : newStockPos) {
+            ProjectStockUnion stockUnion = new ProjectStockUnion();
+            stockUnion.setId(stockPo.getId());
+            stockUnion.setProjectStockPo(stockPo);
+            newStockUnions.add(stockUnion);
+        }
+        newUnion.setProjectStockUnions(newStockUnions);
+        return newUnion;
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProject(Long id) {
-        projectMapper.deleteById(id);
+        int row = projectMapper.deleteById(id);
+        ensureConditionValid(row == 1, "删除项目失败");
         projectStockMapper.batchDeleteByProjectIds(Lists.newArrayList(id));
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProjects(List<Long> ids) {
-        projectMapper.batchDelete(ids);
+        int rows = projectMapper.batchDelete(ids);
+        ensureConditionValid(rows == ids.size(), "删除项目失败");
         projectStockMapper.batchDeleteByProjectIds(ids);
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void modifyProject(ProjectUnion union) {
+    public ProjectUnion modifyProject(ProjectUnion union) {
         ProjectPo projectPo = union.getProjectPo();
-        projectMapper.updateSelective(projectPo);
         Long projectId = projectPo.getId();
+        int row = projectMapper.updateSelective(projectPo);
+        ensureConditionValid(row == 1, "修改项目失败");
+        ProjectPo newPo = projectMapper.selectById(projectId);
+        ensureEntityExist(newPo, "项目不存在");
         projectStockMapper.batchDeleteByProjectIds(Lists.newArrayList(projectId));
         List<ProjectStockPo> stockPos = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
         for (ProjectStockUnion stockUnion : union.getProjectStockUnions()) {
@@ -137,18 +160,42 @@ public class ProjectServiceImpl implements ProjectService {
             stockPo.setProjectId(projectId);
             stockPos.add(stockPo);
         }
-        projectStockMapper.batchInsert(stockPos);
+        int rows = projectStockMapper.batchInsert(stockPos);
+        ensureConditionValid(rows == stockPos.size(), "修改项目失败");
+        ProjectUnion newUnion = new ProjectUnion();
+        newUnion.setId(projectId);
+        newUnion.setProjectPo(newPo);
+        List<ProjectStockPo> newStockPos = projectStockMapper.selectByProjectId(projectId);
+        ensureCollectionNotEmpty(newStockPos, "添加项目失败");
+        List<ProjectStockUnion> newStockUnions = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
+        for (ProjectStockPo stockPo : newStockPos) {
+            ProjectStockUnion stockUnion = new ProjectStockUnion();
+            stockUnion.setId(stockPo.getId());
+            stockUnion.setProjectStockPo(stockPo);
+            newStockUnions.add(stockUnion);
+        }
+        newUnion.setProjectStockUnions(newStockUnions);
+        return newUnion;
     }
 
     @Override
     public ProjectUnion queryProjectDetail(Long id) {
         ProjectUnion union = projectUnionMapper.selectById(id);
         ensureEntityExist(union, "未找到项目");
-        ensureAttributeExist(union.getId(), "未找到项目标识");
+        ensureAttributeExist(union.getId(), "未找到项目");
+        ensureEntityExist(union.getProjectTypePo(), "未找到项目分类");
         ensureEntityExist(union.getProjectPo(), "未找到项目");
-        ensureEntityExist(union.getStorePo(), "未找到项目所在门店");
         ensureCollectionNotEmpty(union.getProjectStockUnions(), "未找到项目对应库存");
         return union;
+    }
+
+    @Override
+    public ProjectPo queryProjectByCode(String code) {
+        ensureParameterExist(code, "项目编码为空");
+        List<ProjectPo> pos = projectMapper.selectByCode(code);
+        ensureCollectionNotEmpty(pos, "项目不存在");
+        ProjectPo po = pos.get(0);
+        return po;
     }
 
     @Override

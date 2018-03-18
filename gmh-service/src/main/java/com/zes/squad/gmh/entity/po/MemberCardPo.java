@@ -14,6 +14,7 @@ public class MemberCardPo extends Po {
     private static final long serialVersionUID = 1L;
 
     private Integer           type;
+    private String            code;
     private String            name;
     private BigDecimal        price;
     private Long              projectId;

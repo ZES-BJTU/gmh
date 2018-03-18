@@ -7,7 +7,8 @@ import lombok.Data;
 @Data
 public class ProjectStockVo {
 
+    private Long       stockId;
     private String     stockName;
-    private BigDecimal stockConsumeAmount;
+    private BigDecimal stockConsumptionAmount;
 
 }

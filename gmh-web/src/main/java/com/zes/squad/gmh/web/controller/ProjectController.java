@@ -124,22 +124,26 @@ public class ProjectController {
                 PagedLists.newPagedList(pagedPos.getPageNum(), pagedPos.getPageSize(), pagedPos.getTotalCount(), vos));
     }
 
-    @RequestMapping(path = "/create", method = { RequestMethod.PUT })
-    public JsonResult<Void> doCreateProject(@RequestBody ProjectCreateOrModifyParams params) {
+    @RequestMapping(method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<ProjectVo> doCreateProject(@RequestBody ProjectCreateOrModifyParams params) {
         checkProjectCreateParams(params);
         ProjectUnion union = buildProjectUnionByCreateOrModifyParams(params);
-        projectService.createProject(union);
-        return JsonResults.success();
+        ProjectUnion newUnion = projectService.createProject(union);
+        ProjectVo vo = buildProjectVoByUnion(newUnion);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProject(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择要删除的项目");
         projectService.removeProject(id);
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/remove", method = { RequestMethod.DELETE })
+    @RequestMapping(method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProjects(@RequestBody List<Long> ids) {
         ensureCollectionNotEmpty(ids, "请选择要删除的项目");
         projectService.removeProjects(ids);
@@ -190,20 +194,23 @@ public class ProjectController {
 
     private void checkProjectCreateParams(ProjectCreateOrModifyParams params) {
         ensureParameterExist(params, "项目信息为空");
-        ensureParameterNotExist(params.getId(), "项目标识应为空");
+        ensureParameterNotExist(params.getId(), "项目已存在");
         ensureParameterExist(params.getProjectTypeId(), "项目分类为空");
+        ensureParameterExist(params.getCode(), "项目编码为空");
         ensureParameterExist(params.getName(), "项目名称为空");
         ensureParameterExist(params.getUnitPrice(), "项目单价为空");
-        ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "项目单价非法");
+        ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "项目单价应大于0");
         ensureParameterExist(params.getIntegral(), "项目积分为空");
-        ensureParameterValid(params.getIntegral().compareTo(BigDecimal.ZERO) == 1, "项目积分非法");
+        ensureParameterValid(params.getIntegral().compareTo(BigDecimal.ZERO) == 1, "项目积分应大于0");
         ensureParameterExist(params.getInternIntegral(), "项目实习生积分为空");
-        ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分非法");
-        ensureParameterValid(params.getIntegral().compareTo(params.getInternIntegral()) == 1, "项目积分应大于实习生积分");
+        ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分应大于0");
+        ensureParameterValid(params.getIntegral().compareTo(params.getInternIntegral()) == 1, "项目积分应大于项目实习生积分");
         ensureCollectionNotEmpty(params.getProjectStockParams(), "项目所需库存为空");
         for (ProjectStockParams stockParams : params.getProjectStockParams()) {
-            ensureParameterNotExist(stockParams.getStockId(), "项目所需库存标识应为空");
-            ensureParameterValid(stockParams.getStockConsumeAmount().compareTo(BigDecimal.ZERO) == 1, "项目所需库存量错误");
+            ensureParameterNotExist(stockParams.getStockId(), "项目所需库存为空");
+            ensureParameterNotExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
+            ensureParameterValid(stockParams.getStockConsumptionAmount().compareTo(BigDecimal.ZERO) == 1,
+                    "项目所需库存量应大于0");
         }
     }
 
@@ -211,50 +218,52 @@ public class ProjectController {
         ProjectPo projectPo = CommonConverter.map(params, ProjectPo.class);
         ProjectUnion union = new ProjectUnion();
         union.setProjectPo(projectPo);
-        if (CollectionUtils.isNotEmpty(params.getProjectStockParams())) {
-            List<ProjectStockUnion> stockUnions = Lists.newArrayListWithCapacity(params.getProjectStockParams().size());
-            for (ProjectStockParams stockParam : params.getProjectStockParams()) {
-                ProjectStockPo stockPo = CommonConverter.map(stockParam, ProjectStockPo.class);
-                ProjectStockUnion stockUnion = new ProjectStockUnion();
-                stockUnion.setProjectStockPo(stockPo);
-                stockUnions.add(stockUnion);
-            }
-            union.setProjectStockUnions(stockUnions);
+        List<ProjectStockUnion> stockUnions = Lists.newArrayListWithCapacity(params.getProjectStockParams().size());
+        for (ProjectStockParams stockParam : params.getProjectStockParams()) {
+            ProjectStockPo stockPo = CommonConverter.map(stockParam, ProjectStockPo.class);
+            ProjectStockUnion stockUnion = new ProjectStockUnion();
+            stockUnion.setProjectStockPo(stockPo);
+            stockUnions.add(stockUnion);
         }
+        union.setProjectStockUnions(stockUnions);
         return union;
     }
 
     private void checkProjectModifyParams(ProjectCreateOrModifyParams params) {
         ensureParameterExist(params, "项目信息为空");
-        ensureParameterExist(params.getId(), "项目标识应为空");
+        ensureParameterExist(params.getId(), "项目不存在");
         if (params.getUnitPrice() != null) {
-            ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "项目单价非法");
+            ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "项目单价应大于0");
         }
         if (params.getIntegral() != null) {
-            ensureParameterValid(params.getIntegral().compareTo(BigDecimal.ZERO) == 1, "项目积分非法");
+            ensureParameterValid(params.getIntegral().compareTo(BigDecimal.ZERO) == 1, "项目积分应大于0");
         }
         if (params.getInternIntegral() != null) {
-            ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分非法");
+            ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分应大于0");
         }
         if (params.getIntegral() != null && params.getInternIntegral() != null) {
-            ensureParameterValid(params.getIntegral().compareTo(params.getInternIntegral()) == 1, "项目积分应大于实习生积分");
+            ensureParameterValid(params.getIntegral().compareTo(params.getInternIntegral()) == 1, "项目积分应大于项目实习生积分");
         }
         if (CollectionUtils.isNotEmpty(params.getProjectStockParams())) {
             for (ProjectStockParams stockParams : params.getProjectStockParams()) {
-                ensureParameterNotExist(stockParams.getStockId(), "项目所需库存标识应为空");
-                ensureParameterValid(stockParams.getStockConsumeAmount().compareTo(BigDecimal.ZERO) == 1, "项目所需库存量错误");
+                ensureParameterNotExist(stockParams.getStockId(), "项目所需库存为空");
+                ensureParameterNotExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
+                ensureParameterValid(stockParams.getStockConsumptionAmount().compareTo(BigDecimal.ZERO) == 1,
+                        "项目所需库存量应大于0");
             }
         }
     }
 
     private ProjectVo buildProjectVoByUnion(ProjectUnion union) {
         ProjectVo vo = CommonConverter.map(union.getProjectPo(), ProjectVo.class);
-        vo.setStoreName(union.getStorePo().getName());
+        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getProjectTypePo().getTopType(), TopTypeEnum.class));
+        vo.setProjectTypeName(union.getProjectTypePo().getName());
         List<ProjectStockVo> stockVos = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
-        for (ProjectStockUnion stockUnion : union.getProjectStockUnions()) {
+        for (ProjectStockUnion projectStockUnion : union.getProjectStockUnions()) {
             ProjectStockVo stockVo = new ProjectStockVo();
-            stockVo.setStockName(stockUnion.getStockPo().getName());
-            stockVo.setStockConsumeAmount(stockUnion.getProjectStockPo().getStockConsumeAmount());
+            stockVo.setStockId(projectStockUnion.getProjectStockPo().getId());
+            stockVo.setStockName(projectStockUnion.getStockUnion().getStockPo().getName());
+            stockVo.setStockConsumptionAmount(projectStockUnion.getProjectStockPo().getStockConsumptionAmount());
             stockVos.add(stockVo);
         }
         vo.setProjectStockVos(stockVos);

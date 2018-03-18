@@ -9,13 +9,15 @@ import lombok.Data;
 public class ProjectVo {
 
     private Long                 id;
-    private String               code;
+    private Integer              topType;
     private String               topTypeDesc;
+    private Long                 projectTypeId;
     private String               projectTypeName;
+    private String               code;
+    private String               name;
     private BigDecimal           unitPrice;
     private BigDecimal           integral;
     private BigDecimal           internIntegral;
-    private String               storeName;
     private String               remark;
     private List<ProjectStockVo> projectStockVos;
 

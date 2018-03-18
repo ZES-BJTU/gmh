@@ -150,8 +150,11 @@ public class ProjectController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/modify", method = { RequestMethod.POST })
-    public JsonResult<Void> doModifyProject(@RequestBody ProjectCreateOrModifyParams params) {
+    @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
+    public JsonResult<Void> doModifyProject(@PathVariable("id") Long id,
+                                            @RequestBody ProjectCreateOrModifyParams params) {
+        ensureParameterExist(id, "项目不存在");
+        params.setId(id);
         checkProjectModifyParams(params);
         ProjectUnion union = buildProjectUnionByCreateOrModifyParams(params);
         projectService.modifyProject(union);
@@ -166,8 +169,8 @@ public class ProjectController {
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(path = "/list", method = { RequestMethod.PUT })
-    public JsonResult<PagedList<ProjectVo>> doListPagedProjects(@RequestBody ProjectQueryParams params) {
+    @RequestMapping(method = { RequestMethod.PUT })
+    public JsonResult<PagedList<ProjectVo>> doListPagedProjects(ProjectQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getTopType() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "顶层分类错误");

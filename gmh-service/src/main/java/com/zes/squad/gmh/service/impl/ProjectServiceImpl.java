@@ -190,12 +190,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectPo queryProjectByCode(String code) {
+    public Long queryProjectByCode(String code) {
         ensureParameterExist(code, "项目编码为空");
         List<ProjectPo> pos = projectMapper.selectByCode(code);
         ensureCollectionNotEmpty(pos, "项目不存在");
         ProjectPo po = pos.get(0);
-        return po;
+        return po.getId();
     }
 
     @Override

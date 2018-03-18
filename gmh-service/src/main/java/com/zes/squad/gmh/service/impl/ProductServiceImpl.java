@@ -1,6 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 
@@ -195,6 +195,13 @@ public class ProductServiceImpl implements ProductService {
         flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
         productFlowMapper.insert(flowPo);
         return newPo;
+    }
+
+    @Override
+    public ProductAmountPo queryProductAmountByCode(String code) {
+        ensureParameterExist(code, "产品编码为空");
+        ProductAmountPo po = productAmountMapper.selectByCode(code);
+        return po;
     }
 
     @Override

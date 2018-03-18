@@ -105,17 +105,23 @@ public interface ProductService {
     PagedList<ProductUnion> listPagedProducts(ProductQueryCondition condition);
 
     /**
+     * 添加商品数量
+     * 
      * @param po
      * @return
      */
     ProductAmountPo createProductAmount(ProductAmountPo po);
 
     /**
+     * 删除单个商品数量
+     * 
      * @param id
      */
     void removeProductAmount(Long id);
 
     /**
+     * 删除多个商品数量
+     * 
      * @param ids
      */
     void removeProductAmounts(List<Long> ids);
@@ -127,6 +133,14 @@ public interface ProductService {
      * @return
      */
     ProductAmountPo modifyProductAmount(ProductAmountPo po);
+
+    /**
+     * 根据编码查询产品
+     * 
+     * @param code
+     * @return
+     */
+    ProductAmountPo queryProductAmountByCode(String code);
 
     /**
      * 查询产品详情(带数量)

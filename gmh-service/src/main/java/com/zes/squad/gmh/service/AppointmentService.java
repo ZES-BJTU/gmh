@@ -21,4 +21,8 @@ public interface AppointmentService {
     PagedList<AppointmentUnion> listPagedAppointments(AppointmentQueryCondition condition);
 
     List<EmployeeTimeTable> queryEmployeeTimeTable(Long employeeId,Date date);
+    
+    boolean isFree(Long employeeId, Date beginTime, Date endTime);
+    
+    boolean isAllFree(List<AppointmentProjectParams> apList);
 }

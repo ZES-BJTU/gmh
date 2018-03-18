@@ -36,67 +36,73 @@ import com.zes.squad.gmh.web.helper.CheckHelper;
 @RestController
 public class AppointmentController {
 
-    @Autowired
-    private AppointmentService appointmentService;
+	@Autowired
+	private AppointmentService appointmentService;
 
-    @OnMessage
-    public JsonResult<AppointmentVo> doRemindReception() {
-        return JsonResults.success();
-    }
+	@OnMessage
+	public JsonResult<AppointmentVo> doRemindReception() {
+		return JsonResults.success();
+	}
 
-    @RequestMapping(path = "/create", method = { RequestMethod.PUT })
-    public JsonResult<Void> doCreateAppointment(@RequestBody AppointmentCreateOrModifyParams params) {
-        AppointmentPo appointmentPo = CommonConverter.map(params, AppointmentPo.class);
-        appointmentService.createAppointment(appointmentPo, params.getAppointmentProjectParams());
-        ;
-        return JsonResults.success();
-    }
+	@RequestMapping(path = "/create", method = { RequestMethod.PUT })
+	public JsonResult<Void> doCreateAppointment(@RequestBody AppointmentCreateOrModifyParams params) {
 
-    @RequestMapping(path = "/cancel", method = { RequestMethod.POST })
-    public JsonResult<Void> doCancleAppointment(@RequestBody Long appointmentId) {
-        appointmentService.cancelAppointment(appointmentId);
-        return JsonResults.success();
-    }
+		boolean isAllFree = appointmentService.isAllFree(params.getAppointmentProjectParams());
+		if (isAllFree) {
+			AppointmentPo appointmentPo = CommonConverter.map(params, AppointmentPo.class);
+			appointmentService.createAppointment(appointmentPo, params.getAppointmentProjectParams());
+			return JsonResults.success();
+		} else
+			return JsonResults.fail(1000, "预约冲突");
+	}
 
-    @RequestMapping(path = "/finish", method = { RequestMethod.POST })
-    public JsonResult<Void> doFinishAppointment(@RequestBody Long appointmentId) {
-        appointmentService.finishAppointment(appointmentId);
-        return JsonResults.success();
-    }
+	@RequestMapping(path = "/cancel", method = { RequestMethod.POST })
+	public JsonResult<Void> doCancleAppointment(@RequestBody Long appointmentId) {
+		appointmentService.cancelAppointment(appointmentId);
+		return JsonResults.success();
+	}
 
-    @RequestMapping(path = "/list", method = { RequestMethod.PUT })
-    public JsonResult<PagedList<AppointmentVo>> doListPagedAppointment(@RequestBody AppointmentQueryParams params) {
-        CheckHelper.checkPageParams(params);
-        AppointmentQueryCondition appointmentQueryCondition = CommonConverter.map(params,
-                AppointmentQueryCondition.class);
-        PagedList<AppointmentUnion> pagedUnions = appointmentService.listPagedAppointments(appointmentQueryCondition);
-        if (CollectionUtils.isEmpty(pagedUnions.getData())) {
-            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
-        }
-        List<AppointmentVo> appointmentVos = new ArrayList<AppointmentVo>();
-        for (AppointmentUnion appointmentUnion : pagedUnions.getData()) {
-            AppointmentVo appontmentVo = buildAppointmentVoByUnion(appointmentUnion);
-            appointmentVos.add(appontmentVo);
-        }
-        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
-                pagedUnions.getTotalCount(), appointmentVos));
-    }
-    
-    @RequestMapping(path = "/queryEmployeeTimeTable", method = { RequestMethod.POST })
-    public JsonResult<List<EmployeeTimeTable>> queryEmployeeTimeTable(@RequestBody QueryEmployeeTimeTableParams params) {
-    	List<EmployeeTimeTable> timeTableList = appointmentService.queryEmployeeTimeTable(params.getEmployeeId(), params.getDate());
-        return JsonResults.success(timeTableList);
-    }
+	@RequestMapping(path = "/finish", method = { RequestMethod.POST })
+	public JsonResult<Void> doFinishAppointment(@RequestBody Long appointmentId) {
+		appointmentService.finishAppointment(appointmentId);
+		return JsonResults.success();
+	}
 
-    private AppointmentVo buildAppointmentVoByUnion(AppointmentUnion appointmentUnion) {
-        AppointmentVo vo = CommonConverter.map(appointmentUnion.getAppointmentPo(), AppointmentVo.class);
-        vo.setCustomerGender(
-                EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getCustomerGender(), GenderEnum.class));
-        vo.setIsVip(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsVip(), YesOrNoEnum.class));
-        vo.setIsLine(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsLine(), YesOrNoEnum.class));
-        vo.setStatus(
-                EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getStatus(), AppointmentStatusEnum.class));
-        vo.setAppointmentProjects(appointmentUnion.getAppointmentProjects());
-        return vo;
-    }
+	@RequestMapping(path = "/list", method = { RequestMethod.PUT })
+	public JsonResult<PagedList<AppointmentVo>> doListPagedAppointment(@RequestBody AppointmentQueryParams params) {
+		CheckHelper.checkPageParams(params);
+		AppointmentQueryCondition appointmentQueryCondition = CommonConverter.map(params,
+				AppointmentQueryCondition.class);
+		PagedList<AppointmentUnion> pagedUnions = appointmentService.listPagedAppointments(appointmentQueryCondition);
+		if (CollectionUtils.isEmpty(pagedUnions.getData())) {
+			return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+		}
+		List<AppointmentVo> appointmentVos = new ArrayList<AppointmentVo>();
+		for (AppointmentUnion appointmentUnion : pagedUnions.getData()) {
+			AppointmentVo appontmentVo = buildAppointmentVoByUnion(appointmentUnion);
+			appointmentVos.add(appontmentVo);
+		}
+		return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
+				pagedUnions.getTotalCount(), appointmentVos));
+	}
+
+	@RequestMapping(path = "/queryEmployeeTimeTable", method = { RequestMethod.POST })
+	public JsonResult<List<EmployeeTimeTable>> queryEmployeeTimeTable(
+			@RequestBody QueryEmployeeTimeTableParams params) {
+		List<EmployeeTimeTable> timeTableList = appointmentService.queryEmployeeTimeTable(params.getEmployeeId(),
+				params.getDate());
+		return JsonResults.success(timeTableList);
+	}
+
+	private AppointmentVo buildAppointmentVoByUnion(AppointmentUnion appointmentUnion) {
+		AppointmentVo vo = CommonConverter.map(appointmentUnion.getAppointmentPo(), AppointmentVo.class);
+		vo.setCustomerGender(
+				EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getCustomerGender(), GenderEnum.class));
+		vo.setIsVip(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsVip(), YesOrNoEnum.class));
+		vo.setIsLine(EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getIsLine(), YesOrNoEnum.class));
+		vo.setStatus(
+				EnumUtils.getDescByKey(appointmentUnion.getAppointmentPo().getStatus(), AppointmentStatusEnum.class));
+		vo.setAppointmentProjects(appointmentUnion.getAppointmentProjects());
+		return vo;
+	}
 }

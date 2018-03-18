@@ -173,7 +173,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return tableList;
 	}
 
-	Double calPercentage(Date end, Date begin) {
+	public Double calPercentage(Date end, Date begin) {
 		Double total = (double) (16 * 60 * 60 * 1000);
 		Double tmpResult = (end.getTime() - begin.getTime()) * 100 / total;
 		DecimalFormat df = new DecimalFormat("######0.00");
@@ -181,5 +181,40 @@ public class AppointmentServiceImpl implements AppointmentService {
 		Double result = Double.parseDouble(tmp);
 		return result;
 	}
-
+	//判断单个时间段是否为空闲
+	public boolean isFree(Long employeeId, Date beginTime, Date endTime){
+		List<EmployeeTimeTable> timeList = queryEmployeeTimeTable(employeeId,beginTime);
+		boolean isFree = false;
+		if(timeList.size()==1)
+			isFree = true;
+		else{
+			for(int i=0;i<timeList.size();){
+				if(beginTime.getTime()>=timeList.get(i).getBeginTime().getTime()&&endTime.getTime()<=timeList.get(i).getEndTime().getTime()){
+					isFree = true;
+				}
+				i = i+2;
+			}
+		}
+		return isFree;
+	}
+	//判断要插入的list是否均为空闲
+	public boolean isAllFree(List<AppointmentProjectParams> apList){
+		List<AppointmentProjectPo> tmpApList = new ArrayList<AppointmentProjectPo>();
+		boolean isFree = true;
+		for(AppointmentProjectParams ap : apList){
+			isFree = isFree(ap.getEmployeeId(),ap.getBeginTime(),ap.getEndTime());
+			if(isFree){
+				AppointmentProjectPo po = CommonConverter.map(ap, AppointmentProjectPo.class);
+				appointmentProjectMapper.insert(po);
+				tmpApList.add(CommonConverter.map(po, AppointmentProjectPo.class));
+			}else 
+				isFree = false;
+				break;
+		}
+		for(AppointmentProjectPo apPo : tmpApList){
+			appointmentProjectMapper.delById(apPo.getId());
+		}
+		return isFree;
+	}
+	
 }

@@ -18,7 +18,7 @@
 		<result column="begin_time" jdbcType="DATE" property="beginTime" />
 		<result column="end_time" jdbcType="DATE" property="endTime" />
 	</resultMap>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO appointment_project
 		(`appointment_id`,`project_id`,`employee_id`,`begin_time`,`end_time`)
 		VALUES
@@ -39,4 +39,9 @@
         where
         ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
 	</select>
+	<delete id="delById" parameterType="long">
+		delete from appointment_project
+		where
+		id=#{id,jdbcType=INTEGER}
+	</delete>
 </mapper>

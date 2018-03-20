@@ -14,8 +14,9 @@
 			columnPrefix="store_"/>
 	</resultMap>
 	<sql id="Base_Column_List">
+		u.`id` AS id,
 		u.`id` AS user_id,
-		u.`role` AS u_role,
+		u.`role` AS user_role,
 		u.`account` AS user_account,
 		u.`email` AS user_email,
 		u.`mobile` AS user_mobile,

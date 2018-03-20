@@ -132,7 +132,12 @@ public class StoreController extends BaseController {
         if (CollectionUtils.isEmpty(pos)) {
             return JsonResults.success(Lists.newArrayList());
         }
-        List<StoreVo> vos = CommonConverter.mapList(pos, StoreVo.class);
+        List<StoreVo> vos = Lists.newArrayListWithCapacity(pos.size());
+        for (StorePo po : pos) {
+            StoreVo vo  = CommonConverter.map(po, StoreVo.class);
+            vo.setId(String.valueOf(po.getId()));
+            vos.add(vo);
+        }
         return JsonResults.success(vos);
     }
 

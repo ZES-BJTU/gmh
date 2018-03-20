@@ -30,7 +30,7 @@
 		`password`, `salt`, `name`, `gender`,
 		`store_id`, `remark`)
 		VALUES
-		(#{role, jdbcType=TINYINT}
+		(#{role, jdbcType=TINYINT},
 		#{account, jdbcType=VARCHAR},
 		#{email, jdbcType=VARCHAR},
 		#{mobile, jdbcType=VARCHAR},

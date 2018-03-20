@@ -30,7 +30,7 @@
 		`password`, `salt`, `name`, `gender`,
 		`store_id`, `remark`)
 		VALUES
-		(#{role, jdbcType=TINYINT}
+		(#{role, jdbcType=TINYINT},
 		#{account, jdbcType=VARCHAR},
 		#{email, jdbcType=VARCHAR},
 		#{mobile, jdbcType=VARCHAR},
@@ -102,7 +102,7 @@
 		parameterType="com.zes.squad.gmh.entity.condition.UserQueryCondition"
 		resultType="long">
 		SELECT
-		<include refid="Base_Column_List" />
+		u.`id`
 		FROM user u
 		LEFT JOIN store s
 		ON u.`store_id` = s.`id`

@@ -51,6 +51,13 @@ public interface StoreService {
      * @param condition
      * @return
      */
-    PagedList<StoreUnion> listStoresByPage(StoreQueryCondition condition);
+    PagedList<StoreUnion> listPagedStores(StoreQueryCondition condition);
+
+    /**
+     * 查询所有门店
+     * 
+     * @return
+     */
+    List<StorePo> listStores();
 
 }

@@ -61,7 +61,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public PagedList<StoreUnion> listStoresByPage(StoreQueryCondition condition) {
+    public PagedList<StoreUnion> listPagedStores(StoreQueryCondition condition) {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
@@ -71,6 +71,11 @@ public class StoreServiceImpl implements StoreService {
         }
         PageInfo<StoreUnion> pageInfo = new PageInfo<>(unions);
         return PagedLists.newPagedList(pageNum, pageSize, pageInfo.getTotal(), unions);
+    }
+    
+    @Override
+    public List<StorePo> listStores() {
+        return storeMapper.selectAll();
     }
 
 }

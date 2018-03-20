@@ -67,4 +67,9 @@
 		WHERE id = #{id, jdbcType=BIGINT}
 		LIMIT 1
 	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList"/>
+		FROM store
+	</select>
 </mapper>

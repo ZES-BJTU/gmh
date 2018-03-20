@@ -106,7 +106,6 @@ public class UserController extends BaseController {
     public JsonResult<UserVo> doCreateUser(@RequestBody UserCreateOrModifyParams params) {
         checkUserCreateParams(params);
         UserPo po = CommonConverter.map(params, UserPo.class);
-        po.setAccount(params.getEmail());
         UserPo newUserPo = userService.createUser(po);
         UserVo vo = buildUserVoByPo(newUserPo);
         return JsonResults.success(vo);
@@ -132,7 +131,6 @@ public class UserController extends BaseController {
     public JsonResult<UserVo> doModifyUser(@PathVariable Long id, @RequestBody UserCreateOrModifyParams params) {
         checkUserModifyParams(id, params);
         UserPo po = CommonConverter.map(params, UserPo.class);
-        po.setAccount(params.getEmail());
         UserPo newUserPo = userService.modifyUser(po);
         UserVo vo = buildUserVoByPo(newUserPo);
         return JsonResults.success(vo);
@@ -178,8 +176,8 @@ public class UserController extends BaseController {
             ensureParameterValid(params.getRole().intValue() != UserRoleEnum.ADMINISTRATOR.getKey()
                     && params.getRole().intValue() != UserRoleEnum.MANAGER.getKey(), "门店负责人只可以新建前台和员工");
         }
-        ensureParameterExist(params.getAccount(), "用户账号不能为空");
         ensureParameterExist(params.getEmail(), "用户邮箱不能为空");
+        params.setAccount(params.getEmail());
         ensureParameterValid(CheckHelper.isValidEmail(params.getEmail()), "用户邮箱格式错误");
         ensureParameterExist(params.getMobile(), "用户手机号不能为空");
         ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "用户手机号格式错误");
@@ -199,6 +197,7 @@ public class UserController extends BaseController {
         params.setId(id);
         if (!Strings.isNullOrEmpty(params.getEmail())) {
             ensureParameterValid(CheckHelper.isValidEmail(params.getEmail()), "用户邮箱格式错误");
+            params.setAccount(params.getEmail());
         }
         if (!Strings.isNullOrEmpty(params.getMobile())) {
             ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "用户手机号格式错误");

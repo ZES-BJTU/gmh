@@ -105,11 +105,11 @@ public class StoreController extends BaseController {
     }
 
     @RequestMapping(method = { RequestMethod.GET })
-    public JsonResult<PagedList<StoreVo>> doListStoresByPage(StoreQueryParams queryParams) {
+    public JsonResult<PagedList<StoreVo>> doListPagedStoresByPage(StoreQueryParams queryParams) {
         ensureParameterExist(queryParams, "门店查询条件为空");
         CheckHelper.checkPageParams(queryParams);
         StoreQueryCondition condition = CommonConverter.map(queryParams, StoreQueryCondition.class);
-        PagedList<StoreUnion> pagedUnions = storeService.listStoresByPage(condition);
+        PagedList<StoreUnion> pagedUnions = storeService.listPagedStores(condition);
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
             return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
         }
@@ -124,6 +124,16 @@ public class StoreController extends BaseController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
+    }
+    
+    @RequestMapping(path = "/all", method = { RequestMethod.GET })
+    public JsonResult<List<StoreVo>> doListStores() {
+        List<StorePo> pos = storeService.listStores();
+        if (CollectionUtils.isEmpty(pos)) {
+            return JsonResults.success(Lists.newArrayList());
+        }
+        List<StoreVo> vos = CommonConverter.mapList(pos, StoreVo.class);
+        return JsonResults.success(vos);
     }
 
     private void checkCreateStoreParams(StoreCreateOrModifyParams params) {

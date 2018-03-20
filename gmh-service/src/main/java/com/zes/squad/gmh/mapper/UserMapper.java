@@ -81,4 +81,12 @@ public interface UserMapper {
      */
     List<Long> selectIdsByCondition(UserQueryCondition condition);
 
+    /**
+     * 根据门店id查询
+     * 
+     * @param storeId
+     * @return
+     */
+    List<UserPo> selectByStoreId(Long storeId);
+
 }

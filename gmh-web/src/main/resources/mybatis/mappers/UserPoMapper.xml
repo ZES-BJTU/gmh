@@ -124,4 +124,13 @@
 			</if>
 		</where>
 	</select>
+	<select id="selectByStoreId" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		user
+		<where>
+			`store_id` = #{storeId, jdbcType=BIGINT}
+		</where>
+	</select>
 </mapper>

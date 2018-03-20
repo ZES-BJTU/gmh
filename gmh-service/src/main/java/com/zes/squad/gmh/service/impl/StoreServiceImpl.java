@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 
 import java.util.List;
@@ -14,9 +15,11 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StoreQueryCondition;
 import com.zes.squad.gmh.entity.po.StorePo;
+import com.zes.squad.gmh.entity.po.UserPo;
 import com.zes.squad.gmh.entity.union.StoreUnion;
 import com.zes.squad.gmh.mapper.StoreMapper;
 import com.zes.squad.gmh.mapper.StoreUnionMapper;
+import com.zes.squad.gmh.mapper.UserMapper;
 import com.zes.squad.gmh.service.StoreService;
 
 @Service("storeService")
@@ -26,6 +29,8 @@ public class StoreServiceImpl implements StoreService {
     private StoreMapper      storeMapper;
     @Autowired
     private StoreUnionMapper storeUnionMapper;
+    @Autowired
+    private UserMapper       userMapper;
 
     @Override
     public StorePo createStore(StorePo po) {
@@ -35,6 +40,8 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public void removeStore(Long id) {
+        List<UserPo> pos = userMapper.selectByStoreId(id);
+        ensureCollectionEmpty(pos, "该门店下存在用户,无法删除");
         storeMapper.deleteById(id);
     }
 
@@ -72,7 +79,7 @@ public class StoreServiceImpl implements StoreService {
         PageInfo<StoreUnion> pageInfo = new PageInfo<>(unions);
         return PagedLists.newPagedList(pageNum, pageSize, pageInfo.getTotal(), unions);
     }
-    
+
     @Override
     public List<StorePo> listStores() {
         return storeMapper.selectAll();

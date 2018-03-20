@@ -37,13 +37,16 @@ public class BaseController {
             ThreadContext.removeUser();
         }
     }
-    
+
     public UserVo buildUserVoByUnion(UserUnion union) {
         UserVo vo = CommonConverter.map(union.getUserPo(), UserVo.class);
         vo.setRole(EnumUtils.getDescByKey(union.getUserPo().getRole().intValue(), UserRoleEnum.class));
         vo.setGender(EnumUtils.getDescByKey(union.getUserPo().getGender().intValue(), GenderEnum.class));
         if (union.getUserTokenPo() != null) {
             vo.setToken(union.getUserTokenPo().getToken());
+        }
+        if (union.getStorePo() != null) {
+            vo.setStoreName(union.getStorePo().getName());
         }
         return vo;
     }

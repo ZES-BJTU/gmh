@@ -28,6 +28,7 @@ import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
 import com.zes.squad.gmh.mapper.AppointmentMapper;
 import com.zes.squad.gmh.mapper.AppointmentProjectMapper;
 import com.zes.squad.gmh.service.AppointmentService;
+import com.zes.squad.gmh.service.ProjectService;
 
 @Service("appointmentService")
 public class AppointmentServiceImpl implements AppointmentService {
@@ -36,7 +37,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private AppointmentMapper appointmentMapper;
 	@Autowired
 	private AppointmentProjectMapper appointmentProjectMapper;
-
+	@Autowired
+	private ProjectService projectService;
 	@Override
 	public void createAppointment(AppointmentPo appointmentPo,
 			List<AppointmentProjectParams> appointmentPorjectParams) {
@@ -44,7 +46,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 		appointmentPo.setStatus(1);
 		appointmentMapper.insert(appointmentPo);
 		for (AppointmentProjectParams ap : appointmentPorjectParams) {
-			AppointmentProjectPo po = CommonConverter.map(ap, AppointmentProjectPo.class);
+			AppointmentProjectPo po = new AppointmentProjectPo();
+			po = CommonConverter.map(ap, AppointmentProjectPo.class);
+			Long projectId = projectService.queryProjectByCode(ap.getProjectCode());
+			if(projectId != null){
+				po.setProjectId(projectId);
+			}
 			po.setAppointmentId(appointmentPo.getId());
 			appointmentProjectMapper.insert(po);
 		}

@@ -48,6 +48,14 @@ public interface StockTypeMapper {
     StockTypePo selectById(Long id);
 
     /**
+     * 根据名称查询
+     * 
+     * @param name
+     * @return
+     */
+    StockTypePo selectByName(String name);
+
+    /**
      * 根据搜索条件查询
      * 
      * @param condition

@@ -62,8 +62,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(path = "/changePassword", method = { RequestMethod.PATCH })
-    public JsonResult<Void> doChangePassword(@PathVariable Long id, @RequestBody UserChangePasswordParams params) {
-        ensureParameterExist(id, "请选择更改密码的用户");
+    public JsonResult<Void> doChangePassword(@RequestBody UserChangePasswordParams params) {
         ensureParameterExist(params, "原密码为空");
         ensureParameterExist(params.getOriginalPassword(), "原密码为空");
         ensureParameterExist(params.getNewPassword(), "新密码为空");

@@ -50,7 +50,7 @@ public class StockController {
     public JsonResult<StockTypeVo> doCreateStockType(@RequestBody StockTypeCreateOrModifyParams params) {
         ensureParameterExist(params, "库存分类为空");
         ensureParameterExist(params.getName(), "库存分类名称为空");
-        ensureParameterNotExist(params.getId(), "库存分类标识应为空");
+        ensureParameterNotExist(params.getId(), "库存分类已存在");
         StockTypePo po = CommonConverter.map(params, StockTypePo.class);
         StockTypePo newTypePo = stockService.createStockType(po);
         StockTypeVo vo = CommonConverter.map(newTypePo, StockTypeVo.class);
@@ -77,9 +77,9 @@ public class StockController {
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
     public JsonResult<StockTypeVo> doModifyStockType(@PathVariable("id") Long id,
                                                      @RequestBody StockTypeCreateOrModifyParams params) {
-        ensureParameterExist(params, "库存分类为空");
+        ensureParameterExist(params, "请选择待修改库存分类");
         ensureParameterExist(id, "请选择待修改库存分类");
-        ensureParameterValid(id.equals(params.getId()), "库存分类错误");
+        params.setId(id);
         ensureParameterExist(params.getName(), "库存分类名称为空");
         StockTypePo po = CommonConverter.map(params, StockTypePo.class);
         StockTypePo newTypePo = stockService.modifyStockType(po);
@@ -98,9 +98,10 @@ public class StockController {
     @RequestMapping(path = "/types", method = { RequestMethod.GET })
     public JsonResult<PagedList<StockTypeVo>> doListPagedStockTypes(StockTypeQueryParams queryParams) {
         ensureParameterExist(queryParams, "库存分类查询条件为空");
+        CheckHelper.checkPageParams(queryParams);
         StockTypeQueryCondition condition = CommonConverter.map(queryParams, StockTypeQueryCondition.class);
         PagedList<StockTypePo> pagedPos = stockService.listPagedStockTypes(condition);
-        if (pagedPos == null || CollectionUtils.isEmpty(pagedPos.getData())) {
+        if (CollectionUtils.isEmpty(pagedPos.getData())) {
             return JsonResults.success(PagedLists.newPagedList(pagedPos.getPageNum(), pagedPos.getPageSize()));
         }
         PagedList<StockTypeVo> pagedVos = CommonConverter.mapPagedList(pagedPos, StockTypeVo.class);

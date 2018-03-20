@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -82,6 +83,7 @@ public class UserServiceImpl implements UserService {
         return userUnion;
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void changePassword(Long id, String originalPassword, String newPassword) {
         UserPo po = userMapper.selectById(id);
@@ -91,6 +93,7 @@ public class UserServiceImpl implements UserService {
         userMapper.updatePassword(newEncryptPassword);
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void resetPassword(String mobile) {
         UserPo po = userMapper.selectByMobile(mobile);
@@ -133,33 +136,39 @@ public class UserServiceImpl implements UserService {
         userTokenMapper.deleteByUserId(userId);
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public UserPo createUser(UserPo po) {
         StorePo storePo = storeMapper.selectById(po.getStoreId());
-        ensureEntityExist(storePo, "门店错误");
+        ensureEntityExist(storePo, "门店不存在");
         String salt = UUID.randomUUID().toString().replaceAll("-", "");
         String password = encryptPassword(po.getAccount(), salt, DEFAULT_PASSWORD);
         po.setSalt(salt);
         po.setPassword(password);
         userMapper.insert(po);
+        po.setPassword(null);
+        po.setSalt(null);
         return po;
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeUser(Long id) {
         userMapper.deleteById(id);
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeUsers(List<Long> ids) {
         userMapper.batchDelete(ids);
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public UserPo modifyUser(UserPo po) {
         if (po.getStoreId() != null) {
             StorePo storePo = storeMapper.selectById(po.getStoreId());
-            ensureEntityExist(storePo, "门店错误");
+            ensureEntityExist(storePo, "门店不存在");
         }
         userMapper.updateSelective(po);
         UserPo newUserPo = userMapper.selectById(po.getId());

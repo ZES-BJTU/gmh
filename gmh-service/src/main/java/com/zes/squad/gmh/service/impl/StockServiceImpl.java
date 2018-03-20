@@ -1,12 +1,15 @@
 package com.zes.squad.gmh.service.impl;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -27,30 +30,42 @@ import com.zes.squad.gmh.service.StockService;
 public class StockServiceImpl implements StockService {
 
     @Autowired
-    private StockTypeMapper      stockTypeMapper;
+    private StockTypeMapper  stockTypeMapper;
     @Autowired
-    private StockMapper          stockMapper;
+    private StockMapper      stockMapper;
     @Autowired
-    private StockUnionMapper     stockUnionMapper;
+    private StockUnionMapper stockUnionMapper;
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public StockTypePo createStockType(StockTypePo po) {
+        StockTypePo existingPo = stockTypeMapper.selectByName(po.getName());
+        ensureEntityNotExist(existingPo, "库存分类已存在");
         stockTypeMapper.insert(po);
         return po;
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStockType(Long id) {
-        stockTypeMapper.deleteById(id);
+        int row = stockTypeMapper.deleteById(id);
+        ensureConditionValid(row == 1, "库存分类删除失败");
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStockTypes(List<Long> ids) {
-        stockTypeMapper.batchDelete(ids);
+        int rows = stockTypeMapper.batchDelete(ids);
+        ensureConditionValid(rows == ids.size(), "库存分类删除失败");
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public StockTypePo modifyStockType(StockTypePo po) {
+        StockTypePo typePo = stockTypeMapper.selectByName(po.getName());
+        if (typePo != null) {
+            ensureConditionValid(typePo.getId().equals(po.getId()), "库存分类已存在");
+        }
         stockTypeMapper.updateSelective(po);
         StockTypePo newTypePo = stockTypeMapper.selectById(po.getId());
         ensureEntityExist(newTypePo, "库存分类不存在");

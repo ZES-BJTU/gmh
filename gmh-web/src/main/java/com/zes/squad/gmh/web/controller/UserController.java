@@ -26,6 +26,7 @@ import com.zes.squad.gmh.common.enums.UserRoleEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
+import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.UserQueryCondition;
 import com.zes.squad.gmh.entity.po.UserPo;
 import com.zes.squad.gmh.entity.union.UserUnion;
@@ -139,6 +140,9 @@ public class UserController extends BaseController {
     public JsonResult<PagedList<UserVo>> doListPagedUsers(UserQueryParams queryParams) {
         ensureParameterExist(queryParams, "用户查询条件为空");
         CheckHelper.checkPageParams(queryParams);
+        if (queryParams.getRole() != null) {
+            ensureParameterValid(EnumUtils.containsKey(queryParams.getRole(), UserRoleEnum.class), "用户角色错误");
+        }
         UserQueryCondition condition = CommonConverter.map(queryParams, UserQueryCondition.class);
         PagedList<UserUnion> pagedUserUnions = userService.listPagedUsers(condition);
         if (pagedUserUnions == null || CollectionUtils.isEmpty(pagedUserUnions.getData())) {
@@ -161,10 +165,17 @@ public class UserController extends BaseController {
     }
 
     private void checkUserCreateParams(UserCreateOrModifyParams params) {
+        UserPo user = ThreadContext.getCurrentUser();
         ensureParameterExist(params, "用户信息为空");
         ensureParameterNotExist(params.getId(), "用户标识应为空");
         ensureParameterExist(params.getRole(), "用户身份为空");
         ensureParameterValid(EnumUtils.containsKey(params.getRole(), UserRoleEnum.class), "用户身份错误");
+        if (user.getRole().intValue() == UserRoleEnum.ADMINISTRATOR.getKey()) {
+            ensureParameterValid(params.getRole().intValue() == UserRoleEnum.MANAGER.getKey(), "管理员只可以新建门店负责人");
+        } else if (user.getRole().intValue() == UserRoleEnum.MANAGER.getKey()) {
+            ensureParameterValid(params.getRole().intValue() != UserRoleEnum.ADMINISTRATOR.getKey()
+                    && params.getRole().intValue() != UserRoleEnum.MANAGER.getKey(), "门店负责人只可以新建前台和员工");
+        }
         ensureParameterExist(params.getAccount(), "用户账号不能为空");
         ensureParameterExist(params.getEmail(), "用户邮箱不能为空");
         ensureParameterValid(CheckHelper.isValidEmail(params.getEmail()), "用户邮箱格式错误");
@@ -173,7 +184,11 @@ public class UserController extends BaseController {
         ensureParameterExist(params.getName(), "用户姓名为空");
         ensureParameterExist(params.getGender(), "用户性别为空");
         ensureParameterValid(EnumUtils.containsKey(params.getGender().intValue(), GenderEnum.class), "用户性别错误");
-        ensureParameterExist(params.getStoreId(), "用户所属门店为空");
+        if (user.getRole().intValue() == UserRoleEnum.ADMINISTRATOR.getKey()) {
+            ensureParameterExist(params.getStoreId(), "门店负责人所属门店为空");
+        } else {
+            params.setStoreId(ThreadContext.getUserStoreId());
+        }
     }
 
     private void checkUserModifyParams(Long id, UserCreateOrModifyParams params) {
@@ -188,6 +203,16 @@ public class UserController extends BaseController {
         }
         if (params.getGender() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getGender().intValue(), GenderEnum.class), "用户性别错误");
+        }
+        if (params.getRole() != null) {
+            ensureParameterValid(EnumUtils.containsKey(params.getRole(), UserRoleEnum.class), "用户身份错误");
+        }
+        ensureParameterExist(params.getStoreId(), "用户所属门店为空");
+        UserPo user = ThreadContext.getCurrentUser();
+        if (user.getRole().intValue() == UserRoleEnum.ADMINISTRATOR.getKey()) {
+            ensureParameterValid(params.getRole().intValue() == UserRoleEnum.MANAGER.getKey(), "管理员只可以修改门店负责人信息");
+        } else if (user.getRole().intValue() == UserRoleEnum.MANAGER.getKey()) {
+            ensureParameterValid(params.getStoreId().equals(user.getStoreId()), "门店负责人只可以修改当前门店人员信息");
         }
     }
 

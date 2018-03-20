@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UserQueryCondition extends QueryCondition {
 
-    private Long   storeId;
-    private String search;
+    private Integer role;
+    private String  search;
 
 }

@@ -13,8 +13,11 @@ public class ConsumeRecordDetailPo extends Po{
 	
 	private String tradeSerialNumber;
 	private Long productId;
+	private String productCode;
 	private Long projectId;
+	private String projectCode;
 	private Long cardId;
+	private String cardCode;
 	private Integer amount;
 	private Long operatorId;
 	private Long consultantId;

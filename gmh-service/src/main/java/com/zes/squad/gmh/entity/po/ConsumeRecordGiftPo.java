@@ -15,9 +15,11 @@ public class ConsumeRecordGiftPo extends Po{
 	
 	private String tradeSerialNumber;;
 	private Integer type;
-	private Integer projectId;
+	private Long projectId;
+	private String projectCode;
 	private Integer projectAmount;
-	private Integer productId;
+	private Long productId;
+	private String productCode;
 	private Integer productAmount;
 	private BigDecimal couponMoney;
 	private Integer couponAmount;

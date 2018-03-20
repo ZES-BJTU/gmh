@@ -61,14 +61,12 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(path = "/changePassword", method = { RequestMethod.PATCH })
-    public JsonResult<Void> doChangePassword(@PathVariable Long id, @RequestBody UserChangePasswordParams params) {
-        ensureParameterExist(id, "请选择更改密码的用户");
+    public JsonResult<Void> doChangePassword(@RequestBody UserChangePasswordParams params) {
         ensureParameterExist(params, "原密码为空");
         ensureParameterExist(params.getOriginalPassword(), "原密码为空");
         ensureParameterExist(params.getNewPassword(), "新密码为空");
         ensureParameterValid(!Objects.equals(params.getOriginalPassword(), params.getNewPassword()), "原密码不能和新密码相同");
         UserUnion union = getUser();
-        ensureParameterValid(id.equals(union.getUserPo().getId()), "用户身份验证失败");
         userService.changePassword(union.getId(), params.getOriginalPassword(), params.getNewPassword());
         return JsonResults.success();
     }
@@ -91,6 +89,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(path = "/logout", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doLogout() {
         UserUnion user = getUser();
         if (user == null) {
@@ -180,7 +179,7 @@ public class UserController extends BaseController {
     private void checkUserModifyParams(Long id, UserCreateOrModifyParams params) {
         ensureParameterExist(id, "用户信息为空");
         ensureParameterExist(params, "用户信息为空");
-        ensureParameterValid(id.equals(params.getId()), "用户信息错误");
+        params.setId(id);
         if (!Strings.isNullOrEmpty(params.getEmail())) {
             ensureParameterValid(CheckHelper.isValidEmail(params.getEmail()), "用户邮箱格式错误");
         }

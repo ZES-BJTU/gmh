@@ -50,6 +50,9 @@
 			<if test="role != null">
 				`role` = #{role, jdbcType=TINYINT},
 			</if>
+			<if test="account != null and account != ''">
+				`account` = #{account, jdbcType=VARCHAR},
+			</if>
 			<if test="email != null and email != ''">
 				`email` = #{email, jdbcType=VARCHAR},
 			</if>
@@ -63,7 +66,10 @@
 				`gender` = #{gender, jdbcType=TINYINT},
 			</if>
 			<if test="storeId != null">
-				`store_id` = #{storeId, jdbcType=VARCHAR}
+				`store_id` = #{storeId, jdbcType=BIGINT},
+			</if>
+			<if test="remark != null and remark != ''">
+				`remark` = #{remark, jdbcType=VARCHAR}
 			</if>
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}

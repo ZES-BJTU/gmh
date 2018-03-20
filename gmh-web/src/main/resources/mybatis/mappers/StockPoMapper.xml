@@ -7,19 +7,23 @@
 		<result column="code" jdbcType="VARCHAR" property="code"/>
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-		<result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `stock_type_id`, `code`, `name`, `unit_name`, `created_time`, `modified_time`
+	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StockPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
 		INSERT INTO stock
-		(`stock_type_id`,`code`,`name`,`unit_name`,`total_amount`)
+		(`stock_type_id`,`code`,`name`,`unit_name`)
 		VALUES
 		(#{stockTypeId, jdbcType=BIGINT},
-		#{code, jdbcType=VARCHAR}
+		#{code, jdbcType=VARCHAR},
 		#{name, jdbcType=VARCHAR},
-		#{unitName, jdbcType=VARCHAR},
-		#{totalAmount, jdbcType=DECIMAL})
+		#{unitName, jdbcType=VARCHAR})
 	</insert>
 	<delete id="deleteById" parameterType="long">
 		DELETE FROM stock WHERE `id` = #{id, jdbcType=BIGINT}
@@ -45,17 +49,33 @@
 			<if test="unitName != null and unitName != ''">
 				`unit_name` = #{unitName, jdbcType=VARCHAR},
 			</if>
-			<if test="totalAmount != null">
-				`total_amount` = #{totalAmount, jdbcType=DECIMAL},
-			</if>
 		</set>
+		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		stock
+		<where>
+			`id` = #{id, jdbcType=BIGINT}
+		</where>
+	</select>
+	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		stock
+		<where>
+			`code` = #{code, jdbcType=VARCHAR}
+		</where>
+	</select>
 	<select id="getById" parameterType="long" resultMap="BaseResultMap">
 		select * from stock
 		where
-		id=#{id,jdbcType=BIGINT}	
+		id=#{id,jdbcType=BIGINT}
 	</select>
-		<update id="updateTotalAmount" parameterType="java.util.Map">
+	<update id="updateTotalAmount" parameterType="java.util.Map">
 		update stock set
 		total_amount=#{totalAmount,jdbcType=DECIMAL}
 		where

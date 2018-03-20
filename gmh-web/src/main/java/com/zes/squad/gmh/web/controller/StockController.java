@@ -3,9 +3,7 @@ package com.zes.squad.gmh.web.controller;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -112,21 +110,20 @@ public class StockController {
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<StockVo> doCreateStock(@RequestBody StockCreateOrModifyParams params) {
         ensureParameterExist(params, "库存信息为空");
-        ensureParameterNotExist(params.getId(), "库存标识应为空");
+        ensureParameterNotExist(params.getId(), "库存已存在");
         ensureParameterExist(params.getStockTypeId(), "库存分类为空");
         ensureParameterExist(params.getCode(), "库存代码为空");
         ensureParameterExist(params.getName(), "库存名称为空");
-        ensureParameterExist(params.getTotalAmount(), "库存余量为空");
-        ensureParameterValid(params.getTotalAmount().compareTo(BigDecimal.ZERO) == 1, "库存余量错误");
         StockPo po = CommonConverter.map(params, StockPo.class);
-        stockService.createStock(po);
-        return JsonResults.success();
+        StockPo newPo = stockService.createStock(po);
+        StockVo vo = CommonConverter.map(newPo, StockVo.class);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveStock(@PathVariable("id") Long id) {
-        ensureParameterExist(id, "库存标识为空");
+        ensureParameterExist(id, "请选择要删除的库存");
         stockService.deleteStock(id);
         return JsonResults.success();
     }
@@ -143,18 +140,19 @@ public class StockController {
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<StockVo> doModifyStock(@PathVariable("id") Long id,
                                              @RequestBody StockCreateOrModifyParams params) {
+        ensureParameterExist(id, "库存标识为空");
         ensureParameterExist(params, "库存信息为空");
-        ensureParameterExist(params.getId(), "库存标识为空");
-        if (params.getTotalAmount() != null) {
-            ensureParameterValid(params.getTotalAmount().compareTo(BigDecimal.ZERO) == 1, "库存余量错误");
-        }
-        return JsonResults.success();
+        params.setId(id);
+        StockPo po = CommonConverter.map(params, StockPo.class);
+        StockPo newPo = stockService.modifyStock(po);
+        StockVo vo = CommonConverter.map(newPo, StockVo.class);
+        return JsonResults.success(vo);
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.GET })
-    public JsonResult<StockVo> doQueryStockTypeById(@PathVariable("id") Long id) {
+    public JsonResult<StockVo> doQueryStockDetail(@PathVariable("id") Long id) {
         ensureParameterExist(id, "库存标识为空");
-        StockUnion union = stockService.queryStock(id);
+        StockUnion union = stockService.queryStockDetail(id);
         StockVo vo = buildStockVoByUnion(union);
         return JsonResults.success(vo);
     }
@@ -189,7 +187,6 @@ public class StockController {
     private StockVo buildStockVoByUnion(StockUnion union) {
         StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
         vo.setStockTypeName(union.getStockTypePo().getName());
-        vo.setStoreName(union.getStoreName());
         return vo;
     }
 

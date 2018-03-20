@@ -16,6 +16,5 @@ public class StockUnion extends Union {
 
     private StockPo           stockPo;
     private StockTypePo       stockTypePo;
-    private String            storeName;
 
 }

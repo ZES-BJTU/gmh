@@ -39,7 +39,23 @@ public interface StockMapper {
      */
     int updateSelective(StockPo po);
 
+    /**
+     * 根据编码查询库存
+     * 
+     * @param id
+     * @return
+     */
+    StockPo selectById(Long id);
+
+    /**
+     * 根据编码查询库存
+     * 
+     * @param code
+     * @return
+     */
+    StockPo selectByCode(String code);
+
     StockPo getById(Long id);
-    
+
     int updateTotalAmount(Map<String, Number> map);
 }

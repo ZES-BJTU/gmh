@@ -1,7 +1,5 @@
 package com.zes.squad.gmh.entity.po;
 
-import java.math.BigDecimal;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,6 +15,5 @@ public class StockPo extends Po {
     private String            code;
     private String            name;
     private String            unitName;
-    private BigDecimal        totalAmount;
 
 }

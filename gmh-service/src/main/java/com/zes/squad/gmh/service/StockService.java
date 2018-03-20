@@ -60,7 +60,7 @@ public interface StockService {
      * 
      * @param po
      */
-    void createStock(StockPo po);
+    StockPo createStock(StockPo po);
 
     /**
      * 根据id删除库存
@@ -81,7 +81,7 @@ public interface StockService {
      * 
      * @param po
      */
-    void modifyStock(StockPo po);
+    StockPo modifyStock(StockPo po);
 
     /**
      * 根绝id查询库存
@@ -89,7 +89,7 @@ public interface StockService {
      * @param id
      * @return
      */
-    StockUnion queryStock(Long id);
+    StockUnion queryStockDetail(Long id);
 
     /**
      * 根据条件模糊搜索库存

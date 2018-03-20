@@ -15,7 +15,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
-import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.StockPo;
@@ -92,29 +91,46 @@ public class StockServiceImpl implements StockService {
         return PagedLists.newPagedList(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), pos);
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void createStock(StockPo po) {
+    public StockPo createStock(StockPo po) {
+        StockPo existingPo = stockMapper.selectByCode(po.getCode());
+        ensureEntityNotExist(existingPo, "库存已存在");
         stockMapper.insert(po);
+        return po;
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStock(Long id) {
-        stockMapper.deleteById(id);
+        int record = stockMapper.deleteById(id);
+        ensureConditionValid(record == 1, "库存删除失败");
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStocks(List<Long> ids) {
-        stockMapper.batchDelete(ids);
+        int records = stockMapper.batchDelete(ids);
+        ensureConditionValid(records == ids.size(), "库存删除失败");
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void modifyStock(StockPo po) {
+    public StockPo modifyStock(StockPo po) {
+        StockPo stockPo = stockMapper.selectByCode(po.getCode());
+        if (stockPo != null) {
+            ensureConditionValid(stockPo.getId().equals(po.getId()), "库存已存在");
+        }
         stockMapper.updateSelective(po);
+        StockPo newPo = stockMapper.selectById(po.getId());
+        return newPo;
     }
 
     @Override
-    public StockUnion queryStock(Long id) {
-        return stockUnionMapper.selectById(id);
+    public StockUnion queryStockDetail(Long id) {
+        StockUnion union = stockUnionMapper.selectById(id);
+        ensureEntityExist(union, "库存不存在");
+        return union;
     }
 
     @Override
@@ -122,7 +138,6 @@ public class StockServiceImpl implements StockService {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
-        condition.setStoreId(ThreadContext.getUserStoreId());
         List<StockUnion> unions = stockUnionMapper.selectByCondition(condition);
         if (CollectionUtils.isEmpty(unions)) {
             return PagedLists.newPagedList(pageNum, pageSize);

@@ -12,16 +12,14 @@
 			columnPrefix="stock_type_" />
 	</resultMap>
 	<sql id="Base_Column_List">
+		s.`id` AS id,
 		s.`id` AS stock_id,
 		s.`stock_type_id` AS stock_stock_type_id,
 		s.`stock_code` AS stock_code,
-		s.`name` AS stock_type_id,
+		s.`name` AS stock_name,
 		s.`unit_name` AS stock_unit_name,
-		s.`total_amount` AS stock_total_amount,
 		st.`id` AS stock_type_id,
 		st.`name` AS stock_type_name,
-		st.`store_id` AS stock_type_store_id,
-		store.`name` AS store_name
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
@@ -30,9 +28,6 @@
 		LEFT JOIN stock_type st
 		ON
 		s.`stock_type_id` = st.`id`
-		LEFT JOIN store store
-		ON
-		st.`store_id` = store.`id`
 		<where>
 			s.`id` = #{id, jdbcType=BIGINT}
 		</where>
@@ -46,19 +41,14 @@
 		LEFT JOIN stock_type st
 		ON
 		s.`stock_type_id` = st.`id`
-		LEFT JOIN store store
-		ON
-		st.`store_id` = store.`id`
 		<where>
-			<if test="storeId != null">
-				st.`store_id` = #{storeId, jdbcType=BIGINT}
-			</if>
 			<if test="stockTypeId != null">
 				AND s.`store_type_id` = #{storeTypeId, jdbcType=BIGINT}
 			</if>
-			<if test="stockKeyWord != null and stockKeyWord != ''">
-				<bind name="condition" value="'%' + stockKeyWord + '%'"/>
-				AND CONCAT(s.`name`,st.`name`,store.`name`) LIKE #{condition, jdbcType=VARCHAR};
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				AND s.`name` LIKE #{condition, jdbcType=VARCHAR}
+				OR st.`name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

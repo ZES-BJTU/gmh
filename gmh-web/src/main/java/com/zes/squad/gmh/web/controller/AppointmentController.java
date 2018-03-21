@@ -7,6 +7,7 @@ import javax.websocket.OnMessage;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,14 +57,14 @@ public class AppointmentController {
 			return JsonResults.fail(1000, "预约冲突");
 	}
 
-	@RequestMapping(path = "/cancel", method = { RequestMethod.POST })
-	public JsonResult<Void> doCancleAppointment(@RequestBody Long appointmentId) {
+	@RequestMapping(path = "/cancel/{appointmentId}", method = { RequestMethod.POST })
+	public JsonResult<Void> doCancleAppointment(@PathVariable("appointmentId") Long appointmentId) {
 		appointmentService.cancelAppointment(appointmentId);
 		return JsonResults.success();
 	}
 
-	@RequestMapping(path = "/finish", method = { RequestMethod.POST })
-	public JsonResult<Void> doFinishAppointment(@RequestBody Long appointmentId) {
+	@RequestMapping(path = "/finish/{appointmentId}", method = { RequestMethod.POST })
+	public JsonResult<Void> doFinishAppointment(@PathVariable("appointmentId") Long appointmentId) {
 		appointmentService.finishAppointment(appointmentId);
 		return JsonResults.success();
 	}

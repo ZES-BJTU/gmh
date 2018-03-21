@@ -6,8 +6,8 @@
 		<result column="appointment_id" jdbcType="INTEGER" property="appointmentId" />
 		<result column="project_id" jdbcType="INTEGER" property="projectId" />
 		<result column="employee_id" jdbcType="INTEGER" property="employeeId" />
-		<result column="begin_time" jdbcType="DATE" property="beginTime" />
-		<result column="end_time" jdbcType="DATE" property="endTime" />
+		<result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
@@ -25,8 +25,8 @@
 		(#{appointmentId, jdbcType=INTEGER},
 		#{projectId, jdbcType=INTEGER},
 		#{employeeId, jdbcType=INTEGER},
-		#{beginTime, jdbcType=DATE},
-		#{endTime, jdbcType=DATE})
+		#{beginTime, jdbcType=TIMESTAMP},
+		#{endTime, jdbcType=TIMESTAMP})
 	</insert>
 	<select id="getAppointmentProjectUnionByAppId" parameterType="long" resultMap="AppointmentProjectUnionMap">
 		SELECT

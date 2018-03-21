@@ -69,6 +69,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	public PagedList<AppointmentUnion> listPagedAppointments(AppointmentQueryCondition condition) {
+		condition.setStoreId(ThreadContext.getUserStoreId());
 		int pageNum = condition.getPageNum();
 		int pageSize = condition.getPageSize();
 		PageHelper.startPage(pageNum, pageSize);

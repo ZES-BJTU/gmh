@@ -23,6 +23,8 @@ import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.GenderEnum;
 import com.zes.squad.gmh.common.enums.UserRoleEnum;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
@@ -175,6 +177,8 @@ public class UserController extends BaseController {
         } else if (user.getRole().intValue() == UserRoleEnum.MANAGER.getKey()) {
             ensureParameterValid(params.getRole().intValue() != UserRoleEnum.ADMINISTRATOR.getKey()
                     && params.getRole().intValue() != UserRoleEnum.MANAGER.getKey(), "门店负责人只可以新建前台和员工");
+        } else {
+            throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "没有权限");
         }
         ensureParameterExist(params.getEmail(), "用户邮箱不能为空");
         params.setAccount(params.getEmail());
@@ -214,6 +218,8 @@ public class UserController extends BaseController {
             ensureParameterValid(params.getRole().intValue() == UserRoleEnum.MANAGER.getKey(), "管理员只可以修改门店负责人信息");
         } else if (user.getRole().intValue() == UserRoleEnum.MANAGER.getKey()) {
             ensureParameterValid(params.getStoreId().equals(user.getStoreId()), "门店负责人只可以修改当前门店人员信息");
+        } else {
+            throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "没有权限");
         }
     }
 

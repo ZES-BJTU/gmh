@@ -38,10 +38,14 @@
 	<update id="cancelAppointment" parameterType="long">
 		UPDATE appointment SET
 		`status` = 3
+		where
+		id = #{id,jdbcType=INTEGER}
 	</update>
 	<update id="finishAppointment" parameterType="long">
 		UPDATE appointment SET
 		`status` = 2
+		where
+		id = #{id,jdbcType=INTEGER}
 	</update>
 	
 	<select id="listAppointmentByCondition"

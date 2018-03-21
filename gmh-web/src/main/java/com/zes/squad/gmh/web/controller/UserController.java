@@ -217,6 +217,8 @@ public class UserController extends BaseController {
         if (user.getRole().intValue() == UserRoleEnum.ADMINISTRATOR.getKey()) {
             ensureParameterValid(params.getRole().intValue() == UserRoleEnum.MANAGER.getKey(), "管理员只可以修改门店负责人信息");
         } else if (user.getRole().intValue() == UserRoleEnum.MANAGER.getKey()) {
+            ensureParameterValid(params.getRole().intValue() != UserRoleEnum.ADMINISTRATOR.getKey()
+                    && params.getRole().intValue() != UserRoleEnum.MANAGER.getKey(), "门店负责人只可以修改前台和员工信息");
             ensureParameterValid(params.getStoreId().equals(user.getStoreId()), "门店负责人只可以修改当前门店人员信息");
         } else {
             throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "没有权限");

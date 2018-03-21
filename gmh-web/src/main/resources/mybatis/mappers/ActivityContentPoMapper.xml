@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ActivityContentMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ActivityContentPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
+		<result column="type" jdbcType="INTEGER" property="type" />
+		<result column="related_id" jdbcType="BIGINT" property="relatedId" />
+		<result column="content" jdbcType="VARCHAR" property="content" />
+		<result column="number" jdbcType="DECIMAL" property="number" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `activity_id`, `type`, `related_id`, `content`, `number`, `remark`, `created_time`, `modified_time`
+	</sql>
+	<insert id="batchInsert" parameterType="com.zes.squad.gmh.entity.po.ActivityContentPo">
+		INSERT INTO activity_content(`activity_id`, `type`, `related_id`, `content`, `number`, `remark`) 
+		VALUES 
+		<foreach collection="list" item="po" separator=",">
+			(#{po.activityId:BIGINT},
+			#{po.type:INTEGER},
+			#{po.relatedId:BIGINT},
+			#{po.content:VARCHAR},
+			#{po.number:DECIMAL},
+			#{po.remark:VARCHAR})
+		</foreach>
+	</insert>
+	<delete id="batchDeleteByActivityId" parameterType="long">
+		DELETE FROM activity_content 
+		<where>
+			<foreach collection="list" item="id" separator="," open="(" close=")">
+				#{id:BIGINT}
+			</foreach>
+		</where>
+	</delete>
+</mapper>

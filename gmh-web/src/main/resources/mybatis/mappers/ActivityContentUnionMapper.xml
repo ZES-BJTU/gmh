@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ActivityContentUnionMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.union.ActivityContentUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="activityContentPo"
+			resultMap="com.zes.squad.gmh.mapper.ActivityContentMapper.BaseResultMap"
+			columnPrefix="ac_" />
+		<association property="projectPo"
+			resultMap="com.zes.squad.gmh.mapper.ProjectMapper.BaseResultMap"
+			columnPrefix="pj_" />
+		<association property="productPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductMapper.BaseResultMap"
+			columnPrefix="pd_" />
+		<association property="memberCardPo"
+			resultMap="com.zes.squad.gmh.mapper.MemberCardMapper.BaseResultMap"
+			columnPrefix="mc_" />
+	</resultMap>
+</mapper>

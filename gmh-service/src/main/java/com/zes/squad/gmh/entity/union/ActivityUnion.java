@@ -2,7 +2,6 @@ package com.zes.squad.gmh.entity.union;
 
 import java.util.List;
 
-import com.zes.squad.gmh.entity.po.ActivityContentPo;
 import com.zes.squad.gmh.entity.po.ActivityPo;
 
 import lombok.Data;
@@ -14,9 +13,9 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ActivityUnion extends Union {
 
-    private static final long       serialVersionUID = 1L;
+    private static final long          serialVersionUID = 1L;
 
-    private ActivityPo              activityPo;
-    private List<ActivityContentPo> activityContentPos;
+    private ActivityPo                 activityPo;
+    private List<ActivityContentUnion> activityContentUnions;
 
 }

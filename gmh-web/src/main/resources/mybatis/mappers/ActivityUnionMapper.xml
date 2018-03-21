@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ActivityUnionMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.ActivityUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="activityPo"
+			resultMap="com.zes.squad.gmh.mapper.ActivityMapper.BaseResultMap"
+			columnPrefix="a_" />
+		<collection property="activityContentUnions"
+			resultMap="com.zes.squad.gmh.mapper.ActivityContentUnionMapper.BaseResultMap"
+			columnPrefix="acu_" />
+	</resultMap>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT * FROM activity WHERE `id` = #{id:BIGINT}
+	</select>
+	<select id="selectByIds" parameterType="long" resultMap="BaseResultMap">
+		SELECT * FROM activity WHERE `id` IN 
+		<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id:BIGINT}
+		</foreach>
+	</select>
+</mapper>

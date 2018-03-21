@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ActivityMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ActivityPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="price" jdbcType="DECIMAL" property="price" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="deadline" jdbcType="TIMESTAMP" property="deadline" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `name`, `price`, `code`, `deadline`,
+		`remark`, `created_time`, `modified_time`
+	</sql>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ActivityPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()			
+		</selectKey>
+		INSERT INTO activity(`name`, `price`, `code`, `deadline`, `remark`)
+		VALUES(#{name:VARCHAR},#{price:DECIMAL},#{code:VARCHAR},#{deadline:TIMESTAMP},#{remark:VARCHAR})
+	</insert>
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM activity WHERE `id` = #{id:BIGINT}
+	</delete>
+	<delete id="batchDelete" parameterType="long">
+		DELETE FROM activity WHERE 
+		<foreach collection="list" item="id" separator="," open="(" close=")">
+			#{id:BIGINT}
+		</foreach>
+	</delete>
+	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ActivityPo">
+		UPDATE activity
+		<set>
+			<if test="name != null and name != ''">
+				`name` = #{name:VARCHAR},
+			</if>
+			<if test="price != null">
+				`price` = #{price:DECIMAL},
+			</if>
+			<if test="code != null and code != ''">
+				`code` = #{code:VARCHAR},
+			</if>
+			<if test="deadline != null">
+				`deadline` = #{deadline:TIMESTAMP},
+			</if>
+			<if test="remark != null and remark != ''">
+				`remark` = #{remark:VARCHAR}
+			</if>
+		</set>
+		WHERE `id` = #{id:BIGINT}
+	</update>
+	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		activity WHERE `code` = {code:VARCHAR}
+	</select>
+	<select id="selectIdsByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ActivityQueryCondition"
+		resultType="long">
+		SELECT `id` FROM activity 
+		<where>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				CONCAT(`name`,`code`,`remark`) LIKE #{condition:VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

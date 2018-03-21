@@ -9,4 +9,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ActivityQueryCondition extends QueryCondition {
 
+    private String search;
+
 }

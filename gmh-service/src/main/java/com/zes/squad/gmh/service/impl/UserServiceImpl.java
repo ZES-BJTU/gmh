@@ -147,6 +147,8 @@ public class UserServiceImpl implements UserService {
         ensureEntityNotExist(userPo, "邮箱已注册");
         userPo = userMapper.selectByMobile(po.getMobile());
         ensureEntityNotExist(userPo, "手机号已注册");
+        List<UserPo> pos = userMapper.selectByStoreId(po.getStoreId());
+        ensureCollectionEmpty(pos, "该门店已有店长");
         String salt = UUID.randomUUID().toString().replaceAll("-", "");
         String password = encryptPassword(po.getAccount(), salt, DEFAULT_PASSWORD);
         po.setSalt(salt);
@@ -184,6 +186,8 @@ public class UserServiceImpl implements UserService {
         if (existingPo != null) {
             ensureConditionValid(existingPo.getId().equals(po.getId()), "手机号已注册");
         }
+        List<UserPo> pos = userMapper.selectByStoreId(po.getStoreId());
+        ensureCollectionEmpty(pos, "该门店已有店长");
         userMapper.updateSelective(po);
         UserPo newUserPo = userMapper.selectById(po.getId());
         ensureEntityExist(newUserPo, "用户信息不存在");

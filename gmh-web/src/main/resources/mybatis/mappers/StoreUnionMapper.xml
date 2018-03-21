@@ -32,7 +32,7 @@
 		ON
 		u.`store_id` = s.`id`
 		<where>
-			s.`id` = #{id, jdbcType=BIGINT}
+			s.`id` = #{id, jdbcType=BIGINT} AND u.`role` = 2
 		</where>
 		LIMIT 1
 	</select>
@@ -47,15 +47,16 @@
 		user u
 		ON
 		s.`id` = u.`store_id`
-		<if test="search != null and search != ''">
-			<bind name="condition" value="'%' + search + '%'" />
-			<where>
-				CONCAT(s.`name`,s.`address`,s.`phone`,s.`remark`)
-				LIKE
-				#{condition, jdbcType=VARCHAR}
-				OR
-				u.`name` LIKE #{condition, jdbcType=VARCHAR}
-			</where>
-		</if>
+		<where>
+			u.`role` = 2
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'" />
+					AND CONCAT(s.`name`,s.`address`,s.`phone`,s.`remark`)
+					LIKE
+					#{condition, jdbcType=VARCHAR}
+					OR
+					u.`name` LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
 	</select>
 </mapper>

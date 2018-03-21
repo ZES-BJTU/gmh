@@ -9,4 +9,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ActivityQueryParams extends QueryParams {
 
+    private String search;
+
 }

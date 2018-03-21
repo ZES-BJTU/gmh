@@ -176,6 +176,14 @@ public class UserServiceImpl implements UserService {
             StorePo storePo = storeMapper.selectById(po.getStoreId());
             ensureEntityExist(storePo, "门店不存在");
         }
+        UserPo existingPo = userMapper.selectByEmail(po.getEmail());
+        if (existingPo != null) {
+            ensureConditionValid(existingPo.getId().equals(po.getId()), "邮箱已注册");
+        }
+        existingPo = userMapper.selectByEmail(po.getMobile());
+        if (existingPo != null) {
+            ensureConditionValid(existingPo.getId().equals(po.getId()), "手机号已注册");
+        }
         userMapper.updateSelective(po);
         UserPo newUserPo = userMapper.selectById(po.getId());
         ensureEntityExist(newUserPo, "用户信息不存在");

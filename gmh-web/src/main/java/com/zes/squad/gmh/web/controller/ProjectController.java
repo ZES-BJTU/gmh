@@ -29,15 +29,15 @@ import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProjectPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
-import com.zes.squad.gmh.entity.union.ProjectStockParams;
 import com.zes.squad.gmh.entity.union.ProjectStockUnion;
 import com.zes.squad.gmh.entity.union.ProjectUnion;
 import com.zes.squad.gmh.service.ProjectService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.ProjectCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.ProjectParams;
 import com.zes.squad.gmh.web.entity.param.ProjectQueryParams;
-import com.zes.squad.gmh.web.entity.param.ProjectTypeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.ProjectStockParams;
+import com.zes.squad.gmh.web.entity.param.ProjectTypeParams;
 import com.zes.squad.gmh.web.entity.param.ProjectTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.ProjectStockVo;
 import com.zes.squad.gmh.web.entity.vo.ProjectTypeVo;
@@ -53,7 +53,7 @@ public class ProjectController {
 
     @RequestMapping(path = "/types", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<ProjectTypeVo> doCreateProjectType(@RequestBody ProjectTypeCreateOrModifyParams params) {
+    public JsonResult<ProjectTypeVo> doCreateProjectType(@RequestBody ProjectTypeParams params) {
         ensureParameterExist(params, "项目分类为空");
         ensureParameterNotExist(params.getId(), "项目分类已存在");
         ensureParameterExist(params.getTopType(), "项目分类顶层分类为空");
@@ -83,7 +83,7 @@ public class ProjectController {
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
     public JsonResult<ProjectTypeVo> doModifyProjectType(@PathVariable("id") Long id,
-                                                         @RequestBody ProjectTypeCreateOrModifyParams params) {
+                                                         @RequestBody ProjectTypeParams params) {
         ensureParameterExist(params, "项目分类为空");
         ensureParameterExist(id, "项目分类为空");
         params.setId(id);
@@ -126,7 +126,7 @@ public class ProjectController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<ProjectVo> doCreateProject(@RequestBody ProjectCreateOrModifyParams params) {
+    public JsonResult<ProjectVo> doCreateProject(@RequestBody ProjectParams params) {
         checkProjectCreateParams(params);
         ProjectUnion union = buildProjectUnionByCreateOrModifyParams(params);
         ProjectUnion newUnion = projectService.createProject(union);
@@ -152,7 +152,7 @@ public class ProjectController {
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<Void> doModifyProject(@PathVariable("id") Long id,
-                                            @RequestBody ProjectCreateOrModifyParams params) {
+                                            @RequestBody ProjectParams params) {
         ensureParameterExist(id, "项目不存在");
         params.setId(id);
         checkProjectModifyParams(params);
@@ -195,7 +195,7 @@ public class ProjectController {
         return vo;
     }
 
-    private void checkProjectCreateParams(ProjectCreateOrModifyParams params) {
+    private void checkProjectCreateParams(ProjectParams params) {
         ensureParameterExist(params, "项目信息为空");
         ensureParameterNotExist(params.getId(), "项目已存在");
         ensureParameterExist(params.getProjectTypeId(), "项目分类为空");
@@ -217,7 +217,7 @@ public class ProjectController {
         }
     }
 
-    private ProjectUnion buildProjectUnionByCreateOrModifyParams(ProjectCreateOrModifyParams params) {
+    private ProjectUnion buildProjectUnionByCreateOrModifyParams(ProjectParams params) {
         ProjectPo projectPo = CommonConverter.map(params, ProjectPo.class);
         ProjectUnion union = new ProjectUnion();
         union.setProjectPo(projectPo);
@@ -232,7 +232,7 @@ public class ProjectController {
         return union;
     }
 
-    private void checkProjectModifyParams(ProjectCreateOrModifyParams params) {
+    private void checkProjectModifyParams(ProjectParams params) {
         ensureParameterExist(params, "项目信息为空");
         ensureParameterExist(params.getId(), "项目不存在");
         if (params.getUnitPrice() != null) {

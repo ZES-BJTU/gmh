@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class MemberCardCreateOrModifyParams {
+public class MemberCardParams {
 
     private Long       id;
     private Integer    type;

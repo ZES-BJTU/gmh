@@ -31,10 +31,10 @@ import com.zes.squad.gmh.entity.union.ProductUnion;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.ProductAmountCreateOrModifyParams;
-import com.zes.squad.gmh.web.entity.param.ProductCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.ProductAmountParams;
+import com.zes.squad.gmh.web.entity.param.ProductParams;
 import com.zes.squad.gmh.web.entity.param.ProductQueryParams;
-import com.zes.squad.gmh.web.entity.param.ProductTypeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.ProductTypeParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.ProductAmountVo;
 import com.zes.squad.gmh.web.entity.vo.ProductTypeVo;
@@ -50,7 +50,7 @@ public class ProductController {
 
     @RequestMapping(path = "/types", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<ProductTypeVo> doCreateProductType(@RequestBody ProductTypeCreateOrModifyParams params) {
+    public JsonResult<ProductTypeVo> doCreateProductType(@RequestBody ProductTypeParams params) {
         ensureParameterExist(params, "产品分类为空");
         ensureParameterNotExist(params.getId(), "产品分类应为空");
         ensureParameterExist(params.getName(), "产品分类名称为空");
@@ -78,7 +78,7 @@ public class ProductController {
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
     public JsonResult<ProductTypeVo> doModifyProductType(@PathVariable("id") Long id,
-                                                         @RequestBody ProductTypeCreateOrModifyParams params) {
+                                                         @RequestBody ProductTypeParams params) {
         ensureParameterExist(id, "产品分类为空");
         ensureParameterExist(params, "产品分类为空");
         ensureParameterValid(id.equals(params.getId()), "产品分类错误");
@@ -111,7 +111,7 @@ public class ProductController {
     }
 
     @RequestMapping(method = { RequestMethod.POST })
-    public JsonResult<ProductVo> doCreateProduct(@RequestBody ProductCreateOrModifyParams params) {
+    public JsonResult<ProductVo> doCreateProduct(@RequestBody ProductParams params) {
         ensureParameterExist(params, "产品信息为空");
         ensureParameterNotExist(params.getId(), "产品已存在");
         ensureParameterExist(params.getProductTypeId(), "产品分类为空");
@@ -143,7 +143,7 @@ public class ProductController {
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<ProductVo> doModifyProducts(@PathVariable("id") Long id,
-                                                  @RequestBody ProductCreateOrModifyParams params) {
+                                                  @RequestBody ProductParams params) {
         ensureParameterExist(id, "请选择待修改商品");
         ensureParameterExist(params, "请选择待修改商品");
         ensureParameterValid(id.equals(params.getId()), "待修改商品不存在");
@@ -185,7 +185,7 @@ public class ProductController {
 
     @RequestMapping(path = "/amount", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<ProductAmountVo> doCreateProductAmount(@RequestBody ProductAmountCreateOrModifyParams params) {
+    public JsonResult<ProductAmountVo> doCreateProductAmount(@RequestBody ProductAmountParams params) {
         ensureParameterExist(params, "产品数量为空");
         ensureParameterExist(params.getProductId(), "请选择产品");
         ensureParameterExist(params.getAmount(), "产品数量为空");
@@ -213,7 +213,7 @@ public class ProductController {
 
     @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PATCH })
     public JsonResult<ProductAmountVo> doModifyProductAmount(@PathVariable("id") Long id,
-                                                             @RequestBody ProductAmountCreateOrModifyParams params) {
+                                                             @RequestBody ProductAmountParams params) {
         ensureParameterExist(id, "请选择待修改数量产品");
         ensureParameterExist(params, "请选择待修改数量产品");
         ensureParameterValid(id.equals(params.getId()), "请选择待修改数量产品");

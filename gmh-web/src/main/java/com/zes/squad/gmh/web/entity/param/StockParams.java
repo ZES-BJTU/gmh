@@ -3,7 +3,7 @@ package com.zes.squad.gmh.web.entity.param;
 import lombok.Data;
 
 @Data
-public class StockCreateOrModifyParams {
+public class StockParams {
 
     private Long       id;
     private Long       stockTypeId;

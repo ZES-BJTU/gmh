@@ -3,7 +3,7 @@ package com.zes.squad.gmh.web.entity.param;
 import lombok.Data;
 
 @Data
-public class ActivityContentCreateOrModifyParams {
+public class ActivityContentParams {
 
     private Long    id;
     private Integer type;

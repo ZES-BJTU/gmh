@@ -3,12 +3,10 @@ package com.zes.squad.gmh.web.entity.param;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.zes.squad.gmh.entity.union.ProjectStockParams;
-
 import lombok.Data;
 
 @Data
-public class ProjectCreateOrModifyParams {
+public class ProjectParams {
 
     private Long                     id;
     private Long                     projectTypeId;

@@ -38,7 +38,7 @@ import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.MessageParams;
 import com.zes.squad.gmh.web.entity.param.UserChangePasswordParams;
-import com.zes.squad.gmh.web.entity.param.UserCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.UserParams;
 import com.zes.squad.gmh.web.entity.param.UserLoginParams;
 import com.zes.squad.gmh.web.entity.param.UserQueryParams;
 import com.zes.squad.gmh.web.entity.vo.UserVo;
@@ -105,7 +105,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<UserVo> doCreateUser(@RequestBody UserCreateOrModifyParams params) {
+    public JsonResult<UserVo> doCreateUser(@RequestBody UserParams params) {
         checkUserCreateParams(params);
         UserPo po = CommonConverter.map(params, UserPo.class);
         UserPo newUserPo = userService.createUser(po);
@@ -130,7 +130,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
-    public JsonResult<UserVo> doModifyUser(@PathVariable Long id, @RequestBody UserCreateOrModifyParams params) {
+    public JsonResult<UserVo> doModifyUser(@PathVariable Long id, @RequestBody UserParams params) {
         checkUserModifyParams(id, params);
         UserPo po = CommonConverter.map(params, UserPo.class);
         UserPo newUserPo = userService.modifyUser(po);
@@ -166,7 +166,7 @@ public class UserController extends BaseController {
         return vo;
     }
 
-    private void checkUserCreateParams(UserCreateOrModifyParams params) {
+    private void checkUserCreateParams(UserParams params) {
         UserPo user = ThreadContext.getCurrentUser();
         ensureParameterExist(params, "用户信息为空");
         ensureParameterNotExist(params.getId(), "用户标识应为空");
@@ -195,7 +195,7 @@ public class UserController extends BaseController {
         }
     }
 
-    private void checkUserModifyParams(Long id, UserCreateOrModifyParams params) {
+    private void checkUserModifyParams(Long id, UserParams params) {
         ensureParameterExist(id, "用户信息为空");
         ensureParameterExist(params, "用户信息为空");
         params.setId(id);

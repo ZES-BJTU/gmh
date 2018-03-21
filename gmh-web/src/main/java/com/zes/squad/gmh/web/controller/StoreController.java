@@ -29,7 +29,7 @@ import com.zes.squad.gmh.service.StoreService;
 import com.zes.squad.gmh.service.UserService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.StoreCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.StoreParams;
 import com.zes.squad.gmh.web.entity.param.StoreQueryParams;
 import com.zes.squad.gmh.web.entity.vo.StoreVo;
 import com.zes.squad.gmh.web.entity.vo.UserVo;
@@ -46,7 +46,7 @@ public class StoreController extends BaseController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<StoreVo> doCreateStore(@RequestBody StoreCreateOrModifyParams params) {
+    public JsonResult<StoreVo> doCreateStore(@RequestBody StoreParams params) {
         checkCreateStoreParams(params);
         StorePo po = CommonConverter.map(params, StorePo.class);
         StorePo newStorePo = storeService.createStore(po);
@@ -72,7 +72,7 @@ public class StoreController extends BaseController {
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<StoreVo> doModifyStore(@PathVariable("id") Long id,
-                                             @RequestBody StoreCreateOrModifyParams params) {
+                                             @RequestBody StoreParams params) {
         checkModifyStoreParams(id, params);
         StorePo po = CommonConverter.map(params, StorePo.class);
         StorePo newStorePo = storeService.modifyStore(po);
@@ -136,13 +136,13 @@ public class StoreController extends BaseController {
         return JsonResults.success(vos);
     }
 
-    private void checkCreateStoreParams(StoreCreateOrModifyParams params) {
+    private void checkCreateStoreParams(StoreParams params) {
         ensureParameterExist(params, "请选择待修改门店");
         ensureParameterExist(params.getName(), "门店名称为空");
         ensureParameterExist(params.getAddress(), "门店地址为空");
     }
 
-    private void checkModifyStoreParams(Long id, StoreCreateOrModifyParams params) {
+    private void checkModifyStoreParams(Long id, StoreParams params) {
         ensureParameterExist(id, "请选择待修改门店");
         ensureParameterExist(params, "请选择待修改门店");
         if (params.getId() != null) {

@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class EmployeeCreateOrModifyParams {
+public class EmployeeParams {
 
     private Long                     id;
     private String                   name;

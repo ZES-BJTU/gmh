@@ -28,9 +28,9 @@ import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.service.StockService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.StockCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.StockParams;
 import com.zes.squad.gmh.web.entity.param.StockQueryParams;
-import com.zes.squad.gmh.web.entity.param.StockTypeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.StockTypeParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeQueryParams;
 import com.zes.squad.gmh.web.entity.vo.StockTypeVo;
 import com.zes.squad.gmh.web.entity.vo.StockVo;
@@ -45,7 +45,7 @@ public class StockController {
 
     @RequestMapping(path = "/types", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<StockTypeVo> doCreateStockType(@RequestBody StockTypeCreateOrModifyParams params) {
+    public JsonResult<StockTypeVo> doCreateStockType(@RequestBody StockTypeParams params) {
         ensureParameterExist(params, "库存分类为空");
         ensureParameterExist(params.getName(), "库存分类名称为空");
         ensureParameterNotExist(params.getId(), "库存分类已存在");
@@ -74,7 +74,7 @@ public class StockController {
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
     public JsonResult<StockTypeVo> doModifyStockType(@PathVariable("id") Long id,
-                                                     @RequestBody StockTypeCreateOrModifyParams params) {
+                                                     @RequestBody StockTypeParams params) {
         ensureParameterExist(params, "请选择待修改库存分类");
         ensureParameterExist(id, "请选择待修改库存分类");
         params.setId(id);
@@ -108,7 +108,7 @@ public class StockController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<StockVo> doCreateStock(@RequestBody StockCreateOrModifyParams params) {
+    public JsonResult<StockVo> doCreateStock(@RequestBody StockParams params) {
         ensureParameterExist(params, "库存信息为空");
         ensureParameterNotExist(params.getId(), "库存已存在");
         ensureParameterExist(params.getStockTypeId(), "库存分类为空");
@@ -139,7 +139,7 @@ public class StockController {
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<StockVo> doModifyStock(@PathVariable("id") Long id,
-                                             @RequestBody StockCreateOrModifyParams params) {
+                                             @RequestBody StockParams params) {
         ensureParameterExist(id, "库存标识为空");
         ensureParameterExist(params, "库存信息为空");
         params.setId(id);

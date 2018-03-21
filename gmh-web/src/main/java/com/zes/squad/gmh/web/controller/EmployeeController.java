@@ -35,7 +35,7 @@ import com.zes.squad.gmh.entity.union.EmployeeUnion;
 import com.zes.squad.gmh.service.EmployeeService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.EmployeeCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.EmployeeParams;
 import com.zes.squad.gmh.web.entity.param.EmployeeWorkParams;
 import com.zes.squad.gmh.web.entity.param.EmployeeWorkQueryParams;
 import com.zes.squad.gmh.web.entity.vo.EmployeeVo;
@@ -51,7 +51,7 @@ public class EmployeeController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<EmployeeVo> doCreateEmployee(@RequestBody EmployeeCreateOrModifyParams params) {
+    public JsonResult<EmployeeVo> doCreateEmployee(@RequestBody EmployeeParams params) {
         checkEmployeCreateParams(params);
         EmployeeUnion union = buildEmployeeUnionByParams(params);
         employeeService.createEmployee(union);
@@ -76,7 +76,7 @@ public class EmployeeController {
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<Void> doModifyEmployee(@PathVariable("id") Long id,
-                                             @RequestBody EmployeeCreateOrModifyParams params) {
+                                             @RequestBody EmployeeParams params) {
         checkEmployeModifyParams(id, params);
         EmployeeUnion union = buildEmployeeUnionByParams(params);
         employeeService.modifyEmployee(union);
@@ -109,7 +109,7 @@ public class EmployeeController {
                 pagedUnions.getTotalCount(), vos));
     }
 
-    private EmployeeUnion buildEmployeeUnionByParams(EmployeeCreateOrModifyParams params) {
+    private EmployeeUnion buildEmployeeUnionByParams(EmployeeParams params) {
         EmployeePo employeePo = CommonConverter.map(params, EmployeePo.class);
         List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(params.getEmployeeWorkParams().size());
         for (EmployeeWorkParams workParams : params.getEmployeeWorkParams()) {
@@ -122,7 +122,7 @@ public class EmployeeController {
         return union;
     }
 
-    private void checkEmployeCreateParams(EmployeeCreateOrModifyParams params) {
+    private void checkEmployeCreateParams(EmployeeParams params) {
         ensureParameterExist(params, "员工信息为空");
         ensureParameterNotExist(params.getId(), "员工标识应为空");
         ensureParameterExist(params.getName(), "员工姓名为空");
@@ -143,7 +143,7 @@ public class EmployeeController {
         }
     }
 
-    private void checkEmployeModifyParams(Long id, EmployeeCreateOrModifyParams params) {
+    private void checkEmployeModifyParams(Long id, EmployeeParams params) {
         ensureParameterExist(params, "员工修改信息为空");
         ensureParameterExist(id, "员工信息缺失");
         ensureParameterValid(id.equals(params.getId()), "员工信息错误");

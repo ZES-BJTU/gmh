@@ -3,7 +3,7 @@ package com.zes.squad.gmh.web.entity.param;
 import lombok.Data;
 
 @Data
-public class UserCreateOrModifyParams {
+public class UserParams {
 
     private Long    id;
     private Integer role;

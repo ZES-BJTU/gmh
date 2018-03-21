@@ -1,4 +1,4 @@
-package com.zes.squad.gmh.entity.union;
+package com.zes.squad.gmh.web.entity.param;
 
 import java.math.BigDecimal;
 

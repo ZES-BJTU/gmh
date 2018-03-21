@@ -3,7 +3,7 @@ package com.zes.squad.gmh.web.entity.param;
 import lombok.Data;
 
 @Data
-public class ProjectTypeCreateOrModifyParams {
+public class ProjectTypeParams {
 
     private Long    id;
     private Integer topType;

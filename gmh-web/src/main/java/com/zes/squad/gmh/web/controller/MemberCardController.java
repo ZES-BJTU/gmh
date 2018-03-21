@@ -32,7 +32,7 @@ import com.zes.squad.gmh.entity.union.MemberCardUnion;
 import com.zes.squad.gmh.service.MemberCardService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
-import com.zes.squad.gmh.web.entity.param.MemberCardCreateOrModifyParams;
+import com.zes.squad.gmh.web.entity.param.MemberCardParams;
 import com.zes.squad.gmh.web.entity.param.MemberCardQueryParams;
 import com.zes.squad.gmh.web.entity.vo.MemberCardVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
@@ -46,7 +46,7 @@ public class MemberCardController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<MemberCardVo> doCreateMemberCard(@RequestBody MemberCardCreateOrModifyParams params) {
+    public JsonResult<MemberCardVo> doCreateMemberCard(@RequestBody MemberCardParams params) {
         checkMemberCardCreateParams(params);
         MemberCardPo po = CommonConverter.map(params, MemberCardPo.class);
         MemberCardPo newPo = memberCardService.createMemberCard(po);
@@ -72,7 +72,7 @@ public class MemberCardController {
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<MemberCardVo> doModifyMemberCard(@PathVariable("id") Long id,
-                                                       @RequestBody MemberCardCreateOrModifyParams params) {
+                                                       @RequestBody MemberCardParams params) {
         ensureParameterExist(id, "请选择待修改会员卡");
         ensureParameterExist(params, "请选择待修改会员卡");
         params.setId(id);
@@ -110,7 +110,7 @@ public class MemberCardController {
                 pagedUnions.getTotalCount(), vos));
     }
 
-    private void checkMemberCardCreateParams(MemberCardCreateOrModifyParams params) {
+    private void checkMemberCardCreateParams(MemberCardParams params) {
         ensureParameterExist(params, "会员卡信息为空");
         ensureParameterNotExist(params.getId(), "会员卡已存在");
         ensureParameterExist(params.getType(), "请输入会员卡类别");
@@ -139,7 +139,7 @@ public class MemberCardController {
         }
     }
 
-    private void checkMemberCardModifyParams(MemberCardCreateOrModifyParams params) {
+    private void checkMemberCardModifyParams(MemberCardParams params) {
         if (params.getType() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getType(), MemberCardTypeEnum.class), "会员卡类别错误");
         }

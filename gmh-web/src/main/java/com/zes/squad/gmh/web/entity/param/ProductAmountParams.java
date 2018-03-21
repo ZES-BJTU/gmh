@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class ProductAmountCreateOrModifyParams {
+public class ProductAmountParams {
 
     private Long       id;
     private Long       productId;

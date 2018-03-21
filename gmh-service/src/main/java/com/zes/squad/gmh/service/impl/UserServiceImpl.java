@@ -1,6 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
 import java.text.MessageFormat;
@@ -143,6 +143,10 @@ public class UserServiceImpl implements UserService {
     public UserPo createUser(UserPo po) {
         StorePo storePo = storeMapper.selectById(po.getStoreId());
         ensureEntityExist(storePo, "门店不存在");
+        UserPo userPo = userMapper.selectByEmail(po.getEmail());
+        ensureEntityNotExist(userPo, "邮箱已注册");
+        userPo = userMapper.selectByMobile(po.getMobile());
+        ensureEntityNotExist(userPo, "手机号已注册");
         String salt = UUID.randomUUID().toString().replaceAll("-", "");
         String password = encryptPassword(po.getAccount(), salt, DEFAULT_PASSWORD);
         po.setSalt(salt);

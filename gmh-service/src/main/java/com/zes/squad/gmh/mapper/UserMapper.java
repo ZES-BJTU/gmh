@@ -68,6 +68,14 @@ public interface UserMapper {
     /**
      * 根据mobile查询
      * 
+     * @param email
+     * @return
+     */
+    UserPo selectByEmail(@Param("email") String email);
+
+    /**
+     * 根据mobile查询
+     * 
      * @param mobile
      * @return
      */

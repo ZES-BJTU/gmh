@@ -97,6 +97,13 @@
 		WHERE `account` = #{account, jdbcType=VARCHAR}
 		LIMIT 1
 	</select>
+	<select id="selectByEmail" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM user
+		WHERE `email` = #{email, jdbcType=VARCHAR}
+		LIMIT 1
+	</select>
 	<select id="selectByMobile" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />

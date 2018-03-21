@@ -3,7 +3,6 @@
 <mapper namespace="com.zes.squad.gmh.mapper.StockUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.StockUnion">
 		<id column="id" jdbcType="BIGINT" property="" />
-		<result column="store_name" jdbcType="VARCHAR" property="storeName" />
 		<association property="stockPo"
 			resultMap="com.zes.squad.gmh.mapper.StockMapper.BaseResultMap"
 			columnPrefix="stock_" />

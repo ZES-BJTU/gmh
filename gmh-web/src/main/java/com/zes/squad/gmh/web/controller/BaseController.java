@@ -48,6 +48,9 @@ public class BaseController {
         if (union.getStorePo() != null) {
             vo.setStoreName(union.getStorePo().getName());
         }
+        if (union.getUserPo().getRole() == UserRoleEnum.ADMINISTRATOR.getKey()) {
+            vo.setStoreName("管理员");
+        }
         return vo;
     }
 

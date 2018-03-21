@@ -80,6 +80,8 @@ public class UserServiceImpl implements UserService {
         userUnion.setId(po.getId());
         userUnion.setUserPo(po);
         userUnion.setUserTokenPo(tokenPo);
+        StorePo storePo = storeMapper.selectById(po.getStoreId());
+        userUnion.setStorePo(storePo);
         return userUnion;
     }
 

@@ -121,6 +121,7 @@ public class StockController {
         ensureParameterExist(params.getStockTypeId(), "库存分类为空");
         ensureParameterExist(params.getCode(), "库存代码为空");
         ensureParameterExist(params.getName(), "库存名称为空");
+        ensureParameterExist(params.getUnitName(), "库存计量单位为空");
         StockPo po = CommonConverter.map(params, StockPo.class);
         StockPo newPo = stockService.createStock(po);
         StockVo vo = CommonConverter.map(newPo, StockVo.class);

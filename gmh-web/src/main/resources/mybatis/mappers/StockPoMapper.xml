@@ -47,7 +47,7 @@
 				`name` = #{name, jdbcType=VARCHAR},
 			</if>
 			<if test="unitName != null and unitName != ''">
-				`unit_name` = #{unitName, jdbcType=VARCHAR},
+				`unit_name` = #{unitName, jdbcType=VARCHAR}
 			</if>
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}

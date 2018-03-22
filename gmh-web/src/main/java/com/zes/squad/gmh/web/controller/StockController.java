@@ -105,6 +105,13 @@ public class StockController {
         PagedList<StockTypeVo> pagedVos = CommonConverter.mapPagedList(pagedPos, StockTypeVo.class);
         return JsonResults.success(pagedVos);
     }
+    
+    @RequestMapping(path = "/types/all", method = { RequestMethod.GET })
+    public JsonResult<List<StockTypeVo>> doListAllStockTypes() {
+        List<StockTypePo> pos = stockService.listAllStockTypes();
+        List<StockTypeVo> vos = CommonConverter.mapList(pos, StockTypeVo.class);
+        return JsonResults.success(vos);
+    }
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)

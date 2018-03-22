@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
@@ -89,6 +90,13 @@ public class StockServiceImpl implements StockService {
         }
         PageInfo<StockTypePo> pageInfo = new PageInfo<>(pos);
         return PagedLists.newPagedList(pageInfo.getPageNum(), pageInfo.getPageSize(), pageInfo.getTotal(), pos);
+    }
+
+    @Override
+    public List<StockTypePo> listAllStockTypes() {
+        List<StockTypePo> pos = stockTypeMapper.selectAll();
+        ensureCollectionNotEmpty(pos, "请先新建库存分类");
+        return pos;
     }
 
     @Transactional(rollbackFor = { Throwable.class })

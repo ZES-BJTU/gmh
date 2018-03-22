@@ -56,6 +56,14 @@ public interface StockService {
     PagedList<StockTypePo> listPagedStockTypes(StockTypeQueryCondition condition);
 
     /**
+     * 查询所有分类
+     * 
+     * @param condition
+     * @return
+     */
+    List<StockTypePo> listAllStockTypes();
+
+    /**
      * 新建库存
      * 
      * @param po

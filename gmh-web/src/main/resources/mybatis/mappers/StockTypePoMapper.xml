@@ -61,4 +61,9 @@
 			</if>
 		</where>
 	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM stock_type
+	</select>
 </mapper>

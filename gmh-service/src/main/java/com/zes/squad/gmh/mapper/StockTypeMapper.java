@@ -62,5 +62,12 @@ public interface StockTypeMapper {
      * @return
      */
     List<StockTypePo> selectByCondition(StockTypeQueryCondition condition);
+    
+    /**
+     * 查询所有
+     * 
+     * @return
+     */
+    List<StockTypePo> selectAll();
 
 }

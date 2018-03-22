@@ -63,4 +63,11 @@ public interface ProductTypeMapper {
      */
     List<ProductTypePo> selectByCondition(ProductTypeQueryCondition condition);
 
+    /**
+     * 查询所有产品分类
+     * 
+     * @return
+     */
+    List<ProductTypePo> selectAll();
+
 }

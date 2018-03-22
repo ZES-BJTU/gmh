@@ -55,6 +55,13 @@ public interface StockMapper {
      */
     StockPo selectByCode(String code);
 
+    /**
+     * 查询所有库存
+     * 
+     * @return
+     */
+    List<StockPo> selectAll();
+
     StockPo getById(Long id);
 
     int updateTotalAmount(Map<String, Number> map);

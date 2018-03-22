@@ -54,4 +54,11 @@ public interface ProductMapper {
      */
     ProductPo selectByName(String name);
 
+    /**
+     * 查询所有产品
+     * 
+     * @return
+     */
+    List<ProductPo> selectAll();
+
 }

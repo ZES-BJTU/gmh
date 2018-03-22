@@ -73,8 +73,7 @@ public class StockController {
     }
 
     @RequestMapping(path = "/types/{id}", method = { RequestMethod.PUT })
-    public JsonResult<StockTypeVo> doModifyStockType(@PathVariable("id") Long id,
-                                                     @RequestBody StockTypeParams params) {
+    public JsonResult<StockTypeVo> doModifyStockType(@PathVariable("id") Long id, @RequestBody StockTypeParams params) {
         ensureParameterExist(params, "请选择待修改库存分类");
         ensureParameterExist(id, "请选择待修改库存分类");
         params.setId(id);
@@ -105,7 +104,7 @@ public class StockController {
         PagedList<StockTypeVo> pagedVos = CommonConverter.mapPagedList(pagedPos, StockTypeVo.class);
         return JsonResults.success(pagedVos);
     }
-    
+
     @RequestMapping(path = "/types/all", method = { RequestMethod.GET })
     public JsonResult<List<StockTypeVo>> doListAllStockTypes() {
         List<StockTypePo> pos = stockService.listAllStockTypes();
@@ -146,8 +145,7 @@ public class StockController {
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
-    public JsonResult<StockVo> doModifyStock(@PathVariable("id") Long id,
-                                             @RequestBody StockParams params) {
+    public JsonResult<StockVo> doModifyStock(@PathVariable("id") Long id, @RequestBody StockParams params) {
         ensureParameterExist(id, "库存标识为空");
         ensureParameterExist(params, "库存信息为空");
         params.setId(id);
@@ -180,6 +178,13 @@ public class StockController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
+    }
+
+    @RequestMapping(path = "/all", method = { RequestMethod.GET })
+    public JsonResult<List<StockVo>> doListAllStocks() {
+        List<StockPo> pos = stockService.listAllStocks();
+        List<StockVo> vos = CommonConverter.mapList(pos, StockVo.class);
+        return JsonResults.success(vos);
     }
 
     @RequestMapping(path = "/statistics", method = { RequestMethod.GET })

@@ -67,4 +67,9 @@
 		WHERE `name` = #{name, jdbcType=VARCHAR}
 		LIMIT 1
 	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM product
+	</select>
 </mapper>

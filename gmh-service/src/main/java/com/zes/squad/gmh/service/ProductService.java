@@ -59,6 +59,13 @@ public interface ProductService {
     PagedList<ProductTypePo> listPagedProductTypes(ProductTypeQueryCondition condition);
 
     /**
+     * 查询所有产品分类
+     * 
+     * @return
+     */
+    List<ProductTypePo> listAllProductTypes();
+
+    /**
      * 新建产品
      * 
      * @param po
@@ -103,6 +110,13 @@ public interface ProductService {
      * @return
      */
     PagedList<ProductUnion> listPagedProducts(ProductQueryCondition condition);
+
+    /**
+     * 查询所有产品
+     * 
+     * @return
+     */
+    List<ProductPo> listAllProducts();
 
     /**
      * 添加商品数量

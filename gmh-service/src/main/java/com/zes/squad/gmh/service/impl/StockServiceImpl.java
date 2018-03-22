@@ -153,5 +153,12 @@ public class StockServiceImpl implements StockService {
         PageInfo<StockUnion> info = new PageInfo<StockUnion>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
+    
+    @Override
+    public List<StockPo> listAllStocks() {
+        List<StockPo> pos = stockMapper.selectAll();
+        ensureCollectionNotEmpty(pos, "请先新建库存");
+        return pos;
+    }
 
 }

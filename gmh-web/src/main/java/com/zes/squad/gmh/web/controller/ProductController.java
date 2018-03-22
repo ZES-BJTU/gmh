@@ -110,6 +110,13 @@ public class ProductController {
         return JsonResults.success(pagedVos);
     }
 
+    @RequestMapping(path = "/types/all", method = { RequestMethod.GET })
+    public JsonResult<List<ProductTypeVo>> doListAllProductTypes() {
+        List<ProductTypePo> pos = productService.listAllProductTypes();
+        List<ProductTypeVo> vos = CommonConverter.mapList(pos, ProductTypeVo.class);
+        return JsonResults.success(vos);
+    }
+
     @RequestMapping(method = { RequestMethod.POST })
     public JsonResult<ProductVo> doCreateProduct(@RequestBody ProductParams params) {
         ensureParameterExist(params, "产品信息为空");
@@ -142,8 +149,7 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
-    public JsonResult<ProductVo> doModifyProducts(@PathVariable("id") Long id,
-                                                  @RequestBody ProductParams params) {
+    public JsonResult<ProductVo> doModifyProducts(@PathVariable("id") Long id, @RequestBody ProductParams params) {
         ensureParameterExist(id, "请选择待修改商品");
         ensureParameterExist(params, "请选择待修改商品");
         ensureParameterValid(id.equals(params.getId()), "待修改商品不存在");
@@ -183,6 +189,13 @@ public class ProductController {
                 pagedUnions.getTotalCount(), vos));
     }
 
+    @RequestMapping(path = "/all", method = { RequestMethod.GET })
+    public JsonResult<List<ProductVo>> doListAllProducts() {
+        List<ProductPo> pos = productService.listAllProducts();
+        List<ProductVo> vos = CommonConverter.mapList(pos, ProductVo.class);
+        return JsonResults.success(vos);
+    }
+
     @RequestMapping(path = "/amount", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<ProductAmountVo> doCreateProductAmount(@RequestBody ProductAmountParams params) {
@@ -219,7 +232,7 @@ public class ProductController {
         ensureParameterValid(id.equals(params.getId()), "请选择待修改数量产品");
         ensureParameterExist(params.getProductId(), "待修改产品为空");
         ensureParameterExist(params.getAmount(), "待修改产品数量为空");
-        ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO)==1,"待修改产品数量应大于0");
+        ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "待修改产品数量应大于0");
         ProductAmountPo po = CommonConverter.map(params, ProductAmountPo.class);
         ProductAmountPo newPo = productService.modifyProductAmount(po);
         ProductAmountVo vo = CommonConverter.map(newPo, ProductAmountVo.class);

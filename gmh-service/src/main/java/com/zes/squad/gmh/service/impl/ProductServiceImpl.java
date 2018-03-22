@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
@@ -98,6 +99,13 @@ public class ProductServiceImpl implements ProductService {
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), pos);
     }
 
+    @Override
+    public List<ProductTypePo> listAllProductTypes() {
+        List<ProductTypePo> pos = productTypeMapper.selectAll();
+        ensureCollectionNotEmpty(pos, "请先新建产品分类");
+        return pos;
+    }
+
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProductPo createProduct(ProductPo po) {
@@ -157,6 +165,13 @@ public class ProductServiceImpl implements ProductService {
         }
         PageInfo<ProductUnion> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
+    }
+
+    @Override
+    public List<ProductPo> listAllProducts() {
+        List<ProductPo> pos = productMapper.selectAll();
+        ensureCollectionNotEmpty(pos, "请先新建产品");
+        return pos;
     }
 
     @Transactional(rollbackFor = { Throwable.class })

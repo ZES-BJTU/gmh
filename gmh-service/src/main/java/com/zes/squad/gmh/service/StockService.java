@@ -107,4 +107,11 @@ public interface StockService {
      */
     PagedList<StockUnion> listPagedStocks(StockQueryCondition condition);
 
+    /**
+     * 查询所有库存
+     * 
+     * @return
+     */
+    List<StockPo> listAllStocks();
+
 }

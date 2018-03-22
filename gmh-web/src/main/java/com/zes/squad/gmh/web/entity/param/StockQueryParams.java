@@ -10,6 +10,6 @@ import lombok.ToString;
 public class StockQueryParams extends QueryParams {
 
     private Long   stockTypeId;
-    private String stockKeyWord;
+    private String search;
 
 }

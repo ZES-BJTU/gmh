@@ -19,7 +19,11 @@
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
-		<include refid="BaseColumnList"/>
+		s.`id` AS store_id,
+		s.`name` AS store_name,
+		s.`address` AS store_address,
+		s.`phone` AS store_phone,
+		s.`remark` AS store_remark,
 		u.`id` AS user_id,
 		u.`name` AS user_name
 		FROM

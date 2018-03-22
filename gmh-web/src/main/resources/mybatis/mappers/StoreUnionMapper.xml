@@ -17,22 +17,15 @@
 		s.`phone` AS store_phone,
 		s.`remark` AS store_remark,
 		s.`created_time` AS store_created_time,
-		s.`modified_time` AS store_modified_time,
-		u.`id` AS user_id,
-		u.`name` AS user_name,
-		u.`store_id` AS user_store_id
+		s.`modified_time` AS store_modified_time
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
 		<include refid="BaseColumnList"/>
 		FROM
 		store s
-		LEFT JOIN 
-		user u
-		ON
-		u.`store_id` = s.`id`
 		<where>
-			s.`id` = #{id, jdbcType=BIGINT} AND u.`role` = 2
+			s.`id` = #{id, jdbcType=BIGINT}
 		</where>
 		LIMIT 1
 	</select>
@@ -43,19 +36,12 @@
 		<include refid="BaseColumnList" />
 		FROM
 		store s
-		LEFT JOIN
-		user u
-		ON
-		s.`id` = u.`store_id`
 		<where>
-			u.`role` = 2
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'" />
-					AND CONCAT(s.`name`,s.`address`,s.`phone`,s.`remark`)
-					LIKE
-					#{condition, jdbcType=VARCHAR}
-					OR
-					u.`name` LIKE #{condition, jdbcType=VARCHAR}
+				AND CONCAT(s.`name`,s.`address`,s.`phone`,s.`remark`)
+				LIKE
+				#{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

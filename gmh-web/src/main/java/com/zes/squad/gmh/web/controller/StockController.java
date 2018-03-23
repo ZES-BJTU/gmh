@@ -169,7 +169,7 @@ public class StockController {
         StockQueryCondition condition = CommonConverter.map(params, StockQueryCondition.class);
         PagedList<StockUnion> pagedUnions = stockService.listPagedStocks(condition);
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
-            return JsonResults.success();
+            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
         }
         List<StockVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
         for (StockUnion union : pagedUnions.getData()) {

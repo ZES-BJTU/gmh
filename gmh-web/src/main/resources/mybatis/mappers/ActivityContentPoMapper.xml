@@ -35,4 +35,13 @@
 			</foreach>
 		</where>
 	</delete>
+	<select id="selectByActivityId" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		activity_content
+		<where>
+			`activity_id` = #{activityId:BIGINT}
+		</where>
+	</select>
 </mapper>

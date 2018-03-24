@@ -22,4 +22,12 @@ public interface ActivityContentMapper {
      */
     int batchDeleteByActivityId(List<Long> activityIds);
 
+    /**
+     * 根据活动id查询
+     * 
+     * @param activityId
+     * @return
+     */
+    List<ActivityContentPo> selectByActivityId(Long activityId);
+
 }

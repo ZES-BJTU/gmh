@@ -13,7 +13,7 @@ public interface ActivityUnionMapper {
      * @return
      */
     ActivityUnion selectById(Long id);
-    
+
     /**
      * 根据id列表查询详情
      * 
@@ -21,5 +21,12 @@ public interface ActivityUnionMapper {
      * @return
      */
     List<ActivityUnion> selectByIds(List<Long> ids);
+
+    /**
+     * 查询所有活动
+     * 
+     * @return
+     */
+    List<ActivityUnion> selectAll();
 
 }

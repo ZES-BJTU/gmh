@@ -10,13 +10,49 @@
 			resultMap="com.zes.squad.gmh.mapper.ActivityContentUnionMapper.BaseResultMap"
 			columnPrefix="acu_" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		a.`id` AS id,
+		a.`id` AS a_id,
+		a.`name` AS a_name,
+		a.`price` AS a_price,
+		a.`code` AS a_code,
+		a.`deadline` AS a_deadline,
+		a.`remark` AS a_remark,
+		ac.`id` AS acu_ac_id,
+		ac.`activity_id` AS acu_ac_activity_id,
+		ac.`type` AS acu_ac_type,
+		ac.`related_id` AS acu_ac_related_id,
+		ac.`content` AS acu_ac_content,
+		ac.`number` AS acu_ac_number,
+		ac.`remark` AS acu_ac_remark
+	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
-		SELECT * FROM activity WHERE `id` = #{id:BIGINT}
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM activity a
+		LEFT JOIN activity_content ac
+		ON
+		a.`id` = ac.`activity_id` 
+		WHERE `id` = #{id:BIGINT}
 	</select>
 	<select id="selectByIds" parameterType="long" resultMap="BaseResultMap">
-		SELECT * FROM activity WHERE `id` IN 
+		SELECT 
+		<include refid="Base_Column_List" />
+ 		FROM activity a
+		LEFT JOIN activity_content ac
+		ON
+		a.`id` = ac.`activity_id` 
+		WHERE `id` IN 
 		<foreach collection="list" item="id" separator="," open="(" close=")">
 			#{id:BIGINT}
 		</foreach>
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+ 		FROM activity a
+		LEFT JOIN activity_content ac
+		ON
+		a.`id` = ac.`activity_id` 
 	</select>
 </mapper>

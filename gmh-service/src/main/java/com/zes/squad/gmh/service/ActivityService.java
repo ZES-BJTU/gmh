@@ -54,4 +54,11 @@ public interface ActivityService {
      */
     PagedList<ActivityUnion> listPagedActivities(ActivityQueryCondition condition);
 
+    /**
+     * 查询所有活动
+     * 
+     * @return
+     */
+    List<ActivityUnion> listAllActivities();
+
 }

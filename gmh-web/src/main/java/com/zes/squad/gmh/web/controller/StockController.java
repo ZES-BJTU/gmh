@@ -192,16 +192,6 @@ public class StockController {
         return JsonResults.success(vos);
     }
 
-    @RequestMapping(path = "/statistics", method = { RequestMethod.GET })
-    public JsonResult<PagedList<StockVo>> doStatStocks() {
-        return JsonResults.success();
-    }
-
-    @RequestMapping(path = "/consumption/records", method = { RequestMethod.PUT })
-    public JsonResult<Void> doCreateStockConsumeRecord() {
-        return JsonResults.success();
-    }
-
     @RequestMapping(path = "/amount", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<StockAmountVo> doCreateStockAmount(@RequestBody StockAmountParams params) {

@@ -22,5 +22,21 @@ public interface StockUnionMapper {
      * @return
      */
     List<StockUnion> selectByCondition(StockQueryCondition condition);
+    
+    /**
+     * 根据id查询
+     * 
+     * @param id
+     * @return
+     */
+    StockUnion selectWithAmountById(Long id);
+    
+    /**
+     * 根据条件模糊查询
+     * 
+     * @param condition
+     * @return
+     */
+    List<StockUnion> selectWithAmountByCondition(StockQueryCondition condition);
 
 }

@@ -234,6 +234,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PagedList<ProductUnion> listPagedProductsWithAmount(ProductQueryCondition condition) {
+        condition.setStoreId(ThreadContext.getUserStoreId());
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);

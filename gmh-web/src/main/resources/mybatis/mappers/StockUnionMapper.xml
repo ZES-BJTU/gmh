@@ -3,12 +3,18 @@
 <mapper namespace="com.zes.squad.gmh.mapper.StockUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.StockUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<association property="stockPo"
-			resultMap="com.zes.squad.gmh.mapper.StockMapper.BaseResultMap"
-			columnPrefix="stock_" />
 		<association property="stockTypePo"
 			resultMap="com.zes.squad.gmh.mapper.StockTypeMapper.BaseResultMap"
 			columnPrefix="stock_type_" />
+		<association property="stockPo"
+			resultMap="com.zes.squad.gmh.mapper.StockMapper.BaseResultMap"
+			columnPrefix="stock_" />
+		<association property="stockAmountPo"
+			resultMap="com.zes.squad.gmh.mapper.StockAmountMapper.BaseResultMap"
+			columnPrefix="sa_" />
+		<association property="storePo"
+			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
+			columnPrefix="store_" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		s.`id` AS id,
@@ -42,11 +48,81 @@
 		s.`stock_type_id` = st.`id`
 		<where>
 			<if test="stockTypeId != null">
+				s.`store_type_id` = #{storeTypeId:BIGINT}
+			</if>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				AND CONCAT(s.`name`, s.`code`) LIKE #{condition:VARCHAR}
+				OR st.`name` LIKE #{condition:VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="selectWithAmountById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		s.`id` AS id,
+		s.`id` AS stock_id,
+		s.`stock_type_id` AS stock_stock_type_id,
+		s.`code` AS stock_code,
+		s.`name` AS stock_name,
+		s.`unit_name` AS stock_unit_name,
+		st.`id` AS stock_type_id,
+		st.`name` AS stock_type_name,
+		sa.`id` AS sa_id,
+		sa.`stock_id` AS sa_stock_id,
+		sa.`amount` AS sa_amount,
+		sa.`store_id` AS sa_store_id,
+		store.`id` AS store_id,
+		store.`name` AS store_name
+		FROM stock s
+		LEFT JOIN stock_type st
+		ON
+		s.`stock_type_id` = st.`id`
+		LEFT JOIN stock_amount sa
+		ON
+		s.`id` = sa.`stock_id`
+		LEFT JOIN store store
+		ON
+		sa.`store_id` = store.`id`
+		<where>
+			s.`id` = #{id, jdbcType=BIGINT}
+		</where>
+	</select>
+	<select id="selectWithAmountByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.StockQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		s.`id` AS id,
+		s.`id` AS stock_id,
+		s.`stock_type_id` AS stock_stock_type_id,
+		s.`code` AS stock_code,
+		s.`name` AS stock_name,
+		s.`unit_name` AS stock_unit_name,
+		st.`id` AS stock_type_id,
+		st.`name` AS stock_type_name,
+		sa.`id` AS sa_id,
+		sa.`stock_id` AS sa_stock_id,
+		sa.`amount` AS sa_amount,
+		sa.`store_id` AS sa_store_id,
+		store.`id` AS store_id,
+		store.`name` AS store_name
+		FROM stock s
+		LEFT JOIN stock_type st
+		ON
+		s.`stock_type_id` = st.`id`
+		LEFT JOIN stock_amount sa
+		ON
+		s.`id` = sa.`stock_id`
+		LEFT JOIN store store
+		ON
+		sa.`store_id` = store.`id`
+		<where>
+			sa.`store_id` = #{storeId:BIGINT}
+			<if test="stockTypeId != null">
 				AND s.`store_type_id` = #{storeTypeId, jdbcType=BIGINT}
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				AND s.`name` LIKE #{condition, jdbcType=VARCHAR}
+				AND CONCAT(s.`name`, s.`code`) LIKE #{condition, jdbcType=VARCHAR}
 				OR st.`name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>

@@ -60,7 +60,7 @@
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(pt.`name`, p.`name`)
+				AND CONCAT(pt.`name`, p.`name`)
 				LIKE
 				#{condition, jdbcType=VARCHAR}
 			</if>
@@ -131,12 +131,13 @@
 		ON
 		p.`product_type_id` = pt.`id`
 		<where>
+			`store_id` = #{storeId:BIGINT}
 			<if test="productTypeId != null">
-				p.`product_type_id` = #{productTypeId}
+				AND p.`product_type_id` = #{productTypeId}
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(pt.`name`, p.`name`)
+				AND CONCAT(pt.`name`, p.`name`)
 				LIKE
 				#{condition, jdbcType=VARCHAR}
 			</if>

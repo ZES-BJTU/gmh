@@ -11,5 +11,6 @@ public class StockQueryCondition extends QueryCondition {
 
     private Long   stockTypeId;
     private String search;
+    private Long   storeId;
 
 }

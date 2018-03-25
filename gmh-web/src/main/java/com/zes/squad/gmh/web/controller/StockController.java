@@ -3,7 +3,9 @@ package com.zes.squad.gmh.web.controller;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,16 +24,19 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.StockAmountPo;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
 import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.service.StockService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.StockAmountParams;
 import com.zes.squad.gmh.web.entity.param.StockParams;
 import com.zes.squad.gmh.web.entity.param.StockQueryParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeQueryParams;
+import com.zes.squad.gmh.web.entity.vo.StockAmountVo;
 import com.zes.squad.gmh.web.entity.vo.StockTypeVo;
 import com.zes.squad.gmh.web.entity.vo.StockVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
@@ -197,9 +202,87 @@ public class StockController {
         return JsonResults.success();
     }
 
+    @RequestMapping(path = "/amount", method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<StockAmountVo> doCreateStockAmount(@RequestBody StockAmountParams params) {
+        ensureParameterExist(params, "请输入库存数量");
+        ensureParameterNotExist(params.getId(), "库存数量已存在");
+        ensureParameterExist(params.getStockId(), "请选择库存");
+        ensureParameterExist(params.getAmount(), "请输入库存数量");
+        ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量应大于0");
+        StockAmountPo po = CommonConverter.map(params, StockAmountPo.class);
+        StockAmountPo newPo = stockService.createStockAmount(po);
+        StockAmountVo vo = CommonConverter.map(newPo, StockAmountVo.class);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public JsonResult<Void> doRemoveStockAmount(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择待删除库存数量");
+        stockService.removeStockAmount(id);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/amount", method = { RequestMethod.DELETE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public JsonResult<StockAmountVo> createStockAmount(@RequestBody List<Long> ids) {
+        ensureCollectionNotEmpty(ids, "请选择待删除库存数量");
+        stockService.removeStockAmounts(ids);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PUT })
+    public JsonResult<StockAmountVo> doModifyStockAmount(@PathVariable("id") Long id,
+                                                         @RequestBody StockAmountParams params) {
+        ensureParameterExist(id, "请选择待修改库存数量");
+        ensureParameterExist(params, "请输入待修改库存数量");
+        ensureParameterExist(params.getStockId(), "请选择待修改库存");
+        params.setId(id);
+        if (params.getAmount() != null) {
+            ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量应大于0");
+        }
+        StockAmountPo po = CommonConverter.map(params, StockAmountPo.class);
+        StockAmountPo newPo = stockService.modifyStockAmount(po);
+        StockAmountVo vo = CommonConverter.map(newPo, StockAmountVo.class);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.GET })
+    public JsonResult<StockVo> doQueryStockAmountDetail(@PathVariable("id") Long id) {
+        ensureParameterExist(id, "请选择待查询数量库存");
+        StockUnion union = stockService.queryStockDetailWithAmount(id);
+        StockVo vo = buildStockVoByUnion(union);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/amount", method = { RequestMethod.GET })
+    public JsonResult<PagedList<StockVo>> doListPagedStockAmounts(@RequestBody StockQueryParams queryParams) {
+        CheckHelper.checkPageParams(queryParams);
+        StockQueryCondition condition = CommonConverter.map(queryParams, StockQueryCondition.class);
+        PagedList<StockUnion> pagedUnions = stockService.listPagedStocksWithAmount(condition);
+        if (CollectionUtils.isEmpty(pagedUnions.getData())) {
+            return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
+        }
+        List<StockVo> vos = Lists.newArrayListWithCapacity(pagedUnions.getData().size());
+        for (StockUnion union : pagedUnions.getData()) {
+            StockVo vo = buildStockVoByUnion(union);
+            vos.add(vo);
+        }
+        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
+                pagedUnions.getTotalCount(), vos));
+    }
+
     private StockVo buildStockVoByUnion(StockUnion union) {
         StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
         vo.setStockTypeName(union.getStockTypePo().getName());
+        if (union.getStockAmountPo() != null) {
+            vo.setAmount(union.getStockAmountPo().getAmount());
+            vo.setStoreId(union.getStockAmountPo().getStoreId());
+        }
+        if (union.getStorePo() != null) {
+            vo.setStoreName(union.getStorePo().getName());
+        }
         return vo;
     }
 

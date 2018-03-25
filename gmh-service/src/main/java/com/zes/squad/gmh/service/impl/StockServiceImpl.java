@@ -16,11 +16,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.StockAmountPo;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
 import com.zes.squad.gmh.entity.union.StockUnion;
+import com.zes.squad.gmh.mapper.StockAmountMapper;
 import com.zes.squad.gmh.mapper.StockMapper;
 import com.zes.squad.gmh.mapper.StockTypeMapper;
 import com.zes.squad.gmh.mapper.StockUnionMapper;
@@ -30,11 +33,13 @@ import com.zes.squad.gmh.service.StockService;
 public class StockServiceImpl implements StockService {
 
     @Autowired
-    private StockTypeMapper  stockTypeMapper;
+    private StockTypeMapper   stockTypeMapper;
     @Autowired
-    private StockMapper      stockMapper;
+    private StockMapper       stockMapper;
     @Autowired
-    private StockUnionMapper stockUnionMapper;
+    private StockUnionMapper  stockUnionMapper;
+    @Autowired
+    private StockAmountMapper stockAmountMapper;
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
@@ -153,12 +158,70 @@ public class StockServiceImpl implements StockService {
         PageInfo<StockUnion> info = new PageInfo<StockUnion>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
-    
+
     @Override
     public List<StockPo> listAllStocks() {
         List<StockPo> pos = stockMapper.selectAll();
         ensureCollectionNotEmpty(pos, "请先新建库存");
         return pos;
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public StockAmountPo createStockAmount(StockAmountPo po) {
+        po.setStoreId(ThreadContext.getUserStoreId());
+        StockAmountPo existingPo = stockAmountMapper.selectByStockAndStore(po.getStockId(), po.getStoreId());
+        ensureEntityNotExist(existingPo, "库存数量重复设置");
+        int record = stockAmountMapper.insert(po);
+        ensureConditionValid(record == 1, "新建库存数量失败");
+        return po;
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public void removeStockAmount(Long id) {
+        int record = stockAmountMapper.deleteById(id);
+        ensureConditionValid(record == 1, "库存数量删除失败");
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public void removeStockAmounts(List<Long> ids) {
+        int records = stockAmountMapper.batchDelete(ids);
+        ensureConditionValid(records == ids.size(), "库存数量删除失败");
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public StockAmountPo modifyStockAmount(StockAmountPo po) {
+        po.setStoreId(ThreadContext.getUserStoreId());
+        int record = stockAmountMapper.updateSelective(po);
+        ensureConditionValid(record == 1, "修改库存数量失败");
+        return po;
+    }
+
+    @Override
+    public StockUnion queryStockDetailWithAmount(Long id) {
+        StockUnion union = stockUnionMapper.selectWithAmountById(id);
+        ensureEntityExist(union, "库存不存在");
+        ensureEntityExist(union.getStockPo(), "库存不存在");
+        ensureEntityExist(union.getStockTypePo(), "库存分类不存在");
+        ensureEntityExist(union.getStockAmountPo(), "库存数量不存在");
+        return union;
+    }
+
+    @Override
+    public PagedList<StockUnion> listPagedStocksWithAmount(StockQueryCondition condition) {
+        condition.setStoreId(ThreadContext.getUserStoreId());
+        int pageNum = condition.getPageNum();
+        int pageSize = condition.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+        List<StockUnion> unions = stockUnionMapper.selectWithAmountByCondition(condition);
+        if (CollectionUtils.isEmpty(unions)) {
+            return PagedLists.newPagedList(pageNum, pageSize);
+        }
+        PageInfo<StockUnion> info = new PageInfo<>(unions);
+        return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
 
 }

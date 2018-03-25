@@ -11,5 +11,6 @@ public class ProductQueryCondition extends QueryCondition {
 
     private Long   productTypeId;
     private String search;
+    private Long   storeId;
 
 }

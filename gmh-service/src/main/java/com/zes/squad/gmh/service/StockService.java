@@ -5,6 +5,7 @@ import java.util.List;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.StockAmountPo;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
 import com.zes.squad.gmh.entity.union.StockUnion;
@@ -113,5 +114,51 @@ public interface StockService {
      * @return
      */
     List<StockPo> listAllStocks();
+
+    /**
+     * 新建库存容量
+     * 
+     * @param po
+     * @return
+     */
+    StockAmountPo createStockAmount(StockAmountPo po);
+
+    /**
+     * 删除单个库存容量
+     * 
+     * @param id
+     */
+    void removeStockAmount(Long id);
+
+    /**
+     * 删除多个库存容量
+     * 
+     * @param ids
+     */
+    void removeStockAmounts(List<Long> ids);
+
+    /**
+     * 修改库存
+     * 
+     * @param po
+     * @return
+     */
+    StockAmountPo modifyStockAmount(StockAmountPo po);
+
+    /**
+     * 根据id查询库存详情
+     * 
+     * @param id
+     * @return
+     */
+    StockUnion queryStockDetailWithAmount(Long id);
+
+    /**
+     * 根据查询条件分页查询库存详情
+     * 
+     * @param condition
+     * @return
+     */
+    PagedList<StockUnion> listPagedStocksWithAmount(StockQueryCondition condition);
 
 }

@@ -10,6 +10,8 @@
 		base-package="com.zes.squad.gmh.web.controller,com.zes.squad.gmh.web.exception.handler"
 		use-default-filters="false">
 		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation"
 			expression="org.springframework.web.bind.annotation.RestController" />
 		<context:include-filter type="annotation"
 			expression="org.springframework.web.bind.annotation.RestControllerAdvice" />
@@ -46,6 +48,7 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
 			<mvc:exclude-mapping path="/users/login" />
+			<mvc:exclude-mapping path="/export/**" />
 			<bean class="com.zes.squad.gmh.web.interceptor.AuthInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>

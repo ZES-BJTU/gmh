@@ -6,6 +6,7 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.FlowTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
@@ -203,14 +203,47 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProductAmountPo modifyProductAmount(ProductAmountPo po) {
-        po.setStoreId(ThreadContext.getUserStoreId());
-        productAmountMapper.addAmount(po);
+        int record = productAmountMapper.updateAmount(po);
+        ensureConditionValid(record == 1, "产品数量修改失败");
         ProductAmountPo newPo = productAmountMapper.selectById(po.getId());
         ensureEntityExist(newPo, "产品数量不存在");
-        ProductFlowPo flowPo = CommonConverter.map(po, ProductFlowPo.class);
-        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
-        productFlowMapper.insert(flowPo);
         return newPo;
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public void addProductAmount(ProductAmountPo po) {
+        ensureParameterExist(po.getProductId(), "产品不存在");
+        po.setStoreId(ThreadContext.getUserStoreId());
+        int record = productAmountMapper.addAmount(po);
+        ensureConditionValid(record == 1, "产品数量修改失败");
+        ProductFlowPo flowPo = new ProductFlowPo();
+        flowPo.setProductId(po.getProductId());
+        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        record = productFlowMapper.insert(flowPo);
+        ensureConditionValid(record == 1, "产品流水生成失败");
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public void reduceProductAmount(ProductAmountPo po) {
+        ensureParameterExist(po.getProductId(), "产品不存在");
+        po.setStoreId(ThreadContext.getUserStoreId());
+        int record = productAmountMapper.reduceAmount(po);
+        ensureConditionValid(record == 1, "产品数量修改失败");
+        ProductAmountPo newPo = productAmountMapper.selectById(po.getId());
+        ensureConditionValid(
+                newPo.getAmount().compareTo(BigDecimal.ZERO) == 0 || newPo.getAmount().compareTo(BigDecimal.ZERO) == 1,
+                "产品余量不足,请及时补充");
+        ProductFlowPo flowPo = new ProductFlowPo();
+        flowPo.setProductId(po.getProductId());
+        flowPo.setType(FlowTypeEnum.SELLING_OUT.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        record = productFlowMapper.insert(flowPo);
+        ensureConditionValid(record == 1, "产品流水生成失败");
     }
 
     @Override

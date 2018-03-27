@@ -34,7 +34,7 @@
 			#{id:BIGINT}
 		</foreach>
 	</delete>
-	<update id="updateSelective">
+	<update id="updateAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
 		UPDATE stock_amount
 		<set>
 			<if test="amount != null">
@@ -43,6 +43,23 @@
 		</set>
 		WHERE `id` = #{id:BIGINT}
 	</update>
+	<update id="addAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
+		UPDATE stock_amount
+		SET	`amount` = `amount` + #{amount:DECIMAL}
+		WHERE `id` = #{id:BIGINT}
+	</update>
+	<update id="reduceAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
+		UPDATE stock_amount
+		SET	`amount` = `amount` - #{amount:DECIMAL}
+		WHERE `id` = #{id:BIGINT}
+	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM
+		stock_amount
+		WHERE `id` = #{id:BIGINT}
+	</select>
 	<select id="selectByStockAndStore" resultMap="BaseResultMap">
 		SELECT 
 		<include refid="Base_Column_List" />

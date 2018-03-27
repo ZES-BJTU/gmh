@@ -38,7 +38,31 @@ public interface StockAmountMapper {
      * @param po
      * @return
      */
-    int updateSelective(StockAmountPo po);
+    int updateAmount(StockAmountPo po);
+
+    /**
+     * 添加库存
+     * 
+     * @param po
+     * @return
+     */
+    int addAmount(StockAmountPo po);
+
+    /**
+     * 减少库存
+     * 
+     * @param po
+     * @return
+     */
+    int reduceAmount(StockAmountPo po);
+
+    /**
+     * 根据id查询
+     * 
+     * @param id
+     * @return
+     */
+    StockAmountPo selectById(Long id);
 
     /**
      * 根据库存id和门店id查询

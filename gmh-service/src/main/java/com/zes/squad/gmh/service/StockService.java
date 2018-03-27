@@ -146,6 +146,20 @@ public interface StockService {
     StockAmountPo modifyStockAmount(StockAmountPo po);
 
     /**
+     * 添加库存
+     * 
+     * @param po
+     */
+    void addStockAmount(StockAmountPo po);
+
+    /**
+     * 减少库存
+     * 
+     * @param po
+     */
+    void reduceStockAmount(StockAmountPo po);
+
+    /**
      * 根据id查询库存详情
      * 
      * @param id

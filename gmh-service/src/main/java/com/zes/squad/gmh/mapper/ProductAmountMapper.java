@@ -32,12 +32,24 @@ public interface ProductAmountMapper {
     int batchDelete(List<Long> ids);
 
     /**
+     * 更改产品数量(区别于进货卖货,不计入流水)
+     * 
+     * @param po
+     * @return
+     */
+    int updateAmount(ProductAmountPo po);
+
+    /**
+     * 添加产品(进货)
+     * 
      * @param po
      * @return
      */
     int addAmount(ProductAmountPo po);
 
     /**
+     * 减少产品(卖货)
+     * 
      * @param po
      * @return
      */

@@ -229,8 +229,7 @@ public class ProductController {
                                                              @RequestBody ProductAmountParams params) {
         ensureParameterExist(id, "请选择待修改数量产品");
         ensureParameterExist(params, "请选择待修改数量产品");
-        ensureParameterValid(id.equals(params.getId()), "请选择待修改数量产品");
-        ensureParameterExist(params.getProductId(), "待修改产品为空");
+        params.setId(id);
         ensureParameterExist(params.getAmount(), "待修改产品数量为空");
         ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "待修改产品数量应大于0");
         ProductAmountPo po = CommonConverter.map(params, ProductAmountPo.class);

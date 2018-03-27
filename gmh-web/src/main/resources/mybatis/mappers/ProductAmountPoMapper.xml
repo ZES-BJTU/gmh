@@ -35,14 +35,15 @@
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
+	<update id="updateAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		UPDATE product_amount SET `amount` = #{amount, jdbcType=DECIMAL}
+	</update>
 	<update id="addAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
-		UPDATE product_amount
-		SET `amount` = `amount` + #{amount, jdbcType=DECIMAL}
+		UPDATE product_amount SET `amount` = `amount` + #{amount, jdbcType=DECIMAL}
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
 	<update id="reduceAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
-		UPDATE product_amount
-		SET `amount` = `amount` - #{amount, jdbcType=DECIMAL}
+		UPDATE product_amount SET `amount` = `amount` - #{amount, jdbcType=DECIMAL}
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">

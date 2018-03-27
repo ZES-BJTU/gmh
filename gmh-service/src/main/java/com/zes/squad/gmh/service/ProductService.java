@@ -149,6 +149,20 @@ public interface ProductService {
     ProductAmountPo modifyProductAmount(ProductAmountPo po);
 
     /**
+     * 进货
+     * 
+     * @param po
+     */
+    void addProductAmount(ProductAmountPo po);
+
+    /**
+     * 卖货
+     * 
+     * @param po
+     */
+    void reduceProductAmount(ProductAmountPo po);
+
+    /**
      * 根据编码查询产品
      * 
      * @param code

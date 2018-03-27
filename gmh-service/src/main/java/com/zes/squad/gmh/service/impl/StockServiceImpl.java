@@ -4,7 +4,9 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmp
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,16 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zes.squad.gmh.common.enums.FlowTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.StockAmountPo;
+import com.zes.squad.gmh.entity.po.StockFlowPo;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
 import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.mapper.StockAmountMapper;
+import com.zes.squad.gmh.mapper.StockFlowMapper;
 import com.zes.squad.gmh.mapper.StockMapper;
 import com.zes.squad.gmh.mapper.StockTypeMapper;
 import com.zes.squad.gmh.mapper.StockUnionMapper;
@@ -40,6 +45,8 @@ public class StockServiceImpl implements StockService {
     private StockUnionMapper  stockUnionMapper;
     @Autowired
     private StockAmountMapper stockAmountMapper;
+    @Autowired
+    private StockFlowMapper   stockFlowMapper;
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
@@ -195,9 +202,43 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockAmountPo modifyStockAmount(StockAmountPo po) {
         po.setStoreId(ThreadContext.getUserStoreId());
-        int record = stockAmountMapper.updateSelective(po);
+        int record = stockAmountMapper.updateAmount(po);
         ensureConditionValid(record == 1, "修改库存数量失败");
         return po;
+    }
+
+    @Override
+    public void addStockAmount(StockAmountPo po) {
+        ensureParameterExist(po.getStockId(), "库存不存在");
+        po.setStoreId(ThreadContext.getUserStoreId());
+        int record = stockAmountMapper.addAmount(po);
+        ensureConditionValid(record == 1, "库存数量修改失败");
+        StockFlowPo flowPo = new StockFlowPo();
+        flowPo.setStockId(po.getStockId());
+        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        record = stockFlowMapper.insert(flowPo);
+        ensureConditionValid(record == 1, "库存流水生成失败");
+    }
+
+    @Override
+    public void reduceStockAmount(StockAmountPo po) {
+        ensureParameterExist(po.getStockId(), "库存不存在");
+        po.setStoreId(ThreadContext.getUserStoreId());
+        int record = stockAmountMapper.reduceAmount(po);
+        ensureConditionValid(record == 1, "库存数量修改失败");
+        StockAmountPo newPo = stockAmountMapper.selectById(po.getId());
+        ensureConditionValid(
+                newPo.getAmount().compareTo(BigDecimal.ZERO) == 0 || newPo.getAmount().compareTo(BigDecimal.ZERO) == 1,
+                "库存余量不足,请及时补充");
+        StockFlowPo flowPo = new StockFlowPo();
+        flowPo.setStockId(po.getStockId());
+        flowPo.setType(FlowTypeEnum.SELLING_OUT.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        record = stockFlowMapper.insert(flowPo);
+        ensureConditionValid(record == 1, "库存流水生成失败");
     }
 
     @Override

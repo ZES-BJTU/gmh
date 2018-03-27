@@ -9,14 +9,13 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ProductPo extends Po {
+public class ProductConvertStockPo extends Po {
 
     private static final long serialVersionUID = 1L;
 
-    private Long              productTypeId;
-    private String            code;
-    private String            name;
-    private String            unitName;
-    private BigDecimal        unitPrice;
+    private Long              productId;
+    private BigDecimal        productAmount;
+    private Long              stockId;
+    private BigDecimal        stockAmount;
 
 }

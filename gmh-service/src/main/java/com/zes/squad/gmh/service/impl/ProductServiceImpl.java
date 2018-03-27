@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProductPo createProduct(ProductPo po) {
-        ProductPo existingPo = productMapper.selectByName(po.getName());
+        ProductPo existingPo = productMapper.selectByCode(po.getCode());
         ensureEntityNotExist(existingPo, "产品已存在");
         ProductTypePo typePo = productTypeMapper.selectById(po.getProductTypeId());
         ensureEntityExist(typePo, "产品分类不存在");
@@ -137,6 +137,10 @@ public class ProductServiceImpl implements ProductService {
         if (po.getProductTypeId() != null) {
             ProductTypePo typePo = productTypeMapper.selectById(po.getProductTypeId());
             ensureEntityExist(typePo, "产品分类不存在");
+        }
+        ProductPo existingPo = productMapper.selectByCode(po.getCode());
+        if (existingPo != null) {
+            ensureConditionValid(po.getId().equals(existingPo.getId()), "产品已存在");
         }
         productMapper.updateSelective(po);
         ProductPo newPo = productMapper.selectById(po.getId());

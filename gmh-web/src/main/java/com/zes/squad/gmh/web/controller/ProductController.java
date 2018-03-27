@@ -122,6 +122,7 @@ public class ProductController {
         ensureParameterExist(params, "产品信息为空");
         ensureParameterNotExist(params.getId(), "产品已存在");
         ensureParameterExist(params.getProductTypeId(), "产品分类为空");
+        ensureParameterExist(params.getCode(), "产品编码为空");
         ensureParameterExist(params.getName(), "产品名称为空");
         ensureParameterExist(params.getUnitName(), "产品计量单位为空");
         ensureParameterExist(params.getUnitPrice(), "产品单价为空");

@@ -23,6 +23,7 @@
 		pt.`name` AS pt_name,
 		p.`id` AS p_id,
 		p.`product_type_id` AS p_product_type_id,
+		p.`code` AS p_code,
 		p.`name` AS p_name,
 		p.`unit_name` AS p_unit_name,
 		p.`unit_price` AS p_unit_price,
@@ -45,6 +46,7 @@
 		pt.`name` AS pt_name,
 		p.`id` AS p_id,
 		p.`product_type_id` AS p_product_type_id,
+		p.`code` AS p_code,
 		p.`name` AS p_name,
 		p.`unit_name` AS p_unit_name,
 		p.`unit_price` AS p_unit_price
@@ -60,7 +62,10 @@
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				AND CONCAT(pt.`name`, p.`name`)
+				AND 
+				pt.`name` LIKE #{condition, jdbcType=VARCHAR}
+				OR
+				CONCAT(p.`code`, p.`name`)
 				LIKE
 				#{condition, jdbcType=VARCHAR}
 			</if>

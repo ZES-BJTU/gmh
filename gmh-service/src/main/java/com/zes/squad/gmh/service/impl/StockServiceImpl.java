@@ -207,6 +207,7 @@ public class StockServiceImpl implements StockService {
         return po;
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void addStockAmount(StockAmountPo po) {
         ensureParameterExist(po.getStockId(), "库存不存在");
@@ -222,6 +223,7 @@ public class StockServiceImpl implements StockService {
         ensureConditionValid(record == 1, "库存流水生成失败");
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void reduceStockAmount(StockAmountPo po) {
         ensureParameterExist(po.getStockId(), "库存不存在");

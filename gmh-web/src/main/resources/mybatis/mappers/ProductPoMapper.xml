@@ -4,6 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProductPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<id column="product_type_id" jdbcType="BIGINT" property="productTypeId" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="unit_name" jdbcType="VARCHAR" property="unitName" />
 		<result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
@@ -11,7 +12,7 @@
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		`id`, `product_type_id`,
+		`id`, `product_type_id`, `code`,
 		`name`, `unit_name`, `unit_price`,
 		`created_time`, `modified_time`
 	</sql>
@@ -19,9 +20,10 @@
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO product(`product_type_id`, `name`, `unit_name`, `unit_price`) 
+		INSERT INTO product(`product_type_id`, `code`, `name`, `unit_name`, `unit_price`) 
 		VALUES 
 		(#{productTypeId, jdbcType=BIGINT},
+		#{code, jdbcType=VARCHAR},
 		#{name, jdbcType=VARCHAR},
 		#{unitName, jdbcType=VARCHAR},
 		#{unitPrice, jdbcType=DECIMAL})
@@ -41,6 +43,9 @@
 			<if test="productTypeId != null">
 				`product_type_id` = #{productTypeId, jdbcType=BIGINT},
 			</if>
+			<if test="code != null and code != ''">
+				`code` = #{code, jdbcType=VARCHAR},
+			</if>
 			<if test="name != null and name != ''">
 				`name` = #{name, jdbcType=VARCHAR},
 			</if>
@@ -48,7 +53,7 @@
 				`unit_name` = #{unitName, jdbcType=VARCHAR},
 			</if>
 			<if test="unitPrice != null">
-				`unit_price` = #{unitPrice, jdbcType=DECIMAL},
+				`unit_price` = #{unitPrice, jdbcType=DECIMAL}
 			</if>
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}
@@ -58,6 +63,13 @@
 		<include refid="Base_Column_List"/>
 		FROM product
 		WHERE `id` = #{id, jdbcType=BIGINT}
+		LIMIT 1
+	</select>
+	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM product
+		WHERE `code` = #{code, jdbcType=VARCHAR}
 		LIMIT 1
 	</select>
 	<select id="selectByName" parameterType="string" resultMap="BaseResultMap">

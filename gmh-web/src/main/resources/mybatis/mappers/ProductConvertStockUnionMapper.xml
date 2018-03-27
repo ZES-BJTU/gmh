@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductConvertStockUnionMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.union.ProductConvertStockUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="productConvertStockPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductConvertStockMapper.BaseResultMap"
+			columnPrefix="pcs_" />
+		<association property="productTypePo"
+			resultMap="com.zes.squad.gmh.mapper.ProductTypeMapper.BaseResultMap"
+			columnPrefix="pt_" />
+		<association property="productPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductMapper.BaseResultMap"
+			columnPrefix="p_" />
+		<association property="stockTypePo"
+			resultMap="com.zes.squad.gmh.mapper.StockTypeMapper.BaseResultMap"
+			columnPrefix="st_" />
+		<association property="stockPo"
+			resultMap="com.zes.squad.gmh.mapper.StockMapper.BaseResultMap"
+			columnPrefix="s_" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		pcs.`id` AS id,
+		pcs.`id` AS pcs_id,
+		pcs.`product_id` AS pcs_product_id,
+		pcs.`product_amount` AS pcs_product_amount,
+		pcs.`stock_id` AS pcs_stock_id,
+		pcs.`stock_amount` AS pcs_stock_amount,
+		pt.`id` AS pt_id,
+		pt.`name` AS pt_name,
+		p.`id` AS p_id,
+		p.`product_type_id` AS p_product_type_id,
+		p.`code` AS p_code,
+		p.`name` AS p_name,
+		p.`unit_name` AS p_unit_name,
+		p.`unit_price` AS p_unit_price,
+		st.`id` AS st_id,
+		st.`name` AS st_name,
+		s.`id` AS s_id,
+		s.`product_type_id` AS s_stock_type_id,
+		s.`code` AS s_code,
+		s.`name` AS s_name,
+		s.`unit_name` AS s_unit_name
+	</sql>
+	<select id="selectByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ProductConvertStockQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM 
+		product_convert_stock pcs
+		LEFT JOIN
+		product p
+		ON
+		pcs.`product_id` = p.`id`
+		LEFT JOIN
+		product_type pt
+		ON
+		p.`product_type_id` = pt.`id`
+		LEFT JOIN
+		stock s
+		ON
+		pcs.`stock_id` = s.`id`
+		LEFT JOIN
+		stock_type st
+		ON
+		s.`stock_type_id` = st.`id`
+		<where>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'"/>
+				CONCAT(p.`name`, p.`code`) LIKE #{condition:VARCHAR}
+				OR
+				pt.`name` LIKE #{condition:VARCHAR}
+				OR
+				CONCAT(s.`name`, s.`code`) LIKE #{condition:VARCHAR}
+				OR
+				st.`name` LIKE #{condition:VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM 
+		product_convert_stock pcs
+		LEFT JOIN
+		product p
+		ON
+		pcs.`product_id` = p.`id`
+		LEFT JOIN
+		product_type pt
+		ON
+		p.`product_type_id` = pt.`id`
+		LEFT JOIN
+		stock s
+		ON
+		pcs.`stock_id` = s.`id`
+		LEFT JOIN
+		stock_type st
+		ON
+		s.`stock_type_id` = st.`id`
+	</select>
+</mapper>

@@ -81,7 +81,7 @@ public class ProductController {
                                                          @RequestBody ProductTypeParams params) {
         ensureParameterExist(id, "产品分类为空");
         ensureParameterExist(params, "产品分类为空");
-        ensureParameterValid(id.equals(params.getId()), "产品分类错误");
+        params.setId(id);
         ensureParameterExist(params.getName(), "产品分类名称为空");
         ProductTypePo po = CommonConverter.map(params, ProductTypePo.class);
         ProductTypePo newTypePo = productService.modifyProductType(po);
@@ -118,6 +118,7 @@ public class ProductController {
     }
 
     @RequestMapping(method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<ProductVo> doCreateProduct(@RequestBody ProductParams params) {
         ensureParameterExist(params, "产品信息为空");
         ensureParameterNotExist(params.getId(), "产品已存在");
@@ -126,7 +127,7 @@ public class ProductController {
         ensureParameterExist(params.getName(), "产品名称为空");
         ensureParameterExist(params.getUnitName(), "产品计量单位为空");
         ensureParameterExist(params.getUnitPrice(), "产品单价为空");
-        ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "产品单价必须大于0");
+        ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "产品单价应大于0");
         ProductPo po = CommonConverter.map(params, ProductPo.class);
         ProductPo newPo = productService.createProduct(po);
         ProductVo vo = CommonConverter.map(newPo, ProductVo.class);
@@ -153,7 +154,7 @@ public class ProductController {
     public JsonResult<ProductVo> doModifyProducts(@PathVariable("id") Long id, @RequestBody ProductParams params) {
         ensureParameterExist(id, "请选择待修改商品");
         ensureParameterExist(params, "请选择待修改商品");
-        ensureParameterValid(id.equals(params.getId()), "待修改商品不存在");
+        params.setId(id);
         if (params.getUnitPrice() != null) {
             ensureParameterExist(params.getUnitPrice(), "产品单价为空");
             ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "产品单价必须大于0");

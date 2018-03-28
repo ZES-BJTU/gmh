@@ -48,6 +48,14 @@ public interface StockMapper {
     StockPo selectById(Long id);
 
     /**
+     * 根据库存类型id查询
+     * 
+     * @param id
+     * @return
+     */
+    List<StockPo> selectByTypeId(Long id);
+
+    /**
      * 根据编码查询库存
      * 
      * @param code

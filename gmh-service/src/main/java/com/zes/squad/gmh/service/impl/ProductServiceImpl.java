@@ -75,6 +75,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProductTypePo modifyProductType(ProductTypePo po) {
+        ProductTypePo existingPo = productTypeMapper.selectByName(po.getName());
+        if (existingPo != null) {
+            ensureConditionValid(existingPo.getId().equals(po.getId()), "产品分类已存在");
+        }
         productTypeMapper.updateSelective(po);
         ProductTypePo newTypePo = productTypeMapper.selectById(po.getId());
         ensureEntityExist(newTypePo, "产品分类不存在");

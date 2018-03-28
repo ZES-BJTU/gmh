@@ -65,6 +65,14 @@ public interface StockAmountMapper {
     StockAmountPo selectById(Long id);
 
     /**
+     * 根据库存id查询
+     * 
+     * @param stockId
+     * @return
+     */
+    List<StockAmountPo> selectByStockId(Long stockId);
+
+    /**
      * 根据库存id和门店id查询
      * 
      * @param stockId

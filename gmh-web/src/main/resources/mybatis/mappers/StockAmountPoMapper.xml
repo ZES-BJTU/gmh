@@ -60,6 +60,13 @@
 		stock_amount
 		WHERE `id` = #{id:BIGINT}
 	</select>
+	<select id="selectByStockId" parameterType="long" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM
+		stock_amount
+		WHERE `stock_id` = #{stockId:BIGINT}
+	</select>
 	<select id="selectByStockAndStore" resultMap="BaseResultMap">
 		SELECT 
 		<include refid="Base_Column_List" />

@@ -1,6 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.*;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
@@ -60,6 +60,8 @@ public class StockServiceImpl implements StockService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStockType(Long id) {
+        List<StockPo> pos = stockMapper.selectByTypeId(id);
+        ensureCollectionEmpty(pos, "库存分类已被使用,无法删除");
         int row = stockTypeMapper.deleteById(id);
         ensureConditionValid(row == 1, "库存分类删除失败");
     }
@@ -123,6 +125,8 @@ public class StockServiceImpl implements StockService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStock(Long id) {
+        List<StockAmountPo> pos = stockAmountMapper.selectByStockId(id);
+        ensureCollectionEmpty(pos, "库存已被使用,无法删除");
         int record = stockMapper.deleteById(id);
         ensureConditionValid(record == 1, "库存删除失败");
     }
@@ -183,6 +187,13 @@ public class StockServiceImpl implements StockService {
         ensureEntityNotExist(existingPo, "库存数量重复设置");
         int record = stockAmountMapper.insert(po);
         ensureConditionValid(record == 1, "新建库存数量失败");
+        StockFlowPo flowPo = new StockFlowPo();
+        flowPo.setStockId(po.getStockId());
+        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        record = stockFlowMapper.insert(flowPo);
+        ensureConditionValid(record == 1, "库存流水生成失败");
         return po;
     }
 

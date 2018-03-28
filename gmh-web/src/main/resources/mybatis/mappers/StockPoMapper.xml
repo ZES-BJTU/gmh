@@ -60,6 +60,16 @@
 		<where>
 			`id` = #{id, jdbcType=BIGINT}
 		</where>
+		LIMIT 1
+	</select>
+	<select id="selectByTypeId" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		stock
+		<where>
+			`stock_type_id` = #{stockTypeId, jdbcType=BIGINT}
+		</where>
 	</select>
 	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
 		SELECT
@@ -69,6 +79,7 @@
 		<where>
 			`code` = #{code, jdbcType=VARCHAR}
 		</where>
+		LIMIT 1
 	</select>
 	<select id="selectAll" resultMap="BaseResultMap">
 		SELECT

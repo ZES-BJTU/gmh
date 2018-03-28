@@ -3,8 +3,6 @@ package com.zes.squad.gmh.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.websocket.OnMessage;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,11 +37,6 @@ public class AppointmentController {
 
 	@Autowired
 	private AppointmentService appointmentService;
-
-	@OnMessage
-	public JsonResult<AppointmentVo> doRemindReception() {
-		return JsonResults.success();
-	}
 
 	@RequestMapping(path = "/create", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateAppointment(@RequestBody AppointmentCreateOrModifyParams params) {

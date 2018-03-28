@@ -176,7 +176,9 @@ public class StockServiceImpl implements StockService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public StockAmountPo createStockAmount(StockAmountPo po) {
-        po.setStoreId(ThreadContext.getUserStoreId());
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "用户不属于任何一家门店");
+        po.setStoreId(storeId);
         StockAmountPo existingPo = stockAmountMapper.selectByStockAndStore(po.getStockId(), po.getStoreId());
         ensureEntityNotExist(existingPo, "库存数量重复设置");
         int record = stockAmountMapper.insert(po);

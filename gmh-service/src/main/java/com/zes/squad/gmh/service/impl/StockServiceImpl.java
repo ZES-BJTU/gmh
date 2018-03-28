@@ -209,7 +209,7 @@ public class StockServiceImpl implements StockService {
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void addStockAmount(StockAmountPo po) {
+    public StockAmountPo addStockAmount(StockAmountPo po) {
         ensureParameterExist(po.getStockId(), "库存不存在");
         po.setStoreId(ThreadContext.getUserStoreId());
         int record = stockAmountMapper.addAmount(po);
@@ -221,6 +221,7 @@ public class StockServiceImpl implements StockService {
         flowPo.setStoreId(ThreadContext.getUserStoreId());
         record = stockFlowMapper.insert(flowPo);
         ensureConditionValid(record == 1, "库存流水生成失败");
+        return stockAmountMapper.selectById(po.getId());
     }
 
     @Transactional(rollbackFor = { Throwable.class })

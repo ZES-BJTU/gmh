@@ -150,7 +150,7 @@ public interface StockService {
      * 
      * @param po
      */
-    void addStockAmount(StockAmountPo po);
+    StockAmountPo addStockAmount(StockAmountPo po);
 
     /**
      * 减少库存

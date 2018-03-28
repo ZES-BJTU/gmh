@@ -238,6 +238,22 @@ public class StockController {
         return JsonResults.success(vo);
     }
 
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PATCH })
+    public JsonResult<StockAmountVo> doAddStockAmount(@PathVariable("id") Long id,
+                                                      @RequestBody StockAmountParams params) {
+        ensureParameterExist(id, "请选择待补充库存数量");
+        ensureParameterExist(params, "请输入待补充库存数量");
+        ensureParameterExist(params.getStockId(), "请选择待补充库存");
+        params.setId(id);
+        if (params.getAmount() != null) {
+            ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量应大于0");
+        }
+        StockAmountPo po = CommonConverter.map(params, StockAmountPo.class);
+        StockAmountPo newPo = stockService.addStockAmount(po);
+        StockAmountVo vo = CommonConverter.map(newPo, StockAmountVo.class);
+        return JsonResults.success(vo);
+    }
+
     @RequestMapping(path = "/amount/{id}", method = { RequestMethod.GET })
     public JsonResult<StockVo> doQueryStockAmountDetail(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择待查询数量库存");

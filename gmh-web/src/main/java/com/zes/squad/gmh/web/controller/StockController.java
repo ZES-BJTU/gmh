@@ -243,7 +243,6 @@ public class StockController {
                                                       @RequestBody StockAmountParams params) {
         ensureParameterExist(id, "请选择待补充库存数量");
         ensureParameterExist(params, "请输入待补充库存数量");
-        ensureParameterExist(params.getStockId(), "请选择待补充库存");
         params.setId(id);
         if (params.getAmount() != null) {
             ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量应大于0");
@@ -263,7 +262,7 @@ public class StockController {
     }
 
     @RequestMapping(path = "/amount", method = { RequestMethod.GET })
-    public JsonResult<PagedList<StockVo>> doListPagedStockAmounts(@RequestBody StockQueryParams queryParams) {
+    public JsonResult<PagedList<StockVo>> doListPagedStockAmounts(StockQueryParams queryParams) {
         CheckHelper.checkPageParams(queryParams);
         StockQueryCondition condition = CommonConverter.map(queryParams, StockQueryCondition.class);
         PagedList<StockUnion> pagedUnions = stockService.listPagedStocksWithAmount(condition);

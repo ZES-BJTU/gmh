@@ -68,6 +68,7 @@ public class StockController {
         return JsonResults.success();
     }
 
+    @Deprecated
     @RequestMapping(path = "/types", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doDeleteStockTypes(@RequestBody List<Long> ids) {
@@ -140,6 +141,7 @@ public class StockController {
         return JsonResults.success();
     }
 
+    @Deprecated
     @RequestMapping(method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveStocks(@RequestBody List<Long> ids) {
@@ -214,6 +216,7 @@ public class StockController {
         return JsonResults.success();
     }
 
+    @Deprecated
     @RequestMapping(path = "/amount", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<StockAmountVo> createStockAmount(@RequestBody List<Long> ids) {
@@ -282,6 +285,7 @@ public class StockController {
         StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
         vo.setStockTypeName(union.getStockTypePo().getName());
         if (union.getStockAmountPo() != null) {
+            vo.setStockAmountId(union.getStockAmountPo().getId());
             vo.setAmount(union.getStockAmountPo().getAmount());
             vo.setStoreId(union.getStockAmountPo().getStoreId());
         }

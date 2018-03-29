@@ -68,6 +68,7 @@ public class ProductController {
         return JsonResults.success();
     }
 
+    @Deprecated
     @RequestMapping(path = "/types", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveProductTypes(@RequestBody List<Long> ids) {
@@ -226,7 +227,7 @@ public class ProductController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PATCH })
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PUT })
     public JsonResult<ProductAmountVo> doModifyProductAmount(@PathVariable("id") Long id,
                                                              @RequestBody ProductAmountParams params) {
         ensureParameterExist(id, "请选择待修改数量产品");
@@ -236,6 +237,20 @@ public class ProductController {
         ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "待修改产品数量应大于0");
         ProductAmountPo po = CommonConverter.map(params, ProductAmountPo.class);
         ProductAmountPo newPo = productService.modifyProductAmount(po);
+        ProductAmountVo vo = CommonConverter.map(newPo, ProductAmountVo.class);
+        return JsonResults.success(vo);
+    }
+
+    @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PATCH })
+    public JsonResult<ProductAmountVo> doAddProductAmount(@PathVariable("id") Long id,
+                                                          @RequestBody ProductAmountParams params) {
+        ensureParameterExist(id, "请选择待修改数量产品");
+        ensureParameterExist(params, "请选择待修改数量产品");
+        params.setId(id);
+        ensureParameterExist(params.getAmount(), "待修改产品数量为空");
+        ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "待修改产品数量应大于0");
+        ProductAmountPo po = CommonConverter.map(params, ProductAmountPo.class);
+        ProductAmountPo newPo = productService.addProductAmount(po);
         ProductAmountVo vo = CommonConverter.map(newPo, ProductAmountVo.class);
         return JsonResults.success(vo);
     }
@@ -270,6 +285,7 @@ public class ProductController {
         ProductVo vo = CommonConverter.map(union.getProductPo(), ProductVo.class);
         vo.setProductTypeName(union.getProductTypePo().getName());
         if (union.getProductAmountPo() != null) {
+            vo.setProductAmountId(union.getProductAmountPo().getId());
             vo.setAmount(union.getProductAmountPo().getAmount());
             vo.setStoreId(union.getProductAmountPo().getStoreId());
         }

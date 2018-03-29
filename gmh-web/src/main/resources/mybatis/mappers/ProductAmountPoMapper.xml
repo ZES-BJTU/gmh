@@ -53,6 +53,13 @@
 		product_amount
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</select>
+	<select id="selectByProductId" parameterType="long" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM
+		product_amount
+		WHERE `product_id` = #{productId, jdbcType=BIGINT}
+	</select>
 	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
 		SELECT 
 		<include refid="Base_Column_List" />

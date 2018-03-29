@@ -64,6 +64,13 @@ public interface ProductAmountMapper {
     ProductAmountPo selectById(Long id);
 
     /**
+     * 
+     * @param productId
+     * @return
+     */
+    List<ProductAmountPo> selectByProductId(Long productId);
+
+    /**
      * 根据产品编码查询
      * 
      * @param code

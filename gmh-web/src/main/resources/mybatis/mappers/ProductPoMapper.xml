@@ -65,6 +65,12 @@
 		WHERE `id` = #{id, jdbcType=BIGINT}
 		LIMIT 1
 	</select>
+	<select id="selectByTypeId" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM product
+		WHERE `product_type_id` = #{productTypeId, jdbcType=BIGINT}
+	</select>
 	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List"/>

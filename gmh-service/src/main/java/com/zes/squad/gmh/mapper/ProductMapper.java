@@ -47,6 +47,14 @@ public interface ProductMapper {
     ProductPo selectById(Long id);
 
     /**
+     * 根据id查询产品
+     * 
+     * @param id
+     * @return
+     */
+    List<ProductPo> selectByTypeId(Long productTypeId);
+
+    /**
      * 根据编码查询产品
      * 
      * @param name

@@ -13,6 +13,7 @@ public class StockVo {
     private String     code;
     private String     name;
     private String     unitName;
+    private Long       stockAmountId;
     private BigDecimal amount;
     private Long       storeId;
     private String     storeName;

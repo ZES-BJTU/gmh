@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
@@ -61,6 +62,8 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProductType(Long id) {
+        List<ProductPo> pos = productMapper.selectByTypeId(id);
+        ensureCollectionEmpty(pos, "产品类型已被使用,无法删除");
         int row = productTypeMapper.deleteById(id);
         ensureConditionValid(row == 1, "产品分类删除失败");
     }
@@ -124,6 +127,8 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProduct(Long id) {
+        List<ProductAmountPo> pos = productAmountMapper.selectByProductId(id);
+        ensureCollectionEmpty(pos, "产品已被使用,无法删除");
         int row = productMapper.deleteById(id);
         ensureConditionValid(row == 1, "产品删除失败");
     }
@@ -190,7 +195,15 @@ public class ProductServiceImpl implements ProductService {
         condition.setStoreId(ThreadContext.getUserStoreId());
         ProductAmountPo existingPo = productAmountMapper.selectByCondition(condition);
         ensureEntityNotExist(existingPo, "产品数量已存在");
+        po.setStoreId(ThreadContext.getUserStoreId());
         productAmountMapper.insert(po);
+        ProductFlowPo flowPo = new ProductFlowPo();
+        flowPo.setProductId(po.getProductId());
+        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        int record = productFlowMapper.insert(flowPo);
+        ensureConditionValid(record == 1, "产品流水生成失败");
         return po;
     }
 
@@ -220,7 +233,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void addProductAmount(ProductAmountPo po) {
+    public ProductAmountPo addProductAmount(ProductAmountPo po) {
         ensureParameterExist(po.getProductId(), "产品不存在");
         po.setStoreId(ThreadContext.getUserStoreId());
         int record = productAmountMapper.addAmount(po);
@@ -232,6 +245,7 @@ public class ProductServiceImpl implements ProductService {
         flowPo.setStoreId(ThreadContext.getUserStoreId());
         record = productFlowMapper.insert(flowPo);
         ensureConditionValid(record == 1, "产品流水生成失败");
+        return productAmountMapper.selectById(po.getId());
     }
 
     @Transactional(rollbackFor = { Throwable.class })

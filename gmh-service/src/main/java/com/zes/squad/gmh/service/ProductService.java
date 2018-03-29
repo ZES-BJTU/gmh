@@ -153,7 +153,7 @@ public interface ProductService {
      * 
      * @param po
      */
-    void addProductAmount(ProductAmountPo po);
+    ProductAmountPo addProductAmount(ProductAmountPo po);
 
     /**
      * 卖货

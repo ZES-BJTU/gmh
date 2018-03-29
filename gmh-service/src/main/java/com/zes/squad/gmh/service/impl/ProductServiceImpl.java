@@ -190,12 +190,14 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProductAmountPo createProductAmount(ProductAmountPo po) {
+        Long storeId= ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何一家门店");
         ProductAmountQueryCondition condition = new ProductAmountQueryCondition();
         condition.setProductId(po.getProductId());
-        condition.setStoreId(ThreadContext.getUserStoreId());
+        condition.setStoreId(storeId);
         ProductAmountPo existingPo = productAmountMapper.selectByCondition(condition);
         ensureEntityNotExist(existingPo, "产品数量已存在");
-        po.setStoreId(ThreadContext.getUserStoreId());
+        po.setStoreId(storeId);
         productAmountMapper.insert(po);
         ProductFlowPo flowPo = new ProductFlowPo();
         flowPo.setProductId(po.getProductId());

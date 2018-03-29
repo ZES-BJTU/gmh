@@ -9,6 +9,5 @@ public class ChangeCardStoreParams {
 	private Long id;
 	private String turnedReason;
 	private BigDecimal turnedMoney;
-	private String uniqueIdentifier;
 	private Long newStoreId;
 }

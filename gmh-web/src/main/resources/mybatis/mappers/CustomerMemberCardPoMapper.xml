@@ -50,8 +50,9 @@
 		#{memberCardId,
 		jdbcType=BIGINT},
 		#{remainingMoney, jdbcType=DECIMAL},
-		#{remainintTimes, jdbcType=INTEGER},
+		#{remainingTimes, jdbcType=INTEGER},
 		#{isValid, jdbcType=INTEGER},
+		#{isReturned, jdbcType=INTEGER},
 		#{isTurned, jdbcType=INTEGER},
 		#{uniqueIdentifier, jdbcType=VARCHAR},
 		#{storeId, jdbcType=BIGINT})
@@ -126,7 +127,8 @@
 				<bind name="condition" value="'%' + keyWords + '%'" />
 				`customer_name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
-			cmd.`is_valid` = 0
+			and
+			cmd.`is_valid` = '0'
 		</where>
 
 	</select>
@@ -138,7 +140,7 @@
 		`is_returned`=1,
 		`returned_reason`=#{returnedReason,jdbcType=VARCHAR},
 		`returned_time`=#{returnedTime,jdbcType=TIMESTAMP},
-		`returned_money`=#{returnenMoney,jdbcType=DECIMAL}
+		`returned_money`=#{returnedMoney,jdbcType=DECIMAL}
 		where
 		`id`=#{id,jdbcType=INTEGER}
 	</update>
@@ -148,9 +150,9 @@
 		set
 		`is_valid`=0,
 		`is_turned`=1,
-		`turned_reason`=#{returnedReason,jdbcType=VARCHAR},
-		`turned_time`=#{returnedTime,jdbcType=TIMESTAMP},
-		`turned_money`=#{returnenMoney,jdbcType=DECIMAL}
+		`turned_reason`=#{turnedReason,jdbcType=VARCHAR},
+		`turned_time`=#{turnedTime,jdbcType=TIMESTAMP},
+		`turned_money`=#{turnedMoney,jdbcType=DECIMAL}
 		where
 		`id`=#{id,jdbcType=INTEGER}
 	</update>

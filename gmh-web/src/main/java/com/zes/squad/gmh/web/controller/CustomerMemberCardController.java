@@ -77,22 +77,22 @@ public class CustomerMemberCardController {
 				pagedUnions.getTotalCount(), customerMemberCardVos));
 	}
 
-	@RequestMapping(path = "/return", method = { RequestMethod.POST })
+	@RequestMapping(path = "/return", method = { RequestMethod.PUT })
 	public JsonResult<Void> doReturnCard(@RequestBody ReturnCardParams returnCardParams) {
 		CustomerMemberCardPo po = CommonConverter.map(returnCardParams, CustomerMemberCardPo.class);
 		customerMemberCardService.returnCard(po);
 		return JsonResults.success();
 	}
-	@RequestMapping(path = "/turn", method = { RequestMethod.POST })
+	@RequestMapping(path = "/turn", method = { RequestMethod.PUT })
 	public JsonResult<Void> doTurnCard(@RequestBody TurnCardParams turnCardParams) {
 		CustomerMemberCardPo po = CommonConverter.map(turnCardParams, CustomerMemberCardPo.class);
-		customerMemberCardService.turnCard(po);
+		customerMemberCardService.turnCard(po,turnCardParams.getNewCardId());
 		return JsonResults.success();
 	}
-	@RequestMapping(path ="/changeStore", method = {RequestMethod.POST})
+	@RequestMapping(path ="/changeStore", method = {RequestMethod.PUT})
 	public JsonResult<Void> doChangeStore(@RequestBody ChangeCardStoreParams params){
 		CustomerMemberCardPo po = CommonConverter.map(params, CustomerMemberCardPo.class);
-		customerMemberCardService.changeStore(po);
+		customerMemberCardService.changeStore(po,params.getNewStoreId());
 		return JsonResults.success();
 	}
 

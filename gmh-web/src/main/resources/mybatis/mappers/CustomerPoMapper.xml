@@ -74,12 +74,9 @@
 			<if test="gender != null ">
 				AND `gender` = #{gender, jdbcType=TINYINT}
 			</if>
-			<if test="source != null">
-				AND `source` = #{source, jdbcType=VARCHAR}
-			</if>
 			<if test="keyWords != null and keyWords != ''">
 				<bind name="condition" value="'%' + keyWords + '%'" />
-				CONCAT(`name`,`mobile`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
+				CONCAT(`name`,`mobile`,`remark`,`source`) LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

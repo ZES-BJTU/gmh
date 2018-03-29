@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,8 +45,8 @@ public class CustomerController {
 		 	customerService.update(customer);
 	        return JsonResults.success();
 	    }
-	 @RequestMapping(path = "/delete", method = { RequestMethod.PUT })
-	    public JsonResult<Void> doDeleteCustomer(@RequestBody Long id) {
+	 @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+	    public JsonResult<Void> doDeleteCustomer(@PathVariable("id") Long id) {
 		 
 		 	customerService.delete(id);
 	        return JsonResults.success();
@@ -69,7 +70,6 @@ public class CustomerController {
 	private CustomerVo buildCustomerVoByPo(CustomerPo po) {
 		CustomerVo vo = CommonConverter.map(po, CustomerVo.class);
 		vo.setGender(EnumUtils.getDescByKey(po.getGender(), GenderEnum.class));
-		//TODO source确认枚举
 		return vo;
 	}
 }

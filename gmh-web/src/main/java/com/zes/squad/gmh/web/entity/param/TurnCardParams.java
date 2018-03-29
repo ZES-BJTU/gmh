@@ -9,5 +9,4 @@ public class TurnCardParams {
 	private Long newCardId;
 	private String turnedReason;
 	private BigDecimal turnedMoney;
-	private String uniqueIdentifier;
 }

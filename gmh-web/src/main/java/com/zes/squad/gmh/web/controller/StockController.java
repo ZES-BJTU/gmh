@@ -282,6 +282,7 @@ public class StockController {
         StockVo vo = CommonConverter.map(union.getStockPo(), StockVo.class);
         vo.setStockTypeName(union.getStockTypePo().getName());
         if (union.getStockAmountPo() != null) {
+            vo.setStockAmountId(union.getStockAmountPo().getId());
             vo.setAmount(union.getStockAmountPo().getAmount());
             vo.setStoreId(union.getStockAmountPo().getStoreId());
         }

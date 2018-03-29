@@ -14,6 +14,7 @@ public class ProductVo {
     private String     name;
     private String     unitName;
     private BigDecimal unitPrice;
+    private Long       productAmountId;
     private BigDecimal amount;
     private Long       storeId;
     private String     storeName;

@@ -270,6 +270,7 @@ public class ProductController {
         ProductVo vo = CommonConverter.map(union.getProductPo(), ProductVo.class);
         vo.setProductTypeName(union.getProductTypePo().getName());
         if (union.getProductAmountPo() != null) {
+            vo.setProductAmountId(union.getProductAmountPo().getId());
             vo.setAmount(union.getProductAmountPo().getAmount());
             vo.setStoreId(union.getProductAmountPo().getStoreId());
         }

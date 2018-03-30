@@ -10,6 +10,7 @@ import lombok.ToString;
 public class UserQueryCondition extends QueryCondition {
 
     private Integer role;
+    private Long    storeId;
     private String  search;
 
 }

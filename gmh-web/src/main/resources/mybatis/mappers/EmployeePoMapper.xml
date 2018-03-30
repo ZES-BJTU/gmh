@@ -79,4 +79,56 @@
 		WHERE `mobile` = #{mobile:VARCHAR} AND `is_working` = 1
 		LIMIT 1
 	</select>
+	<select id="selectEmployeeIdsByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition"
+		resultType="long">
+		SELECT
+		DISTINCT ew.`employee_id`
+		FROM 
+		employee e
+		LEFT JOIN
+		employee_work ew
+		ON
+		e.`id` = ew.`employee_id`
+		<where>
+			<if test="storeId != null">
+				e.`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="startEntryTime != null and endEntryTime == null">
+				AND e.`entry_time` <![CDATA[>]]> #{startEntryTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="startEntryTime == null and endEntryTime != null">
+				AND e.`entry_time` <![CDATA[<]]> #{endEntryTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="startEntryTime != null and endEntryTime != null">
+				AND (e.`entry_time` BETWEEN #{startEntryTime, jdbcType=TIMESTAMP} AND #{endEntryTime, jdbcType=TIMESTAMP})
+			</if>
+			<if test="working != null">
+				AND e.`is_working` = #{working, jdbcType=TINYINT}
+			</if>
+			<if test="workType != null">
+				AND ew.`work_type` = #{workType, jdbcType=INTEGER}
+			</if>
+			<if test="search != null and search != ''">
+				<bind name="condition" value="'%' + search + '%'" />
+				AND CONCAT(e.`name`,e.`mobile`,e.`remark`) LIKE #{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="selectByWorkType" resultMap="BaseResultMap">
+		SELECT
+		e.`id`, e.`name`
+		FROM 
+		employee e
+		LEFT JOIN
+		employee_work ew
+		ON
+		e.`id` = ew.`employee_id`
+		WHERE
+		`is_working` = 1
+		AND
+		`store_id` = #{storeId:BIGINT}
+		AND
+		ew.`work_type` = #{workType:INTEGER}
+	</select>
 </mapper>

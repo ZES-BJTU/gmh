@@ -125,13 +125,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
         condition.setStoreId(ThreadContext.getUserStoreId());
-        List<Long> ids = employeeWorkMapper.selectEmployeeIdsByCondition(condition);
+        List<Long> ids = employeeMapper.selectEmployeeIdsByCondition(condition);
         if (CollectionUtils.isEmpty(ids)) {
             return PagedLists.newPagedList(pageNum, pageSize);
         }
         List<EmployeeUnion> unions = employeeUnionMapper.selectByIds(ids);
         PageInfo<Long> info = new PageInfo<>(ids);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
+    }
+
+    @Override
+    public List<EmployeePo> listEmployeesByWorkType(Integer workType) {
+        return employeeMapper.selectByWorkType(workType, ThreadContext.getUserStoreId());
     }
 
 }

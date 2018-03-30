@@ -38,6 +38,7 @@
 		<property name="converters">
 			<set>
 				<bean class="com.zes.squad.gmh.web.converter.TimestampToDateConverter" />
+				<bean class="com.zes.squad.gmh.web.converter.StringToDateConverter" />
 			</set>
 		</property>
 	</bean>

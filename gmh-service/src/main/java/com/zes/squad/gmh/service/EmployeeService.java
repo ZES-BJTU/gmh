@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition;
+import com.zes.squad.gmh.entity.po.EmployeePo;
 import com.zes.squad.gmh.entity.union.EmployeeUnion;
 
 public interface EmployeeService {
@@ -51,5 +52,13 @@ public interface EmployeeService {
      * @return
      */
     PagedList<EmployeeUnion> listPagedEmployees(EmployeeWorkQueryCondition condition);
+
+    /**
+     * 根据工种查询员工
+     * 
+     * @param workType
+     * @return
+     */
+    List<EmployeePo> listEmployeesByWorkType(Integer workType);
 
 }

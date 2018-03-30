@@ -2,6 +2,9 @@ package com.zes.squad.gmh.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition;
 import com.zes.squad.gmh.entity.po.EmployeePo;
 
 public interface EmployeeMapper {
@@ -53,5 +56,22 @@ public interface EmployeeMapper {
      * @return
      */
     EmployeePo selectByMobile(String mobile);
+
+    /**
+     * 根据条件分页模糊查询员工信息
+     * 
+     * @param condition
+     * @return
+     */
+    List<Long> selectEmployeeIdsByCondition(EmployeeWorkQueryCondition condition);
+
+    /**
+     * 根据工种和门店查询
+     * 
+     * @param workType
+     * @param storeId
+     * @return
+     */
+    List<EmployeePo> selectByWorkType(@Param("workType") Integer workType, @Param("storeId") Long storeId);
 
 }

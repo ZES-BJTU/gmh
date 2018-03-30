@@ -2,7 +2,6 @@ package com.zes.squad.gmh.mapper;
 
 import java.util.List;
 
-import com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition;
 import com.zes.squad.gmh.entity.po.EmployeeWorkPo;
 
 public interface EmployeeWorkMapper {
@@ -38,13 +37,5 @@ public interface EmployeeWorkMapper {
      * @return
      */
     List<EmployeeWorkPo> selectByEmployeeId(Long employeeId);
-
-    /**
-     * 根据条件分页模糊查询员工信息
-     * 
-     * @param condition
-     * @return
-     */
-    List<Long> selectEmployeeIdsByCondition(EmployeeWorkQueryCondition condition);
 
 }

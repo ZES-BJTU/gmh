@@ -90,7 +90,7 @@ public class EmployeeController {
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(method = { RequestMethod.GET })
+    @RequestMapping(path = "/search", method = { RequestMethod.GET })
     public JsonResult<PagedList<EmployeeVo>> doListPagedEmployees(EmployeeWorkQueryParams queryParams) {
         ensureParameterExist(queryParams, "员工查询条件为空");
         checkEmployeeQueryParams(queryParams);
@@ -106,6 +106,18 @@ public class EmployeeController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
+    }
+
+    @RequestMapping(path = "/list", method = { RequestMethod.GET })
+    public JsonResult<List<EmployeeVo>> doListEmployeesByWorkType(Integer workType) {
+        ensureParameterExist(workType, "员工工种为空");
+        ensureParameterValid(EnumUtils.containsKey(workType, WorkTypeEnum.class), "员工工种错误");
+        List<EmployeePo> pos = employeeService.listEmployeesByWorkType(workType);
+        if (CollectionUtils.isEmpty(pos)) {
+            return JsonResults.success();
+        }
+        List<EmployeeVo> vos = CommonConverter.mapList(pos, EmployeeVo.class);
+        return JsonResults.success(vos);
     }
 
     private EmployeeUnion buildEmployeeUnionByParams(EmployeeParams params) {
@@ -172,7 +184,8 @@ public class EmployeeController {
         EmployeeVo vo = CommonConverter.map(union.getEmployeePo(), EmployeeVo.class);
         vo.setGender(EnumUtils.getDescByKey(union.getEmployeePo().getGender(), GenderEnum.class));
         boolean working = union.getEmployeePo().getWorking();
-        vo.setWorking(EnumUtils.getDescByKey(working ? WorkingEnum.ON.getKey() : WorkingEnum.OFF.getKey(), WorkingEnum.class));
+        vo.setWorking(EnumUtils.getDescByKey(working ? WorkingEnum.ON.getKey() : WorkingEnum.OFF.getKey(),
+                WorkingEnum.class));
         if (CollectionUtils.isNotEmpty(union.getEmployeeWorkPos())) {
             List<EmployeeWorkVo> workVos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
             for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {

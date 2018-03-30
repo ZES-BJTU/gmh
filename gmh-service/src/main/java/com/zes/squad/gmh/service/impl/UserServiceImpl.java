@@ -190,8 +190,6 @@ public class UserServiceImpl implements UserService {
         if (existingPo != null) {
             ensureConditionValid(existingPo.getId().equals(po.getId()), "手机号已注册");
         }
-        List<UserPo> pos = userMapper.selectByStoreId(po.getStoreId());
-        ensureCollectionEmpty(pos, "该门店已有店长");
         userMapper.updateSelective(po);
         UserPo newUserPo = userMapper.selectById(po.getId());
         ensureEntityExist(newUserPo, "用户信息不存在");

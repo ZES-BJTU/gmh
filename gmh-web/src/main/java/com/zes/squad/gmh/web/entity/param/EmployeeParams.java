@@ -8,13 +8,13 @@ import lombok.Data;
 @Data
 public class EmployeeParams {
 
-    private Long                     id;
-    private String                   name;
-    private Integer                  gender;
-    private String                   mobile;
-    private Date                     entryTime;
-    private Boolean                  working;
-    private String                   remark;
-    private List<EmployeeWorkParams> employeeWorkParams;
+    private Long          id;
+    private String        name;
+    private Integer       gender;
+    private String        mobile;
+    private Date          entryTime;
+    private Boolean       working;
+    private String        remark;
+    private List<Integer> workTypes;
 
 }

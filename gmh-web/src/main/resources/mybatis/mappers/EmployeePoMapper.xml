@@ -13,10 +13,12 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `name`, `gender`, `mobile`, `entry_time`, `is_working`, `store_id`, `remark`, `created_time`, `modified_time`
+	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.EmployeePo">
 		<selectKey keyProperty="id" resultType="long" order="AFTER">
-			SELECT
-			LAST_INSERT_ID()
+			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO employee
 		(`name`, `gender`, `mobile`, `entry_time`,
@@ -58,10 +60,16 @@
 			<if test="working != null">
 				`is_working` = #{working, jdbcType=TINYINT},
 			</if>
-			<if test="remark != null and remark != ''">
-				`remark` = #{remark, jdbcType=VARCHAR}
-			</if>
+			`remark` = #{remark, jdbcType=VARCHAR}
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
+	<select id="selectByMobile" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		employee
+		WHERE `mobile` = #{mobile:VARCHAR}
+		LIMIT 1
+	</select>
 </mapper>

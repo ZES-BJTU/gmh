@@ -11,7 +11,7 @@ public enum TopTypeEnum {
     BEAUTY(1, "美容"),
     NAIL(2, "美甲"),
     LIDS(3, "美睫"),
-    PRODUCT(4, "产品");
+    CONSULTANT(4, "顾问");
 
     private int    key;
     private String desc;

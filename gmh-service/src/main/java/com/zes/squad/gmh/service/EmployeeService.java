@@ -13,7 +13,7 @@ public interface EmployeeService {
      * 
      * @param union
      */
-    void createEmployee(EmployeeUnion union);
+    EmployeeUnion createEmployee(EmployeeUnion union);
 
     /**
      * 删除单个员工
@@ -34,7 +34,7 @@ public interface EmployeeService {
      * 
      * @param union
      */
-    void modifyEmployee(EmployeeUnion union);
+    EmployeeUnion modifyEmployee(EmployeeUnion union);
 
     /**
      * 查询员工详情

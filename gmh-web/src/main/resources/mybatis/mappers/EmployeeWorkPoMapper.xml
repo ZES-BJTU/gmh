@@ -4,25 +4,38 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.EmployeeWorkPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="employee_id" jdbcType="BIGINT" property="employeeId" />
-		<result column="top_type" jdbcType="INTEGER" property="topType" />
 		<result column="work_type" jdbcType="INTEGER" property="workType" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `employee_id`, `work_type`, `created_time`, `modified_time`
+	</sql>
 	<insert id="batchInsert" parameterType="com.zes.squad.gmh.entity.po.EmployeeWorkPo">
 		INSERT INTO employee_work
-		(`employee_id`, `top_type`, `work_type`)
+		(`employee_id`, `work_type`)
 		VALUES
 		<foreach collection="list" item="po" separator=",">
 			(#{po.employeeId, jdbcType=BIGINT},
-			#{po.topType, jdbcType=INTEGER},
 			#{po.workType, jdbcType=INTEGER})
 		</foreach>
 	</insert>
-	<delete id="batchDelete" parameterType="long">
-		DELETE FROM employee_work
-		WHERE `employee_id` = #{employeeId, jdbcType=BIGINT}
+	<delete id="batchDeleteByEmployeeId" parameterType="long">
+		DELETE FROM employee_work WHERE `employee_id` = #{employeeId, jdbcType=BIGINT}
 	</delete>
+	<delete id="batchDeleteByEmployeeIds" parameterType="long">
+		DELETE FROM employee_work WHERE `employee_id` IN
+		<foreach collection="list" item="employeeId" separator="," open="(" close=")">
+			#{employeeId, jdbcType=BIGINT}
+		</foreach>
+	</delete>
+	<select id="selectByEmployeeId" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		employee_work
+		WHERE `employee_id` = #{employeeId:BIGINT}
+	</select>
 	<select id="selectEmployeeIdsByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.EmployeeWorkQueryCondition"
 		resultType="list">
@@ -49,15 +62,14 @@
 			<if test="working != null">
 				AND e.`is_working` = #{working, jdbcType=TINYINT}
 			</if>
-			<if test="topType != null">
-				AND ewt.`top_type` = #{topType, jdbcType=INTEGER}
-			</if>
 			<if test="workType != null">
-				AND ewt.`work_type` = #{workType, jdbcType=INTEGER}
+				AND ew.`work_type` = #{workType, jdbcType=INTEGER}
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'" />
-				CONCAT(e.`name`,e.`mobile`,e.`remark`,ewt.`name`) LIKE #{condition, jdbcType=VARCHAR}
+				ew.`name` LIKE #{condition, jdbcType=VARCHAR}
+				OR 
+				CONCAT(e.`name`,e.`mobile`,e.`remark`) LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

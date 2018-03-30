@@ -1,7 +1,9 @@
 package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
 import java.util.Date;
@@ -39,55 +41,75 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void createEmployee(EmployeeUnion union) {
+    public EmployeeUnion createEmployee(EmployeeUnion union) {
+        EmployeePo existingPo = employeeMapper.selectByMobile(union.getEmployeePo().getMobile());
+        ensureEntityNotExist(existingPo, "手机号已被占用");
         EmployeePo employeePo = union.getEmployeePo();
         if (employeePo.getEntryTime() == null) {
             employeePo.setEntryTime(new Date());
         }
         employeePo.setWorking(true);
         employeePo.setStoreId(ThreadContext.getUserStoreId());
-        employeeMapper.insert(employeePo);
+        int record = employeeMapper.insert(employeePo);
+        ensureConditionValid(record == 1, "添加员工失败");
         ensureParameterExist(employeePo.getId(), "添加员工失败");
         List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
         for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
             workPo.setEmployeeId(employeePo.getId());
             workPos.add(workPo);
         }
-        employeeWorkMapper.batchInsert(workPos);
+        int records = employeeWorkMapper.batchInsert(workPos);
+        ensureConditionValid(records == union.getEmployeeWorkPos().size(), "设置员工工种失败");
+        List<EmployeeWorkPo> employeeWorkPos = employeeWorkMapper.selectByEmployeeId(employeePo.getId());
+        union.setEmployeeWorkPos(employeeWorkPos);
+        return union;
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeEmployee(Long id) {
-        employeeMapper.updateWorkingById(id);
-        employeeWorkMapper.batchDelete(id);
+        int record = employeeMapper.updateWorkingById(id);
+        ensureConditionValid(record == 1, "删除员工失败");
+        employeeWorkMapper.batchDeleteByEmployeeId(id);
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeEmployees(List<Long> ids) {
-        employeeMapper.batchUpdateWorkingByIds(ids);
+        int records = employeeMapper.batchUpdateWorkingByIds(ids);
+        ensureConditionValid(records == ids.size(), "删除员工失败");
+        employeeWorkMapper.batchDeleteByEmployeeIds(ids);
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void modifyEmployee(EmployeeUnion union) {
+    public EmployeeUnion modifyEmployee(EmployeeUnion union) {
+        EmployeePo existingPo = employeeMapper.selectByMobile(union.getEmployeePo().getMobile());
+        if (existingPo != null) {
+            ensureConditionValid(existingPo.getId().equals(union.getEmployeePo().getId()), "手机号已被占用");
+        }
         EmployeePo employeePo = union.getEmployeePo();
-        employeeMapper.updateSelective(employeePo);
+        int record = employeeMapper.updateSelective(employeePo);
+        ensureConditionValid(record == 1, "员工信息修改失败");
         Long employeeId = employeePo.getId();
-        employeeWorkMapper.batchDelete(employeeId);
+        employeeWorkMapper.batchDeleteByEmployeeId(employeeId);
         List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
         for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
             workPo.setEmployeeId(employeePo.getId());
             workPos.add(workPo);
         }
-        employeeWorkMapper.batchInsert(workPos);
+        int records = employeeWorkMapper.batchInsert(workPos);
+        ensureConditionValid(records == workPos.size(), "员工工种信息修改失败");
+        List<EmployeeWorkPo> employeeWorkPos = employeeWorkMapper.selectByEmployeeId(employeePo.getId());
+        union.setEmployeeWorkPos(employeeWorkPos);
+        return union;
     }
 
     @Override
     public EmployeeUnion queryEmployeeDetail(Long id) {
         EmployeeUnion union = employeeUnionMapper.selectById(id);
         ensureEntityExist(union, "未找到员工详细信息");
-        ensureEntityExist(union.getEmployeePo(), "未找到员工详细信息");
+        ensureEntityExist(union.getEmployeePo(), "未找到员工信息");
         ensureCollectionNotEmpty(union.getEmployeeWorkPos(), "未找到员工工种信息");
         return union;
     }

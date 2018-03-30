@@ -21,7 +21,23 @@ public interface EmployeeWorkMapper {
      * @param employeeId
      * @return
      */
-    int batchDelete(Long employeeId);
+    int batchDeleteByEmployeeId(Long employeeId);
+
+    /**
+     * 根据员工id批量删除
+     * 
+     * @param employeeIds
+     * @return
+     */
+    int batchDeleteByEmployeeIds(List<Long> employeeIds);
+
+    /**
+     * 根据员工id查询
+     * 
+     * @param employeeId
+     * @return
+     */
+    List<EmployeeWorkPo> selectByEmployeeId(Long employeeId);
 
     /**
      * 根据条件分页模糊查询员工信息

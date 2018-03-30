@@ -38,4 +38,12 @@ public interface EmployeeMapper {
      */
     int updateSelective(EmployeePo po);
 
+    /**
+     * 根据手机号查询员工
+     * 
+     * @param mobile
+     * @return
+     */
+    EmployeePo selectByMobile(String mobile);
+
 }

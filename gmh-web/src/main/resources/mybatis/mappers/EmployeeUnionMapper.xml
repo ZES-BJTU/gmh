@@ -23,15 +23,10 @@
 		e.`is_working` AS e_is_working,
 		e.`store_id` AS e_store_id,
 		e.`remark` AS e_remark,
-		e.`created_time` AS e_created_time,
-		e.`modified_time` AS e_modified_time,
 		s.`name` AS s_name,
 		ew.`id` AS ew_id,
 		ew.`employee_id` AS ew_employee_id,
-		ew.`top_type` AS ew_top_type,
-		ew.`work_type` AS ew_work_type,
-		ew.`created_time` AS ewu_ew_created_time,
-		ew.`modified_time` AS ewu_ew_modified_time,
+		ew.`work_type` AS ew_work_type
 	</sql>
 	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
@@ -42,6 +37,7 @@
 		store s
 		ON
 		e.`store_id` = s.`id`
+		LEFT JOIN
 		employee_work ew
 		ON
 		e.`id` = ew.`employee_id`
@@ -56,6 +52,7 @@
 		store s
 		ON
 		e.`store_id` = s.`id`
+		LEFT JOIN
 		employee_work ew
 		ON
 		e.`id` = ew.`employee_id`

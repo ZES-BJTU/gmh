@@ -11,12 +11,11 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class EmployeeWorkQueryCondition extends QueryCondition {
 
-    private Long    storeId;
     private Date    startEntryTime;
     private Date    endEntryTime;
     private Boolean working;
-    private Integer topType;
     private Integer workType;
+    private Long    storeId;
     private String  search;
 
 }

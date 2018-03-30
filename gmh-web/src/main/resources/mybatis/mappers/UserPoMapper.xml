@@ -68,7 +68,7 @@
 			<if test="storeId != null">
 				`store_id` = #{storeId, jdbcType=BIGINT},
 			</if>
-			<if test="remark != null and remark != ''">
+			<if test="remark != null">
 				`remark` = #{remark, jdbcType=VARCHAR}
 			</if>
 		</set>

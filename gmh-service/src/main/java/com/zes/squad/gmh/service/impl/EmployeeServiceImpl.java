@@ -91,17 +91,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeePo employeePo = union.getEmployeePo();
         int record = employeeMapper.updateSelective(employeePo);
         ensureConditionValid(record == 1, "员工信息修改失败");
+        employeePo = employeeMapper.selectById(employeePo.getId());
         Long employeeId = employeePo.getId();
         employeeWorkMapper.batchDeleteByEmployeeId(employeeId);
-        List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
-        for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
-            workPo.setEmployeeId(employeePo.getId());
-            workPos.add(workPo);
+        if (employeePo.getWorking().booleanValue()) {
+            List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
+            for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
+                workPo.setEmployeeId(employeePo.getId());
+                workPos.add(workPo);
+            }
+            int records = employeeWorkMapper.batchInsert(workPos);
+            ensureConditionValid(records == workPos.size(), "员工工种信息修改失败");
+            List<EmployeeWorkPo> employeeWorkPos = employeeWorkMapper.selectByEmployeeId(employeePo.getId());
+            union.setEmployeeWorkPos(employeeWorkPos);
+        } else {
+            union.setEmployeeWorkPos(null);
         }
-        int records = employeeWorkMapper.batchInsert(workPos);
-        ensureConditionValid(records == workPos.size(), "员工工种信息修改失败");
-        List<EmployeeWorkPo> employeeWorkPos = employeeWorkMapper.selectByEmployeeId(employeePo.getId());
-        union.setEmployeeWorkPos(employeeWorkPos);
         return union;
     }
 

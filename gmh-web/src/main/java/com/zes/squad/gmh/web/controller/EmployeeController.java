@@ -171,14 +171,17 @@ public class EmployeeController {
     private EmployeeVo buildEmployeeVoByUnion(EmployeeUnion union) {
         EmployeeVo vo = CommonConverter.map(union.getEmployeePo(), EmployeeVo.class);
         vo.setGender(EnumUtils.getDescByKey(union.getEmployeePo().getGender(), GenderEnum.class));
-        vo.setWorking(EnumUtils.getDescByKey(union.getEmployeePo().getWorking(), WorkingEnum.class));
-        List<EmployeeWorkVo> workVos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
-        for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
-            EmployeeWorkVo workVo = CommonConverter.map(workPo, EmployeeWorkVo.class);
-            workVo.setWorkTypeDesc(EnumUtils.getDescByKey(workPo.getWorkType(), WorkTypeEnum.class));
-            workVos.add(workVo);
+        boolean working = union.getEmployeePo().getWorking();
+        vo.setWorking(EnumUtils.getDescByKey(working ? WorkingEnum.ON.getKey() : WorkingEnum.OFF.getKey(), WorkingEnum.class));
+        if (CollectionUtils.isNotEmpty(union.getEmployeeWorkPos())) {
+            List<EmployeeWorkVo> workVos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
+            for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
+                EmployeeWorkVo workVo = CommonConverter.map(workPo, EmployeeWorkVo.class);
+                workVo.setWorkTypeDesc(EnumUtils.getDescByKey(workPo.getWorkType(), WorkTypeEnum.class));
+                workVos.add(workVo);
+            }
+            vo.setEmployeeWorkVos(workVos);
         }
-        vo.setEmployeeWorkVos(workVos);
         return vo;
     }
 

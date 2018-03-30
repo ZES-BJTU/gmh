@@ -39,6 +39,14 @@ public interface EmployeeMapper {
     int updateSelective(EmployeePo po);
 
     /**
+     * 根据id查询员工
+     * 
+     * @param id
+     * @return
+     */
+    EmployeePo selectById(Long id);
+
+    /**
      * 根据手机号查询员工
      * 
      * @param mobile

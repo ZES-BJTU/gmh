@@ -64,12 +64,19 @@
 		</set>
 		WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
+	<select id="selectById" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		employee
+		WHERE `id` = #{id:BIGINT}
+	</select>
 	<select id="selectByMobile" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM
 		employee
-		WHERE `mobile` = #{mobile:VARCHAR}
+		WHERE `mobile` = #{mobile:VARCHAR} AND `is_working` = 1
 		LIMIT 1
 	</select>
 </mapper>

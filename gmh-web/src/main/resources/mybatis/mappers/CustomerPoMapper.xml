@@ -45,7 +45,7 @@
 			<if test="source != null">
 				`source`= #{source,jdbcType=INTEGER},
 			</if>
-			<if test="stoerId != null">
+			<if test="storeId != null">
 				`store_id`= #{storeId,jdbcType=INTEGER},
 			</if>
 			<if test="remark != null and remark != ''">

@@ -130,9 +130,6 @@ public class EmployeeController {
         ensureParameterValid(EnumUtils.containsKey(params.getGender(), GenderEnum.class), "员工性别错误");
         ensureParameterExist(params.getMobile(), "员工手机号为空");
         ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "员工手机号格式错误");
-        if (params.getEntryTime() != null) {
-            ensureParameterValid(params.getEntryTime().before(new Date()), "员工入职时间错误");
-        }
         ensureCollectionNotEmpty(params.getWorkTypes(), "员工工种为空");
         for (Integer workType : params.getWorkTypes()) {
             ensureParameterExist(workType, "员工工种为空");

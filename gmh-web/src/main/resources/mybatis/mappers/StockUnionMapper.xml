@@ -43,12 +43,13 @@
 		SELECT
 		<include refid="Base_Column_List"/>
 		FROM stock s
-		LEFT JOIN stock_type st
+		LEFT JOIN 
+		stock_type st
 		ON
 		s.`stock_type_id` = st.`id`
 		<where>
 			<if test="stockTypeId != null">
-				s.`store_type_id` = #{storeTypeId:BIGINT}
+				s.`stock_type_id` = #{stockTypeId:BIGINT}
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>

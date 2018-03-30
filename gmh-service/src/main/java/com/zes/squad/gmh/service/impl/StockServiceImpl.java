@@ -119,7 +119,8 @@ public class StockServiceImpl implements StockService {
     public StockPo createStock(StockPo po) {
         StockPo existingPo = stockMapper.selectByCode(po.getCode());
         ensureEntityNotExist(existingPo, "库存已存在");
-        stockMapper.insert(po);
+        int record = stockMapper.insert(po);
+        ensureConditionValid(record == 1, "库存新建成功");
         return po;
     }
 
@@ -144,7 +145,7 @@ public class StockServiceImpl implements StockService {
     public StockPo modifyStock(StockPo po) {
         StockPo stockPo = stockMapper.selectByCode(po.getCode());
         if (stockPo != null) {
-            ensureConditionValid(stockPo.getId().equals(po.getId()), "库存已存在");
+            ensureConditionValid(stockPo.getId().equals(po.getId()), "库存代码已被占用");
         }
         stockMapper.updateSelective(po);
         StockPo newPo = stockMapper.selectById(po.getId());

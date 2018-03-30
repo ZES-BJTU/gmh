@@ -7,6 +7,7 @@ import net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime;
 @Data
 public class CustomerMemberCardVo {
 	
+	private Long id;
 	private String customerName;
 	private String memberCardName;
 	private BigDecimal remainingMoney;

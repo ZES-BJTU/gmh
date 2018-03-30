@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class CustomerVo {
 
+	private Long id;
 	private String name;
 	private String gender;
 	private String mobile;

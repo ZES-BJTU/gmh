@@ -58,7 +58,7 @@ public class EmployeeController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/{id}", method = { RequestMethod.PATCH })
+    @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public JsonResult<Void> doRemoveEmployee(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择离职员工");

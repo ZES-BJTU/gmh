@@ -59,6 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void removeEmployee(Long id) {
         employeeMapper.updateWorkingById(id);
+        employeeWorkMapper.batchDelete(id);
     }
 
     @Transactional(rollbackFor = { Throwable.class })

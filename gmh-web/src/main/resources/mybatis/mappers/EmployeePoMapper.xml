@@ -31,8 +31,7 @@
 		#{remark, jdbcType=VARCHAR})
 	</insert>
 	<update id="updateWorkingById" parameterType="long">
-		UPDATE employee SET
-		`is_working` = 0
+		UPDATE employee SET `is_working` = 0 WHERE `id` = #{id, jdbcType=BIGINT}
 	</update>
 	<update id="batchUpdateWorkingByIds" parameterType="list">
 		UPDATE employee SET `is_working` = 0 WHERE `id` IN

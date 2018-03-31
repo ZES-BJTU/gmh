@@ -24,6 +24,7 @@
 		mc.`product_discount` AS mc_product_discount,
 		mc.`store_id` AS mc_store_id,
 		mc.`remark` AS mc_remark,
+		mc.`status` AS mc_status,
 		p.`id` AS p_id,
 		p.`name` AS p_name
 	</sql>

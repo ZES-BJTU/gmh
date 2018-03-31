@@ -83,4 +83,10 @@
 		</where>
 		LIMIT 1
 	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project_type
+	</select>
 </mapper>

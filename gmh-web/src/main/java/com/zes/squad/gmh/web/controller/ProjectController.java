@@ -124,11 +124,25 @@ public class ProjectController {
                 PagedLists.newPagedList(pagedPos.getPageNum(), pagedPos.getPageSize(), pagedPos.getTotalCount(), vos));
     }
 
+    @RequestMapping(path = "/types/all", method = { RequestMethod.GET })
+    public JsonResult<List<ProjectTypeVo>> doListAllProjectTypes() {
+        List<ProjectTypePo> pos = projectService.listAllProjectTypes();
+        if (CollectionUtils.isEmpty(pos)) {
+            return JsonResults.success(Lists.newArrayList());
+        }
+        List<ProjectTypeVo> vos = Lists.newArrayListWithCapacity(pos.size());
+        for (ProjectTypePo po : pos) {
+            ProjectTypeVo vo = buildProjectTypeVoByPo(po);
+            vos.add(vo);
+        }
+        return JsonResults.success(vos);
+    }
+
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<ProjectVo> doCreateProject(@RequestBody ProjectParams params) {
         checkProjectCreateParams(params);
-        ProjectUnion union = buildProjectUnionByCreateOrModifyParams(params);
+        ProjectUnion union = buildProjectUnionByParams(params);
         ProjectUnion newUnion = projectService.createProject(union);
         ProjectVo vo = buildProjectVoByUnion(newUnion);
         return JsonResults.success(vo);
@@ -151,12 +165,11 @@ public class ProjectController {
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
-    public JsonResult<Void> doModifyProject(@PathVariable("id") Long id,
-                                            @RequestBody ProjectParams params) {
+    public JsonResult<Void> doModifyProject(@PathVariable("id") Long id, @RequestBody ProjectParams params) {
         ensureParameterExist(id, "项目不存在");
         params.setId(id);
         checkProjectModifyParams(params);
-        ProjectUnion union = buildProjectUnionByCreateOrModifyParams(params);
+        ProjectUnion union = buildProjectUnionByParams(params);
         projectService.modifyProject(union);
         return JsonResults.success();
     }
@@ -199,7 +212,7 @@ public class ProjectController {
         ensureParameterExist(params, "项目信息为空");
         ensureParameterNotExist(params.getId(), "项目已存在");
         ensureParameterExist(params.getProjectTypeId(), "项目分类为空");
-        ensureParameterExist(params.getCode(), "项目编码为空");
+        ensureParameterExist(params.getCode(), "项目代码为空");
         ensureParameterExist(params.getName(), "项目名称为空");
         ensureParameterExist(params.getUnitPrice(), "项目单价为空");
         ensureParameterValid(params.getUnitPrice().compareTo(BigDecimal.ZERO) == 1, "项目单价应大于0");
@@ -210,14 +223,14 @@ public class ProjectController {
         ensureParameterValid(params.getIntegral().compareTo(params.getInternIntegral()) == 1, "项目积分应大于项目实习生积分");
         ensureCollectionNotEmpty(params.getProjectStockParams(), "项目所需库存为空");
         for (ProjectStockParams stockParams : params.getProjectStockParams()) {
-            ensureParameterNotExist(stockParams.getStockId(), "项目所需库存为空");
-            ensureParameterNotExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
+            ensureParameterExist(stockParams.getStockId(), "项目所需库存为空");
+            ensureParameterExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
             ensureParameterValid(stockParams.getStockConsumptionAmount().compareTo(BigDecimal.ZERO) == 1,
                     "项目所需库存量应大于0");
         }
     }
 
-    private ProjectUnion buildProjectUnionByCreateOrModifyParams(ProjectParams params) {
+    private ProjectUnion buildProjectUnionByParams(ProjectParams params) {
         ProjectPo projectPo = CommonConverter.map(params, ProjectPo.class);
         ProjectUnion union = new ProjectUnion();
         union.setProjectPo(projectPo);

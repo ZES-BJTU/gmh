@@ -57,6 +57,13 @@ public interface ProjectService {
     PagedList<ProjectTypePo> listPagedProjectTypes(ProjectTypeQueryCondition condition);
 
     /**
+     * 查询所有美容项目分类
+     * 
+     * @return
+     */
+    List<ProjectTypePo> listAllProjectTypes();
+
+    /**
      * 新建项目
      * 
      * @param union

@@ -101,13 +101,18 @@ public class ProjectServiceImpl implements ProjectService {
         PageInfo<ProjectTypePo> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
+    
+    @Override
+    public List<ProjectTypePo> listAllProjectTypes() {
+        return projectTypeMapper.selectAll();
+    }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProjectUnion createProject(ProjectUnion union) {
         ProjectPo projectPo = union.getProjectPo();
         ProjectPo po = projectMapper.selectByCode(projectPo.getCode());
-        ensureEntityNotExist(po, "项目已存在");
+        ensureEntityNotExist(po, "项目代码已被占用");
         projectMapper.insert(projectPo);
         Long projectId = projectPo.getId();
         ensureAttributeExist(projectId, "添加项目失败");

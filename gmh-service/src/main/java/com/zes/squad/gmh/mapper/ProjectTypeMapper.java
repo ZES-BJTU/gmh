@@ -66,4 +66,11 @@ public interface ProjectTypeMapper {
      */
     ProjectTypePo selectByTopTypeAndName(@Param("topType") Integer topType, @Param("name") String name);
 
+    /**
+     * 查询所有项目分类
+     * 
+     * @return
+     */
+    List<ProjectTypePo> selectAll();
+
 }

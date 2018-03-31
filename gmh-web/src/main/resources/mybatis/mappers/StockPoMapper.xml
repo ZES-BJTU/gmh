@@ -94,7 +94,7 @@
 	</select>
 	<update id="updateTotalAmount" parameterType="java.util.Map">
 		update stock set
-		total_amount=#{totalAmount,jdbcType=DECIMAL}
+		amount=#{totalAmount,jdbcType=DECIMAL}
 		where
 		id=#{id,jdbcType=BIGINT}
 	</update>

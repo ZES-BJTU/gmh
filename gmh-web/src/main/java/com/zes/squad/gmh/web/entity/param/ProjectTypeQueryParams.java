@@ -10,6 +10,6 @@ import lombok.ToString;
 public class ProjectTypeQueryParams extends QueryParams {
 
     private Integer topType;
-    private String  projectTypeKeyWord;
+    private String  search;
 
 }

@@ -81,5 +81,6 @@
 				`name` = #{name, jdbcType=VARCHAR}
 			</if>
 		</where>
+		LIMIT 1
 	</select>
 </mapper>

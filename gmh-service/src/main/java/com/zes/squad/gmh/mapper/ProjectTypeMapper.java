@@ -64,6 +64,6 @@ public interface ProjectTypeMapper {
      * @param name
      * @return
      */
-    List<ProjectTypePo> selectByTopTypeAndName(@Param("topType") Integer topType, @Param("name") String name);
+    ProjectTypePo selectByTopTypeAndName(@Param("topType") Integer topType, @Param("name") String name);
 
 }

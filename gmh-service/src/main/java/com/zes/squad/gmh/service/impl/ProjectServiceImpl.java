@@ -48,17 +48,18 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProjectTypePo createProjectType(ProjectTypePo po) {
-        List<ProjectTypePo> pos = projectTypeMapper.selectByTopTypeAndName(po.getTopType(), po.getName());
-        ensureCollectionNotEmpty(pos, "项目分类已存在");
-        projectTypeMapper.insert(po);
+        ProjectTypePo existingPo = projectTypeMapper.selectByTopTypeAndName(po.getTopType(), po.getName());
+        ensureEntityNotExist(existingPo, "项目分类已存在");
+        int record = projectTypeMapper.insert(po);
+        ensureConditionSatisfied(record == 1, "项目分类添加失败");
         return po;
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProjectType(Long id) {
-        int row = projectTypeMapper.deleteById(id);
-        ensureConditionSatisfied(row == 1, "项目分类删除失败");
+        int record = projectTypeMapper.deleteById(id);
+        ensureConditionSatisfied(record == 1, "项目分类删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
@@ -71,6 +72,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProjectTypePo modifyProjectType(ProjectTypePo po) {
+        ProjectTypePo existingPo = projectTypeMapper.selectByTopTypeAndName(po.getTopType(), po.getName());
+        if (existingPo != null) {
+            ensureConditionSatisfied(existingPo.getId().equals(po.getId()), "项目分类重复");
+        }
         projectTypeMapper.updateSelective(po);
         ProjectTypePo newPo = projectTypeMapper.selectById(po.getId());
         ensureEntityExist(newPo, "项目分类不存在");

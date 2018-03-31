@@ -268,8 +268,11 @@ public class ProjectController {
 
     private ProjectVo buildProjectVoByUnion(ProjectUnion union) {
         ProjectVo vo = CommonConverter.map(union.getProjectPo(), ProjectVo.class);
-        vo.setTopTypeDesc(EnumUtils.getDescByKey(union.getProjectTypePo().getTopType(), TopTypeEnum.class));
-        vo.setProjectTypeName(union.getProjectTypePo().getName());
+        ProjectTypePo typePo = union.getProjectTypePo();
+        if (typePo != null) {
+            vo.setTopTypeDesc(EnumUtils.getDescByKey(typePo.getTopType(), TopTypeEnum.class));
+            vo.setProjectTypeName(typePo.getName());
+        }
         List<ProjectStockVo> stockVos = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
         for (ProjectStockUnion projectStockUnion : union.getProjectStockUnions()) {
             ProjectStockVo stockVo = new ProjectStockVo();

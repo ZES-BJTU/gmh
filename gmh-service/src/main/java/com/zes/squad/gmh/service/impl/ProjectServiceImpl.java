@@ -165,7 +165,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!Strings.isNullOrEmpty(code)) {
             ProjectPo po = projectMapper.selectByCode(code);
             if (po != null) {
-                ensureConditionSatisfied(po.getId().equals(projectId), "会员卡编码重复");
+                ensureConditionSatisfied(po.getId().equals(projectId), "项目编码已被占用");
             }
         }
         int row = projectMapper.updateSelective(projectPo);

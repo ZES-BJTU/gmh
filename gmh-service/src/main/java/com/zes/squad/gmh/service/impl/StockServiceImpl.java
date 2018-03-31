@@ -118,7 +118,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockPo createStock(StockPo po) {
         StockPo existingPo = stockMapper.selectByCode(po.getCode());
-        ensureEntityNotExist(existingPo, "库存已存在");
+        ensureEntityNotExist(existingPo, "库存代码已被占用");
         int record = stockMapper.insert(po);
         ensureConditionSatisfied(record == 1, "库存新建成功");
         return po;

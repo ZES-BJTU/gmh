@@ -199,6 +199,12 @@ public class MemberCardController {
         if (union.getProjectPo() != null) {
             vo.setProjectName(union.getProjectPo().getName());
         }
+        if (union.getMemberCardPo().getStatus() == 1) {
+            vo.setStatus("有效");
+        }
+        if (union.getMemberCardPo().getStatus() == 0) {
+            vo.setStatus("无效");
+        }
         return vo;
     }
 

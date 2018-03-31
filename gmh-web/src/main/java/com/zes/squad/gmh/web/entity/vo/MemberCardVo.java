@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class MemberCardVo {
 
+    private Long       id;
     private Integer    type;
     private String     typeDesc;
     private String     code;
@@ -19,5 +20,6 @@ public class MemberCardVo {
     private BigDecimal projectDiscount;
     private BigDecimal productDiscount;
     private String     remark;
+    private String     status;
 
 }

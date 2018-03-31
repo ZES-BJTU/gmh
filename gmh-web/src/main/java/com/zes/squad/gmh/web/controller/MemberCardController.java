@@ -45,7 +45,7 @@ public class MemberCardController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<MemberCardVo> doCreateMemberCard(MemberCardParams params) {
+    public JsonResult<MemberCardVo> doCreateMemberCard(@RequestBody MemberCardParams params) {
         ensureParameterExist(params, "会员卡信息为空");
         if (params.getProjectDiscount() != null) {
             params.setProjectDiscount(params.getProjectDiscount().divide(new BigDecimal("100")));

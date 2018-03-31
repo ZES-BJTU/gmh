@@ -52,7 +52,9 @@
 		ON
 		mc.`project_id` = p.`id`
 		<where>
-			mc.`type` = #{type, jdbcType=BIGINT}
+			<if test="type != null">
+				mc.`type` = #{type, jdbcType=BIGINT}
+			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
 				AND

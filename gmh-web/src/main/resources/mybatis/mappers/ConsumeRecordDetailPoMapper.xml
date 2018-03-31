@@ -15,7 +15,7 @@
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo">
-		INSERT INTO consume_record_product
+		INSERT INTO consume_record_detail
 		(`trade_serial_number`,`product_id`,`project_id`,`card_id`,`amount`,`operator_id`,`consultant_id`,`sales_man_id`)
 		VALUES
 		(#{tradeSerialNumber, jdbcType=VARCHAR},

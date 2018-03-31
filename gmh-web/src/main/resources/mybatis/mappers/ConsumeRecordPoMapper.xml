@@ -3,7 +3,8 @@
 <mapper namespace="com.zes.squad.gmh.mapper.ConsumeRecordMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />
+		<result column="trade_serial_number" jdbcType="VARCHAR"
+			property="tradeSerialNumber" />
 		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
 		<result column="customer_mobile" jdbcType="VARCHAR" property="customerMobile" />
 		<result column="consume_type" jdbcType="INTEGER" property="consumeType" />
@@ -17,24 +18,32 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordPo" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordPo"
+		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO consume_record
 		(`trade_serial_number`,`customer_id`,`customer_mobile`,`consume_type`,`consume_money`,`payment_way`,`activity_id`,`is_modified`,`remark`,`store_id`,`consume_time`)
 		VALUES
 		(#{tradeSerialNumber, jdbcType=VARCHAR},
-		#{customerId, jdbcType=BIGINT},
+		#{customerId,
+		jdbcType=BIGINT},
 		#{customerMobile, jdbcType=VARCHAR},
-		#{consumeType, jdbcType=INTEGER},
+		#{consumeType,
+		jdbcType=INTEGER},
 		#{consumeMoney, jdbcType=DECIMAL},
-		#{paymentWay, jdbcType=INTEGER},
+		#{paymentWay,
+		jdbcType=INTEGER},
 		#{activityId, jdbcType=BIGINT},
-		#{isModified, jdbcType=INTEGER},
+		#{isModified,
+		jdbcType=INTEGER},
 		#{remark, jdbcType=VARCHAR},
-		#{storeId, jdbcType=BIGINT},
+		#{storeId,
+		jdbcType=BIGINT},
 		#{consumeTime, jdbcType=TIMESTAMP})
 	</insert>
-	<select id="listConsumeRecordByCondition" parameterType="com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition" resultMap="BaseResultMap">
-		SELECT 
+	<select id="listConsumeRecordByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
 		*
 		from
 		consume_record
@@ -55,10 +64,50 @@
 				AND <![CDATA[ consume_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
 			</if>
 			<if test="keyWords != null and keyWords != ''">
-				<bind name="condition" value="'%' + keyWords + '%'"/>
-				CONCAT(`trade_serial_number`,`customer_mobile`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
+				<bind name="condition" value="'%' + keyWords + '%'" />
+				CONCAT(`trade_serial_number`,`customer_mobile`,`remark`) LIKE
+				#{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
-	
+
 	</select>
+
+	<select id="changedListConsumeRecordByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		*
+		from
+		consume_record
+		<where>
+			<if test="storeId != null">
+				`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="consumeType != null ">
+				AND `consume_type` = #{consumeType, jdbcType=INTEGER}
+			</if>
+			<if test="beginTime != null and endTime != null">
+				AND <![CDATA[#{beginTime,jdbcType=TIMESTAMP}<= consume_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="beginTime != null and endTime == null">
+				AND <![CDATA[ consume_time >= #{beginTime,jdbcType=TIMESTAMP}  ]]>
+			</if>
+			<if test="beginTime == null and endTime != null">
+				AND <![CDATA[ consume_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
+			</if>
+			<if test="keyWords != null and keyWords != ''">
+				<bind name="condition" value="'%' + keyWords + '%'" />
+				CONCAT(`trade_serial_number`,`customer_mobile`,`remark`) LIKE
+				#{condition, jdbcType=VARCHAR}
+			</if>
+			and is_modified = 1
+		</where>
+
+	</select>
+
+	<update id="modify" parameterType="long">
+		update consume_record set is_modified = 1
+		where
+		id = #{id,jdbcType=BIGINT}
+	</update>
 </mapper>

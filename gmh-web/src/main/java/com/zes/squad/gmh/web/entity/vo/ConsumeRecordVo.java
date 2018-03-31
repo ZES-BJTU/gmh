@@ -12,6 +12,7 @@ import net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime;
 @Data
 public class ConsumeRecordVo {
 
+	private Long id;
 	private String tradeSerialNumber;
 	private String customerName;
 	private String customerMobile;

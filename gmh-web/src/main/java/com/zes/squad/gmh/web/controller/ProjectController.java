@@ -220,7 +220,6 @@ public class ProjectController {
         ensureParameterValid(params.getIntegral().compareTo(BigDecimal.ZERO) == 1, "项目积分应大于0");
         ensureParameterExist(params.getInternIntegral(), "项目实习生积分为空");
         ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分应大于0");
-        ensureParameterValid(params.getIntegral().compareTo(params.getInternIntegral()) == 1, "项目积分应大于项目实习生积分");
         ensureCollectionNotEmpty(params.getProjectStockParams(), "项目所需库存为空");
         for (ProjectStockParams stockParams : params.getProjectStockParams()) {
             ensureParameterExist(stockParams.getStockId(), "项目所需库存为空");
@@ -256,9 +255,6 @@ public class ProjectController {
         }
         if (params.getInternIntegral() != null) {
             ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分应大于0");
-        }
-        if (params.getIntegral() != null && params.getInternIntegral() != null) {
-            ensureParameterValid(params.getIntegral().compareTo(params.getInternIntegral()) == 1, "项目积分应大于项目实习生积分");
         }
         if (CollectionUtils.isNotEmpty(params.getProjectStockParams())) {
             for (ProjectStockParams stockParams : params.getProjectStockParams()) {

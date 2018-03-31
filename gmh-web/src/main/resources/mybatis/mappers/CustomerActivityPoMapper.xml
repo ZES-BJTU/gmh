@@ -5,6 +5,7 @@
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
 		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
@@ -14,10 +15,11 @@
 		<result column="activity_name" jdbcType="VARCHAR" property="activityName" />
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerActivityPo" useGeneratedKeys="true" keyProperty="id">
-		insert into customer_activity(`customer_id`,`activity_id`)
+		insert into customer_activity(`customer_id`,`activity_id`,`store_id`)
 		values(
 		#{customerId,jdbcType=BIGINT},
-		#{activityId,jdbcType=BIGINT})
+		#{activityId,jdbcType=BIGINT},
+		#{storeId,jdbcType=BIGINT})
 	</insert>
 	<select id="listByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.CustomerActivityQueryCondition"
@@ -40,8 +42,10 @@
 				CONCAT(c.`name`,a.`name`) LIKE
 				#{condition, jdbcType=VARCHAR}
 			</if>
-		</where>
-
+			<if test="storeId != null and storeId != ''">
+				ca.`store_id`=#{storeId,jdbcType=BIGINT}
+			</if>
+		</where>		
 	</select>
 	
 </mapper>

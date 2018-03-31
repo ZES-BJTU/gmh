@@ -204,8 +204,8 @@ public class ProjectController {
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
     }
-    
-    @RequestMapping(method = { RequestMethod.GET })
+
+    @RequestMapping(path = "/all", method = { RequestMethod.GET })
     public JsonResult<List<ProjectVo>> doListAllProjects() {
         List<ProjectPo> pos = projectService.listAllProjects();
         if (CollectionUtils.isEmpty(pos)) {

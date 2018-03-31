@@ -8,10 +8,40 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<resultMap type="com.zes.squad.gmh.entity.union.CustomerActivityUnion" id="UnionMap">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerActivityPo" useGeneratedKeys="true" keyProperty="id">
 		insert into customer_activity(`customer_id`,`activity_id`)
 		values(
 		#{customerId,jdbcType=BIGINT},
 		#{activityId,jdbcType=BIGINT})
 	</insert>
+	<select id="listByCondition"
+		parameterType="com.zes.squad.gmh.entity.condition.CustomerActivityQueryCondition"
+		resultMap="UnionMap">
+		SELECT
+		ca.`id` as `id`,
+		c.`name` as `customer_name`,
+		a.`name` as `activity_name`
+		from
+		customer_activity ca
+		left join customer c
+		on
+		ca.`customer_id`=c.`id`
+		left join activity a
+		on
+		ca.`activity_id`=a.`id`
+		<where>
+			<if test="keyWord != null and keyWord != ''">
+				<bind name="condition" value="'%' + keyWord + '%'" />
+				CONCAT(c.`name`,a.`name`) LIKE
+				#{condition, jdbcType=VARCHAR}
+			</if>
+		</where>
+
+	</select>
+	
 </mapper>

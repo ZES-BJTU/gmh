@@ -1,24 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zes.squad.gmh.mapper.CustomerActivityContentMapper">
-	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerActivityContentPo">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.po.CustomerActivityContentPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="customer_activity_id" jdbcType="BIGINT" property="customerActivityId" />
+		<result column="customer_activity_id" jdbcType="BIGINT"
+			property="customerActivityId" />
 		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="related_id" jdbcType="BIGINT" property="relatedId" />
-		<result column="content" jdbcType="VARCHAR" property="content" />
+		<result column="content" jdbcType="DECIMAL" property="content" />
 		<result column="number" jdbcType="DECIMAL" property="number" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-	
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerActivityContentPo">
-		insert into customer_activity_content(`customer_activity_id`,`type`,`related_id`,`content`,`number`)
+	<resultMap
+		type="com.zes.squad.gmh.entity.union.CustomerActivityContentUnion" id="UnionType">
+		<result column="type" jdbcType="INTEGER" property="type" />
+		<result column="related_name" jdbcType="BIGINT" property="relatedName" />
+		<result column="content" jdbcType="DECIMAL" property="content" />
+		<result column="number" jdbcType="DECIMAL" property="number" />
+	</resultMap>
+	<insert id="insert"
+		parameterType="com.zes.squad.gmh.entity.po.CustomerActivityContentPo">
+		insert into
+		customer_activity_content(`customer_activity_id`,`type`,`related_id`,`content`,`number`)
 		values(
 		#{customerActivityId,jdbcType=BIGINT},
 		#{type,jdbcType=BIGINT}
-		#{related_id,jdbcType=BIGINT}
+		#{relatedId,jdbcType=BIGINT}
 		#{content,jdbcType=VARCHAR}
 		#{number,jdbcType=DECIMAL})
 	</insert>
+
+	<select id="getProductListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
+		select
+		cac.`type` as type,
+		p.`name` as `related_name`,
+		cac.`number` as `number`
+		from customer_activity_content cac left join product p
+		on
+		cac.`related_id`=p.`id`
+		where
+		cac.`customer_activity_id`=#{customerActivityId,jdbcType=BIGINT}
+		and
+		cac.`type`=3;
+	</select>
+	<select id="getProjectListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
+		select
+		cac.`type` as type,
+		p.`name` as `related_name`,
+		cac.`number` as `number`
+		from customer_activity_content cac left join project p
+		on
+		cac.`related_id`=p.`id`
+		where
+		cac.`customer_activity_id`=#{customerActivityId,jdbcType=BIGINT}
+		and
+		cac.`type`=1;
+	</select>
+	<select id="getCardListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
+		select
+		cac.`type` as type,
+		p.`name` as `related_name`,
+		cac.`number` as `number`
+		from customer_activity_content cac left join member_card p
+		on
+		cac.`related_id`=p.`id`
+		where
+		cac.`customer_activity_id`=#{customerActivityId,jdbcType=BIGINT}
+		and
+		cac.`type`=2;
+	</select>
+	<select id="getCouponListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
+		select `type`,`content`,`number` from
+		customer_activity_content
+		where
+		`customer_activity_id`=#{customerActivityId,jdbcType=BIGINT}
+		and
+		cac.`type`=4;
+	</select>
 </mapper>

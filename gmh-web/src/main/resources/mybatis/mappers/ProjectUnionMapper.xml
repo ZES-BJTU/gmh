@@ -35,6 +35,7 @@
 		s.`stock_type_id` AS psu_su_stock_stock_type_id,
 		s.`code` AS psu_su_stock_code,
 		s.`name` AS psu_su_stock_name,
+		s.`unit_name` AS psu_su_stock_unit_name,
 		st.`id` AS psu_su_stock_type_id,
 		st.`name` AS psu_su_stock_type_name
 	</sql>

@@ -10,5 +10,6 @@ public class ProjectStockVo {
     private Long       stockId;
     private String     stockName;
     private BigDecimal stockConsumptionAmount;
+    private String     unitName;
 
 }

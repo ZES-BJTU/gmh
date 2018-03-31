@@ -276,6 +276,7 @@ public class ProjectController {
             stockVo.setStockId(projectStockUnion.getProjectStockPo().getId());
             stockVo.setStockName(projectStockUnion.getStockUnion().getStockPo().getName());
             stockVo.setStockConsumptionAmount(projectStockUnion.getProjectStockPo().getStockConsumptionAmount());
+            stockVo.setUnitName(projectStockUnion.getStockUnion().getStockPo().getUnitName());
             stockVos.add(stockVo);
         }
         vo.setProjectStockVos(stockVos);

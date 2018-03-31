@@ -20,7 +20,7 @@ public interface MemberCardMapper {
      * @param id
      * @return
      */
-    int deleteById(Long id);
+    int updateStatus(Long id);
 
     /**
      * 批量删除

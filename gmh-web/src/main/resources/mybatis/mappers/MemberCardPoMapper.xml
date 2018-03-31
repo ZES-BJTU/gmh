@@ -14,20 +14,21 @@
 		<result column="product_discount" jdbcType="DECIMAL" property="productDiscount" />
 		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="status" jdbcType="TINYINT" property="status" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		`id`, `type`, `code`, `name`, `price`, `project_id`,
 		`times`, `amount`, `project_discount`, `product_discount`,
-		`store_id`, `remark`, `created_time`, `modified_time`
+		`store_id`, `remark`, `status`, `created_time`, `modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.MemberCardPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO member_card(`type`, `code`, `name`, `price`, `project_id`,
-		`times`, `amount`, `project_discount`, `product_discount`, `store_id`, `remark`) 
+		`times`, `amount`, `project_discount`, `product_discount`, `store_id`, `remark`, `status`) 
 		VALUES 
 		(#{type, jdbcType=INTEGER},
 		#{code, jdbcType=VARCHAR},
@@ -39,17 +40,11 @@
 		#{projectDiscount, jdbcType=DECIMAL},
 		#{productDiscount, jdbcType=DECIMAL},
 		#{storeId, jdbcType=BIGINT},
-		#{remark, jdbcType=VARCHAR})
+		#{remark, jdbcType=VARCHAR},1)
 	</insert>
-	<delete id="deleteById" parameterType="long">
-		DELETE FROM member_card WHERE `id` = #{id, jdbcType=BIGINT}
-	</delete>
-	<delete id="batchDelete" parameterType="long">
-		DELETE FROM member_card WHERE `id` IN
-		<foreach collection="list" item="id" separator="," open="(" close=")">
-			#{id, jdbcType=BIGINT}
-		</foreach>
-	</delete>
+	<update id="updateStatus" parameterType="long">
+		UPDATE member_card SET `status` = 0 WHERE `id` = #{id, jdbcType=BIGINT}
+	</update>
 	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.ProductPo">
 		UPDATE member_card
 		<set>

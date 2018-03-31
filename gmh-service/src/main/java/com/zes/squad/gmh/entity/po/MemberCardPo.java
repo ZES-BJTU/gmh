@@ -24,5 +24,6 @@ public class MemberCardPo extends Po {
     private BigDecimal        productDiscount;
     private Long              storeId;
     private String            remark;
+    private Integer           status;
 
 }

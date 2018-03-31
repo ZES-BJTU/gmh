@@ -45,8 +45,8 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeMemberCard(Long id) {
-        int result = memberCardMapper.deleteById(id);
-        ensureConditionSatisfied(result == 1, "删除会员卡失败");
+        int result = memberCardMapper.updateStatus(id);
+        ensureConditionSatisfied(result == 1, "会员卡置为无效失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })

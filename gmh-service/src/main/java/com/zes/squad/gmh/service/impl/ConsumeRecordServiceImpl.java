@@ -26,9 +26,9 @@ import com.zes.squad.gmh.entity.po.CustomerActivityContentPo;
 import com.zes.squad.gmh.entity.po.CustomerActivityPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.ProductAmountPo;
+import com.zes.squad.gmh.entity.po.ProductFlowPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.StockFlowPo;
-import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
@@ -40,9 +40,9 @@ import com.zes.squad.gmh.mapper.ConsumeRecordMapper;
 import com.zes.squad.gmh.mapper.CustomerActivityContentMapper;
 import com.zes.squad.gmh.mapper.CustomerActivityMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
+import com.zes.squad.gmh.mapper.ProductFlowMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
 import com.zes.squad.gmh.mapper.StockFlowMapper;
-import com.zes.squad.gmh.mapper.StockMapper;
 import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.MemberCardService;
@@ -66,7 +66,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	@Autowired
 	private ProjectStockMapper projectStockMapper;
 	@Autowired
-	private StockMapper stockMapper;
+	private ProductFlowMapper productFlowMapper;
 	@Autowired
 	private ConsumeRecordGiftMapper giftMapper;
 	@Autowired
@@ -114,6 +114,14 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			crpp.setTradeSerialNumber(tradeSerialNumber);
 			consumeRecordDetailMapper.insert(crpp);
 			// TODO 产品中扣除相应数量
+			ProductFlowPo pfPo = new ProductFlowPo();
+			pfPo.setAmount(crpp.getAmount());
+			pfPo.setProductId(crpp.getProductId());
+			pfPo.setRecordId(consumeRecord.getId());
+			pfPo.setStatus(1);
+			pfPo.setType(3);
+			productFlowMapper.insert(pfPo);
+			productService.reduceProductAmount(pfPo);
 		}
 	}
 

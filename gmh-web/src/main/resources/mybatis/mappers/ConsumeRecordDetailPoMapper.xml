@@ -7,7 +7,7 @@
 		<result column="product_id" jdbcType="BIGINT" property="productId" />
 		<result column="project_id" jdbcType="BIGINT" property="projectId" />
 		<result column="card_id" jdbcType="BIGINT" property="cardId" />
-		<result column="amount" jdbcType="INTEGER" property="amount" />
+		<result column="amount" jdbcType="DECIMAL" property="amount" />
 		<result column="operator_id" jdbcType="INTEGER" property="operatorId" />
 		<result column="consultant_id" jdbcType="INTEGER" property="consultantId" />
 		<result column="sales_man_id" jdbcType="DECIMAL" property="salesManId" />
@@ -22,7 +22,7 @@
 		#{productId, jdbcType=BIGINT},
 		#{projectId, jdbcType=BIGINT},
 		#{cardId, jdbcType=BIGINT},
-		#{amount, jdbcType=INTEGER},
+		#{amount, jdbcType=DECIMAL},
 		#{operatorId, jdbcType=INTEGER},
 		#{consultantId, jdbcType=INTEGER},
 		#{salesManId, jdbcType=INTEGER})

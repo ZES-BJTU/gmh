@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.entity.po;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -18,7 +20,7 @@ public class ConsumeRecordDetailPo extends Po{
 	private String projectCode;
 	private Long cardId;
 	private String cardCode;
-	private Integer amount;
+	private BigDecimal amount;
 	private Long operatorId;
 	private Long consultantId;
 	private Long salesManId;

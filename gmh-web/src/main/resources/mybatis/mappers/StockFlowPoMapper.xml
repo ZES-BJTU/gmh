@@ -3,7 +3,8 @@
 <mapper namespace="com.zes.squad.gmh.mapper.StockFlowMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.StockFlowPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="stock_ik" jdbcType="BIGINT" property="stockId" />
+		<result column="stock_id" jdbcType="BIGINT" property="stockId" />
+		<result column="record_id" jdbcType="BIGINT" property="recordId" />
 		<result column="type" jdbcType="TINYINT" property="type" />
 		<result column="amount" jdbcType="DECIMAL" property="amount" />
 		<result column="store_id" jdbcType="BIGINT" property="storeId" />
@@ -16,9 +17,10 @@
 			SELECT
 			LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO stock_flow(`stock_id`, `type`, `amount`, `store_id`, `status`)
+		INSERT INTO stock_flow(`stock_id`, `record_id`, `type`, `amount`, `store_id`, `status`)
 		VALUES
 		(#{stockId, jdbcType=BIGINT},
+		#{recordId, jdbcType=BIGINT},
 		#{type, jdbcType=TINYINT},
 		#{amount, jdbcType=DECIMAL},
 		#{storeId, jdbcType=BIGINT},1)

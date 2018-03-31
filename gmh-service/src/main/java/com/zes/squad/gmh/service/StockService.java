@@ -6,6 +6,7 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.StockAmountPo;
+import com.zes.squad.gmh.entity.po.StockFlowPo;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
 import com.zes.squad.gmh.entity.union.StockUnion;
@@ -155,9 +156,9 @@ public interface StockService {
     /**
      * 减少库存
      * 
-     * @param po
+     * @param flowPo
      */
-    void reduceStockAmount(StockAmountPo po);
+    void reduceStockAmount(StockFlowPo flowPo);
 
     /**
      * 根据id查询库存详情

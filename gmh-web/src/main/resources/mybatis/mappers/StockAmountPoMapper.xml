@@ -35,12 +35,8 @@
 		</foreach>
 	</delete>
 	<update id="updateAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
-		UPDATE stock_amount
-		<set>
-			<if test="amount != null">
-				`amount` = #{amount:DECIMAL}
-			</if>
-		</set>
+		UPDATE stock_amount 
+		SET `amount` = #{amount:DECIMAL}
 		WHERE `id` = #{id:BIGINT}
 	</update>
 	<update id="addAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">

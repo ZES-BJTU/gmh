@@ -7,11 +7,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum FlowTypeEnum {
-    
-    BUYING_IN(1,"买入"),
-    SELLING_OUT(2,"卖出");
 
-    private int key;
+    FIRST_BUYING_IN(1, "首次买入"),
+    BUYING_IN(2, "买入"),
+    SELLING_OUT(3, "卖出"),
+    ADJUSTMENT(4, "调整");
+
+    private int    key;
     private String desc;
 
 }

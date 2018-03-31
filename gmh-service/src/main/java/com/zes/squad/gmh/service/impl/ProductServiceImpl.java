@@ -202,9 +202,9 @@ public class ProductServiceImpl implements ProductService {
         productAmountMapper.insert(po);
         ProductFlowPo flowPo = new ProductFlowPo();
         flowPo.setProductId(po.getProductId());
-        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
+        flowPo.setType(FlowTypeEnum.FIRST_BUYING_IN.getKey());
         flowPo.setAmount(po.getAmount());
-        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        flowPo.setStoreId(storeId);
         int record = productFlowMapper.insert(flowPo);
         ensureConditionSatisfied(record == 1, "产品流水生成失败");
         return po;
@@ -231,6 +231,13 @@ public class ProductServiceImpl implements ProductService {
         ensureConditionSatisfied(record == 1, "产品数量修改失败");
         ProductAmountPo newPo = productAmountMapper.selectById(po.getId());
         ensureEntityExist(newPo, "产品数量不存在");
+        ProductFlowPo flowPo = new ProductFlowPo();
+        flowPo.setProductId(po.getProductId());
+        flowPo.setType(FlowTypeEnum.ADJUSTMENT.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        record = productFlowMapper.insert(flowPo);
+        ensureConditionSatisfied(record == 1, "产品流水生成失败");
         return newPo;
     }
 

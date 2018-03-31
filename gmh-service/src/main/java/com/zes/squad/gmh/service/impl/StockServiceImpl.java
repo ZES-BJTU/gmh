@@ -7,7 +7,6 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -191,9 +190,9 @@ public class StockServiceImpl implements StockService {
         ensureConditionSatisfied(record == 1, "新建库存数量失败");
         StockFlowPo flowPo = new StockFlowPo();
         flowPo.setStockId(po.getStockId());
-        flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
+        flowPo.setType(FlowTypeEnum.FIRST_BUYING_IN.getKey());
         flowPo.setAmount(po.getAmount());
-        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        flowPo.setStoreId(storeId);
         record = stockFlowMapper.insert(flowPo);
         ensureConditionSatisfied(record == 1, "库存流水生成失败");
         return po;
@@ -219,6 +218,13 @@ public class StockServiceImpl implements StockService {
         po.setStoreId(ThreadContext.getUserStoreId());
         int record = stockAmountMapper.updateAmount(po);
         ensureConditionSatisfied(record == 1, "修改库存数量失败");
+        StockFlowPo flowPo = new StockFlowPo();
+        flowPo.setStockId(po.getStockId());
+        flowPo.setType(FlowTypeEnum.ADJUSTMENT.getKey());
+        flowPo.setAmount(po.getAmount());
+        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        record = stockFlowMapper.insert(flowPo);
+        ensureConditionSatisfied(record == 1, "库存流水生成失败");
         return po;
     }
 
@@ -226,14 +232,16 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockAmountPo addStockAmount(StockAmountPo po) {
         ensureParameterExist(po.getStockId(), "库存不存在");
-        po.setStoreId(ThreadContext.getUserStoreId());
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureParameterExist(storeId, "当前用户不属于任何店铺");
+        po.setStoreId(storeId);
         int record = stockAmountMapper.addAmount(po);
         ensureConditionSatisfied(record == 1, "库存数量修改失败");
         StockFlowPo flowPo = new StockFlowPo();
         flowPo.setStockId(po.getStockId());
         flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
         flowPo.setAmount(po.getAmount());
-        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        flowPo.setStoreId(storeId);
         record = stockFlowMapper.insert(flowPo);
         ensureConditionSatisfied(record == 1, "库存流水生成失败");
         return stockAmountMapper.selectById(po.getId());
@@ -241,22 +249,25 @@ public class StockServiceImpl implements StockService {
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
-    public void reduceStockAmount(StockAmountPo po) {
-        ensureParameterExist(po.getStockId(), "库存不存在");
-        po.setStoreId(ThreadContext.getUserStoreId());
-        int record = stockAmountMapper.reduceAmount(po);
-        ensureConditionSatisfied(record == 1, "库存数量修改失败");
-        StockAmountPo newPo = stockAmountMapper.selectById(po.getId());
-        ensureConditionSatisfied(
-                newPo.getAmount().compareTo(BigDecimal.ZERO) == 0 || newPo.getAmount().compareTo(BigDecimal.ZERO) == 1,
-                "库存余量不足,请及时补充");
-        StockFlowPo flowPo = new StockFlowPo();
-        flowPo.setStockId(po.getStockId());
+    public void reduceStockAmount(StockFlowPo flowPo) {
+        ensureParameterExist(flowPo.getStockId(), "库存不存在");
+        ensureParameterExist(flowPo.getRecordId(), "消费记录id为空");
+        ensureParameterExist(flowPo.getAmount(), "库存消耗为空");
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureParameterExist(storeId, "当前用户不属于任何店铺");
+        flowPo.setStoreId(storeId);
         flowPo.setType(FlowTypeEnum.SELLING_OUT.getKey());
-        flowPo.setAmount(po.getAmount());
-        flowPo.setStoreId(ThreadContext.getUserStoreId());
-        record = stockFlowMapper.insert(flowPo);
+        int record = stockFlowMapper.insert(flowPo);
         ensureConditionSatisfied(record == 1, "库存流水生成失败");
+        StockAmountPo amountPo = stockAmountMapper.selectByStockAndStore(flowPo.getStockId(), storeId);
+        ensureEntityExist(amountPo, "无对应库存");
+        ensureConditionSatisfied(amountPo.getAmount().compareTo(flowPo.getAmount()) == 0
+                || amountPo.getAmount().compareTo(flowPo.getAmount()) == 1, "库存余量不足,请及时补充");
+        StockAmountPo po = new StockAmountPo();
+        po.setId(amountPo.getId());
+        po.setAmount(flowPo.getAmount());
+        record = stockAmountMapper.reduceAmount(po);
+        ensureConditionSatisfied(record == 1, "库存数量修改失败");
     }
 
     @Override

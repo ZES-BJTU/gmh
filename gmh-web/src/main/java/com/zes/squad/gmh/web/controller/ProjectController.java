@@ -182,7 +182,7 @@ public class ProjectController {
         return JsonResults.success(vo);
     }
 
-    @RequestMapping(method = { RequestMethod.PUT })
+    @RequestMapping(method = { RequestMethod.GET })
     public JsonResult<PagedList<ProjectVo>> doListPagedProjects(ProjectQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getTopType() != null) {

@@ -226,7 +226,7 @@ public class ProductServiceImpl implements ProductService {
         ProductAmountPo newPo = productAmountMapper.selectById(po.getId());
         ensureEntityExist(newPo, "产品数量不存在");
         ProductFlowPo flowPo = new ProductFlowPo();
-        flowPo.setProductId(po.getProductId());
+        flowPo.setProductId(newPo.getProductId());
         flowPo.setType(FlowTypeEnum.ADJUSTMENT.getKey());
         flowPo.setAmount(po.getAmount());
         Long storeId = ThreadContext.getUserStoreId();
@@ -240,14 +240,16 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProductAmountPo addProductAmount(ProductAmountPo po) {
-        ensureParameterExist(po.getProductId(), "产品不存在");
+        ProductAmountPo amountPo = productAmountMapper.selectById(po.getId());
+        ensureEntityExist(amountPo, "产品不存在");
         Long storeId = ThreadContext.getUserStoreId();
         ensureParameterExist(storeId, "当前用户不属于任何店铺");
         po.setStoreId(storeId);
+        po.setProductId(amountPo.getProductId());
         int record = productAmountMapper.addAmount(po);
         ensureConditionSatisfied(record == 1, "产品数量修改失败");
         ProductFlowPo flowPo = new ProductFlowPo();
-        flowPo.setProductId(po.getProductId());
+        flowPo.setProductId(amountPo.getProductId());
         flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
         flowPo.setAmount(po.getAmount());
         flowPo.setStoreId(storeId);

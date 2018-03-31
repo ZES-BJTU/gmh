@@ -1,7 +1,7 @@
 package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
@@ -51,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeePo.setWorking(true);
         employeePo.setStoreId(ThreadContext.getUserStoreId());
         int record = employeeMapper.insert(employeePo);
-        ensureConditionValid(record == 1, "添加员工失败");
+        ensureConditionSatisfied(record == 1, "添加员工失败");
         ensureParameterExist(employeePo.getId(), "添加员工失败");
         List<EmployeeWorkPo> workPos = Lists.newArrayListWithCapacity(union.getEmployeeWorkPos().size());
         for (EmployeeWorkPo workPo : union.getEmployeeWorkPos()) {
@@ -59,7 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             workPos.add(workPo);
         }
         int records = employeeWorkMapper.batchInsert(workPos);
-        ensureConditionValid(records == union.getEmployeeWorkPos().size(), "设置员工工种失败");
+        ensureConditionSatisfied(records == union.getEmployeeWorkPos().size(), "设置员工工种失败");
         List<EmployeeWorkPo> employeeWorkPos = employeeWorkMapper.selectByEmployeeId(employeePo.getId());
         union.setEmployeeWorkPos(employeeWorkPos);
         return union;
@@ -69,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void removeEmployee(Long id) {
         int record = employeeMapper.updateWorkingById(id);
-        ensureConditionValid(record == 1, "删除员工失败");
+        ensureConditionSatisfied(record == 1, "删除员工失败");
         employeeWorkMapper.batchDeleteByEmployeeId(id);
     }
 
@@ -77,7 +77,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void removeEmployees(List<Long> ids) {
         int records = employeeMapper.batchUpdateWorkingByIds(ids);
-        ensureConditionValid(records == ids.size(), "删除员工失败");
+        ensureConditionSatisfied(records == ids.size(), "删除员工失败");
         employeeWorkMapper.batchDeleteByEmployeeIds(ids);
     }
 
@@ -86,11 +86,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeUnion modifyEmployee(EmployeeUnion union) {
         EmployeePo existingPo = employeeMapper.selectByMobile(union.getEmployeePo().getMobile());
         if (existingPo != null) {
-            ensureConditionValid(existingPo.getId().equals(union.getEmployeePo().getId()), "手机号已被占用");
+            ensureConditionSatisfied(existingPo.getId().equals(union.getEmployeePo().getId()), "手机号已被占用");
         }
         EmployeePo employeePo = union.getEmployeePo();
         int record = employeeMapper.updateSelective(employeePo);
-        ensureConditionValid(record == 1, "员工信息修改失败");
+        ensureConditionSatisfied(record == 1, "员工信息修改失败");
         employeePo = employeeMapper.selectById(employeePo.getId());
         Long employeeId = employeePo.getId();
         employeeWorkMapper.batchDeleteByEmployeeId(employeeId);
@@ -101,7 +101,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 workPos.add(workPo);
             }
             int records = employeeWorkMapper.batchInsert(workPos);
-            ensureConditionValid(records == workPos.size(), "员工工种信息修改失败");
+            ensureConditionSatisfied(records == workPos.size(), "员工工种信息修改失败");
             List<EmployeeWorkPo> employeeWorkPos = employeeWorkMapper.selectByEmployeeId(employeePo.getId());
             union.setEmployeeWorkPos(employeeWorkPos);
         } else {

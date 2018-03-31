@@ -2,7 +2,7 @@ package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
@@ -64,14 +64,14 @@ public class StockServiceImpl implements StockService {
         List<StockPo> pos = stockMapper.selectByTypeId(id);
         ensureCollectionEmpty(pos, "库存分类已被使用,无法删除");
         int row = stockTypeMapper.deleteById(id);
-        ensureConditionValid(row == 1, "库存分类删除失败");
+        ensureConditionSatisfied(row == 1, "库存分类删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStockTypes(List<Long> ids) {
         int rows = stockTypeMapper.batchDelete(ids);
-        ensureConditionValid(rows == ids.size(), "库存分类删除失败");
+        ensureConditionSatisfied(rows == ids.size(), "库存分类删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
@@ -79,7 +79,7 @@ public class StockServiceImpl implements StockService {
     public StockTypePo modifyStockType(StockTypePo po) {
         StockTypePo typePo = stockTypeMapper.selectByName(po.getName());
         if (typePo != null) {
-            ensureConditionValid(typePo.getId().equals(po.getId()), "库存分类已存在");
+            ensureConditionSatisfied(typePo.getId().equals(po.getId()), "库存分类已存在");
         }
         stockTypeMapper.updateSelective(po);
         StockTypePo newTypePo = stockTypeMapper.selectById(po.getId());
@@ -120,7 +120,7 @@ public class StockServiceImpl implements StockService {
         StockPo existingPo = stockMapper.selectByCode(po.getCode());
         ensureEntityNotExist(existingPo, "库存已存在");
         int record = stockMapper.insert(po);
-        ensureConditionValid(record == 1, "库存新建成功");
+        ensureConditionSatisfied(record == 1, "库存新建成功");
         return po;
     }
 
@@ -130,14 +130,14 @@ public class StockServiceImpl implements StockService {
         List<StockAmountPo> pos = stockAmountMapper.selectByStockId(id);
         ensureCollectionEmpty(pos, "库存已被使用,无法删除");
         int record = stockMapper.deleteById(id);
-        ensureConditionValid(record == 1, "库存删除失败");
+        ensureConditionSatisfied(record == 1, "库存删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void deleteStocks(List<Long> ids) {
         int records = stockMapper.batchDelete(ids);
-        ensureConditionValid(records == ids.size(), "库存删除失败");
+        ensureConditionSatisfied(records == ids.size(), "库存删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
@@ -145,7 +145,7 @@ public class StockServiceImpl implements StockService {
     public StockPo modifyStock(StockPo po) {
         StockPo stockPo = stockMapper.selectByCode(po.getCode());
         if (stockPo != null) {
-            ensureConditionValid(stockPo.getId().equals(po.getId()), "库存代码已被占用");
+            ensureConditionSatisfied(stockPo.getId().equals(po.getId()), "库存代码已被占用");
         }
         stockMapper.updateSelective(po);
         StockPo newPo = stockMapper.selectById(po.getId());
@@ -188,14 +188,14 @@ public class StockServiceImpl implements StockService {
         StockAmountPo existingPo = stockAmountMapper.selectByStockAndStore(po.getStockId(), po.getStoreId());
         ensureEntityNotExist(existingPo, "库存数量重复设置");
         int record = stockAmountMapper.insert(po);
-        ensureConditionValid(record == 1, "新建库存数量失败");
+        ensureConditionSatisfied(record == 1, "新建库存数量失败");
         StockFlowPo flowPo = new StockFlowPo();
         flowPo.setStockId(po.getStockId());
         flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
         flowPo.setAmount(po.getAmount());
         flowPo.setStoreId(ThreadContext.getUserStoreId());
         record = stockFlowMapper.insert(flowPo);
-        ensureConditionValid(record == 1, "库存流水生成失败");
+        ensureConditionSatisfied(record == 1, "库存流水生成失败");
         return po;
     }
 
@@ -203,14 +203,14 @@ public class StockServiceImpl implements StockService {
     @Override
     public void removeStockAmount(Long id) {
         int record = stockAmountMapper.deleteById(id);
-        ensureConditionValid(record == 1, "库存数量删除失败");
+        ensureConditionSatisfied(record == 1, "库存数量删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeStockAmounts(List<Long> ids) {
         int records = stockAmountMapper.batchDelete(ids);
-        ensureConditionValid(records == ids.size(), "库存数量删除失败");
+        ensureConditionSatisfied(records == ids.size(), "库存数量删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
@@ -218,7 +218,7 @@ public class StockServiceImpl implements StockService {
     public StockAmountPo modifyStockAmount(StockAmountPo po) {
         po.setStoreId(ThreadContext.getUserStoreId());
         int record = stockAmountMapper.updateAmount(po);
-        ensureConditionValid(record == 1, "修改库存数量失败");
+        ensureConditionSatisfied(record == 1, "修改库存数量失败");
         return po;
     }
 
@@ -228,14 +228,14 @@ public class StockServiceImpl implements StockService {
         ensureParameterExist(po.getStockId(), "库存不存在");
         po.setStoreId(ThreadContext.getUserStoreId());
         int record = stockAmountMapper.addAmount(po);
-        ensureConditionValid(record == 1, "库存数量修改失败");
+        ensureConditionSatisfied(record == 1, "库存数量修改失败");
         StockFlowPo flowPo = new StockFlowPo();
         flowPo.setStockId(po.getStockId());
         flowPo.setType(FlowTypeEnum.BUYING_IN.getKey());
         flowPo.setAmount(po.getAmount());
         flowPo.setStoreId(ThreadContext.getUserStoreId());
         record = stockFlowMapper.insert(flowPo);
-        ensureConditionValid(record == 1, "库存流水生成失败");
+        ensureConditionSatisfied(record == 1, "库存流水生成失败");
         return stockAmountMapper.selectById(po.getId());
     }
 
@@ -245,9 +245,9 @@ public class StockServiceImpl implements StockService {
         ensureParameterExist(po.getStockId(), "库存不存在");
         po.setStoreId(ThreadContext.getUserStoreId());
         int record = stockAmountMapper.reduceAmount(po);
-        ensureConditionValid(record == 1, "库存数量修改失败");
+        ensureConditionSatisfied(record == 1, "库存数量修改失败");
         StockAmountPo newPo = stockAmountMapper.selectById(po.getId());
-        ensureConditionValid(
+        ensureConditionSatisfied(
                 newPo.getAmount().compareTo(BigDecimal.ZERO) == 0 || newPo.getAmount().compareTo(BigDecimal.ZERO) == 1,
                 "库存余量不足,请及时补充");
         StockFlowPo flowPo = new StockFlowPo();
@@ -256,7 +256,7 @@ public class StockServiceImpl implements StockService {
         flowPo.setAmount(po.getAmount());
         flowPo.setStoreId(ThreadContext.getUserStoreId());
         record = stockFlowMapper.insert(flowPo);
-        ensureConditionValid(record == 1, "库存流水生成失败");
+        ensureConditionSatisfied(record == 1, "库存流水生成失败");
     }
 
     @Override

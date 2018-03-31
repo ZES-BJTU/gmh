@@ -1,6 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class ProductConvertStockServiceImpl implements ProductConvertStockServic
                 po.getStockId());
         ensureEntityNotExist(existingPo, "产品库存转换关系已存在");
         int record = productConvertStockMapper.insert(po);
-        ensureConditionValid(record == 1, "新增产品库存转换关系失败");
+        ensureConditionSatisfied(record == 1, "新增产品库存转换关系失败");
         return po;
     }
 
@@ -44,14 +44,14 @@ public class ProductConvertStockServiceImpl implements ProductConvertStockServic
     @Override
     public void removeProductConvertStock(Long id) {
         int record = productConvertStockMapper.deleteById(id);
-        ensureConditionValid(record == 1, "产品库存转换关系删除失败");
+        ensureConditionSatisfied(record == 1, "产品库存转换关系删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public ProductConvertStockPo modifyProductConvertStock(ProductConvertStockPo po) {
         int record = productConvertStockMapper.updateSelective(po);
-        ensureConditionValid(record == 1, "产品库存转换更新失败");
+        ensureConditionSatisfied(record == 1, "产品库存转换更新失败");
         return productConvertStockMapper.selectById(po.getId());
     }
 

@@ -46,7 +46,7 @@ public class LogicHelper {
     }
 
     public static void ensureParameterValid(boolean condition, String message) {
-        ensureConditionValid(condition, message);
+        ensureConditionSatisfied(condition, message);
     }
 
     public static void ensureAttributeExist(Object attribute, String message) {
@@ -91,7 +91,7 @@ public class LogicHelper {
         }
     }
 
-    public static void ensureConditionValid(boolean condition, String message) {
+    public static void ensureConditionSatisfied(boolean condition, String message) {
         if (!condition) {
             throw new GmhException(BUSINESS_EXCEPTION_CONDITION_NOT_SUPPORTED, message);
         }

@@ -2,7 +2,7 @@ package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureAttributeExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
@@ -58,14 +58,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void removeProjectType(Long id) {
         int row = projectTypeMapper.deleteById(id);
-        ensureConditionValid(row == 1, "项目分类删除失败");
+        ensureConditionSatisfied(row == 1, "项目分类删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProjectTypes(List<Long> ids) {
         int rows = projectTypeMapper.batchDelete(ids);
-        ensureConditionValid(rows == ids.size(), "项目分类删除失败");
+        ensureConditionSatisfied(rows == ids.size(), "项目分类删除失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
@@ -113,7 +113,7 @@ public class ProjectServiceImpl implements ProjectService {
             stockPos.add(stockPo);
         }
         int rows = projectStockMapper.batchInsert(stockPos);
-        ensureConditionValid(rows == stockPos.size(), "添加项目失败");
+        ensureConditionSatisfied(rows == stockPos.size(), "添加项目失败");
         ProjectUnion newUnion = new ProjectUnion();
         newUnion.setId(projectPo.getId());
         newUnion.setProjectPo(projectPo);
@@ -134,7 +134,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void removeProject(Long id) {
         int row = projectMapper.deleteById(id);
-        ensureConditionValid(row == 1, "删除项目失败");
+        ensureConditionSatisfied(row == 1, "删除项目失败");
         projectStockMapper.batchDeleteByProjectIds(Lists.newArrayList(id));
     }
 
@@ -142,7 +142,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void removeProjects(List<Long> ids) {
         int rows = projectMapper.batchDelete(ids);
-        ensureConditionValid(rows == ids.size(), "删除项目失败");
+        ensureConditionSatisfied(rows == ids.size(), "删除项目失败");
         projectStockMapper.batchDeleteByProjectIds(ids);
     }
 
@@ -155,11 +155,11 @@ public class ProjectServiceImpl implements ProjectService {
         if (!Strings.isNullOrEmpty(code)) {
             ProjectPo po = projectMapper.selectByCode(code);
             if (po != null) {
-                ensureConditionValid(po.getId().equals(projectId), "会员卡编码重复");
+                ensureConditionSatisfied(po.getId().equals(projectId), "会员卡编码重复");
             }
         }
         int row = projectMapper.updateSelective(projectPo);
-        ensureConditionValid(row == 1, "修改项目失败");
+        ensureConditionSatisfied(row == 1, "修改项目失败");
         ProjectPo newPo = projectMapper.selectById(projectId);
         ensureEntityExist(newPo, "项目不存在");
         projectStockMapper.batchDeleteByProjectIds(Lists.newArrayList(projectId));
@@ -170,7 +170,7 @@ public class ProjectServiceImpl implements ProjectService {
             stockPos.add(stockPo);
         }
         int rows = projectStockMapper.batchInsert(stockPos);
-        ensureConditionValid(rows == stockPos.size(), "修改项目失败");
+        ensureConditionSatisfied(rows == stockPos.size(), "修改项目失败");
         ProjectUnion newUnion = new ProjectUnion();
         newUnion.setId(projectId);
         newUnion.setProjectPo(newPo);

@@ -1,9 +1,9 @@
 package com.zes.squad.gmh.context;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 
 import com.zes.squad.gmh.common.enums.UserRoleEnum;
+import com.zes.squad.gmh.common.helper.LogicHelper;
 import com.zes.squad.gmh.entity.po.UserPo;
 
 public abstract class ThreadContext {
@@ -27,7 +27,7 @@ public abstract class ThreadContext {
 
     public static Long getUserStoreId() {
         UserPo po = userContext.get();
-        ensureConditionValid(po.getRole().intValue() != UserRoleEnum.ADMINISTRATOR.getKey(), "管理员不属于任意门店");
+        LogicHelper.ensureConditionSatisfied(po.getRole().intValue() != UserRoleEnum.ADMINISTRATOR.getKey(), "管理员不属于任意门店");
         return po.getStoreId();
     }
 

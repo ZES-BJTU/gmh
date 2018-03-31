@@ -2,7 +2,7 @@ package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 
@@ -73,7 +73,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void removeActivity(Long id) {
         int record = activityMapper.deleteById(id);
-        ensureConditionValid(record == 1, "活动删除失败");
+        ensureConditionSatisfied(record == 1, "活动删除失败");
         activityContentMapper.batchDeleteByActivityId(Lists.newArrayList(id));
         List<ActivityContentPo> contentPos = activityContentMapper.selectByActivityId(id);
         ensureCollectionEmpty(contentPos, "活动删除失败");
@@ -83,7 +83,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void removeActivities(List<Long> ids) {
         int records = activityMapper.batchDelete(ids);
-        ensureConditionValid(records == ids.size(), "活动删除失败");
+        ensureConditionSatisfied(records == ids.size(), "活动删除失败");
         activityContentMapper.batchDeleteByActivityId(ids);
         for (Long id : ids) {
             List<ActivityContentPo> contentPos = activityContentMapper.selectByActivityId(id);
@@ -97,7 +97,7 @@ public class ActivityServiceImpl implements ActivityService {
         ActivityPo po = union.getActivityPo();
         ActivityPo activityPo = activityMapper.selectByCode(po.getCode());
         if (activityPo != null) {
-            ensureConditionValid(activityPo.getId().equals(po.getId()), "活动已存在");
+            ensureConditionSatisfied(activityPo.getId().equals(po.getId()), "活动已存在");
         }
         activityMapper.updateSelective(po);
         activityContentMapper.batchDeleteByActivityId(Lists.newArrayList(po.getId()));

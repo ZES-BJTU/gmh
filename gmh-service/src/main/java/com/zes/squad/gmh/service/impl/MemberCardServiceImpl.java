@@ -1,6 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
@@ -38,7 +38,7 @@ public class MemberCardServiceImpl implements MemberCardService {
         MemberCardPo existingPo = memberCardMapper.selectByCode(po.getCode());
         ensureEntityNotExist(existingPo, "会员卡已存在");
         int result = memberCardMapper.insert(po);
-        ensureConditionValid(result == 1, "添加会员卡失败");
+        ensureConditionSatisfied(result == 1, "添加会员卡失败");
         return po;
     }
 
@@ -46,14 +46,14 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Override
     public void removeMemberCard(Long id) {
         int result = memberCardMapper.deleteById(id);
-        ensureConditionValid(result == 1, "删除会员卡失败");
+        ensureConditionSatisfied(result == 1, "删除会员卡失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeMemberCards(List<Long> ids) {
         int result = memberCardMapper.batchDelete(ids);
-        ensureConditionValid(result == ids.size(), "删除会员卡失败");
+        ensureConditionSatisfied(result == ids.size(), "删除会员卡失败");
     }
 
     @Transactional(rollbackFor = { Throwable.class })
@@ -62,7 +62,7 @@ public class MemberCardServiceImpl implements MemberCardService {
         if (!Strings.isNullOrEmpty(po.getCode())) {
             MemberCardPo cardPo = memberCardMapper.selectByCode(po.getCode());
             if (cardPo != null) {
-                ensureConditionValid(cardPo.getId().equals(po.getId()), "会员卡重复");
+                ensureConditionSatisfied(cardPo.getId().equals(po.getId()), "会员卡重复");
             }
         }
         memberCardMapper.updateSelective(po);

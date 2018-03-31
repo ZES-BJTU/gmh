@@ -1,7 +1,7 @@
 package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionValid;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
@@ -184,11 +184,11 @@ public class UserServiceImpl implements UserService {
         }
         UserPo existingPo = userMapper.selectByEmail(po.getEmail());
         if (existingPo != null) {
-            ensureConditionValid(existingPo.getId().equals(po.getId()), "邮箱已注册");
+            ensureConditionSatisfied(existingPo.getId().equals(po.getId()), "邮箱已注册");
         }
         existingPo = userMapper.selectByEmail(po.getMobile());
         if (existingPo != null) {
-            ensureConditionValid(existingPo.getId().equals(po.getId()), "手机号已注册");
+            ensureConditionSatisfied(existingPo.getId().equals(po.getId()), "手机号已注册");
         }
         userMapper.updateSelective(po);
         UserPo newUserPo = userMapper.selectById(po.getId());

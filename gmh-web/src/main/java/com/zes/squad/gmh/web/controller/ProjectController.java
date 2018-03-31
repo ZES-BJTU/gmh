@@ -105,7 +105,7 @@ public class ProjectController {
     }
 
     @RequestMapping(path = "/types", method = { RequestMethod.GET })
-    public JsonResult<PagedList<ProjectTypeVo>> doListPagedProjectTypes(@RequestBody ProjectTypeQueryParams params) {
+    public JsonResult<PagedList<ProjectTypeVo>> doListPagedProjectTypes(ProjectTypeQueryParams params) {
         CheckHelper.checkPageParams(params);
         if (params.getTopType() != null) {
             ensureParameterValid(EnumUtils.containsKey(params.getTopType(), TopTypeEnum.class), "项目分类顶层分类错误");

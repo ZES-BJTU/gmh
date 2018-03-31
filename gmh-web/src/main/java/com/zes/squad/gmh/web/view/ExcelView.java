@@ -1,4 +1,4 @@
-package com.zes.squad.gmh.web.controller;
+package com.zes.squad.gmh.web.view;
 
 import java.io.OutputStream;
 import java.util.Map;

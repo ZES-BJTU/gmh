@@ -234,8 +234,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectPo> listAllProjects() {
-        // TODO Auto-generated method stub
-        return null;
+        return projectMapper.selectAll();
     }
 
 }

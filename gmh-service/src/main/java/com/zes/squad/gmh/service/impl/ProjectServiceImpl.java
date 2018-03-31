@@ -115,20 +115,20 @@ public class ProjectServiceImpl implements ProjectService {
         ensureEntityNotExist(po, "项目代码已被占用");
         projectMapper.insert(projectPo);
         Long projectId = projectPo.getId();
-        ensureAttributeExist(projectId, "添加项目失败");
+        ensureAttributeExist(projectId, "项目添加失败");
         List<ProjectStockPo> stockPos = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
         for (ProjectStockUnion stockUnion : union.getProjectStockUnions()) {
             ProjectStockPo stockPo = stockUnion.getProjectStockPo();
             stockPo.setProjectId(projectId);
             stockPos.add(stockPo);
         }
-        int rows = projectStockMapper.batchInsert(stockPos);
-        ensureConditionSatisfied(rows == stockPos.size(), "添加项目失败");
+        int records = projectStockMapper.batchInsert(stockPos);
+        ensureConditionSatisfied(records == stockPos.size(), "项目添加失败");
         ProjectUnion newUnion = new ProjectUnion();
         newUnion.setId(projectPo.getId());
         newUnion.setProjectPo(projectPo);
         List<ProjectStockPo> newStockPos = projectStockMapper.selectByProjectId(projectId);
-        ensureCollectionNotEmpty(newStockPos, "添加项目失败");
+        ensureCollectionNotEmpty(newStockPos, "项目添加失败");
         List<ProjectStockUnion> newStockUnions = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
         for (ProjectStockPo stockPo : newStockPos) {
             ProjectStockUnion stockUnion = new ProjectStockUnion();

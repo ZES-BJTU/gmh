@@ -98,6 +98,7 @@
 		<include refid="Base_Column_List" />
 		FROM 
 		member_card 
-		WHERE `code` = {code, jdbcType=VARCHAR}
+		WHERE `code` = #{code, jdbcType=VARCHAR}
+		LIMIT 1
 	</select>
 </mapper>

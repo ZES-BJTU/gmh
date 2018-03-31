@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.CustomerActivityMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerActivityPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
+		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerActivityPo" useGeneratedKeys="true" keyProperty="id">
+		insert into customer_activity(`customer_id`,`activity_id`)
+		values(
+		#{customerId,jdbcType=BIGINT},
+		#{activityId,jdbcType=BIGINT})
+	</insert>
+</mapper>

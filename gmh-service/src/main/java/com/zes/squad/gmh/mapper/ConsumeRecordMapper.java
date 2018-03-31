@@ -10,4 +10,8 @@ public interface ConsumeRecordMapper {
 	int insert(ConsumeRecordPo consumeRecordPo);
 
 	List<ConsumeRecordPo> listConsumeRecordByCondition(ConsumeRecordQueryCondition condition);
+	
+	List<ConsumeRecordPo> changedListConsumeRecordByCondition(ConsumeRecordQueryCondition condition);
+	
+	void modify(Long id);
 }

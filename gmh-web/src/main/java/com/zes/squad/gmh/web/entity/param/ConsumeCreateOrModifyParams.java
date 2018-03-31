@@ -15,6 +15,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ConsumeCreateOrModifyParams extends QueryParams{
 	
+	
 	private ConsumeRecordPo consumeRecordPo;
 	private List<ConsumeRecordDetailPo> consumeRecordDetails;
 	private List<ConsumeRecordGiftPo> gifts;

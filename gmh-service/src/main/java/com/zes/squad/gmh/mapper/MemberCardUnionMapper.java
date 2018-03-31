@@ -2,6 +2,7 @@ package com.zes.squad.gmh.mapper;
 
 import java.util.List;
 
+import com.zes.squad.gmh.entity.condition.MemberCardQueryCondition;
 import com.zes.squad.gmh.entity.union.MemberCardUnion;
 
 public interface MemberCardUnionMapper {
@@ -17,8 +18,9 @@ public interface MemberCardUnionMapper {
     /**
      * 根据条件查询
      * 
+     * @param condition
      * @return
      */
-    List<MemberCardUnion> selectByCondition();
+    List<MemberCardUnion> selectByCondition(MemberCardQueryCondition condition);
 
 }

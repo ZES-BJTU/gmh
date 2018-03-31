@@ -92,6 +92,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         int record = employeeMapper.updateSelective(employeePo);
         ensureConditionSatisfied(record == 1, "员工信息修改失败");
         employeePo = employeeMapper.selectById(employeePo.getId());
+        union.setEmployeePo(employeePo);
         Long employeeId = employeePo.getId();
         employeeWorkMapper.batchDeleteByEmployeeId(employeeId);
         if (employeePo.getWorking().booleanValue()) {

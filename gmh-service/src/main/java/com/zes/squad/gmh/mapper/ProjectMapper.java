@@ -63,4 +63,11 @@ public interface ProjectMapper {
      */
     List<Long> selectIdsByCondition(ProjectQueryCondition condition);
 
+    /**
+     * 查询所有项目
+     * 
+     * @return
+     */
+    List<ProjectPo> selectAll();
+
 }

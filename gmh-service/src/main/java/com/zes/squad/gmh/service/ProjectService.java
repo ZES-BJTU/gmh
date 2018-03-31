@@ -5,6 +5,7 @@ import java.util.List;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProjectQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
+import com.zes.squad.gmh.entity.po.ProjectPo;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
 import com.zes.squad.gmh.entity.union.ProjectUnion;
 
@@ -116,5 +117,12 @@ public interface ProjectService {
      * @return
      */
     PagedList<ProjectUnion> listPagedProjects(ProjectQueryCondition condition);
+
+    /**
+     * 查询所有项目
+     * 
+     * @return
+     */
+    List<ProjectPo> listAllProjects();
 
 }

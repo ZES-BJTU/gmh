@@ -232,4 +232,10 @@ public class ProjectServiceImpl implements ProjectService {
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
 
+    @Override
+    public List<ProjectPo> listAllProjects() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

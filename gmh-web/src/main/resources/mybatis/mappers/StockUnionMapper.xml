@@ -124,10 +124,15 @@
 			<if test="stockTypeId != null">
 				AND s.`store_type_id` = #{storeTypeId, jdbcType=BIGINT}
 			</if>
+			AND sa.`amount` IS NOT NULL
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				AND CONCAT(s.`name`, s.`code`) LIKE #{condition, jdbcType=VARCHAR}
-				OR st.`name` LIKE #{condition, jdbcType=VARCHAR}
+				AND 
+				(s.`name` LIKE #{condition, jdbcType=VARCHAR}
+				OR
+				s.`code` LIKE #{condition, jdbcType=VARCHAR}
+				OR 
+				st.`name` LIKE #{condition, jdbcType=VARCHAR})
 			</if>
 		</where>
 	</select>

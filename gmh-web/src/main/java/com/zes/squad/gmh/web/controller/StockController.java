@@ -221,7 +221,6 @@ public class StockController {
                                                          @RequestBody StockAmountParams params) {
         ensureParameterExist(id, "请选择待修改库存数量");
         ensureParameterExist(params, "请输入待修改库存数量");
-        ensureParameterExist(params.getStockId(), "请选择待修改库存");
         params.setId(id);
         if (params.getAmount() != null) {
             ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量应大于0");

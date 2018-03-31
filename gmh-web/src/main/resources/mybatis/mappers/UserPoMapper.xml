@@ -128,9 +128,15 @@
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				AND CONCAT(u.`account`, u.`email`, u.`mobile`, u.`name`) 
-				LIKE #{condition, jdbcType=VARCHAR}
-				OR s.`name` LIKE #{condition, jdbcType=VARCHAR}
+				AND 
+				(u.`account` LIKE #{condition, jdbcType=VARCHAR}
+				OR
+				u.`email` LIKE #{condition, jdbcType=VARCHAR}
+				OR 
+				u.`mobile` LIKE #{condition, jdbcType=VARCHAR}
+				OR 
+				u.`name` LIKE #{condition, jdbcType=VARCHAR}
+				OR s.`name` LIKE #{condition, jdbcType=VARCHAR})
 			</if>
 		</where>
 	</select>

@@ -65,7 +65,11 @@
 		<where>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(`name`,`code`,`remark`) LIKE #{condition:VARCHAR}
+				(`name` LIKE #{condition:VARCHAR}
+				OR
+				`code` LIKE #{condition:VARCHAR}
+				or
+				`remark` LIKE #{condition:VARCHAR})
 			</if>
 		</where>
 	</select>

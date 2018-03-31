@@ -111,7 +111,12 @@
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'" />
-				AND CONCAT(e.`name`,e.`mobile`,e.`remark`) LIKE #{condition, jdbcType=VARCHAR}
+				AND 
+				(e.`name` LIKE #{condition, jdbcType=VARCHAR}
+				OR
+				e.`mobile` LIKE #{condition, jdbcType=VARCHAR}
+				OR
+				e.`remark` LIKE #{condition, jdbcType=VARCHAR})
 			</if>
 		</where>
 	</select>

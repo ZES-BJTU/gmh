@@ -57,7 +57,7 @@
 		<where>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(st.`name`) LIKE #{condition, jdbcType=VARCHAR}
+				st.`name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

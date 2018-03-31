@@ -52,12 +52,14 @@
 		mc.`project_id` = p.`id`
 		<where>
 			mc.`type` = #{type, jdbcType=BIGINT}
-			AMD
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(mc.`name`,`remark`) LIKE #{condition, jdbcType=VARCHAR}
+				AND
+				(mc.`name` LIKE #{condition, jdbcType=VARCHAR}
 				OR
-				p.`name` LIKE #{condition, jdbcType=VARCHAR}
+				`remark` LIKE #{condition, jdbcType=VARCHAR}
+				OR
+				p.`name` LIKE #{condition, jdbcType=VARCHAR})
 			</if>
 		</where>
 	</select>

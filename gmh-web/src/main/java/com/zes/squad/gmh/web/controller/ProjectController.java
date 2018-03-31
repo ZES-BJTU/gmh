@@ -284,7 +284,7 @@ public class ProjectController {
         List<ProjectStockVo> stockVos = Lists.newArrayListWithCapacity(union.getProjectStockUnions().size());
         for (ProjectStockUnion projectStockUnion : union.getProjectStockUnions()) {
             ProjectStockVo stockVo = new ProjectStockVo();
-            stockVo.setStockId(projectStockUnion.getProjectStockPo().getId());
+            stockVo.setStockId(projectStockUnion.getProjectStockPo().getStockId());
             stockVo.setStockConsumptionAmount(projectStockUnion.getProjectStockPo().getStockConsumptionAmount());
             if (projectStockUnion.getStockUnion() != null && projectStockUnion.getStockUnion().getStockPo() != null) {
                 stockVo.setStockName(projectStockUnion.getStockUnion().getStockPo().getName());

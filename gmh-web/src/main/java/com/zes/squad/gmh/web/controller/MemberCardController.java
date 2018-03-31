@@ -46,6 +46,13 @@ public class MemberCardController {
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<MemberCardVo> doCreateMemberCard(@RequestBody MemberCardParams params) {
+        ensureParameterExist(params, "会员卡信息为空");
+        if (params.getProjectDiscount() != null) {
+            params.setProjectDiscount(params.getProjectDiscount().divide(new BigDecimal("100")));
+        }
+        if (params.getProductDiscount() != null) {
+            params.setProductDiscount(params.getProductDiscount().divide(new BigDecimal("100")));
+        }
         checkMemberCardCreateParams(params);
         MemberCardPo po = CommonConverter.map(params, MemberCardPo.class);
         MemberCardPo newPo = memberCardService.createMemberCard(po);
@@ -64,10 +71,21 @@ public class MemberCardController {
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
     public JsonResult<MemberCardVo> doModifyMemberCard(@PathVariable("id") Long id,
                                                        @RequestBody MemberCardParams params) {
+        ensureParameterExist(params, "会员卡信息为空");
+        if (params.getProjectDiscount() != null) {
+            params.setProjectDiscount(params.getProjectDiscount().divide(new BigDecimal("100")));
+        }
+        if (params.getProductDiscount() != null) {
+            params.setProductDiscount(params.getProductDiscount().divide(new BigDecimal("100")));
+        }
         ensureParameterExist(id, "请选择待修改会员卡");
         ensureParameterExist(params, "请选择待修改会员卡");
         params.setId(id);
         checkMemberCardModifyParams(params);
+        if (params.getProjectDiscount() != null) {
+            params.setProjectDiscount(params.getProjectDiscount().divide(new BigDecimal("100")));
+            params.setProductDiscount(params.getProductDiscount().divide(new BigDecimal("100")));
+        }
         MemberCardPo po = CommonConverter.map(params, MemberCardPo.class);
         MemberCardPo newPo = memberCardService.modifyMemberCard(po);
         MemberCardVo vo = CommonConverter.map(newPo, MemberCardVo.class);
@@ -102,7 +120,6 @@ public class MemberCardController {
     }
 
     private void checkMemberCardCreateParams(MemberCardParams params) {
-        ensureParameterExist(params, "会员卡信息为空");
         ensureParameterNotExist(params.getId(), "会员卡已存在");
         ensureParameterExist(params.getType(), "请输入会员卡类别");
         ensureParameterValid(EnumUtils.containsKey(params.getType(), MemberCardTypeEnum.class), "会员卡类别错误");

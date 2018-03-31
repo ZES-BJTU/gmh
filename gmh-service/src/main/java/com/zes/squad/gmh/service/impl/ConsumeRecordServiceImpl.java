@@ -27,6 +27,7 @@ import com.zes.squad.gmh.entity.po.CustomerActivityPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.ProductAmountPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
+import com.zes.squad.gmh.entity.po.StockFlowPo;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
@@ -40,12 +41,14 @@ import com.zes.squad.gmh.mapper.CustomerActivityContentMapper;
 import com.zes.squad.gmh.mapper.CustomerActivityMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
+import com.zes.squad.gmh.mapper.StockFlowMapper;
 import com.zes.squad.gmh.mapper.StockMapper;
 import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.MemberCardService;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.service.ProjectService;
+import com.zes.squad.gmh.service.StockService;
 
 @Service("consumeRecordService")
 public class ConsumeRecordServiceImpl implements ConsumeRecordService {
@@ -80,7 +83,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private CustomerActivityContentMapper customerActivityContentMapper;
 	@Autowired
 	private CustomerActivityMapper customerActivityMapper;
-	
+	@Autowired
+	private StockFlowMapper stockFlowMapper;
+	@Autowired
+	private StockService stockService;
 	
 	
 	@SuppressWarnings("null")
@@ -95,6 +101,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.productNumberAdd(oldNumber + 1);
+		
 		// TODO 根据支付方式扣除会员卡或赠内容
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			ProductAmountPo productAmountPo = new ProductAmountPo();
@@ -209,13 +216,15 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			List<ProjectStockPo> psps = projectStockMapper.getProjectStockByProId(crpp.getProductId());
 			for (ProjectStockPo psp : psps) {
-				StockPo stock = stockMapper.getById(psp.getStockId());
-				Map<String, Number> stockMap = new HashMap<String, Number>();
-				map.put("id", stock.getId());
-				// TODO 库存实体类结构调整，后续修改
-				// map.put("totalAmount",
-				// stock.getTotalAmount().subtract(psp.getStockConsumptionAmount()));
-				stockMapper.updateTotalAmount(stockMap);
+
+				StockFlowPo stockFlowPo = new StockFlowPo();
+				stockFlowPo.setAmount(psp.getStockConsumptionAmount());
+				stockFlowPo.setStockId(psp.getStockId());
+				stockFlowPo.setRecordId(consumeRecord.getId());
+				stockFlowPo.setStatus(1);
+				stockFlowPo.setType(3);
+				stockFlowMapper.insert(stockFlowPo);
+				stockService.reduceStockAmount(stockFlowPo);
 			}
 		}
 

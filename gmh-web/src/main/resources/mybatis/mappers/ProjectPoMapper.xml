@@ -86,6 +86,7 @@
 		<where>
 			`code` = #{code, jdbcType=VARCHAR}
 		</where>
+		LIMIT 1
 	</select>
 	<select id="selectIdsByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.ProjectQueryCondition"

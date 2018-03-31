@@ -161,6 +161,13 @@ public interface StockService {
     void reduceStockAmount(StockFlowPo flowPo);
 
     /**
+     * 根据消费记录id讲库存流水置为无效
+     * 
+     * @param recordId
+     */
+    void modifyFlowInvalid(Long recordId);
+
+    /**
      * 根据id查询库存详情
      * 
      * @param id

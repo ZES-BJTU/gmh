@@ -44,6 +44,18 @@
 		SET	`amount` = `amount` + #{amount:DECIMAL}
 		WHERE `id` = #{id:BIGINT}
 	</update>
+	<update id="addAmountByStockAndStore" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
+		UPDATE stock_amount 
+		SET `amount` = `amount` + #{amount:DECIMAL}
+		WHERE `stock_id` = #{stockId:BIGINT} AND `store_id` = #{storeId:BIGINT}
+	</update>
+	<update id="batchAddAmountByStockAndStore" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
+		<foreach collection="list" separator=";" item="po">
+			UPDATE stock_amount 
+			SET `amount` = `amount` + #{po.amount:DECIMAL}
+			WHERE `stock_id` = #{po.stockId:BIGINT} AND `store_id` = #{po.storeId:BIGINT}
+		</foreach>
+	</update>
 	<update id="reduceAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
 		UPDATE stock_amount
 		SET	`amount` = `amount` - #{amount:DECIMAL}

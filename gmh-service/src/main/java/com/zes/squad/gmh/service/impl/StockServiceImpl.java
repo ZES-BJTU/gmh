@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.enums.FlowTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
@@ -182,7 +183,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockAmountPo createStockAmount(StockAmountPo po) {
         Long storeId = ThreadContext.getUserStoreId();
-        ensureEntityExist(storeId, "用户不属于任何一家门店");
+        ensureEntityExist(storeId, "当前用户不属于任何店铺");
         po.setStoreId(storeId);
         StockAmountPo existingPo = stockAmountMapper.selectByStockAndStore(po.getStockId(), po.getStoreId());
         ensureEntityNotExist(existingPo, "库存数量重复设置");
@@ -268,6 +269,28 @@ public class StockServiceImpl implements StockService {
         po.setAmount(flowPo.getAmount());
         record = stockAmountMapper.reduceAmount(po);
         ensureConditionSatisfied(record == 1, "库存数量修改失败");
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public void modifyFlowInvalid(Long recordId) {
+        ensureParameterExist(recordId, "消费记录不存在");
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何店铺");
+        List<StockFlowPo> pos = stockFlowMapper.selectByRecordId(recordId, storeId);
+        ensureCollectionNotEmpty(pos, "消费记录没有库存消耗记录");
+        List<StockAmountPo> amountPos = Lists.newArrayListWithCapacity(pos.size());
+        for (StockFlowPo po : pos) {
+            StockAmountPo amountPo = new StockAmountPo();
+            amountPo.setStockId(po.getStockId());
+            amountPo.setStoreId(po.getStoreId());
+            amountPo.setAmount(po.getAmount());
+            amountPos.add(amountPo);
+        }
+        int records = stockAmountMapper.batchAddAmountByStockAndStore(amountPos);
+        ensureConditionSatisfied(records == amountPos.size(), "库存数量修改失败");
+        int record = stockFlowMapper.updateStatusByRecordId(recordId);
+        ensureConditionSatisfied(record == 1, "库存流水置为无效失败");
     }
 
     @Override

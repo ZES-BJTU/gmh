@@ -12,6 +12,9 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `stock_id`, `record_id`, `type`, `amount`, `store_id`, `status`
+	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StockFlowPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT
@@ -26,6 +29,17 @@
 		#{storeId, jdbcType=BIGINT},1)
 	</insert>
 	<update id="updateStatus" parameterType="long">
-		UPDATE stock_flow SET `status` = 0
+		UPDATE stock_flow SET `status` = 0 WHERE `id` = #{id:BIGINT}
 	</update>
+	<update id="updateStatusByRecordId" parameterType="long">
+		UPDATE stock_flow SET `status` = 0 WHERE `record_id` = #{recordId:BIGINT}
+	</update>
+	<select id="selectByRecordId" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM
+		stock_flow
+		WHERE
+		`record_id` = #{recordId:BIGINT} AND `store_id` = #{storeId:BIGINT} AND `status` = 1
+	</select>
 </mapper>

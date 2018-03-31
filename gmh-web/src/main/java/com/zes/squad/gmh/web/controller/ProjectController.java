@@ -275,9 +275,9 @@ public class ProjectController {
         ensureCollectionNotEmpty(params.getProjectStockParams(), "项目所需库存为空");
         Set<Long> stockIds = Sets.newHashSet();
         for (ProjectStockParams stockParams : params.getProjectStockParams()) {
-            ensureParameterNotExist(stockParams.getStockId(), "项目所需库存为空");
+            ensureParameterExist(stockParams.getStockId(), "项目所需库存为空");
             stockIds.add(stockParams.getStockId());
-            ensureParameterNotExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
+            ensureParameterExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
             ensureParameterValid(stockParams.getStockConsumptionAmount().compareTo(BigDecimal.ZERO) == 1,
                     "项目所需库存量应大于0");
         }

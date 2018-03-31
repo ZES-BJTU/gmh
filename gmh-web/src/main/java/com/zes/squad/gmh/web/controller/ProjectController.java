@@ -1,12 +1,14 @@
 package com.zes.squad.gmh.web.controller;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.TopTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
@@ -221,12 +224,15 @@ public class ProjectController {
         ensureParameterExist(params.getInternIntegral(), "项目实习生积分为空");
         ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分应大于0");
         ensureCollectionNotEmpty(params.getProjectStockParams(), "项目所需库存为空");
+        Set<Long> stockIds = Sets.newHashSet();
         for (ProjectStockParams stockParams : params.getProjectStockParams()) {
             ensureParameterExist(stockParams.getStockId(), "项目所需库存为空");
+            stockIds.add(stockParams.getStockId());
             ensureParameterExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
             ensureParameterValid(stockParams.getStockConsumptionAmount().compareTo(BigDecimal.ZERO) == 1,
                     "项目所需库存量应大于0");
         }
+        ensureConditionSatisfied(params.getProjectStockParams().size() == stockIds.size(), "库存重复选取");
     }
 
     private ProjectUnion buildProjectUnionByParams(ProjectParams params) {
@@ -256,14 +262,16 @@ public class ProjectController {
         if (params.getInternIntegral() != null) {
             ensureParameterValid(params.getInternIntegral().compareTo(BigDecimal.ZERO) == 1, "项目实习生积分应大于0");
         }
-        if (CollectionUtils.isNotEmpty(params.getProjectStockParams())) {
-            for (ProjectStockParams stockParams : params.getProjectStockParams()) {
-                ensureParameterNotExist(stockParams.getStockId(), "项目所需库存为空");
-                ensureParameterNotExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
-                ensureParameterValid(stockParams.getStockConsumptionAmount().compareTo(BigDecimal.ZERO) == 1,
-                        "项目所需库存量应大于0");
-            }
+        ensureCollectionNotEmpty(params.getProjectStockParams(), "项目所需库存为空");
+        Set<Long> stockIds = Sets.newHashSet();
+        for (ProjectStockParams stockParams : params.getProjectStockParams()) {
+            ensureParameterNotExist(stockParams.getStockId(), "项目所需库存为空");
+            stockIds.add(stockParams.getStockId());
+            ensureParameterNotExist(stockParams.getStockConsumptionAmount(), "项目所需库存量为空");
+            ensureParameterValid(stockParams.getStockConsumptionAmount().compareTo(BigDecimal.ZERO) == 1,
+                    "项目所需库存量应大于0");
         }
+        ensureConditionSatisfied(params.getProjectStockParams().size() == stockIds.size(), "库存重复选取");
     }
 
     private ProjectVo buildProjectVoByUnion(ProjectUnion union) {
@@ -277,9 +285,11 @@ public class ProjectController {
         for (ProjectStockUnion projectStockUnion : union.getProjectStockUnions()) {
             ProjectStockVo stockVo = new ProjectStockVo();
             stockVo.setStockId(projectStockUnion.getProjectStockPo().getId());
-            stockVo.setStockName(projectStockUnion.getStockUnion().getStockPo().getName());
             stockVo.setStockConsumptionAmount(projectStockUnion.getProjectStockPo().getStockConsumptionAmount());
-            stockVo.setUnitName(projectStockUnion.getStockUnion().getStockPo().getUnitName());
+            if (projectStockUnion.getStockUnion() != null && projectStockUnion.getStockUnion().getStockPo() != null) {
+                stockVo.setStockName(projectStockUnion.getStockUnion().getStockPo().getName());
+                stockVo.setUnitName(projectStockUnion.getStockUnion().getStockPo().getUnitName());
+            }
             stockVos.add(stockVo);
         }
         vo.setProjectStockVos(stockVos);

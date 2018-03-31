@@ -1,6 +1,5 @@
 package com.zes.squad.gmh.web.controller;
 
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
@@ -37,7 +36,7 @@ import com.zes.squad.gmh.web.entity.param.MemberCardQueryParams;
 import com.zes.squad.gmh.web.entity.vo.MemberCardVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
-@RequestMapping(path = "/membership/cards")
+@RequestMapping(path = "/member/cards")
 @RestController
 public class MemberCardController {
 
@@ -59,14 +58,6 @@ public class MemberCardController {
     public JsonResult<Void> doRemoveMemberCard(@PathVariable("id") Long id) {
         ensureParameterExist(id, "请选择待删除会员卡");
         memberCardService.removeMemberCard(id);
-        return JsonResults.success();
-    }
-
-    @RequestMapping(method = { RequestMethod.DELETE })
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public JsonResult<Void> doRemoveMemberCards(@RequestBody List<Long> ids) {
-        ensureCollectionNotEmpty(ids, "请选择待删除会员卡");
-        memberCardService.removeMemberCards(ids);
         return JsonResults.success();
     }
 

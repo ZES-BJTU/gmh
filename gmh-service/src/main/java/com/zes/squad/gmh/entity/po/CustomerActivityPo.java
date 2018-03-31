@@ -13,5 +13,5 @@ public class CustomerActivityPo extends Po{
 	
 	private Long customerId;
 	private Long activityId;
-	
+	private Long storeId;
 }

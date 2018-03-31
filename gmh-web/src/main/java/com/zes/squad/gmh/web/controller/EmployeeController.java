@@ -5,7 +5,6 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -158,9 +157,6 @@ public class EmployeeController {
         }
         if (!Strings.isNullOrEmpty(params.getMobile())) {
             ensureParameterValid(CheckHelper.isValidMobile(params.getMobile()), "员工手机号格式错误");
-        }
-        if (params.getEntryTime() != null) {
-            ensureParameterValid(params.getEntryTime().before(new Date()), "员工入职时间错误");
         }
         if (CollectionUtils.isNotEmpty(params.getWorkTypes())) {
             for (Integer workType : params.getWorkTypes()) {

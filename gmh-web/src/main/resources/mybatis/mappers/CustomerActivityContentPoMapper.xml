@@ -3,7 +3,7 @@
 <mapper namespace="com.zes.squad.gmh.mapper.CustomerActivityContentMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerActivityContentPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="custoemr_activity_id" jdbcType="BIGINT" property="custoemrActivityId" />
+		<result column="customer_activity_id" jdbcType="BIGINT" property="customerActivityId" />
 		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="related_id" jdbcType="BIGINT" property="relatedId" />
 		<result column="content" jdbcType="VARCHAR" property="content" />
@@ -15,10 +15,10 @@
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerActivityContentPo">
 		insert into customer_activity_content(`customer_activity_id`,`type`,`related_id`,`content`,`number`)
 		values(
-		#{custoemrActivityId,jdbcType=BIGINT},
+		#{customerActivityId,jdbcType=BIGINT},
 		#{type,jdbcType=BIGINT}
 		#{related_id,jdbcType=BIGINT}
 		#{content,jdbcType=VARCHAR}
 		#{number,jdbcType=DECIMAL})
 	</insert>
-	</mapper>
+</mapper>

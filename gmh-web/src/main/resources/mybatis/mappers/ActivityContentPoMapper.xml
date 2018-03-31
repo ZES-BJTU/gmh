@@ -6,7 +6,7 @@
 		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
 		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="related_id" jdbcType="BIGINT" property="relatedId" />
-		<result column="content" jdbcType="VARCHAR" property="content" />
+		<result column="content" jdbcType="DECIMAL" property="content" />
 		<result column="number" jdbcType="DECIMAL" property="number" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
@@ -22,7 +22,7 @@
 			(#{po.activityId:BIGINT},
 			#{po.type:INTEGER},
 			#{po.relatedId:BIGINT},
-			#{po.content:VARCHAR},
+			#{po.content:DECIMAL},
 			#{po.number:DECIMAL},
 			#{po.remark:VARCHAR})
 		</foreach>

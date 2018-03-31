@@ -16,7 +16,7 @@ public class ActivityContentPo extends Po {
     private Long              activityId;
     private Integer           type;
     private Long              relatedId;
-    private String            content;
+    private BigDecimal        content;
     private BigDecimal        number;
     private String            remark;
 

@@ -183,7 +183,6 @@ public class ActivityController {
         List<ActivityContentPo> contentPos = Lists.newArrayListWithCapacity(params.getActivityContentParams().size());
         for (ActivityContentParams contentParams : params.getActivityContentParams()) {
             ActivityContentPo contentPo = CommonConverter.map(contentParams, ActivityContentPo.class);
-            contentPo.setContent(contentParams.getContent() == null ? null : contentParams.getContent().toString());
             contentPos.add(contentPo);
         }
         List<ActivityContentUnion> contentUnions = Lists.newArrayListWithCapacity(contentPos.size());

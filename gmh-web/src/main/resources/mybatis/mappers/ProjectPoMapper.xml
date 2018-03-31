@@ -28,9 +28,9 @@
 		VALUES(#{projectTypeId, jdbcType=BIGINT},
 		#{code, jdbcType=VARCHAR},
 		#{name, jdbcType=VARCHAR},
-		#{unit_price, jdbcType=DECIMAL},
+		#{unitPrice, jdbcType=DECIMAL},
 		#{integral, jdbcType=DECIMAL},
-		#{intern_integral, jdbcType=DECIMAL},
+		#{internIntegral, jdbcType=DECIMAL},
 		#{remark, jdbcType=VARCHAR})
 	</insert>
 	<delete id="deleteById" parameterType="long">

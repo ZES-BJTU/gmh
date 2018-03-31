@@ -235,6 +235,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
         CustomerActivityPo caPo = new CustomerActivityPo();
         caPo.setCustomerId(consumeRecord.getCustomerId());
         caPo.setActivityId(consumeRecord.getActivityId());
+        caPo.setStoreId(ThreadContext.getUserStoreId());
         customerActivityMapper.insert(caPo);
         List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(caPo.getId());
 

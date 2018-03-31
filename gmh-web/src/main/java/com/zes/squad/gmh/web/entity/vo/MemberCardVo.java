@@ -9,6 +9,7 @@ public class MemberCardVo {
 
     private Integer    type;
     private String     typeDesc;
+    private String     code;
     private String     name;
     private BigDecimal price;
     private Long       projectId;

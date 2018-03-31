@@ -45,7 +45,7 @@ public class MemberCardController {
 
     @RequestMapping(method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
-    public JsonResult<MemberCardVo> doCreateMemberCard(@RequestBody MemberCardParams params) {
+    public JsonResult<MemberCardVo> doCreateMemberCard(MemberCardParams params) {
         ensureParameterExist(params, "会员卡信息为空");
         if (params.getProjectDiscount() != null) {
             params.setProjectDiscount(params.getProjectDiscount().divide(new BigDecimal("100")));
@@ -130,14 +130,14 @@ public class MemberCardController {
         if (params.getProjectId() != null) {
             ensureParameterExist(params.getTimes(), "请输入会员卡对应项目次数");
             ensureParameterValid(params.getTimes().intValue() > 0, "会员卡对应项目次数应大于0");
-            ensureParameterExist(params.getProjectDiscount(), "请输入会员卡对应项目折扣");
+            //            ensureParameterExist(params.getProjectDiscount(), "请输入会员卡对应项目折扣");
             ensureParameterValid((params.getProjectDiscount().compareTo(BigDecimal.ZERO) == 1)
                     && ((params.getProjectDiscount().compareTo(BigDecimal.ONE) == 0)
                             || (params.getProjectDiscount().compareTo(BigDecimal.ONE) == -1)),
                     "会员卡对应项目折扣错误");
         } else if (params.getAmount() != null) {
             ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "会员卡储值应大于0");
-            ensureParameterExist(params.getProductDiscount(), "请输入会员卡对应项目折扣");
+            //            ensureParameterExist(params.getProductDiscount(), "请输入会员卡对应项目折扣");
             ensureParameterValid((params.getProductDiscount().compareTo(BigDecimal.ZERO) == 1)
                     && ((params.getProductDiscount().compareTo(BigDecimal.ONE) == 0)
                             || (params.getProductDiscount().compareTo(BigDecimal.ONE) == -1)),
@@ -165,8 +165,22 @@ public class MemberCardController {
                                         || (params.getProjectDiscount().compareTo(BigDecimal.ONE) == -1)),
                         "会员卡对应项目折扣错误");
             }
+            if (params.getProductDiscount() != null) {
+                ensureParameterValid(
+                        (params.getProductDiscount().compareTo(BigDecimal.ZERO) == 1)
+                                && ((params.getProductDiscount().compareTo(BigDecimal.ONE) == 0)
+                                        || (params.getProductDiscount().compareTo(BigDecimal.ONE) == -1)),
+                        "会员卡对应产品折扣错误");
+            }
         } else if (params.getAmount() != null) {
             ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "会员卡储值应大于0");
+            if (params.getProjectDiscount() != null) {
+                ensureParameterValid(
+                        (params.getProjectDiscount().compareTo(BigDecimal.ZERO) == 1)
+                                && ((params.getProjectDiscount().compareTo(BigDecimal.ONE) == 0)
+                                        || (params.getProjectDiscount().compareTo(BigDecimal.ONE) == -1)),
+                        "会员卡对应项目折扣错误");
+            }
             if (params.getProductDiscount() != null) {
                 ensureParameterValid(
                         (params.getProductDiscount().compareTo(BigDecimal.ZERO) == 1)

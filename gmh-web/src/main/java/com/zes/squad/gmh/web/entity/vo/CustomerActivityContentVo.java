@@ -9,6 +9,6 @@ public class CustomerActivityContentVo {
 	
 	private String type;
 	private String relatedName;
-	private String content;
+	private BigDecimal content;
 	private BigDecimal number;
 }

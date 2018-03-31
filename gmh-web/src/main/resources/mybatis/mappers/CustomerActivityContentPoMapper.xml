@@ -77,6 +77,6 @@
 		where
 		`customer_activity_id`=#{customerActivityId,jdbcType=BIGINT}
 		and
-		cac.`type`=4;
+		`type`=4;
 	</select>
 </mapper>

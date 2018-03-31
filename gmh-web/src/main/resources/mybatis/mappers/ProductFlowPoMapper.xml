@@ -4,6 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProductFlowPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="product_id" jdbcType="BIGINT" property="productId" />
+		<result column="record_id" jdbcType="BIGINT" property="recordId" />
 		<result column="type" jdbcType="TINYINT" property="type" />
 		<result column="amount" jdbcType="DECIMAL" property="amount" />
 		<result column="store_id" jdbcType="BIGINT" property="storeId" />
@@ -11,19 +12,34 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `product_id`, `record_id`, `type`, `amount`, `store_id`, `status`, `created_time`, `modified_time`
+	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductFlowPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT
 			LAST_INSERT_ID()
 		</selectKey>
-		INSERT INTO product_flow(`product_id`, `type`, `amount`, `store_id`, `status`)
+		INSERT INTO product_flow(`product_id`, `record_id`, `type`, `amount`, `store_id`, `status`)
 		VALUES
 		(#{productId, jdbcType=BIGINT},
+		#{recordId, jdbcType=BIGINT},
 		#{type, jdbcType=TINYINT},
 		#{amount, jdbcType=DECIMAL},
 		#{storeId, jdbcType=BIGINT},1)
 	</insert>
 	<update id="updateStatus" parameterType="long">
-		UPDATE product_flow SET `status` = 0
+		UPDATE product_flow SET `status` = 0 WHERE `id` = #{id:BIGINT}
 	</update>
+	<update id="updateStatusByRecordId" parameterType="long">
+		UPDATE product_flow SET `status` = 0 WHERE `record_id` = #{recordId:BIGINT}
+	</update>
+	<select id="selectByRecordId" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM
+		product_flow
+		WHERE
+		`record_id` = #{recordId:BIGINT} AND `store_id` = #{storeId:BIGINT} AND `status` = 1
+	</select>
 </mapper>

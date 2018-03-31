@@ -6,6 +6,7 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProductAmountPo;
+import com.zes.squad.gmh.entity.po.ProductFlowPo;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
 import com.zes.squad.gmh.entity.union.ProductUnion;
@@ -26,13 +27,6 @@ public interface ProductService {
      * @param id
      */
     void removeProductType(Long id);
-
-    /**
-     * 删除多个产品分类
-     * 
-     * @param ids
-     */
-    void removeProductTypes(List<Long> ids);
 
     /**
      * 修改产品分类
@@ -158,9 +152,16 @@ public interface ProductService {
     /**
      * 卖货
      * 
-     * @param po
+     * @param flowPo
      */
-    void reduceProductAmount(ProductAmountPo po);
+    void reduceProductAmount(ProductFlowPo flowPo);
+    
+    /**
+     * 根据消费记录id将产品流水置为无效
+     * 
+     * @param recordId
+     */
+    void modifyFlowInvalid(Long recordId);
 
     /**
      * 根据编码查询产品

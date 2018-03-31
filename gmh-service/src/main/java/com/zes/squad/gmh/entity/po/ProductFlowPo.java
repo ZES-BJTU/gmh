@@ -14,6 +14,7 @@ public class ProductFlowPo extends Po {
     private static final long serialVersionUID = 1L;
 
     private Long              productId;
+    private Long              recordId;
     private Integer           type;
     private BigDecimal        amount;
     private Long              storeId;

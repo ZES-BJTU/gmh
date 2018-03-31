@@ -216,17 +216,20 @@ public class StockServiceImpl implements StockService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public StockAmountPo modifyStockAmount(StockAmountPo po) {
-        po.setStoreId(ThreadContext.getUserStoreId());
         int record = stockAmountMapper.updateAmount(po);
-        ensureConditionSatisfied(record == 1, "修改库存数量失败");
+        ensureConditionSatisfied(record == 1, "库存数量修改失败");
+        StockAmountPo newPo = stockAmountMapper.selectById(po.getId());
+        ensureEntityExist(newPo, "库存数量不存在");
         StockFlowPo flowPo = new StockFlowPo();
         flowPo.setStockId(po.getStockId());
         flowPo.setType(FlowTypeEnum.ADJUSTMENT.getKey());
         flowPo.setAmount(po.getAmount());
-        flowPo.setStoreId(ThreadContext.getUserStoreId());
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何店铺");
+        flowPo.setStoreId(storeId);
         record = stockFlowMapper.insert(flowPo);
         ensureConditionSatisfied(record == 1, "库存流水生成失败");
-        return po;
+        return newPo;
     }
 
     @Transactional(rollbackFor = { Throwable.class })

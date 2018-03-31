@@ -15,8 +15,7 @@
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
-			SELECT
-			LAST_INSERT_ID()
+			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO stock_amount(`stock_id`, `amount`, `store_id`)
 		VALUES
@@ -35,9 +34,7 @@
 		</foreach>
 	</delete>
 	<update id="updateAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
-		UPDATE stock_amount 
-		SET `amount` = #{amount:DECIMAL}
-		WHERE `id` = #{id:BIGINT}
+		UPDATE stock_amount SET `amount` = #{amount:DECIMAL} WHERE `id` = #{id:BIGINT}
 	</update>
 	<update id="addAmount" parameterType="com.zes.squad.gmh.entity.po.StockAmountPo">
 		UPDATE stock_amount

@@ -33,7 +33,7 @@ public interface StockFlowMapper {
     int updateStatusByRecordId(Long recordId);
 
     /**
-     * 根据消费记录查询有效库存
+     * 根据消费记录查询有效库存流水
      * 
      * @param recordId
      * @return

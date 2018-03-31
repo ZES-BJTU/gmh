@@ -8,8 +8,7 @@
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		`id`, `name`,
-		`created_time`, `modified_time`
+		`id`, `name`, `created_time`, `modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductTypePo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
@@ -58,7 +57,7 @@
 		<where>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(pt.`name`) LIKE #{condition, jdbcType=VARCHAR}
+				pt.`name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
 	</select>

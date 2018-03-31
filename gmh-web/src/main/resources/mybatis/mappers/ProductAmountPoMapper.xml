@@ -15,8 +15,7 @@
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
-			SELECT
-			LAST_INSERT_ID()
+			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO product_amount(`product_id`, `amount`, `store_id`)
 		VALUES
@@ -25,8 +24,7 @@
 		#{storeId, jdbcType=BIGINT})
 	</insert>
 	<delete id="deleteById" parameterType="long">
-		DELETE FROM product_amount
-		WHERE `id` = #{id, jdbcType=BIGINT}
+		DELETE FROM product_amount WHERE `id` = #{id, jdbcType=BIGINT}
 	</delete>
 	<delete id="batchDelete" parameterType="long">
 		DELETE FROM product_amount WHERE `id` IN
@@ -41,6 +39,18 @@
 	<update id="addAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
 		UPDATE product_amount SET `amount` = `amount` + #{amount, jdbcType=DECIMAL}
 		WHERE `id` = #{id, jdbcType=BIGINT}
+	</update>
+	<update id="addAmountByProductAndStore" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		UPDATE product_amount 
+		SET `amount` = `amount` + #{amount:DECIMAL}
+		WHERE `product_id` = #{productId:BIGINT} AND `store_id` = #{storeId:BIGINT}
+	</update>
+	<update id="batchAddAmountByProductAndStore" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
+		<foreach collection="list" separator=";" item="po">
+			UPDATE product_amount 
+			SET `amount` = `amount` + #{po.amount:DECIMAL}
+			WHERE `product_id` = #{po.productId:BIGINT} AND `store_id` = #{po.storeId:BIGINT}
+		</foreach>
 	</update>
 	<update id="reduceAmount" parameterType="com.zes.squad.gmh.entity.po.ProductAmountPo">
 		UPDATE product_amount SET `amount` = `amount` - #{amount, jdbcType=DECIMAL}
@@ -73,6 +83,17 @@
 	</select>
 	<select id="selectByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		product_amount
+		WHERE
+		`product_id` = #{productId, jdbcType=BIGINT}
+		AND
+		`store_id` = #{storeId, jdbcType=BIGINT}
+	</select>
+	<select id="selectByProductAndStore"
 		resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />

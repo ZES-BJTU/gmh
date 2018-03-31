@@ -2,6 +2,8 @@ package com.zes.squad.gmh.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition;
 import com.zes.squad.gmh.entity.po.ProductAmountPo;
 
@@ -48,6 +50,22 @@ public interface ProductAmountMapper {
     int addAmount(ProductAmountPo po);
 
     /**
+     * 根据产品和门店修改数量
+     * 
+     * @param po
+     * @return
+     */
+    int addAmountByProductAndStore(ProductAmountPo po);
+
+    /**
+     * 根据产品和门店批量修改数量
+     * 
+     * @param pos
+     * @return
+     */
+    int batchAddAmountByProductAndStore(List<ProductAmountPo> pos);
+
+    /**
      * 减少产品(卖货)
      * 
      * @param po
@@ -64,7 +82,6 @@ public interface ProductAmountMapper {
     ProductAmountPo selectById(Long id);
 
     /**
-     * 
      * @param productId
      * @return
      */
@@ -85,5 +102,14 @@ public interface ProductAmountMapper {
      * @return
      */
     ProductAmountPo selectByCondition(ProductAmountQueryCondition condition);
+
+    /**
+     * 根据产品id和门店id查询
+     * 
+     * @param productId
+     * @param storeId
+     * @return
+     */
+    ProductAmountPo selectByProductAndStore(@Param("productId") Long productId, @Param("storeId") Long storeId);
 
 }

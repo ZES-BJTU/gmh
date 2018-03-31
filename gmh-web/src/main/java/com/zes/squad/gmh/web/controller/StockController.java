@@ -216,15 +216,6 @@ public class StockController {
         return JsonResults.success();
     }
 
-    @Deprecated
-    @RequestMapping(path = "/amount", method = { RequestMethod.DELETE })
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public JsonResult<StockAmountVo> createStockAmount(@RequestBody List<Long> ids) {
-        ensureCollectionNotEmpty(ids, "请选择待删除库存数量");
-        stockService.removeStockAmounts(ids);
-        return JsonResults.success();
-    }
-
     @RequestMapping(path = "/amount/{id}", method = { RequestMethod.PUT })
     public JsonResult<StockAmountVo> doModifyStockAmount(@PathVariable("id") Long id,
                                                          @RequestBody StockAmountParams params) {
@@ -266,6 +257,7 @@ public class StockController {
 
     @RequestMapping(path = "/amount", method = { RequestMethod.GET })
     public JsonResult<PagedList<StockVo>> doListPagedStockAmounts(StockQueryParams queryParams) {
+        ensureParameterExist(queryParams, "库存查询条件为空");
         CheckHelper.checkPageParams(queryParams);
         StockQueryCondition condition = CommonConverter.map(queryParams, StockQueryCondition.class);
         PagedList<StockUnion> pagedUnions = stockService.listPagedStocksWithAmount(condition);

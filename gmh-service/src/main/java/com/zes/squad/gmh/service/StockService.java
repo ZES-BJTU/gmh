@@ -161,7 +161,7 @@ public interface StockService {
     void reduceStockAmount(StockFlowPo flowPo);
 
     /**
-     * 根据消费记录id讲库存流水置为无效
+     * 根据消费记录id将库存流水置为无效
      * 
      * @param recordId
      */

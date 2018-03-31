@@ -94,6 +94,7 @@ public class MemberCardServiceImpl implements MemberCardService {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
+        condition.setStoreId(ThreadContext.getUserStoreId());
         List<MemberCardUnion> unions = memberCardUnionMapper.selectByCondition();
         if (CollectionUtils.isEmpty(unions)) {
             return PagedLists.newPagedList(pageNum, pageSize);

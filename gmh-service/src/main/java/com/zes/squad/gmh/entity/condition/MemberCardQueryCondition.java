@@ -10,6 +10,7 @@ import lombok.ToString;
 public class MemberCardQueryCondition extends QueryCondition {
 
     private Integer type;
+    private Long    storeId;
     private String  search;
 
 }

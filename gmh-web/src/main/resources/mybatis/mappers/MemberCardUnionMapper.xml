@@ -13,6 +13,7 @@
 	</resultMap>
 	<sql id="Base_Column_List">
 		mc.`id` AS id,
+		mc.`id` AS mc_id,
 		mc.`type` AS mc_type,
 		mc.`code` AS mc_code,
 		mc.`name` AS mc_name,
@@ -55,6 +56,9 @@
 		<where>
 			<if test="type != null">
 				mc.`type` = #{type, jdbcType=BIGINT}
+			</if>
+			<if test="storeId != null">
+				AND mc.`store_id` = #{storeId, jdbcType=BIGINT}
 			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>

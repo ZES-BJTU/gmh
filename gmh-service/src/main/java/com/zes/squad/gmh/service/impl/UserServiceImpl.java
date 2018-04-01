@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         String originalEncryptPassword = encryptPassword(po.getAccount(), po.getSalt(), originalPassword);
         ensureParameterValid(Objects.equals(originalEncryptPassword, po.getPassword()), "原密码错误");
         String newEncryptPassword = encryptPassword(po.getAccount(), po.getSalt(), newPassword);
-        userMapper.updatePassword(newEncryptPassword);
+        userMapper.updatePassword(id, newEncryptPassword);
     }
 
     @Transactional(rollbackFor = { Throwable.class })
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         String resetPassword = encryptPassword(po.getAccount(), po.getSalt(), DEFAULT_PASSWORD);
         String resetPasswordContent = MessageProperties.get("reset.password.content");
         SMSHelper.sendMessage(po.getMobile(), MessageFormat.format(resetPasswordContent, DEFAULT_PASSWORD));
-        userMapper.updatePassword(resetPassword);
+        userMapper.updatePassword(po.getId(), resetPassword);
     }
 
     @Override

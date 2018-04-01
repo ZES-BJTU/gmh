@@ -41,8 +41,8 @@
 		#{storeId, jdbcType=BIGINT},
 		#{remark, jdbcType=VARCHAR})
 	</insert>
-	<update id="updatePassword" parameterType="string">
-		UPDATE user SET `password` = #{password, jdbcType=VARCHAR}
+	<update id="updatePassword">
+		UPDATE user SET `password` = #{password, jdbcType=VARCHAR} WHERE `id` = #{id:BIGINT}
 	</update>
 	<update id="updateSelective" parameterType="com.zes.squad.gmh.entity.po.UserPo">
 		UPDATE user

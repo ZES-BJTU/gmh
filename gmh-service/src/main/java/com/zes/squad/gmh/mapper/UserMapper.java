@@ -36,10 +36,11 @@ public interface UserMapper {
     /**
      * 更新密码
      * 
+     * @param id
      * @param password
      * @return
      */
-    int updatePassword(String password);
+    int updatePassword(@Param("id") long id, @Param("password") String password);
 
     /**
      * 修改用户信息

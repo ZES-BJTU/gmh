@@ -12,7 +12,9 @@
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	
-	<resultMap id="AppointmentProjectUnionMap" type="com.zes.squad.gmh.entity.union.AppointmentProjectUnion">		
+	<resultMap id="AppointmentProjectUnionMap" type="com.zes.squad.gmh.entity.union.AppointmentProjectUnion">	
+		<result column="project_id" jdbcType="INTEGER" property="projectId" />
+		<result column="employee_id" jdbcType="INTEGER" property="employeeId" />	
 		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
 		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
 		<result column="begin_time" jdbcType="DATE" property="beginTime" />
@@ -30,7 +32,7 @@
 	</insert>
 	<select id="getAppointmentProjectUnionByAppId" parameterType="long" resultMap="AppointmentProjectUnionMap">
 		SELECT
-		p.name as project_name, e.name as employee_name, begin_time, end_time from 
+		p.name as project_name, e.name as employee_name,project_id,employee_id, begin_time, end_time from 
 		appointment_project ap
 		left join project p
 		on ap.`project_id` = p.`id`

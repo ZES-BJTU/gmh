@@ -103,7 +103,7 @@
 				`customer_name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
-
+		
 	</select>
 	
 	<select id="changedListCustomerMemberCardByCondition"

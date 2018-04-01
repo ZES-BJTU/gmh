@@ -50,13 +50,13 @@ public class AppointmentController {
 			return JsonResults.fail(1000, "预约冲突");
 	}
 
-	@RequestMapping(path = "/cancel/{appointmentId}", method = { RequestMethod.POST })
+	@RequestMapping(path = "/cancel/{appointmentId}", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCancleAppointment(@PathVariable("appointmentId") Long appointmentId) {
 		appointmentService.cancelAppointment(appointmentId);
 		return JsonResults.success();
 	}
 
-	@RequestMapping(path = "/finish/{appointmentId}", method = { RequestMethod.POST })
+	@RequestMapping(path = "/finish/{appointmentId}", method = { RequestMethod.PUT })
 	public JsonResult<Void> doFinishAppointment(@PathVariable("appointmentId") Long appointmentId) {
 		appointmentService.finishAppointment(appointmentId);
 		return JsonResults.success();

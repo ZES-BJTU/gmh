@@ -73,4 +73,15 @@
 			</if>
 		</where>
 	</select>
+	<select id="selectAll" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		member_card mc
+		LEFT JOIN
+		project p
+		ON
+		mc.`project_id` = p.`id`
+		WHERE mc.`store_id` = #{storeId:BIGINT}
+	</select>
 </mapper>

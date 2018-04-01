@@ -103,4 +103,11 @@ public class MemberCardServiceImpl implements MemberCardService {
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
 
+    @Override
+    public List<MemberCardUnion> listAllMemberCards() {
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何店铺");
+        return memberCardUnionMapper.selectAll(storeId);
+    }
+
 }

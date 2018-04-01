@@ -23,4 +23,12 @@ public interface MemberCardUnionMapper {
      */
     List<MemberCardUnion> selectByCondition(MemberCardQueryCondition condition);
 
+    /**
+     * 根据门店查询所有会员卡
+     * 
+     * @param storeId
+     * @return
+     */
+    List<MemberCardUnion> selectAll(Long storeId);
+
 }

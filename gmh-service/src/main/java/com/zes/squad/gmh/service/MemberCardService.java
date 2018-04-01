@@ -63,4 +63,11 @@ public interface MemberCardService {
      */
     PagedList<MemberCardUnion> listPagedMemberCards(MemberCardQueryCondition condition);
 
+    /**
+     * 查询所有会员卡
+     * 
+     * @return
+     */
+    List<MemberCardUnion> listAllMemberCards();
+
 }

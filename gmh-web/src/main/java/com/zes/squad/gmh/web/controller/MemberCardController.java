@@ -119,6 +119,20 @@ public class MemberCardController {
                 pagedUnions.getTotalCount(), vos));
     }
 
+    @RequestMapping(path = "/all", method = { RequestMethod.GET })
+    public JsonResult<List<MemberCardVo>> doListAllMemberCards() {
+        List<MemberCardUnion> unions = memberCardService.listAllMemberCards();
+        if (CollectionUtils.isEmpty(unions)) {
+            return JsonResults.success();
+        }
+        List<MemberCardVo> vos = Lists.newArrayListWithCapacity(unions.size());
+        for (MemberCardUnion union : unions) {
+            MemberCardVo vo = buildMemberCardVoByUnion(union);
+            vos.add(vo);
+        }
+        return JsonResults.success(vos);
+    }
+
     private void checkMemberCardCreateParams(MemberCardParams params) {
         ensureParameterNotExist(params.getId(), "会员卡已存在");
         ensureParameterExist(params.getType(), "请输入会员卡类别");

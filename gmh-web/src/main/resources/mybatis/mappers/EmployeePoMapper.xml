@@ -131,12 +131,11 @@
 		e.`id` = ew.`employee_id`
 		WHERE
 		`is_working` = 1
-		<where>
-			`store_id` = #{storeId:BIGINT}
-			<if test="workType != null">
-				AND ew.`work_type` = #{workType:INTEGER}
-			</if>
-		</where>
+		AND
+		`store_id` = #{storeId:BIGINT}
+		<if test="workType != null">
+			AND ew.`work_type` = #{workType:INTEGER}
+		</if>
 	</select>
 	<select id="selectByWorkTypes" resultMap="BaseResultMap">
 		SELECT
@@ -149,14 +148,13 @@
 		e.`id` = ew.`employee_id`
 		WHERE
 		`is_working` = 1
-		<where>
-			`store_id` = #{storeId:BIGINT}
-			<if test="workTypes != null and workTypes.size() != 0">
-				AND `work_type` IN
-				<foreach collection="workTypes" item="workType" separator="," open="(" close=")">
-					#{workType:INTEGER}
-				</foreach>
-			</if>
-		</where>
+		AND
+		e.`store_id` = #{storeId:BIGINT}
+		<if test="workTypes != null and workTypes.size() != 0">
+			AND ew.`work_type` IN
+			<foreach collection="workTypes" item="workType" separator="," open="(" close=")">
+				#{workType:INTEGER}
+			</foreach>
+		</if>
 	</select>
 </mapper>

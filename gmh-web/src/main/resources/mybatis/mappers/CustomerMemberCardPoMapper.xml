@@ -63,6 +63,7 @@
 		select
 		cmd.`id` as `id`,
 		cus.`name` as `customer_name`,
+		c.`name` as `member_card_name`,
 		cmd.`remaining_money` as `remaining_money`,
 		cmd.`remaining_times` as `remaining_times`,
 		cmd.`is_valid` as
@@ -83,6 +84,8 @@
 		customer_member_card cmd
 		left join customer cus on
 		cus.`id`=cmd.`customer_id`
+		left join member_card c on
+		cmd.`member_card_id`=c.`id`
 		<where>
 			<if test="storeId != null">
 				cmd.`store_id` = #{storeId, jdbcType=BIGINT}

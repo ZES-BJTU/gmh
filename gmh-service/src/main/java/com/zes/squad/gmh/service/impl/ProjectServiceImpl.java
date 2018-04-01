@@ -77,7 +77,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectTypePo modifyProjectType(ProjectTypePo po) {
         ProjectTypePo existingPo = projectTypeMapper.selectByTopTypeAndName(po.getTopType(), po.getName());
         if (existingPo != null) {
-            ensureConditionSatisfied(existingPo.getId().equals(po.getId()), "项目分类重复");
+            ensureConditionSatisfied(existingPo.getId().equals(po.getId()), "项目分类已存在");
         }
         projectTypeMapper.updateSelective(po);
         ProjectTypePo newPo = projectTypeMapper.selectById(po.getId());

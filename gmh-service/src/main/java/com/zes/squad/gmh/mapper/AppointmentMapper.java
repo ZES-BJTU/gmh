@@ -10,6 +10,8 @@ import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
 public interface AppointmentMapper {
 
     int insert(AppointmentPo appointmentPo);
+    
+    int modify(AppointmentPo appointmentPo);
 
     int cancelAppointment(Long id);
 

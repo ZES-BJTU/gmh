@@ -20,8 +20,10 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.entity.condition.AppointmentQueryCondition;
 import com.zes.squad.gmh.entity.po.AppointmentPo;
+import com.zes.squad.gmh.entity.po.AppointmentProjectPo;
 import com.zes.squad.gmh.entity.union.AppointmentUnion;
 import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
+import com.zes.squad.gmh.mapper.AppointmentProjectMapper;
 import com.zes.squad.gmh.service.AppointmentService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
@@ -37,6 +39,8 @@ public class AppointmentController {
 
 	@Autowired
 	private AppointmentService appointmentService;
+	@Autowired
+	private AppointmentProjectMapper appointmentProjectMapper;
 
 	@RequestMapping(path = "/create", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateAppointment(@RequestBody AppointmentCreateOrModifyParams params) {
@@ -47,6 +51,22 @@ public class AppointmentController {
 			appointmentService.createAppointment(appointmentPo, params.getAppointmentProjectParams());
 			return JsonResults.success();
 		} else
+			return JsonResults.fail(1000, "预约冲突");
+	}
+	
+	@RequestMapping(path = "/modify", method = { RequestMethod.PUT })
+	public JsonResult<Void> doModifyAppointment(@RequestBody AppointmentCreateOrModifyParams params) {
+		List<AppointmentProjectPo> apList = appointmentProjectMapper.getListByAppointmentId(params.getId()); 
+		appointmentProjectMapper.delByAppointmentId(params.getId());
+		boolean isAllFree = appointmentService.isAllFree(params.getAppointmentProjectParams());
+		if (isAllFree) {
+			AppointmentPo appointmentPo = CommonConverter.map(params, AppointmentPo.class);
+			appointmentService.modifyAppointment(appointmentPo, params.getAppointmentProjectParams());
+			return JsonResults.success();
+		} else
+			for(AppointmentProjectPo po : apList){
+				appointmentProjectMapper.insert(po);
+			}
 			return JsonResults.fail(1000, "预约冲突");
 	}
 

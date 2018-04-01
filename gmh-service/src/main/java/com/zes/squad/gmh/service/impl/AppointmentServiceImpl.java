@@ -39,6 +39,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private AppointmentProjectMapper appointmentProjectMapper;
 	@Autowired
 	private ProjectService projectService;
+
 	@Override
 	public void createAppointment(AppointmentPo appointmentPo,
 			List<AppointmentProjectParams> appointmentPorjectParams) {
@@ -49,7 +50,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			AppointmentProjectPo po = new AppointmentProjectPo();
 			po = CommonConverter.map(ap, AppointmentProjectPo.class);
 			Long projectId = projectService.queryProjectByCode(ap.getProjectCode());
-			if(projectId != null){
+			if (projectId != null) {
 				po.setProjectId(projectId);
 			}
 			po.setAppointmentId(appointmentPo.getId());
@@ -189,40 +190,61 @@ public class AppointmentServiceImpl implements AppointmentService {
 		Double result = Double.parseDouble(tmp);
 		return result;
 	}
-	//判断单个时间段是否为空闲
-	public boolean isFree(Long employeeId, Date beginTime, Date endTime){
-		List<EmployeeTimeTable> timeList = queryEmployeeTimeTable(employeeId,beginTime);
+
+	// 判断单个时间段是否为空闲
+	public boolean isFree(Long employeeId, Date beginTime, Date endTime) {
+		List<EmployeeTimeTable> timeList = queryEmployeeTimeTable(employeeId, beginTime);
 		boolean isFree = false;
-		if(timeList.size()==1)
+		if (timeList.size() == 1)
 			isFree = true;
-		else{
-			for(int i=0;i<timeList.size();){
-				if(beginTime.getTime()>=timeList.get(i).getBeginTime().getTime()&&endTime.getTime()<=timeList.get(i).getEndTime().getTime()){
+		else {
+			for (int i = 0; i < timeList.size();) {
+				if (beginTime.getTime() >= timeList.get(i).getBeginTime().getTime()
+						&& endTime.getTime() <= timeList.get(i).getEndTime().getTime()) {
 					isFree = true;
 				}
-				i = i+2;
+				i = i + 2;
 			}
 		}
 		return isFree;
 	}
-	//判断要插入的list是否均为空闲
-	public boolean isAllFree(List<AppointmentProjectParams> apList){
+
+	// 判断要插入的list是否均为空闲
+	public boolean isAllFree(List<AppointmentProjectParams> apList) {
 		List<AppointmentProjectPo> tmpApList = new ArrayList<AppointmentProjectPo>();
 		boolean isFree = true;
-		for(AppointmentProjectParams ap : apList){
-			isFree = isFree(ap.getEmployeeId(),ap.getBeginTime(),ap.getEndTime());
-			if(isFree){
+		for (AppointmentProjectParams ap : apList) {
+			isFree = isFree(ap.getEmployeeId(), ap.getBeginTime(), ap.getEndTime());
+			if (isFree) {
 				AppointmentProjectPo po = CommonConverter.map(ap, AppointmentProjectPo.class);
 				appointmentProjectMapper.insert(po);
 				tmpApList.add(CommonConverter.map(po, AppointmentProjectPo.class));
-			}else 
+			} else
 				isFree = false;
-				break;
+			break;
 		}
-		for(AppointmentProjectPo apPo : tmpApList){
+		for (AppointmentProjectPo apPo : tmpApList) {
 			appointmentProjectMapper.delById(apPo.getId());
 		}
 		return isFree;
 	}
-	
+
+	@Override
+	public void modifyAppointment(AppointmentPo appointmentPo,
+			List<AppointmentProjectParams> appointmentPorjectParams) {
+
+		appointmentMapper.modify(appointmentPo);
+		for (AppointmentProjectParams ap : appointmentPorjectParams) {
+			AppointmentProjectPo po = new AppointmentProjectPo();
+			po = CommonConverter.map(ap, AppointmentProjectPo.class);
+//			Long projectId = projectService.queryProjectByCode(ap.getProjectCode());
+//			if (projectId != null) {
+//				po.setProjectId(projectId);
+//			}
+			po.setAppointmentId(appointmentPo.getId());
+			appointmentProjectMapper.insert(po);
+		}
+
+	}
+
 }

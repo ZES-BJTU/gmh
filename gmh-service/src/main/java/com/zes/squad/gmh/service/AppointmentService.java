@@ -14,6 +14,8 @@ public interface AppointmentService {
 
     void createAppointment(AppointmentPo appointmentPo, List<AppointmentProjectParams> appointmentPorjectParams);
 
+    void modifyAppointment(AppointmentPo appointmentPo, List<AppointmentProjectParams> appointmentPorjectParams);
+    
     void cancelAppointment(Long appointmentId);
 
     void finishAppointment(Long appointmentId);

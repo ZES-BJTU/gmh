@@ -41,9 +41,19 @@
         where
         ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
 	</select>
+	<select id="getListByAppointmentId" parameterType="long" resultMap="BaseResultMap">
+		select * from appointment_project ap
+        where
+        ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
+	</select>
 	<delete id="delById" parameterType="long">
 		delete from appointment_project
 		where
 		id=#{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="delByAppointmentId" parameterType="long">
+		delete from appointment_project
+		where
+		appointment_id=#{appointmentId,jdbcType=INTEGER}
 	</delete>
 </mapper>

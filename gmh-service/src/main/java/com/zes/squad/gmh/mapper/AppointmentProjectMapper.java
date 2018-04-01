@@ -13,4 +13,7 @@ public interface AppointmentProjectMapper {
     
     int delById(Long id);
 
+    int delByAppointmentId(Long appointmentId);
+    
+    List<AppointmentProjectPo> getListByAppointmentId(Long appointmentId);
 }

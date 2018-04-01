@@ -6,7 +6,8 @@ import java.util.Date;
 import lombok.Data;
 @Data
 public class CustomerMemberCardUnion {
-
+	
+	private Long id;
 	private String customerName;
 	private String memberCardName;
 	private BigDecimal remainingMoney;

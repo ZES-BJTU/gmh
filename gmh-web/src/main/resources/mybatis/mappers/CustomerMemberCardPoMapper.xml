@@ -61,6 +61,7 @@
 		parameterType="com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition"
 		resultMap="union">
 		select
+		cmd.`id` as `id`,
 		cus.`name` as `customer_name`,
 		cmd.`remaining_money` as `remaining_money`,
 		cmd.`remaining_times` as `remaining_times`,

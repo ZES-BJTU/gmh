@@ -10,11 +10,32 @@
 			<level>DEBUG</level>
 		</filter>
 	</appender>
-	
-	<logger name="com.zes.squad.gmh.mapper" level="DEBUG" addtivity="false"/>
+
+	<appender name="FILE_INFO"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- 此处如果不设置file，日志主目录下将不显示文件该日志文件 -->
+		<file>${LOG_HOME}/${LOG_NAME}.log</file>
+		<encoder>
+			<!-- logger后面的整数可以缩短logger名，缺失默认显示全路径，0只显示最右边方法名，其他表示缩写，最短类全限定名称缩写（首字母）和方法名全称，随着整数变大，logger名称从右向左依次显示全称，但是总长度（包括"."）不大于整数，同时不存在不完整单词 -->
+			<pattern>[%thread] | %d | %level | %logger{5}[%L] | %msg%n</pattern>
+			<charset>${CHARSET}</charset>
+		</encoder>
+		<!-- 按照时间滚动，此处fileNamePattern根据设置的时间精度来调整滚动频率，当前根据%d{yyyy-MM-dd}表示每天滚动 -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/backup/${LOG_NAME}.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+	</appender>
+
+	<logger name="com.zes.squad.gmh.mapper" level="DEBUG" addtivity="false" />
 
 	<root level="INFO">
 		<appender-ref ref="CONSOLE_OUT" />
+		<appender-ref ref="FILE_INFO" />
 	</root>
 
 </configuration>

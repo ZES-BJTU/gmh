@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureAttributeExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
@@ -58,6 +59,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void removeProjectType(Long id) {
+        List<ProjectPo> pos = projectMapper.selectByTypeId(id);
+        ensureCollectionEmpty(pos, "项目分类已被使用,无法删除");
         int record = projectTypeMapper.deleteById(id);
         ensureConditionSatisfied(record == 1, "项目分类删除失败");
     }
@@ -74,7 +77,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectTypePo modifyProjectType(ProjectTypePo po) {
         ProjectTypePo existingPo = projectTypeMapper.selectByTopTypeAndName(po.getTopType(), po.getName());
         if (existingPo != null) {
-            ensureConditionSatisfied(existingPo.getId().equals(po.getId()), "项目分类重复");
+            ensureConditionSatisfied(existingPo.getId().equals(po.getId()), "项目分类已存在");
         }
         projectTypeMapper.updateSelective(po);
         ProjectTypePo newPo = projectTypeMapper.selectById(po.getId());

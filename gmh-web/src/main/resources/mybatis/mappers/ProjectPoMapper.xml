@@ -3,28 +3,31 @@
 <mapper namespace="com.zes.squad.gmh.mapper.ProjectMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ProjectPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="project_type_id" jdbcType="BIGINT" property="projectTypeId"/>
-		<result column="code" jdbcType="VARCHAR" property="code"/>
-		<result column="name" jdbcType="VARCHAR" property="name"/>
-		<result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
-		<result column="integral" jdbcType="DECIMAL" property="integral"/>
-		<result column="intern_integral" jdbcType="DECIMAL" property="internIntegral"/>
-		<result column="remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="project_type_id" jdbcType="BIGINT" property="projectTypeId" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+		<result column="integral" jdbcType="DECIMAL" property="integral" />
+		<result column="intern_integral" jdbcType="DECIMAL" property="internIntegral" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		`id`, `project_type_id`, `code`, `name`,
-		`unit_price`, `integral`, `intern_integral`,
-		`remark`, `created_time`, `modified_time`
+		`unit_price`,
+		`integral`, `intern_integral`,
+		`remark`, `created_time`,
+		`modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ProjectPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
-			SELECT LAST_INSERT_ID()
+			SELECT
+			LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO project
 		(`project_type_id`, `code`, `name`, `unit_price`,
-		`integral`, `intern_integral`, `remark`) 
+		`integral`, `intern_integral`, `remark`)
 		VALUES(#{projectTypeId, jdbcType=BIGINT},
 		#{code, jdbcType=VARCHAR},
 		#{name, jdbcType=VARCHAR},
@@ -34,11 +37,13 @@
 		#{remark, jdbcType=VARCHAR})
 	</insert>
 	<delete id="deleteById" parameterType="long">
-		DELETE FROM project WHERE `id` = #{id, jdbcType=BIGINT}
+		DELETE FROM project WHERE
+		`id` = #{id, jdbcType=BIGINT}
 	</delete>
 	<delete id="batchDelete" parameterType="long">
 		DELETE FROM project WHERE `id` IN
-		<foreach collection="list" item="id" separator="," open="(" close=")">
+		<foreach collection="list" item="id" separator="," open="("
+			close=")">
 			#{id, jdbcType=BIGINT}
 		</foreach>
 	</delete>
@@ -78,6 +83,15 @@
 			`id` = #{id, jdbcType=BIGINT}
 		</where>
 	</select>
+	<select id="selectByTypeId" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project
+		<where>
+			`project_type_id` = #{projectTypeId, jdbcType=BIGINT}
+		</where>
+	</select>
 	<select id="selectByCode" parameterType="string" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />
@@ -97,13 +111,14 @@
 				`project_type_id` = #{projectTypeId, jdbcType=BIGINT}
 			</if>
 			<if test="search != null and search != ''">
-				<bind name="condition" value="'%' + search + '%'"/>
-				AND 
+				<bind name="condition" value="'%' + search + '%'" />
+				AND
 				(`code` LIKE #{condition, jdbcType=VARCHAR}
-				OR 
+				OR
 				`name` LIKE #{condition, jdbcType=VARCHAR}
 				OR
-				`remark` LIKE #{condition, jdbcType=VARCHAR})
+				`remark` LIKE #{condition,
+				jdbcType=VARCHAR})
 			</if>
 		</where>
 	</select>

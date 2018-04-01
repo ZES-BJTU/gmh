@@ -56,6 +56,14 @@ public interface ProjectMapper {
     ProjectPo selectById(Long id);
 
     /**
+     * 根据美容项目分类id查询
+     * 
+     * @param projectTypeId
+     * @return
+     */
+    List<ProjectPo> selectByTypeId(Long projectTypeId);
+
+    /**
      * 根据条件查询id集合
      * 
      * @param condition

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+	<property name="LOG_HOME" value="/tmp/logs" />
+	<property name="LOG_NAME" value="gmh-web" />
+	<property name="CHARSET" value="UTF-8" />
+
 	<appender name="CONSOLE_OUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<pattern>%-30(%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread]) %level %logger{10}[%L]-%msg%n</pattern>

@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.web.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.YesOrNoEnum;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
@@ -79,6 +81,9 @@ public class CustomerMemberCardController {
 
 	@RequestMapping(path = "/return", method = { RequestMethod.PUT })
 	public JsonResult<Void> doReturnCard(@RequestBody ReturnCardParams returnCardParams) {
+		if(returnCardParams.getReturnedMoney().compareTo(BigDecimal.ZERO) == -1){
+			return JsonResults.fail(10001, "退款金额应大于0");
+		}
 		CustomerMemberCardPo po = CommonConverter.map(returnCardParams, CustomerMemberCardPo.class);
 		customerMemberCardService.returnCard(po);
 		return JsonResults.success();

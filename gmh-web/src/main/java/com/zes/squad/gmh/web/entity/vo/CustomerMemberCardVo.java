@@ -17,6 +17,8 @@ public class CustomerMemberCardVo {
 	private DateTime returnedTime;
 	private String returnedReason;
 	private BigDecimal returnedMoney;
+	private BigDecimal projectDiscount;
+	private BigDecimal productDiscount;
 	private String isTurned;
 	private String turnedReason;
 	private DateTime turnedTime;

@@ -13,6 +13,8 @@
 		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
 		<result column="returned_time" jdbcType="TIMESTAMP" property="returnedTime" />
 		<result column="returned_money" jdbcType="DECIMAL" property="returnedMoney" />
+		<result column="project_discount" jdbcType="DECIMAL" property="projectDiscount" />
+		<result column="product_discount" jdbcType="DECIMAL" property="productDiscount" />
 		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
 		<result column="is_turned" jdbcType="TINYINT" property="isTurned" />
 		<result column="turned_reason" jdbcType="VARCHAR" property="turnedReason" />
@@ -31,6 +33,8 @@
 		<result column="remaining_times" jdbcType="DATE" property="remainingTimes" />
 		<result column="is_valid" jdbcType="TINYINT" property="isValid" />
 		<result column="is_returned" jdbcType="TINYINT" property="isReturned" />
+		<result column="project_discount" jdbcType="DECIMAL" property="projectDiscount" />
+		<result column="product_discount" jdbcType="DECIMAL" property="productDiscount" />
 		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
 		<result column="returned_time" jdbcType="TIMESTAMP" property="returnedTime" />
 		<result column="returned_money" jdbcType="DECIMAL" property="returnedMoney" />
@@ -44,13 +48,15 @@
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardPo">
 		INSERT INTO
 		customer_member_card
-		(`customer_id`,`member_card_id`,`remaining_money`,`remaining_times`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
+		(`customer_id`,`member_card_id`,`remaining_money`,`remaining_times`,`project_discount`,`product_discount`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
 		VALUES
 		(#{customerId, jdbcType=BIGINT},
 		#{memberCardId,
 		jdbcType=BIGINT},
 		#{remainingMoney, jdbcType=DECIMAL},
 		#{remainingTimes, jdbcType=INTEGER},
+		#{projectDiscount, jdbcType=DECIMAL},
+		#{productDiscount, jdbcType=DECIMAL},
 		#{isValid, jdbcType=INTEGER},
 		#{isReturned, jdbcType=INTEGER},
 		#{isTurned, jdbcType=INTEGER},
@@ -68,6 +74,8 @@
 		cmd.`remaining_times` as `remaining_times`,
 		cmd.`is_valid` as
 		`is_valid`,
+		cmd.`project_discount` as `project_discount`,
+		cmd.`product_discount` as `product_discount`,
 		cmd.`is_returned` as `is_returned`,
 		cmd.`returned_reason` as
 		`returned_reason`,
@@ -107,6 +115,8 @@
 		cmd.`remaining_times` as `remaining_times`,
 		cmd.`is_valid` as
 		`is_valid`,
+		cmd.`project_discount` as `project_discount`,
+		cmd.`product_discount` as `product_discount`,
 		cmd.`is_returned` as `is_returned`,
 		cmd.`returned_reason` as
 		`returned_reason`,

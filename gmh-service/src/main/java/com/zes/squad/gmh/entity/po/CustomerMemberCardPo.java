@@ -18,6 +18,8 @@ public class CustomerMemberCardPo extends Po{
 	private Long memberCardId;
 	private BigDecimal remainingMoney;
 	private Integer remainingTimes;
+	private BigDecimal projectDiscount;
+	private BigDecimal productDiscount;
 	private Integer isValid;
 	private Integer isReturned;
 	private String returnedReason;

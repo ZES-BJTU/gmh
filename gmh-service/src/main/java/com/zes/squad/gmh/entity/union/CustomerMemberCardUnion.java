@@ -17,6 +17,8 @@ public class CustomerMemberCardUnion {
 	private String returnedReason;
 	private Date returnedTime;
 	private BigDecimal returnedMoney;
+	private BigDecimal projectDiscount;
+	private BigDecimal productDiscount;
 	private Integer isTurned;
 	private Date turnedTime;
 	private BigDecimal turnedMoney;

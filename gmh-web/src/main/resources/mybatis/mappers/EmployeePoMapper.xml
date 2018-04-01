@@ -138,4 +138,25 @@
 			</if>
 		</where>
 	</select>
+	<select id="selectByWorkTypes" resultMap="BaseResultMap">
+		SELECT
+		e.`id`, e.`name`
+		FROM 
+		employee e
+		LEFT JOIN
+		employee_work ew
+		ON
+		e.`id` = ew.`employee_id`
+		WHERE
+		`is_working` = 1
+		<where>
+			`store_id` = #{storeId:BIGINT}
+			<if test="workTypes != null and workTypes.size() != 0">
+				AND `work_type` IN
+				<foreach collection="workTypes" item="workType" separator="," open="(" close=")">
+					#{workType:INTEGER}
+				</foreach>
+			</if>
+		</where>
+	</select>
 </mapper>

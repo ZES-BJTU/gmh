@@ -21,6 +21,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.GenderEnum;
+import com.zes.squad.gmh.common.enums.TopTypeEnum;
 import com.zes.squad.gmh.common.enums.WorkTypeEnum;
 import com.zes.squad.gmh.common.enums.WorkingEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
@@ -107,12 +108,24 @@ public class EmployeeController {
                 pagedUnions.getTotalCount(), vos));
     }
 
-    @RequestMapping(path = "/list", method = { RequestMethod.GET })
+    @RequestMapping(path = "/workType", method = { RequestMethod.GET })
     public JsonResult<List<EmployeeVo>> doListEmployeesByWorkType(Integer workType) {
         if (workType != null) {
             ensureParameterValid(EnumUtils.containsKey(workType, WorkTypeEnum.class), "员工工种错误");
         }
         List<EmployeePo> pos = employeeService.listEmployeesByWorkType(workType);
+        if (CollectionUtils.isEmpty(pos)) {
+            return JsonResults.success();
+        }
+        List<EmployeeVo> vos = CommonConverter.mapList(pos, EmployeeVo.class);
+        return JsonResults.success(vos);
+    }
+
+    @RequestMapping(path = "/topType", method = { RequestMethod.GET })
+    public JsonResult<List<EmployeeVo>> doListEmployeesByTopType(Integer topType) {
+        ensureParameterExist(topType, "顶层分类为空");
+        ensureParameterValid(EnumUtils.containsKey(topType, TopTypeEnum.class), "顶层分类错误");
+        List<EmployeePo> pos = employeeService.listEmployeesByWorkTypes(getWorkTypesByTopType(topType));
         if (CollectionUtils.isEmpty(pos)) {
             return JsonResults.success();
         }
@@ -193,6 +206,23 @@ public class EmployeeController {
             vo.setEmployeeWorkVos(workVos);
         }
         return vo;
+    }
+
+    private List<Integer> getWorkTypesByTopType(Integer topType) {
+        if (topType == TopTypeEnum.BEAUTY.getKey()) {
+            return Lists.newArrayList(WorkTypeEnum.BEAUTICIAN.getKey(), WorkTypeEnum.TRAINEE_BEAUTICIAN.getKey());
+        }
+        if (topType == TopTypeEnum.NAIL.getKey()) {
+            return Lists.newArrayList(WorkTypeEnum.NAIL_ARTIST.getKey());
+        }
+        if (topType == TopTypeEnum.LIDS.getKey()) {
+            return Lists.newArrayList(WorkTypeEnum.BEAUTY_TEACHER.getKey());
+        }
+        if (topType == TopTypeEnum.CONSULTANT.getKey()) {
+            return Lists.newArrayList(WorkTypeEnum.BEAUTY_CONSULTANT.getKey(), WorkTypeEnum.DIRECTOR.getKey(),
+                    WorkTypeEnum.TRAINEE_CONSULTANT.getKey());
+        }
+        return null;
     }
 
 }

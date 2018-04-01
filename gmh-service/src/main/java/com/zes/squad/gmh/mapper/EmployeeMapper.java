@@ -73,5 +73,14 @@ public interface EmployeeMapper {
      * @return
      */
     List<EmployeePo> selectByWorkType(@Param("workType") Integer workType, @Param("storeId") Long storeId);
+    
+    /**
+     * 根据工种和门店查询
+     * 
+     * @param workType
+     * @param storeId
+     * @return
+     */
+    List<EmployeePo> selectByWorkTypes(@Param("workTypes") List<Integer> workTypes, @Param("storeId") Long storeId);
 
 }

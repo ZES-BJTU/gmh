@@ -109,8 +109,9 @@ public class EmployeeController {
 
     @RequestMapping(path = "/list", method = { RequestMethod.GET })
     public JsonResult<List<EmployeeVo>> doListEmployeesByWorkType(Integer workType) {
-        ensureParameterExist(workType, "员工工种为空");
-        ensureParameterValid(EnumUtils.containsKey(workType, WorkTypeEnum.class), "员工工种错误");
+        if (workType != null) {
+            ensureParameterValid(EnumUtils.containsKey(workType, WorkTypeEnum.class), "员工工种错误");
+        }
         List<EmployeePo> pos = employeeService.listEmployeesByWorkType(workType);
         if (CollectionUtils.isEmpty(pos)) {
             return JsonResults.success();

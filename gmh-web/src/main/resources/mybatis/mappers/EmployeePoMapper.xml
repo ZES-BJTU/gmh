@@ -131,9 +131,11 @@
 		e.`id` = ew.`employee_id`
 		WHERE
 		`is_working` = 1
-		AND
-		`store_id` = #{storeId:BIGINT}
-		AND
-		ew.`work_type` = #{workType:INTEGER}
+		<where>
+			`store_id` = #{storeId:BIGINT}
+			<if test="workType != null">
+				AND ew.`work_type` = #{workType:INTEGER}
+			</if>
+		</where>
 	</select>
 </mapper>

@@ -17,6 +17,8 @@
 	<resultMap type="com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion" id="GiftUnion">
 		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
+		<result column="project_id" jdbcType="BIGINT" property="projectId" />
+		<result column="product_id" jdbcType="BIGINT" property="productId" />
 		<result column="project_amount" jdbcType="INTEGER" property="projectAmount" />
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
 		<result column="product_amount" jdbcType="INTEGER" property="productAmount" />
@@ -38,8 +40,10 @@
 	</insert>
 	<select id="getRecordGiftUnionByTradeSerialNumber" parameterType="String" resultMap="GiftUnion">
 		select 
+		g.`product_id` as `product_id`,
 		d.`name` as `product_name`,
 		g.`product_amount` as `product_amount`,
+		g.`project_id` as `project_id`,
 		j.`name` as `project_name`,
 		g.`project_amount` as `project_amount`,
 		g.`coupon_money` as `coupon_money`,

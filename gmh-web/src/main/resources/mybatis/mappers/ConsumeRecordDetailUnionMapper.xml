@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zes.squad.gmh.mapper.ConsumeRecordDetailUnionMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion">
+		<result column="product_id" jdbcType="BIGINT" property="productId" />
 		<result column="product_name" jdbcType="VARCHAR" property="productName" />
+		<result column="project_id" jdbcType="BIGINT" property="projectId" />
 		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
 		<result column="card_name" jdbcType="VARCHAR" property="cardName" />
 		<result column="amount" jdbcType="INTEGER" property="amount" />
@@ -12,7 +14,9 @@
 	</resultMap>
 	<select id="getRecordDetailUnionByTradeSerialNumber" parameterType="String" resultMap="BaseResultMap">
 			select 
+		crd.`product_id` as `product_id`,
 		d.`name` as `product_name`,
+		crd.`project_id` as `project_id`,
 		j.`name` as `project_name`,
 		crd.`amount` as `amount`,
 		e1.`name` as `operator_name`,

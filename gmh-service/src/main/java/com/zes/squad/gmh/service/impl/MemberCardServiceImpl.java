@@ -17,7 +17,6 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.base.Strings;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
-import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.MemberCardQueryCondition;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.MemberCardUnion;
@@ -38,7 +37,6 @@ public class MemberCardServiceImpl implements MemberCardService {
     public MemberCardPo createMemberCard(MemberCardPo po) {
         MemberCardPo existingPo = memberCardMapper.selectByCode(po.getCode());
         ensureEntityNotExist(existingPo, "会员卡代码被占用");
-        po.setStoreId(ThreadContext.getUserStoreId());
         int result = memberCardMapper.insert(po);
         ensureConditionSatisfied(result == 1, "添加会员卡失败");
         return po;
@@ -94,7 +92,6 @@ public class MemberCardServiceImpl implements MemberCardService {
         int pageNum = condition.getPageNum();
         int pageSize = condition.getPageSize();
         PageHelper.startPage(pageNum, pageSize);
-        condition.setStoreId(ThreadContext.getUserStoreId());
         List<MemberCardUnion> unions = memberCardUnionMapper.selectByCondition(condition);
         if (CollectionUtils.isEmpty(unions)) {
             return PagedLists.newPagedList(pageNum, pageSize);
@@ -105,9 +102,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     @Override
     public List<MemberCardUnion> listAllMemberCards() {
-        Long storeId = ThreadContext.getUserStoreId();
-        ensureEntityExist(storeId, "当前用户不属于任何店铺");
-        return memberCardUnionMapper.selectAll(storeId);
+        return memberCardUnionMapper.selectAll();
     }
 
 }

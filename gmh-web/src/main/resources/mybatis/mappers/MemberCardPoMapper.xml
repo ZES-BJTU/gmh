@@ -12,7 +12,6 @@
 		<result column="amount" jdbcType="DECIMAL" property="amount" />
 		<result column="project_discount" jdbcType="DECIMAL" property="projectDiscount" />
 		<result column="product_discount" jdbcType="DECIMAL" property="productDiscount" />
-		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 		<result column="status" jdbcType="TINYINT" property="status" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
@@ -21,14 +20,14 @@
 	<sql id="Base_Column_List">
 		`id`, `type`, `code`, `name`, `price`, `project_id`,
 		`times`, `amount`, `project_discount`, `product_discount`,
-		`store_id`, `remark`, `status`, `created_time`, `modified_time`
+		`remark`, `status`, `created_time`, `modified_time`
 	</sql>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.MemberCardPo">
 		<selectKey keyProperty="id" order="AFTER" resultType="long">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
 		INSERT INTO member_card(`type`, `code`, `name`, `price`, `project_id`,
-		`times`, `amount`, `project_discount`, `product_discount`, `store_id`, `remark`, `status`) 
+		`times`, `amount`, `project_discount`, `product_discount`, `remark`, `status`) 
 		VALUES 
 		(#{type, jdbcType=INTEGER},
 		#{code, jdbcType=VARCHAR},
@@ -39,7 +38,6 @@
 		#{amount, jdbcType=DECIMAL},
 		#{projectDiscount, jdbcType=DECIMAL},
 		#{productDiscount, jdbcType=DECIMAL},
-		#{storeId, jdbcType=BIGINT},
 		#{remark, jdbcType=VARCHAR},1)
 	</insert>
 	<update id="updateStatus" parameterType="long">
@@ -74,9 +72,6 @@
 			</if>
 			<if test="productDiscount != null">
 				`product_discount` = #{productDiscount, jdbcType=DECIMAL},
-			</if>
-			<if test="storeId != null">
-				`store_id` = #{storeId, jdbcType=BIGINT},
 			</if>
 			<if test="remark != null and remark != ''">
 				`remark` = #{remark, jdbcType=VARCHAR}

@@ -23,7 +23,6 @@
 		mc.`amount` AS mc_amount,
 		mc.`project_discount` AS mc_project_discount,
 		mc.`product_discount` AS mc_product_discount,
-		mc.`store_id` AS mc_store_id,
 		mc.`remark` AS mc_remark,
 		mc.`status` AS mc_status,
 		p.`id` AS p_id,
@@ -57,9 +56,6 @@
 			<if test="type != null">
 				mc.`type` = #{type, jdbcType=BIGINT}
 			</if>
-			<if test="storeId != null">
-				AND mc.`store_id` = #{storeId, jdbcType=BIGINT}
-			</if>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
 				AND
@@ -73,7 +69,7 @@
 			</if>
 		</where>
 	</select>
-	<select id="selectAll" parameterType="long" resultMap="BaseResultMap">
+	<select id="selectAll" resultMap="BaseResultMap">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM
@@ -82,6 +78,5 @@
 		project p
 		ON
 		mc.`project_id` = p.`id`
-		WHERE mc.`store_id` = #{storeId:BIGINT}
 	</select>
 </mapper>

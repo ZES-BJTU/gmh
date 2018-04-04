@@ -19,6 +19,9 @@ public class ConsumeRecordVo {
 	private String consumeType;
 	private BigDecimal consumeMoney;
 	private Integer paymentWay;
+	private String paymentWayName;
+	private Integer payWayId;
+	private String PayWayName;
 	private String activityName;
 	private Integer isModified;
 	private String remark;

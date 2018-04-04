@@ -10,6 +10,7 @@
 		<result column="consume_type" jdbcType="INTEGER" property="consumeType" />
 		<result column="consume_money" jdbcType="DECIMAL" property="consumeMoney" />
 		<result column="payment_way" jdbcType="INTEGER" property="paymentWay" />
+		<result column="pay_way_id" jdbcType="INTEGER" property="payWayId" />
 		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
 		<result column="is_modified" jdbcType="INTEGER" property="isModified" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -21,7 +22,7 @@
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordPo"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO consume_record
-		(`trade_serial_number`,`customer_id`,`customer_mobile`,`consume_type`,`consume_money`,`payment_way`,`activity_id`,`is_modified`,`remark`,`store_id`,`consume_time`)
+		(`trade_serial_number`,`customer_id`,`customer_mobile`,`consume_type`,`consume_money`,`payment_way`,`pay_way_id`,`activity_id`,`is_modified`,`remark`,`store_id`,`consume_time`)
 		VALUES
 		(#{tradeSerialNumber, jdbcType=VARCHAR},
 		#{customerId,
@@ -32,13 +33,17 @@
 		#{consumeMoney, jdbcType=DECIMAL},
 		#{paymentWay,
 		jdbcType=INTEGER},
-		#{activityId, jdbcType=BIGINT},
+		#{payWayId,jdbcType=INTEGER},
+		#{activityId,
+		jdbcType=BIGINT},
 		#{isModified,
 		jdbcType=INTEGER},
-		#{remark, jdbcType=VARCHAR},
+		#{remark,
+		jdbcType=VARCHAR},
 		#{storeId,
 		jdbcType=BIGINT},
-		#{consumeTime, jdbcType=TIMESTAMP})
+		#{consumeTime,
+		jdbcType=TIMESTAMP})
 	</insert>
 	<select id="listConsumeRecordByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition"
@@ -106,7 +111,8 @@
 	</select>
 
 	<update id="modify" parameterType="long">
-		update consume_record set is_modified = 1
+		update consume_record set
+		is_modified = 1
 		where
 		id = #{id,jdbcType=BIGINT}
 	</update>

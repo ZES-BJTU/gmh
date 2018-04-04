@@ -61,6 +61,13 @@ public class ConsumeController {
 		consumeRecordService.createActivityConsumeRecord(map,params.getConsumeRecordPo(), params.getConsumeRecordDetails());
 		return JsonResults.success();
 	}
+	
+	@RequestMapping(path = "/createConsume", method = { RequestMethod.PUT })
+	public JsonResult<Void> doCreateConsume(@RequestBody ConsumeCreateOrModifyParams params) {
+		Map<String,Object> map = consumeRecordService.getTradeSerialNumber("A");
+		consumeRecordService.createActivityConsumeRecord(map,params.getConsumeRecordPo(), params.getConsumeRecordDetails());
+		return JsonResults.success();
+	}
 	@RequestMapping(path = "/modify", method = { RequestMethod.PUT })
 	public JsonResult<Void> doModify(@RequestBody ConsumeCreateOrModifyParams params) {
 		consumeRecordService.modify(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts(), params.getConsumeRecordPo().getId());

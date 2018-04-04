@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,21 +88,20 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private StockFlowMapper stockFlowMapper;
 	@Autowired
 	private StockService stockService;
-	
-	
+
 	@SuppressWarnings("null")
 	@Override
-	public void createProductConsumeRecord(Map<String,Object> map,ConsumeRecordPo consumeRecord,
+	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordProducts) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
-		Integer oldNumber = (Integer)map.get("oldNumber");
+		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-		
+
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.productNumberAdd(oldNumber + 1);
-		
+
 		// TODO 根据支付方式扣除会员卡或赠内容
 		for (ConsumeRecordDetailPo crpp : consumeRecordProducts) {
 			ProductAmountPo productAmountPo = new ProductAmountPo();
@@ -125,25 +125,25 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 	}
 
-	public Map<String,Object> getTradeSerialNumber(String type) {
+	public Map<String, Object> getTradeSerialNumber(String type) {
 		String tradeSerialNumber = type + ThreadContext.getUserStoreId();
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		tradeSerialNumber = tradeSerialNumber + sdf.format(date);
 		Integer oldNumber = 0;
-		if(type=="A"){
+		if (type == "A") {
 			oldNumber = tradeSerialNumberMapper.getActivityNumber();
-		}else if(type=="B"){
+		} else if (type == "B") {
 			oldNumber = tradeSerialNumberMapper.getProductNumber();
-		}else if(type=="C"){
+		} else if (type == "C") {
 			oldNumber = tradeSerialNumberMapper.getCardNumber();
-		}else if(type=="D"){
+		} else if (type == "D") {
 			oldNumber = tradeSerialNumberMapper.getProjectNumber();
-		}		
+		}
 		Integer tmpNumber = 10000 + oldNumber;
 		String number = tmpNumber.toString().substring(1, 5);
-		tradeSerialNumber = tradeSerialNumber + number;	
-		Map<String,Object> map = new HashMap<String,Object>();
+		tradeSerialNumber = tradeSerialNumber + number;
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("tradeSerialNumber", tradeSerialNumber);
 		map.put("oldNumber", oldNumber);
 		return map;
@@ -151,10 +151,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 
 	@SuppressWarnings("null")
 	@Override
-	public void createCardConsumeRecord(Map<String,Object> map,ConsumeRecordPo consumeRecord,
+	public void createCardConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordProducts, List<ConsumeRecordGiftPo> gifts) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
-		Integer oldNumber = (Integer)map.get("oldNumber");
+		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
@@ -202,10 +202,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	}
 
 	@Override
-	public void createProjectConsumeRecord(Map<String,Object> map,ConsumeRecordPo consumeRecord,
+	public void createProjectConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordProducts) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
-		Integer oldNumber = (Integer)map.get("oldNumber");
+		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
@@ -239,32 +239,31 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	}
 
 	@Override
-    public void createActivityConsumeRecord(Map<String,Object> map,ConsumeRecordPo consumeRecord,List<ConsumeRecordDetailPo> consumeRecordProducts) {
+	public void createActivityConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
+			List<ConsumeRecordDetailPo> consumeRecordProducts) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
-		Integer oldNumber = (Integer)map.get("oldNumber");
-        consumeRecord.setTradeSerialNumber(tradeSerialNumber);
-        consumeRecord.setStoreId(ThreadContext.getUserStoreId());
-        consumeRecord.setIsModified(0);
+		Integer oldNumber = (Integer) map.get("oldNumber");
+		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
+		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
+		consumeRecord.setIsModified(0);
 
-        consumeRecordMapper.insert(consumeRecord);
-        tradeSerialNumberMapper.activityNumberAdd(oldNumber + 1);
-        
-        CustomerActivityPo caPo = new CustomerActivityPo();
-        caPo.setCustomerId(consumeRecord.getCustomerId());
-        caPo.setActivityId(consumeRecord.getActivityId());
-        caPo.setStoreId(ThreadContext.getUserStoreId());
-        customerActivityMapper.insert(caPo);
-        List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(caPo.getId());
+		consumeRecordMapper.insert(consumeRecord);
+		tradeSerialNumberMapper.activityNumberAdd(oldNumber + 1);
 
-        for(ActivityContentPo ac : acList){
-        	CustomerActivityContentPo cacPo = CommonConverter.map(ac,CustomerActivityContentPo.class);
-        	cacPo.setCustomerActivityId(caPo.getId());
-        	customerActivityContentMapper.insert(cacPo);
-        }
-        
-        
-        
-    }
+		CustomerActivityPo caPo = new CustomerActivityPo();
+		caPo.setCustomerId(consumeRecord.getCustomerId());
+		caPo.setActivityId(consumeRecord.getActivityId());
+		caPo.setStoreId(ThreadContext.getUserStoreId());
+		customerActivityMapper.insert(caPo);
+		List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(caPo.getId());
+
+		for (ActivityContentPo ac : acList) {
+			CustomerActivityContentPo cacPo = CommonConverter.map(ac, CustomerActivityContentPo.class);
+			cacPo.setCustomerActivityId(caPo.getId());
+			customerActivityContentMapper.insert(cacPo);
+		}
+
+	}
 
 	@Override
 	public PagedList<ConsumeRecordUnion> listPagedConsumeRecords(ConsumeRecordQueryCondition condition) {
@@ -323,27 +322,49 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	}
 
 	@Override
-	public void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,List<ConsumeRecordGiftPo> gifts, Long id) {
+	public void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,
+			List<ConsumeRecordGiftPo> gifts, Long id) {
 		consumeRecordMapper.modify(id);
-		Map<String,Object> map = new HashMap<String,Object>();
-		if(consumeRecord.getConsumeType()==1){
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (consumeRecord.getConsumeType() == 1) {
 			map = getTradeSerialNumber("C");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createCardConsumeRecord(map,consumeRecord,consumeRecordProducts,gifts);
-		}else if(consumeRecord.getConsumeType()==2){
+			createCardConsumeRecord(map, consumeRecord, consumeRecordProducts, gifts);
+		} else if (consumeRecord.getConsumeType() == 2) {
 			map = getTradeSerialNumber("B");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProductConsumeRecord(map,consumeRecord,consumeRecordProducts);
-		}else if(consumeRecord.getConsumeType()==3){
+			createProductConsumeRecord(map, consumeRecord, consumeRecordProducts);
+		} else if (consumeRecord.getConsumeType() == 3) {
 			map = getTradeSerialNumber("D");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProjectConsumeRecord(map,consumeRecord,consumeRecordProducts);
-		}else if(consumeRecord.getConsumeType()==4){
+			createProjectConsumeRecord(map, consumeRecord, consumeRecordProducts);
+		} else if (consumeRecord.getConsumeType() == 4) {
 			map = getTradeSerialNumber("A");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createActivityConsumeRecord(map,consumeRecord,consumeRecordProducts);
+			createActivityConsumeRecord(map, consumeRecord, consumeRecordProducts);
 		}
-		
-		
+	}
+	
+	@Override
+	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,
+			List<ConsumeRecordGiftPo> gifts) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (consumeRecord.getConsumeType() == 1) {
+			map = getTradeSerialNumber("C");			
+			createCardConsumeRecord(map, consumeRecord, consumeRecordProducts, gifts);
+		} else if (consumeRecord.getConsumeType() == 2) {
+			map = getTradeSerialNumber("B");			
+			createProductConsumeRecord(map, consumeRecord, consumeRecordProducts);
+		} else if (consumeRecord.getConsumeType() == 3) {
+			map = getTradeSerialNumber("D");			
+			createProjectConsumeRecord(map, consumeRecord, consumeRecordProducts);
+		} else if (consumeRecord.getConsumeType() == 4) {
+			map = getTradeSerialNumber("A");
+			createActivityConsumeRecord(map, consumeRecord, consumeRecordProducts);
+		}
+	}
+
+	private void calMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts) {
+
 	}
 }

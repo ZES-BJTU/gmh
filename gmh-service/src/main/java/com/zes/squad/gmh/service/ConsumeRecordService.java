@@ -12,19 +12,26 @@ import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 
 public interface ConsumeRecordService {
 
-	void createProductConsumeRecord(Map<String,Object> map,ConsumeRecordPo consumeRecord,List<ConsumeRecordDetailPo> consumeRecordProducts);
-	
-	void createCardConsumeRecord(Map<String,Object> map, ConsumeRecordPo consumeRecord,List<ConsumeRecordDetailPo> consumeRecordProducts, List<ConsumeRecordGiftPo> gists);
-	
-	void createProjectConsumeRecord(Map<String,Object> map, ConsumeRecordPo consumeRecord,List<ConsumeRecordDetailPo> consumeRecordProducts);
+	void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
+			List<ConsumeRecordDetailPo> consumeRecordProducts);
+
+	void createCardConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
+			List<ConsumeRecordDetailPo> consumeRecordProducts, List<ConsumeRecordGiftPo> gists);
+
+	void createProjectConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
+			List<ConsumeRecordDetailPo> consumeRecordProducts);
 
 	PagedList<ConsumeRecordUnion> listPagedConsumeRecords(ConsumeRecordQueryCondition consumeRecordQueryCondition);
 
-	void createActivityConsumeRecord(Map<String,Object> map, ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts);
+	void createActivityConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
+			List<ConsumeRecordDetailPo> consumeRecordProducts);
 
-	void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,List<ConsumeRecordGiftPo> gifts, Long id);
-	
-	public Map<String,Object> getTradeSerialNumber(String type);
-	
+	void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,
+			List<ConsumeRecordGiftPo> gifts, Long id);
+
+	public Map<String, Object> getTradeSerialNumber(String type);
+
 	PagedList<ConsumeRecordUnion> changedListPagedConsumeRecords(ConsumeRecordQueryCondition condition);
+
+	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,List<ConsumeRecordGiftPo> gifts);
 }

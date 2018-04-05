@@ -53,6 +53,10 @@
 			<mvc:exclude-mapping path="/appointment/remind/**" />
 			<bean class="com.zes.squad.gmh.web.interceptor.AuthInterceptor" />
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/export/**" />
+			<bean class="com.zes.squad.gmh.web.interceptor.ExportAuthInterceptor" />
+		</mvc:interceptor>
 	</mvc:interceptors>
 
 </beans>

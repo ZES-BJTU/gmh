@@ -2,6 +2,8 @@ package com.zes.squad.gmh.service;
 
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProjectQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
@@ -124,5 +126,12 @@ public interface ProjectService {
      * @return
      */
     List<ProjectPo> listAllProjects();
+
+    /**
+     * 导出所有美容项目
+     * 
+     * @return
+     */
+    Workbook exportProjects();
 
 }

@@ -22,4 +22,11 @@ public interface ProjectUnionMapper {
      */
     List<ProjectUnion> selectByIds(List<Long> ids);
 
+    /**
+     * 查询所有美容项目
+     * 
+     * @return
+     */
+    List<ProjectUnion> selectAll();
+
 }

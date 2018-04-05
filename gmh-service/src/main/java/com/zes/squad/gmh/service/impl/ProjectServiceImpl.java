@@ -7,10 +7,16 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfi
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+import static com.zes.squad.gmh.helper.ExcelHelper.generateNumericCell;
+import static com.zes.squad.gmh.helper.ExcelHelper.generateStringCell;
 
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +25,20 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.zes.squad.gmh.common.enums.TopTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.entity.condition.ProjectQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProjectTypeQueryCondition;
 import com.zes.squad.gmh.entity.po.ProjectPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.ProjectTypePo;
+import com.zes.squad.gmh.entity.po.StockPo;
+import com.zes.squad.gmh.entity.po.StockTypePo;
 import com.zes.squad.gmh.entity.union.ProjectStockUnion;
 import com.zes.squad.gmh.entity.union.ProjectUnion;
+import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.mapper.ProjectMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
 import com.zes.squad.gmh.mapper.ProjectTypeMapper;
@@ -104,7 +115,7 @@ public class ProjectServiceImpl implements ProjectService {
         PageInfo<ProjectTypePo> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
-    
+
     @Override
     public List<ProjectTypePo> listAllProjectTypes() {
         return projectTypeMapper.selectAll();
@@ -238,6 +249,90 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectPo> listAllProjects() {
         return projectMapper.selectAll();
+    }
+
+    @Override
+    public Workbook exportProjects() {
+        Workbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("项目统计");
+        List<ProjectUnion> unions = projectUnionMapper.selectAll();
+        if (CollectionUtils.isEmpty(unions)) {
+            return workbook;
+        }
+        buildSheetByProjectUnions(sheet, unions);
+        return workbook;
+    }
+
+    private void buildSheetByProjectUnions(Sheet sheet, List<ProjectUnion> unions) {
+        int rowNum = 0;
+        int columnNum = 0;
+        int defaultStockColumnNum = 8;
+        Row row = sheet.createRow(rowNum++);
+        generateStringCell(row, columnNum++, "顶层分类名称");
+        generateStringCell(row, columnNum++, "项目分类名称");
+        generateStringCell(row, columnNum++, "项目编码");
+        generateStringCell(row, columnNum++, "项目名称");
+        generateStringCell(row, columnNum++, "项目单价");
+        generateStringCell(row, columnNum++, "项目积分");
+        generateStringCell(row, columnNum++, "实习生项目积分");
+        generateStringCell(row, columnNum++, "备注");
+        generateStringCell(row, columnNum++, "项目所需库存分类名称");
+        generateStringCell(row, columnNum++, "项目所需库存编码");
+        generateStringCell(row, columnNum++, "项目所需库存名称");
+        generateStringCell(row, columnNum++, "项目所需库存数量");
+        generateStringCell(row, columnNum++, "项目所需库存计量单位");
+        for (ProjectUnion union : unions) {
+            ProjectTypePo typePo = union.getProjectTypePo();
+            ensureEntityExist(typePo, "项目分类不存在");
+            ProjectPo po = union.getProjectPo();
+            ensureEntityExist(po, "项目不存在");
+            List<ProjectStockUnion> stockUnions = union.getProjectStockUnions();
+            ensureCollectionNotEmpty(stockUnions, "项目所需库存为空");
+            columnNum = 0;
+            row = sheet.createRow(rowNum++);
+            //顶层分类名称
+            generateStringCell(row, columnNum++, EnumUtils.getDescByKey(typePo.getTopType(), TopTypeEnum.class));
+            //项目分类名称
+            generateStringCell(row, columnNum++, typePo.getName());
+            //项目编码
+            generateStringCell(row, columnNum++, po.getCode());
+            //项目名称
+            generateStringCell(row, columnNum++, po.getName());
+            //项目单价
+            generateNumericCell(row, columnNum++, po.getUnitPrice().doubleValue());
+            //项目积分
+            generateNumericCell(row, columnNum++, po.getIntegral().doubleValue());
+            //实习生项目积分
+            generateNumericCell(row, columnNum++, po.getInternIntegral().doubleValue());
+            //备注
+            generateStringCell(row, columnNum++, po.getRemark());
+            for (int i = 0; i < stockUnions.size(); i++) {
+                ProjectStockUnion projectStockUnion = stockUnions.get(i);
+                ensureEntityExist(projectStockUnion, "项目所需库存为空");
+                ProjectStockPo projectStockPo = projectStockUnion.getProjectStockPo();
+                ensureEntityExist(projectStockPo, "项目所需库存为空");
+                StockUnion stockUnion = projectStockUnion.getStockUnion();
+                ensureEntityExist(stockUnion, "项目所需库存为空");
+                StockTypePo stockTypePo = stockUnion.getStockTypePo();
+                ensureEntityExist(stockTypePo, "项目所需库存分类为空");
+                StockPo stockPo = stockUnion.getStockPo();
+                columnNum = defaultStockColumnNum;
+                if (i > 0) {
+                    row = sheet.createRow(rowNum++);
+                }
+                ensureEntityExist(stockPo, "项目所需库存为空");
+                //项目所需库存分类名称
+                generateStringCell(row, columnNum++, stockTypePo.getName());
+                //项目所需库存编码
+                generateStringCell(row, columnNum++, stockPo.getCode());
+                //项目所需库存名称
+                generateStringCell(row, columnNum++, stockPo.getName());
+                //项目所需库存数量
+                generateNumericCell(row, columnNum++, projectStockPo.getStockConsumptionAmount().doubleValue());
+                //项目所需库存计量单位
+                generateStringCell(row, columnNum++, stockPo.getUnitName());
+            }
+        }
     }
 
 }

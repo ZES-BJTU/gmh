@@ -92,4 +92,26 @@
 			</foreach>
 		</where>
 	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		project p
+		LEFT JOIN
+		project_type pt
+		ON
+		p.`project_type_id` = pt.`id`
+		LEFT JOIN
+		project_stock ps
+		ON
+		p.`id` = ps.`project_id`
+		LEFT JOIN
+		stock s
+		ON
+		ps.`stock_id` = s.`id`
+		LEFT JOIN
+		stock_type st
+		ON
+		s.`stock_type_id` = st.`id`
+	</select>
 </mapper>

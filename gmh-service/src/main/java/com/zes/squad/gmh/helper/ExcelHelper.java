@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -60,22 +59,20 @@ public class ExcelHelper {
         }
     }
 
-    public static Cell generateStringCell(Row row, int column, String stringCellValue, CellStyle cellStyle) {
+    public static Cell generateStringCell(Row row, int column, String stringCellValue) {
         Cell cell = row.createCell(column);
         cell.setCellType(CellType.STRING);
-        cell.setCellStyle(cellStyle);
         cell.setCellValue(stringCellValue);
         return cell;
     }
     
-    public static Cell generateNumericCell(Row row, int column, double numericCellValue, CellStyle cellStyle) {
+    public static Cell generateNumericCell(Row row, int column, double numericCellValue) {
         Cell cell = row.createCell(column);
         cell.setCellType(CellType.NUMERIC);
-        cell.setCellStyle(cellStyle);
         cell.setCellValue(numericCellValue);
         return cell;
     }
-
+    
     private static boolean containsIgnoreCase(List<String> comparedStrings, String comparedString) {
         if (comparedString == null) {
             for (int i = 0; i < comparedStrings.size(); i++) {

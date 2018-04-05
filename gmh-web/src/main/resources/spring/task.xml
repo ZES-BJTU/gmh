@@ -10,15 +10,14 @@
 		file-encoding="UTF-8" location="classpath:cron.properties"
 		ignore-unresolvable="true" />
 
-	<bean id="appointmentTaskService"
-		class="com.zes.squad.gmh.task.service.impl.AppointmentTaskServiceImpl" />
+	<bean id="appointmentTask" class="com.zes.squad.gmh.web.task.AppointmentTask" />
 
 	<task:scheduler id="gmhScheduler" />
 
 	<task:annotation-driven />
 
 	<task:scheduled-tasks scheduler="gmhScheduler">
-		<task:scheduled ref="appointmentTaskService" method="remindCustomers"
+		<task:scheduled ref="appointmentTask" method="remindCustomers"
 			cron="${appointment.cron}" />
 	</task:scheduled-tasks>
 

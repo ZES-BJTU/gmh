@@ -60,4 +60,34 @@
 			u.`role` = #{role, jdbcType=INTEGER}
 		</where>
 	</select>
+	<select id="selectOnline" resultMap="BaseResultMap">
+		SELECT
+		u.`id` AS id,
+		u.`id` AS user_id,
+		u.`role` AS user_role,
+		u.`account` AS user_account,
+		u.`email` AS user_email,
+		u.`mobile` AS user_mobile,
+		u.`name` AS user_name,
+		u.`gender` AS user_gender,
+		u.`store_id` AS user_store_id,
+		u.`remark` AS user_remark,
+		ut.`id` AS user_token_id,
+		ut.`user_id` AS user_token_user_id,
+		ut.`token` AS user_token_token,
+		s.`name` AS store_name
+		FROM 
+		user_token ut
+		LEFT JOIN
+		user u
+		ON
+		ut.`user_id` = u.`id`
+		LEFT JOIN
+		store s
+		ON
+		u.`store_id` = s.`id`
+		<where>
+			ut.`token` IS NOT NULL
+		</where>
+	</select>
 </mapper>

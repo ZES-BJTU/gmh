@@ -68,11 +68,16 @@ public class UserServiceImpl implements UserService {
         if (!Objects.equals(po.getPassword(), encryptPassword)) {
             throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_INVALID_PARAMETER, "密码错误");
         }
+        UserTokenPo userTokenPo = userTokenMapper.selectByUserId(po.getId());
         boolean isCacheValid = cacheService.isValid();
         if (isCacheValid) {
-            UserTokenPo userTokenPo = userTokenMapper.selectByUserId(po.getId());
-            String cacheKey = String.format(CacheConsts.CACHE_KEY_USER_PREFIX, userTokenPo.getToken());
-            cacheService.delete(cacheKey);
+            if (userTokenPo != null) {
+                String cacheKey = String.format(CacheConsts.CACHE_KEY_USER_PREFIX, userTokenPo.getToken());
+                cacheService.delete(cacheKey);
+            }
+        }
+        if (userTokenPo != null) {
+            userTokenMapper.deleteByUserId(userTokenPo.getUserId());
         }
         String token = UUID.randomUUID().toString().replaceAll("-", "");
         UserTokenPo tokenPo = new UserTokenPo();
@@ -239,6 +244,11 @@ public class UserServiceImpl implements UserService {
 
     private String encryptPassword(String account, String salt, String password) {
         return EncryptUtils.md5(account + salt + password);
+    }
+
+    @Override
+    public List<UserUnion> listOnLineUsers() {
+        return userUnionMapper.selectOnline();
     }
 
 }

@@ -22,4 +22,11 @@ public interface UserUnionMapper {
      */
     List<UserUnion> selectUserUnionsByRole(Integer role);
 
+    /**
+     * 查询所有登录用户
+     * 
+     * @return
+     */
+    List<UserUnion> selectOnline();
+
 }

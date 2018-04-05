@@ -93,4 +93,11 @@ public interface UserService {
      */
     List<UserUnion> listUsersByRole(Integer role);
 
+    /**
+     * 查询所有登录用户
+     * 
+     * @return
+     */
+    List<UserUnion> listOnLineUsers();
+
 }

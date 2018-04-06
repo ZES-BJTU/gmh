@@ -56,7 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityUnion createActivity(ActivityUnion union) {
         ActivityPo po = union.getActivityPo();
         ActivityPo existingPo = activityMapper.selectByCode(po.getCode());
-        ensureEntityNotExist(existingPo, "活动编码被占用");
+        ensureEntityNotExist(existingPo, "活动代码被占用");
         activityMapper.insert(po);
         List<ActivityContentUnion> contentUnions = union.getActivityContentUnions();
         List<ActivityContentPo> contentPos = Lists.newArrayListWithCapacity(contentUnions.size());
@@ -97,9 +97,10 @@ public class ActivityServiceImpl implements ActivityService {
         ActivityPo po = union.getActivityPo();
         ActivityPo activityPo = activityMapper.selectByCode(po.getCode());
         if (activityPo != null) {
-            ensureConditionSatisfied(activityPo.getId().equals(po.getId()), "活动已存在");
+            ensureConditionSatisfied(activityPo.getId().equals(po.getId()), "活动代码被占用");
         }
-        activityMapper.updateSelective(po);
+        int record = activityMapper.updateSelective(po);
+        ensureConditionSatisfied(record == 1, "修改活动失败");
         activityContentMapper.batchDeleteByActivityId(Lists.newArrayList(po.getId()));
         List<ActivityContentPo> contentPos = activityContentMapper.selectByActivityId(po.getId());
         ensureCollectionEmpty(contentPos, "活动修改失败");

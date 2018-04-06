@@ -30,6 +30,7 @@
 	<delete id="batchDeleteByActivityId" parameterType="long">
 		DELETE FROM activity_content 
 		<where>
+			`activity_id` IN 
 			<foreach collection="list" item="id" separator="," open="(" close=")">
 				#{id:BIGINT}
 			</foreach>

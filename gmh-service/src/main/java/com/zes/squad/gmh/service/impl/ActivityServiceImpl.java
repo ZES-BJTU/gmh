@@ -56,7 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityUnion createActivity(ActivityUnion union) {
         ActivityPo po = union.getActivityPo();
         ActivityPo existingPo = activityMapper.selectByCode(po.getCode());
-        ensureEntityNotExist(existingPo, "活动已存在");
+        ensureEntityNotExist(existingPo, "活动编码被占用");
         activityMapper.insert(po);
         List<ActivityContentUnion> contentUnions = union.getActivityContentUnions();
         List<ActivityContentPo> contentPos = Lists.newArrayListWithCapacity(contentUnions.size());

@@ -38,6 +38,7 @@
 		from customer_member_card_content c
 		left join project p
 		on c.`related_id` = p.`id`
+		   
 		where
 		c.`customer_member_card_id`=#{customerMemberCardId,jdbcType=BIGINT}
 	</select>

@@ -44,7 +44,12 @@ public class AppointmentController {
 
 	@RequestMapping(path = "/create", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateAppointment(@RequestBody AppointmentCreateOrModifyParams params) {
-
+		if(params.getAppointmentProjectParams()==null){
+			return JsonResults.fail(1000, "未添加项目");
+		}
+		if(params.getAppointmentProjectParams().get(0).getProjectId()==null){
+			return JsonResults.fail(1000, "未添加项目");
+		}
 		boolean isAllFree = appointmentService.isAllFree(params.getAppointmentProjectParams());
 		if (isAllFree) {
 			AppointmentPo appointmentPo = CommonConverter.map(params, AppointmentPo.class);

@@ -83,6 +83,7 @@
 			</if>
 			<if test="appointmentKeyWords != null and appointmentKeyWords != ''">
 				<bind name="condition" value="'%' + appointmentKeyWords + '%'" />
+				AND
 				CONCAT(`customer_name`,`customer_mobile`,`remarks`) LIKE
 				#{condition, jdbcType=VARCHAR}
 			</if>

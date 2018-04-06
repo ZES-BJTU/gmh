@@ -11,6 +11,7 @@ public class CacheConsts {
     public static final String CACHE_KEY_USER_PREFIX = "_cache_key_user_%s";
     //缓存时间
     public static final long   TWO_MINUTE            = 60 * 2;
+    public static final long   FIVE_MINUTE           = 60 * 5;
     public static final long   THIRTY_MINUTES        = 60 * 30;
 
 }

@@ -11,7 +11,6 @@ import com.zes.squad.gmh.cache.CacheService;
 import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
 import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.helper.LogicHelper;
-import com.zes.squad.gmh.constant.CacheConsts;
 import com.zes.squad.gmh.entity.po.UserPo;
 import com.zes.squad.gmh.helper.SMSHelper;
 import com.zes.squad.gmh.mapper.UserMapper;
@@ -28,7 +27,7 @@ public class MessageServiceImpl implements MessageService {
 
     private static final String CACHE_KEY_AUTH_CODE_PREFIX = "_cache_key_auth_code_%s";
 
-    private static final int    DEFAULT_VALID_MINUTES      = 2;
+    private static final int    DEFAULT_VALID_MINUTES      = 5;
 
     @Autowired
     private CacheService        cacheService;
@@ -43,9 +42,11 @@ public class MessageServiceImpl implements MessageService {
         if (!isCacheValid) {
             throw new GmhException(ErrorCodeEnum.CACHE_EXCEPTION, "验证码服务不可用");
         }
-        String cacheKey = String.format(CACHE_KEY_AUTH_CODE_PREFIX, mobile);
-        String cacheAuthCode = cacheService.get(cacheKey);
-        if (!Strings.isNullOrEmpty(cacheAuthCode)) {
+        //验证码接口防刷处理
+        //针对同一个手机号防刷
+        String mobileCacheKey = String.format(CACHE_KEY_AUTH_CODE_PREFIX, mobile);
+        String mobileCacheAuthCode = cacheService.get(mobileCacheKey);
+        if (!Strings.isNullOrEmpty(mobileCacheAuthCode)) {
             throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
                     "短信验证码" + DEFAULT_VALID_MINUTES + "分钟内只能获取一次,请稍后再试");
         }
@@ -53,8 +54,8 @@ public class MessageServiceImpl implements MessageService {
         String content = MessageFormat.format(MessageProperties.get("auth.code.content"), authCode,
                 DEFAULT_VALID_MINUTES);
         SMSHelper.sendMessage(mobile, content);
-        //验证码有效期默认2分钟
-        cacheService.put(cacheKey, authCode, CacheConsts.TWO_MINUTE);
+        //验证码有效期默认5分钟
+        //        cacheService.put(cacheKey, authCode, CacheConsts.FIVE_MINUTE);
     }
 
     @Override

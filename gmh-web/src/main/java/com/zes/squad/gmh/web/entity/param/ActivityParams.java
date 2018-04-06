@@ -11,8 +11,8 @@ public class ActivityParams {
 
     private Long                        id;
     private String                      name;
-    private BigDecimal                  price;
     private String                      code;
+    private BigDecimal                  price;
     private Date                        deadline;
     private String                      remark;
     private List<ActivityContentParams> activityContentParams;

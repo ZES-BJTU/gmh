@@ -56,7 +56,9 @@
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM
-		activity WHERE `code` = {code:VARCHAR}
+		activity 
+		WHERE `code` = #{code:VARCHAR}
+		LIMIT 1
 	</select>
 	<select id="selectIdsByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.ActivityQueryCondition"

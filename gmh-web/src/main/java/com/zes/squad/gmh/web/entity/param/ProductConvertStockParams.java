@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class ProductConvertStockParams {
 
+    private Long       id;
     private Long       productId;
     private BigDecimal productAmount;
     private Long       stockId;

@@ -66,15 +66,13 @@ public class ProductConvertStockController {
                                                                          @RequestBody ProductConvertStockParams params) {
         ensureParameterExist(id, "请选择产品库存转换关系");
         ensureParameterExist(params, "请输入产品库存转换关系");
-        ensureParameterExist(params.getProductId(), "请选择产品");
         if (params.getProductAmount() != null) {
             ensureParameterValid(params.getProductAmount().compareTo(BigDecimal.ZERO) == 1, "产品数量错误");
         }
-        ensureParameterExist(params.getStockId(), "请选择库存");
         if (params.getStockAmount() != null) {
             ensureParameterValid(params.getStockAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量错误");
-
         }
+        params.setId(id);
         ProductConvertStockPo po = CommonConverter.map(params, ProductConvertStockPo.class);
         ProductConvertStockPo newPo = productConvertStockService.modifyProductConvertStock(po);
         ProductConvertStockVo vo = CommonConverter.map(newPo, ProductConvertStockVo.class);

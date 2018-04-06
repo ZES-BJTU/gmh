@@ -38,7 +38,7 @@
 		st.`id` AS st_id,
 		st.`name` AS st_name,
 		s.`id` AS s_id,
-		s.`product_type_id` AS s_stock_type_id,
+		s.`stock_type_id` AS s_stock_type_id,
 		s.`code` AS s_code,
 		s.`name` AS s_name,
 		s.`unit_name` AS s_unit_name
@@ -69,13 +69,17 @@
 		<where>
 			<if test="search != null and search != ''">
 				<bind name="condition" value="'%' + search + '%'"/>
-				CONCAT(p.`name`, p.`code`) LIKE #{condition:VARCHAR}
+				(p.`name` LIKE #{condition:VARCHAR}
+				OR
+				p.`code` LIKE #{condition:VARCHAR}
 				OR
 				pt.`name` LIKE #{condition:VARCHAR}
 				OR
-				CONCAT(s.`name`, s.`code`) LIKE #{condition:VARCHAR}
+				s.`name` LIKE #{condition:VARCHAR}
 				OR
-				st.`name` LIKE #{condition:VARCHAR}
+				s.`code` LIKE #{condition:VARCHAR}
+				OR
+				st.`name` LIKE #{condition:VARCHAR})
 			</if>
 		</where>
 	</select>

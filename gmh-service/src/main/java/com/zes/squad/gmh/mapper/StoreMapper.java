@@ -47,6 +47,14 @@ public interface StoreMapper {
     StorePo selectById(Long id);
 
     /**
+     * 根据名称查询
+     * 
+     * @param name
+     * @return
+     */
+    StorePo selectByName(String name);
+
+    /**
      * 查询所有门店
      * 
      * @return

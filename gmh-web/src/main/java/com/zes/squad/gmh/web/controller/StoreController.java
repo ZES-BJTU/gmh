@@ -2,7 +2,6 @@ package com.zes.squad.gmh.web.controller;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
-import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
 import java.util.List;
 
@@ -74,6 +73,7 @@ public class StoreController extends BaseController {
     public JsonResult<StoreVo> doModifyStore(@PathVariable("id") Long id,
                                              @RequestBody StoreParams params) {
         checkModifyStoreParams(id, params);
+        params.setId(id);
         StorePo po = CommonConverter.map(params, StorePo.class);
         StorePo newStorePo = storeService.modifyStore(po);
         StoreVo vo = CommonConverter.map(newStorePo, StoreVo.class);
@@ -145,11 +145,6 @@ public class StoreController extends BaseController {
     private void checkModifyStoreParams(Long id, StoreParams params) {
         ensureParameterExist(id, "请选择待修改门店");
         ensureParameterExist(params, "请选择待修改门店");
-        if (params.getId() != null) {
-            ensureParameterValid(id.equals(params.getId()), "门店信息错误");
-        } else {
-            params.setId(id);
-        }
     }
 
 }

@@ -78,5 +78,6 @@
 		FROM
 		stock_amount
 		WHERE `stock_id` = #{stockId:BIGINT} AND `store_id` = #{storeId:BIGINT}
+		LIMIT 1
 	</select>
 </mapper>

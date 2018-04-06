@@ -103,5 +103,6 @@
 		`product_id` = #{productId, jdbcType=BIGINT}
 		AND
 		`store_id` = #{storeId, jdbcType=BIGINT}
+		LIMIT 1
 	</select>
 </mapper>

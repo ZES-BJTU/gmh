@@ -1,9 +1,11 @@
 package com.zes.squad.gmh.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductConvertStockQueryCondition;
+import com.zes.squad.gmh.entity.po.ProductConvertStockFlowPo;
 import com.zes.squad.gmh.entity.po.ProductConvertStockPo;
 import com.zes.squad.gmh.entity.union.ProductConvertStockUnion;
 
@@ -46,5 +48,21 @@ public interface ProductConvertStockService {
      * @return
      */
     List<ProductConvertStockUnion> listAllProductConvertStocks();
+
+    /**
+     * 根据转换关系计算数量
+     * 
+     * @param po
+     * @return
+     */
+    BigDecimal calculateAmount(ProductConvertStockPo po);
+
+    /**
+     * 新建产品库存转化流水
+     * 
+     * @param po
+     * @return
+     */
+    ProductConvertStockFlowPo createProductConvertStockFlow(ProductConvertStockFlowPo po);
 
 }

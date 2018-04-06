@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductConvertStockFlowMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.po.ProductConvertStockFlowPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="type" jdbcType="TINYINT" property="type" />
+		<result column="product_id" jdbcType="BIGINT" property="productId" />
+		<result column="product_amount" jdbcType="DECIMAL" property="productAmount" />
+		<result column="stock_id" jdbcType="BIGINT" property="stockId" />
+		<result column="stock_amount" jdbcType="DECIMAL" property="stockAmount" />
+		<result column="store_id" jdbcType="BIGINT" property="storeId" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		`id`, `type`, `product_id`, `product_amount`, `stock_id`, `stock_amount`,
+		`store_id`, `status`, `remark`, `created_time`, `modified_time`
+	</sql>
+	<insert id="insert"
+		parameterType="com.zes.squad.gmh.entity.po.ProductConvertStockFlowPo">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		product_convert_stock_flow(`type`, `product_id`, `product_amount`, 
+		`stock_id`, `stock_amount`, `store_id`, `status`, remark)
+		VALUES (#{type:TINYINT},
+		#{productId:BIGINT},
+		#{productAmount:DECIMAL},
+		#{stockId:BIGINT},
+		#{stockAmount:DECIMAL},
+		#{storeId:BIGINT},1,
+		#{remark:VARCHAR})
+	</insert>
+	<update id="updateStatus" parameterType="long">
+		UPDATE product_convert_stock_flow SET `status` = 0 WHERE `id` = #{id:BIGINT}
+	</update>
+</mapper>

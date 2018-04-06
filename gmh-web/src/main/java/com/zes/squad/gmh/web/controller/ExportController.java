@@ -63,5 +63,17 @@ public class ExportController {
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
+    
+    @RequestMapping(path = "/products/stocks", method = { RequestMethod.GET })
+    public ModelAndView doExportProductsStocks(ModelMap map, HttpServletRequest request, HttpServletResponse response,
+                                         Date beginTime, Date endTime)
+                                                 throws Exception {
+        LogicHelper.ensureParameterValid(beginTime.after(beginTime), "起始时间不能晚于截止时间");
+        map.put("fileName", "产品流水.xlsx");
+        Workbook workbook = productService.exportProducts(beginTime, endTime);
+        ExcelView excelView = new ExcelView();
+        excelView.buildExcelDocument(map, workbook, request, response);
+        return new ModelAndView(excelView, map);
+    }
 
 }

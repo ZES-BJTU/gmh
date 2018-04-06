@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
 import java.math.BigDecimal;
@@ -18,16 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.converter.CommonConverter;
+import com.zes.squad.gmh.common.enums.ProductStockConvertFlowTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.entity.condition.ProductConvertStockQueryCondition;
+import com.zes.squad.gmh.entity.po.ProductConvertStockFlowPo;
 import com.zes.squad.gmh.entity.po.ProductConvertStockPo;
 import com.zes.squad.gmh.entity.union.ProductConvertStockUnion;
 import com.zes.squad.gmh.service.ProductConvertStockService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
+import com.zes.squad.gmh.web.entity.param.ProductConvertStockFlowParams;
 import com.zes.squad.gmh.web.entity.param.ProductConvertStockParams;
 import com.zes.squad.gmh.web.entity.param.ProductConvertStockQueryParams;
+import com.zes.squad.gmh.web.entity.vo.ProductConvertStockFlowVo;
 import com.zes.squad.gmh.web.entity.vo.ProductConvertStockVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
@@ -102,6 +108,41 @@ public class ProductConvertStockController {
         }
         List<ProductConvertStockVo> vos = buildProductConvertStockVosByUnions(unions);
         return JsonResults.success(vos);
+    }
+
+    @RequestMapping(path = "/calculate", method = { RequestMethod.GET })
+    public JsonResult<BigDecimal> doCalculateAmount(ProductConvertStockParams params) {
+        ensureParameterExist(params, "请输入产品库存转化关系");
+        ensureParameterExist(params.getProductId(), "请选择产品");
+        ensureParameterExist(params.getStockId(), "请选择库存");
+        if (params.getProductAmount() == null) {
+            ensureParameterExist(params.getStockAmount(), "产品和库存数量均为空");
+            ensureParameterValid(params.getStockAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量应大于0");
+        } else {
+            ensureParameterValid(params.getProductAmount().compareTo(BigDecimal.ZERO) == 1, "产品数量应大于0");
+            ensureParameterNotExist(params.getStockAmount(), "产品和库存数量不能同时存在");
+        }
+        ProductConvertStockPo po = CommonConverter.map(params, ProductConvertStockPo.class);
+        BigDecimal amount = productConvertStockService.calculateAmount(po);
+        return JsonResults.success(amount);
+    }
+
+    @RequestMapping(path = "/flows", method = { RequestMethod.POST })
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonResult<ProductConvertStockFlowVo> doCreateProductConvertStockFlow(@RequestBody ProductConvertStockFlowParams params) {
+        ensureParameterExist(params, "请输入产品库存转化信息");
+        ensureParameterExist(params.getType(), "请选择转化类型");
+        ensureParameterValid(EnumUtils.containsKey(params.getType(), ProductStockConvertFlowTypeEnum.class), "转化类型错误");
+        ensureParameterExist(params.getProductId(), "请选择产品");
+        ensureParameterExist(params.getStockId(), "请选择库存");
+        ensureParameterExist(params.getProductAmount(), "产品数量为空");
+        ensureParameterValid(params.getProductAmount().compareTo(BigDecimal.ZERO) == 1, "产品数量应大于0");
+        ensureParameterExist(params.getStockAmount(), "库存数量为空");
+        ensureParameterValid(params.getStockAmount().compareTo(BigDecimal.ZERO) == 1, "库存数量应大于0");
+        ProductConvertStockFlowPo po = CommonConverter.map(params, ProductConvertStockFlowPo.class);
+        ProductConvertStockFlowPo newPo = productConvertStockService.createProductConvertStockFlow(po);
+        ProductConvertStockFlowVo vo = CommonConverter.map(newPo, ProductConvertStockFlowVo.class);
+        return JsonResults.success(vo);
     }
 
     private List<ProductConvertStockVo> buildProductConvertStockVosByUnions(List<ProductConvertStockUnion> unions) {

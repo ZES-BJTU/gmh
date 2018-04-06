@@ -17,8 +17,8 @@
 		<result column="employee_id" jdbcType="INTEGER" property="employeeId" />	
 		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
 		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
-		<result column="begin_time" jdbcType="DATE" property="beginTime" />
-		<result column="end_time" jdbcType="DATE" property="endTime" />
+		<result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO appointment_project

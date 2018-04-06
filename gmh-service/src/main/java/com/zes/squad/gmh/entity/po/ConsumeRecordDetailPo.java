@@ -13,13 +13,14 @@ public class ConsumeRecordDetailPo extends Po{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Long consumeRecordId;
 	private String tradeSerialNumber;
 	private Long productId;
 	private String productCode;
 	private Long projectId;
 	private String projectCode;
 	private Long cardId;
-	private String cardCode;
+//	private String cardCode;
 	private BigDecimal amount;
 	private Long operatorId;
 	private Long consultantId;

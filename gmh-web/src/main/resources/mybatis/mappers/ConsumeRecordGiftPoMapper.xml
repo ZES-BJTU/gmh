@@ -3,6 +3,7 @@
 <mapper namespace="com.zes.squad.gmh.mapper.ConsumeRecordGiftMapper">
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="consume_record_id" jdbcType="BIGINT" property="consumeRecordId" />
 		<result column="trade_serial_number" jdbcType="VARCHAR" property="tradeSerialNumber" />
 		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="project_id" jdbcType="BIGINT" property="projectId" />
@@ -27,9 +28,10 @@
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo">
 		INSERT INTO consume_record_product
-		(`trade_serial_number`,`type`,`product_id`,`product_amount`,`project_id`,`project_amount`,`coupon_money`,`coupon_amount`)
+		(`consume_record_id`,`trade_serial_number`,`type`,`product_id`,`product_amount`,`project_id`,`project_amount`,`coupon_money`,`coupon_amount`)
 		VALUES
-		(#{tradeSerialNumber, jdbcType=VARCHAR},
+		(#{consumeRecordId,jdbcType=BIGINT},
+		#{tradeSerialNumber, jdbcType=VARCHAR},
 		#{type, jdbcType=INTEGER},
 		#{productId, jdbcType=BIGINT},
 		#{productAmount, jdbcType=INTEGER},

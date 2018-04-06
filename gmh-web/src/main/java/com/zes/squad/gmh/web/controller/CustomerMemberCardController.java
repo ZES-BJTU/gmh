@@ -19,6 +19,7 @@ import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
+import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
 import com.zes.squad.gmh.web.common.JsonResults;
@@ -102,10 +103,21 @@ public class CustomerMemberCardController {
 
 	private CustomerMemberCardVo buildAppointmentVoByUnion(CustomerMemberCardUnion customerMemberCardUnion) {
 
+		List<CustomerMemberCardContentUnion> cmccuList = customerMemberCardUnion.getCustomerMemberCardContent();
+		for(int i=0;i<cmccuList.size();i++){
+			if(cmccuList.get(i).getType()==1)
+				cmccuList.get(i).setTypeName("项目");
+			if(cmccuList.get(i).getType()==2)
+				cmccuList.get(i).setTypeName("产品");
+			if(cmccuList.get(i).getType()==3)
+				cmccuList.get(i).setTypeName("代金券");
+		}
+		
 		CustomerMemberCardVo vo = CommonConverter.map(customerMemberCardUnion, CustomerMemberCardVo.class);
 		vo.setIsReturned(EnumUtils.getDescByKey(customerMemberCardUnion.getIsReturned(), YesOrNoEnum.class));
 		vo.setIsValid(EnumUtils.getDescByKey(customerMemberCardUnion.getIsValid(), YesOrNoEnum.class));
 		vo.setIsTurned(EnumUtils.getDescByKey(customerMemberCardUnion.getIsTurned(), YesOrNoEnum.class));
+		
 		return vo;
 	}
 }

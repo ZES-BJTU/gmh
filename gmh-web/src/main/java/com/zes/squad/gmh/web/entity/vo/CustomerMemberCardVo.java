@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.web.entity.vo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.Data;
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime;
@@ -11,7 +12,8 @@ public class CustomerMemberCardVo {
 	private String customerName;
 	private String memberCardName;
 	private BigDecimal remainingMoney;
-	private Integer remainingTimes;
+//	private Integer remainingTimes;
+	private List<CustomerMemberCardContentVo> customerMemberCardContent;
 	private String isValid;
 	private String isReturned;
 	private DateTime returnedTime;

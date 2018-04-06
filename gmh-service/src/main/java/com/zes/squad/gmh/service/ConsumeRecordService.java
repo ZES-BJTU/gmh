@@ -8,6 +8,7 @@ import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
+import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 
 public interface ConsumeRecordService {
@@ -16,7 +17,7 @@ public interface ConsumeRecordService {
 			List<ConsumeRecordDetailPo> consumeRecordProducts);
 
 	void createCardConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
-			List<ConsumeRecordDetailPo> consumeRecordProducts, List<ConsumeRecordGiftPo> gists);
+			List<ConsumeRecordDetailPo> consumeRecordProducts, List<ConsumeRecordGiftPo> gists,MemberCardPo memberCardPo);
 
 	void createProjectConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordProducts);
@@ -27,11 +28,11 @@ public interface ConsumeRecordService {
 			List<ConsumeRecordDetailPo> consumeRecordProducts);
 
 	void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,
-			List<ConsumeRecordGiftPo> gifts, Long id);
+			List<ConsumeRecordGiftPo> gifts, Long id,MemberCardPo memberCardPo);
 
 	public Map<String, Object> getTradeSerialNumber(String type);
 
 	PagedList<ConsumeRecordUnion> changedListPagedConsumeRecords(ConsumeRecordQueryCondition condition);
 
-	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,List<ConsumeRecordGiftPo> gifts);
+	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,List<ConsumeRecordGiftPo> gifts,MemberCardPo memberCardPo);
 }

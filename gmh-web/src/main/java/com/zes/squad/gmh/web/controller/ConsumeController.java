@@ -16,6 +16,7 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
+import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
@@ -45,7 +46,7 @@ public class ConsumeController {
 	public JsonResult<Void> doCreateCardConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String,Object> map = consumeRecordService.getTradeSerialNumber("C");
 		consumeRecordService.createCardConsumeRecord(map,params.getConsumeRecordPo(), params.getConsumeRecordDetails(),
-				params.getGifts());
+				params.getGifts(),params.getMemberCardPo());
 		return JsonResults.success();
 	}
 
@@ -64,13 +65,12 @@ public class ConsumeController {
 	
 	@RequestMapping(path = "/createConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateConsume(@RequestBody ConsumeCreateOrModifyParams params) {
-		Map<String,Object> map = consumeRecordService.getTradeSerialNumber("A");
-		consumeRecordService.createActivityConsumeRecord(map,params.getConsumeRecordPo(), params.getConsumeRecordDetails());
+		consumeRecordService.createConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts(), params.getMemberCardPo());
 		return JsonResults.success();
 	}
 	@RequestMapping(path = "/modify", method = { RequestMethod.PUT })
 	public JsonResult<Void> doModify(@RequestBody ConsumeCreateOrModifyParams params) {
-		consumeRecordService.modify(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts(), params.getConsumeRecordPo().getId());
+		consumeRecordService.modify(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts(), params.getConsumeRecordPo().getId(),params.getMemberCardPo());
 		return JsonResults.success();
 	}
 

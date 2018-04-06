@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,10 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
+import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
+import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
+import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
 
@@ -22,6 +26,8 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 
 	@Autowired
 	private CustomerMemberCardMapper customerMemberCardMapper;
+	@Autowired
+	private CustomerMemberCardContentMapper customerMemberCardContentMapper;
 //	@Autowired
 //	private MemberCardService memberCardService;
 
@@ -32,6 +38,9 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		PageHelper.startPage(pageNum, pageSize);
 		List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper
 				.listCustomerMemberCardByCondition(condition);
+		for(CustomerMemberCardUnion cmcu:customerMemberCardUnions){
+			cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getContentList(cmcu.getId()));
+		}
 		PageInfo<CustomerMemberCardUnion> info = new PageInfo<>(customerMemberCardUnions);
 		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(),
 				customerMemberCardUnions);
@@ -44,6 +53,9 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		PageHelper.startPage(pageNum, pageSize);
 		List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper
 				.changedListCustomerMemberCardByCondition(condition);
+		for(CustomerMemberCardUnion cmcu:customerMemberCardUnions){
+			cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getContentList(cmcu.getId()));
+		}
 		PageInfo<CustomerMemberCardUnion> info = new PageInfo<>(customerMemberCardUnions);
 		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(),
 				customerMemberCardUnions);
@@ -96,5 +108,6 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		customerMemberCardMapper.insert(oldCard);
 
 	}
+	
 
 }

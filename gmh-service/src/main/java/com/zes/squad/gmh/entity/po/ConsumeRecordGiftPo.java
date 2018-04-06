@@ -13,6 +13,7 @@ public class ConsumeRecordGiftPo extends Po{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Long consumeRecordId;
 	private String tradeSerialNumber;;
 	private Integer type;
 	private Long projectId;

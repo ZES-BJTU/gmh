@@ -1,6 +1,8 @@
 package com.zes.squad.gmh.mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
@@ -19,5 +21,10 @@ public interface CustomerMemberCardMapper {
 	int turnCard(CustomerMemberCardPo po);
 	
 	CustomerMemberCardPo getById(Long id);
+	
+	BigDecimal getBalanceById(Long id);
+	
+	void calRemainMoney(Map<String,Object> map);
+	
 	
 }

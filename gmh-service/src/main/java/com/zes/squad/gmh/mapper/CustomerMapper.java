@@ -16,4 +16,6 @@ public interface CustomerMapper {
 	List<CustomerPo> selectByCondition(CustomerQueryCondition condition);
 	
 	CustomerPo getById(Long id);
+	
+	CustomerPo getByMobile(String mobile);
 }

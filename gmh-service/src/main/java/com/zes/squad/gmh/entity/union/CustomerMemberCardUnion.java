@@ -2,6 +2,7 @@ package com.zes.squad.gmh.entity.union;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 @Data
@@ -11,7 +12,9 @@ public class CustomerMemberCardUnion {
 	private String customerName;
 	private String memberCardName;
 	private BigDecimal remainingMoney;
-	private Integer remainingTimes;
+	private String projectName;
+//	private Integer remainingTimes;
+	private List<CustomerMemberCardContentUnion> customerMemberCardContent;
 	private Integer isValid;
 	private Integer isReturned;
 	private String returnedReason;

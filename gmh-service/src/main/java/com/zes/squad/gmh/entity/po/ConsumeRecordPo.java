@@ -20,7 +20,9 @@ public class ConsumeRecordPo extends Po {
 	private Integer consumeType;
 	private BigDecimal consumeMoney;
 	private Integer paymentWay;
-	private Integer payWayId;
+	private Long payWayId;
+	private Long payWayContentId;
+	private Integer couponAmount;
 	private Long activityId;
 	private Integer isModified;
 	private String remark;

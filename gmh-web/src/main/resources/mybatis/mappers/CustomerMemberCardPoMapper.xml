@@ -7,7 +7,6 @@
 		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
 		<result column="member_card_id" jdbcType="BIGINT" property="memberCardId" />
 		<result column="remaining_money" jdbcType="DECIMAL" property="remainingMoney" />
-		<result column="remaining_times" jdbcType="DATE" property="remainingTimes" />
 		<result column="is_valid" jdbcType="TINYINT" property="isValid" />
 		<result column="is_returned" jdbcType="TINYINT" property="isReturned" />
 		<result column="returned_reason" jdbcType="VARCHAR" property="returnedReason" />
@@ -30,7 +29,6 @@
 		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
 		<result column="member_card_name" jdbcType="VARCHAR" property="memberCardName" />
 		<result column="remaining_money" jdbcType="DECIMAL" property="remainingMoney" />
-		<result column="remaining_times" jdbcType="DATE" property="remainingTimes" />
 		<result column="is_valid" jdbcType="TINYINT" property="isValid" />
 		<result column="is_returned" jdbcType="TINYINT" property="isReturned" />
 		<result column="project_discount" jdbcType="DECIMAL" property="projectDiscount" />
@@ -45,16 +43,15 @@
 		<result column="turned_money" jdbcType="DECIMAL" property="turnedMoney" />
 		<result column="unique_identifier" jdbcType="VARCHAR" property="uniqueIdentifier" />
 	</resultMap>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardPo">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		customer_member_card
-		(`customer_id`,`member_card_id`,`remaining_money`,`remaining_times`,`project_discount`,`product_discount`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
+		(`customer_id`,`member_card_id`,`remaining_money`,`project_id`,`remaining_times`,`project_discount`,`product_discount`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
 		VALUES
 		(#{customerId, jdbcType=BIGINT},
 		#{memberCardId,
 		jdbcType=BIGINT},
 		#{remainingMoney, jdbcType=DECIMAL},
-		#{remainingTimes, jdbcType=INTEGER},
 		#{projectDiscount, jdbcType=DECIMAL},
 		#{productDiscount, jdbcType=DECIMAL},
 		#{isValid, jdbcType=INTEGER},
@@ -71,7 +68,6 @@
 		cus.`name` as `customer_name`,
 		c.`name` as `member_card_name`,
 		cmd.`remaining_money` as `remaining_money`,
-		cmd.`remaining_times` as `remaining_times`,
 		cmd.`is_valid` as
 		`is_valid`,
 		cmd.`project_discount` as `project_discount`,
@@ -112,7 +108,6 @@
 		select
 		cus.`name` as `customer_name`,
 		cmd.`remaining_money` as `remaining_money`,
-		cmd.`remaining_times` as `remaining_times`,
 		cmd.`is_valid` as
 		`is_valid`,
 		cmd.`project_discount` as `project_discount`,
@@ -177,4 +172,11 @@
 		`id`=#{id,jdbcType=INTEGER}
 	
 	</select>
+	<update id="calRemainMoney" parameterType="map">
+		update customer_member_card
+		set
+		`remaining_money`=#{remainMoney,jdbcType=DECIMAL}
+		where
+		`id`=#{id,jdbcType=BIGINT}
+	</update>
 </mapper>

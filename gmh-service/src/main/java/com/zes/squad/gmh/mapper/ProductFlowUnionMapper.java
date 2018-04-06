@@ -12,10 +12,12 @@ public interface ProductFlowUnionMapper {
     /**
      * 查询所有流水
      * 
+     * @param storeId
      * @param beginTime
      * @param endTime
      * @return
      */
-    List<ProductFlowUnion> selectAll(@Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
+    List<ProductFlowUnion> selectAll(@Param("storeId") Long storeId, @Param("beginTime") Date beginTime,
+                                     @Param("endTime") Date endTime);
 
 }

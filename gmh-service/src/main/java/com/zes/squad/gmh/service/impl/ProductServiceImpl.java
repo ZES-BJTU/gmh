@@ -354,7 +354,9 @@ public class ProductServiceImpl implements ProductService {
     public Workbook exportProducts(Date beginTime, Date endTime) {
         Workbook workbook = new SXSSFWorkbook();
         Sheet sheet = workbook.createSheet("产品流水统计");
-        List<ProductFlowUnion> unions = productFlowUnionMapper.selectAll(beginTime, endTime);
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何门店");
+        List<ProductFlowUnion> unions = productFlowUnionMapper.selectAll(storeId, beginTime, endTime);
         if (CollectionUtils.isEmpty(unions)) {
             return workbook;
         }

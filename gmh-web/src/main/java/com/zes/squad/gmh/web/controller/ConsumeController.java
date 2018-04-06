@@ -16,7 +16,6 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
-import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;

@@ -51,11 +51,12 @@
 		ON
 		sf.`store_id` = se.`id`
 		<where>
+			sf.`store_id` = #{storeId:BIGINT}
 			<if test="beginTime != null">
-				pf.`created_time` >= #{beginTime:TIMESTAMP}
+				AND sf.`created_time` >= #{beginTime:TIMESTAMP}
 			</if>
 			<if test="endTime != null">
-				AND pf.`created_time` <![CDATA[<=]]> #{endTime:TIMESTAMP}
+				AND sf.`created_time` <![CDATA[<=]]> #{endTime:TIMESTAMP}
 			</if>
 		</where>
 	</select>

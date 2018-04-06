@@ -1,6 +1,5 @@
 package com.zes.squad.gmh.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,8 +13,6 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
-import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
-import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;

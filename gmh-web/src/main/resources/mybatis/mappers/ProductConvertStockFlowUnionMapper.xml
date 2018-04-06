@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductConvertStockFlowUnionMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.union.ProductConvertStockFlowUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="productConvertStockFlowPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductConvertStockFlowMapper.BaseResultMap"
+			columnPrefix="pcsf_" />
+		<association property="productTypePo"
+			resultMap="com.zes.squad.gmh.mapper.ProductTypeMapper.BaseResultMap"
+			columnPrefix="pt_" />
+		<association property="productPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductMapper.BaseResultMap"
+			columnPrefix="p_" />
+		<association property="stockTypePo"
+			resultMap="com.zes.squad.gmh.mapper.StockTypeMapper.BaseResultMap"
+			columnPrefix="st_" />
+		<association property="stockPo"
+			resultMap="com.zes.squad.gmh.mapper.StockMapper.BaseResultMap"
+			columnPrefix="sk_" />
+		<association property="storePo"
+			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
+			columnPrefix="s_" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		pcsf.`id` AS id,
+		pcsf.`id` AS pcsf_id,
+		pcsf.`type` AS pcsf_type,
+		pcsf.`product_id` AS pcsf_product_id,
+		pcsf.`product_amount` AS pcsf_product_amount,
+		pcsf.`stock_id` AS pcsf_stock_id,
+		pcsf.`stock_amount` AS pcsf_stock_amount,
+		pcsf.`status` AS pcsf_status,
+		pcsf.`remark` AS pcsf_remark,
+		pcsf.`created_time` AS pcsf_created_time,
+		pt.`id` AS pt_id,
+		pt.`name` AS pt_name,
+		p.`id` AS p_id,
+		p.`product_type_id` AS p_product_type_id,
+		p.`code` AS p_code,
+		p.`name` AS p_name,
+		p.`unit_name` AS p_unit_name,
+		p.`unit_price` AS p_unit_price,
+		st.`id` AS st_id,
+		st.`name` AS st_name,
+		sk.`id` AS sk_id,
+		sk.`stock_type_id` AS sk_stock_type_id,
+		sk.`code` AS sk_code,
+		sk.`name` AS sk_name,
+		sk.`unit_name` AS sk_unit_name,
+		s.`name` AS s_name
+	</sql>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM 
+		product_convert_stock_flow pcsf
+		LEFT JOIN
+		product p
+		ON
+		pcsf.`product_id` = p.`id`
+		LEFT JOIN
+		product_type pt
+		ON
+		p.`product_type_id` = pt.`id`
+		LEFT JOIN
+		stock sk
+		ON
+		pcsf.`stock_id` = sk.`id`
+		LEFT JOIN
+		stock_type st
+		ON
+		sk.`stock_type_id` = st.`id`
+		LEFT JOIN
+		store s
+		ON
+		pcsf.`store_id` = s.`id`
+		<where>
+			pcsf.`store_id` = #{storeId:BIGINT}
+			<if test="beginTime != null">
+				AND pcsf.`created_time` >= #{beginTime:TIMESTAMP}
+			</if>
+			<if test="endTime != null">
+				AND pcsf.`created_time` <![CDATA[<=]]> #{endTime:TIMESTAMP}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -340,7 +340,9 @@ public class StockServiceImpl implements StockService {
     public Workbook exportStocks(Date beginTime, Date endTime) {
         Workbook workbook = new SXSSFWorkbook();
         Sheet sheet = workbook.createSheet("库存流水统计");
-        List<StockFlowUnion> unions = stockFlowUnionMapper.selectAll(beginTime, endTime);
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何门店");
+        List<StockFlowUnion> unions = stockFlowUnionMapper.selectAll(storeId, beginTime, endTime);
         if (CollectionUtils.isEmpty(unions)) {
             return workbook;
         }

@@ -1,7 +1,10 @@
 package com.zes.squad.gmh.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductConvertStockQueryCondition;
@@ -64,5 +67,14 @@ public interface ProductConvertStockService {
      * @return
      */
     ProductConvertStockFlowPo createProductConvertStockFlow(ProductConvertStockFlowPo po);
+
+    /**
+     * 导出产品库存转换流水
+     * 
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    Workbook exportProductsStocks(Date beginTime, Date endTime);
 
 }

@@ -64,7 +64,14 @@
 		SELECT
 		<include refid="BaseColumnList"/>
 		FROM store
-		WHERE id = #{id, jdbcType=BIGINT}
+		WHERE `id` = #{id, jdbcType=BIGINT}
+		LIMIT 1
+	</select>
+	<select id="selectByName" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="BaseColumnList"/>
+		FROM store
+		WHERE `name` = #{name:VARCHAR}
 		LIMIT 1
 	</select>
 	<select id="selectAll" resultMap="BaseResultMap">

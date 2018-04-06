@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ProductFlowUnionMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.ProductFlowUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="productTypePo"
+			resultMap="com.zes.squad.gmh.mapper.ProductTypeMapper.BaseResultMap"
+			columnPrefix="pt_" />
+		<association property="productPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductMapper.BaseResultMap"
+			columnPrefix="p_" />
+		<association property="productFlowPo"
+			resultMap="com.zes.squad.gmh.mapper.ProductFlowMapper.BaseResultMap"
+			columnPrefix="pf_" />
+		<association property="storePo"
+			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
+			columnPrefix="s_" />
+	</resultMap>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		pf.`id` AS id,
+		pt.`id` AS pt_id,
+		pt.`name` AS pt_name,
+		p.`id` AS p_id,
+		p.`product_type_id` AS p_product_type_id,
+		p.`code` AS p_code,
+		p.`name` AS p_name,
+		p.`unit_name` AS p_unit_name,
+		p.`unit_price` AS p_unit_price,
+		pf.`id` AS pf_id,
+		pf.`product_id` AS pf_product_id,
+		pf.`record_id` AS pf_record_id,
+		pf.`type` AS pf_type,
+		pf.`amount` AS pf_amount,
+		pf.`store_id` AS pf_store_id,
+		pf.`status` AS pf_status,
+		pf.`created_time` AS pf_created_time,
+		s.`id` AS s_id,
+		s.`name` AS s_name
+		FROM
+		product_flow pf
+		LEFT JOIN
+		product p
+		ON
+		pf.`product_id` = p.`id`
+		LEFT JOIN
+		product_type pt
+		ON
+		p.`product_type_id` = pt.`id`
+		LEFT JOIN
+		store s
+		ON
+		pf.`store_id` = s.`id`
+	</select>
+</mapper>

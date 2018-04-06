@@ -1,7 +1,9 @@
 package com.zes.squad.gmh.service.impl;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfied;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 
 import java.util.List;
 
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Strings;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StoreQueryCondition;
@@ -34,6 +37,8 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public StorePo createStore(StorePo po) {
+        StorePo existingPo = storeMapper.selectByName(po.getName());
+        ensureEntityNotExist(existingPo, "门店名称被占用");
         storeMapper.insert(po);
         return po;
     }
@@ -52,6 +57,12 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public StorePo modifyStore(StorePo po) {
+        if (!Strings.isNullOrEmpty(po.getName())) {
+            StorePo storePo = storeMapper.selectByName(po.getName());
+            if (storePo != null) {
+                ensureConditionSatisfied(storePo.getId().equals(po.getId()), "门店名称被占用");
+            }
+        }
         storeMapper.updateSelective(po);
         StorePo newStorePo = storeMapper.selectById(po.getId());
         ensureEntityExist(newStorePo, "该门店不存在");

@@ -74,6 +74,15 @@ public class UserController extends BaseController {
         return JsonResults.success();
     }
 
+    @RequestMapping(path = "/applyAuthCode", method = { RequestMethod.PATCH })
+    public JsonResult<Void> doApplyAuthCode(@RequestBody MessageParams params) {
+        ensureParameterExist(params, "短信参数为空");
+        ensureParameterExist(params.getMobile(), "手机号为空");
+        messageService.sendAuthCode(params.getMobile());
+        userService.resetPassword(params.getMobile());
+        return JsonResults.success();
+    }
+
     @RequestMapping(path = "/resetPassword", method = { RequestMethod.PATCH })
     public JsonResult<Void> doResetPassword(@RequestBody MessageParams params) {
         ensureParameterExist(params, "短信参数为空");
@@ -174,9 +183,11 @@ public class UserController extends BaseController {
         ensureParameterValid(EnumUtils.containsKey(params.getRole(), UserRoleEnum.class), "用户身份错误");
         if (user.getRole().intValue() == UserRoleEnum.ADMINISTRATOR.getKey()) {
             ensureParameterValid(params.getRole().intValue() == UserRoleEnum.MANAGER.getKey(), "管理员只可以新建门店负责人");
+            ensureParameterExist(params.getStoreId(), "门店负责人所属门店为空");
         } else if (user.getRole().intValue() == UserRoleEnum.MANAGER.getKey()) {
             ensureParameterValid(params.getRole().intValue() != UserRoleEnum.ADMINISTRATOR.getKey()
                     && params.getRole().intValue() != UserRoleEnum.MANAGER.getKey(), "门店负责人只可以新建前台和员工");
+            params.setStoreId(ThreadContext.getUserStoreId());
         } else {
             throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "没有权限");
         }
@@ -188,11 +199,6 @@ public class UserController extends BaseController {
         ensureParameterExist(params.getName(), "用户姓名为空");
         ensureParameterExist(params.getGender(), "用户性别为空");
         ensureParameterValid(EnumUtils.containsKey(params.getGender().intValue(), GenderEnum.class), "用户性别错误");
-        if (user.getRole().intValue() == UserRoleEnum.ADMINISTRATOR.getKey()) {
-            ensureParameterExist(params.getStoreId(), "门店负责人所属门店为空");
-        } else {
-            params.setStoreId(ThreadContext.getUserStoreId());
-        }
     }
 
     private void checkUserModifyParams(Long id, UserParams params) {

@@ -2,6 +2,8 @@ package com.zes.squad.gmh.service;
 
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
@@ -182,5 +184,12 @@ public interface StockService {
      * @return
      */
     PagedList<StockUnion> listPagedStocksWithAmount(StockQueryCondition condition);
+
+    /**
+     * 导出库存
+     * 
+     * @return
+     */
+    Workbook exportStocks();
 
 }

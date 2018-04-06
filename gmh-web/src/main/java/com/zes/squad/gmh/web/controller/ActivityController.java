@@ -103,7 +103,14 @@ public class ActivityController {
         if (CollectionUtils.isEmpty(pagedUnions.getData())) {
             return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
         }
-        return JsonResults.success();
+        List<ActivityUnion> unions = pagedUnions.getData();
+        List<ActivityVo> vos = Lists.newArrayListWithCapacity(unions.size());
+        for (ActivityUnion union : unions) {
+            ActivityVo vo = buildActivityVoByUnion(union);
+            vos.add(vo);
+        }
+        return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
+                pagedUnions.getTotalCount(), vos));
     }
 
     @RequestMapping(path = "/all", method = { RequestMethod.GET })
@@ -123,10 +130,10 @@ public class ActivityController {
     private void checkActivityCreateParams(ActivityParams params) {
         ensureParameterExist(params, "请输入活动信息");
         ensureParameterNotExist(params.getId(), "活动已存在");
+        ensureParameterExist(params.getCode(), "请输入活动编码");
         ensureParameterExist(params.getName(), "请输入活动名称");
         ensureParameterExist(params.getPrice(), "请输入活动价格");
         ensureParameterValid(params.getPrice().compareTo(BigDecimal.ZERO) == 1, "活动价格应大于0");
-        ensureParameterExist(params.getCode(), "请输入活动编码");
         ensureParameterExist(params.getDeadline(), "请输入活动有效期");
         ensureParameterValid(params.getDeadline().after(new Date()), "活动有效期不合法");
         ensureCollectionNotEmpty(params.getActivityContentParams(), "请输入活动内容");
@@ -259,19 +266,19 @@ public class ActivityController {
             contentVo.setType(EnumUtils.getDescByKey(contentUnion.getActivityContentPo().getType(),
                     ActivityContentTypeEnum.class));
             if (contentUnion.getActivityContentPo().getType() == ActivityContentTypeEnum.PROJECT.getKey()) {
-                if (contentUnion.getProductPo() != null) {
-                    contentVo.setContent(String.valueOf(contentUnion.getProjectPo().getName()));
+                if (contentUnion.getProjectPo() != null) {
+                    contentVo.setRelatedName(String.valueOf(contentUnion.getProjectPo().getName()));
                 }
             } else if (contentUnion.getActivityContentPo().getType() == ActivityContentTypeEnum.MEMBER_CARD.getKey()) {
                 if (contentUnion.getMemberCardPo() != null) {
-                    contentVo.setContent(String.valueOf(contentUnion.getMemberCardPo().getName()));
+                    contentVo.setRelatedName(String.valueOf(contentUnion.getMemberCardPo().getName()));
                 }
             } else if (contentUnion.getActivityContentPo().getType() == ActivityContentTypeEnum.PRODUCT.getKey()) {
                 if (contentUnion.getProductPo() != null) {
-                    contentVo.setContent(String.valueOf(contentUnion.getProductPo().getName()));
+                    contentVo.setRelatedName(String.valueOf(contentUnion.getProductPo().getName()));
                 }
             } else {
-                contentVo.setContent(String.valueOf(contentUnion.getActivityContentPo().getContent()));
+                contentVo.setContent(contentUnion.getActivityContentPo().getContent());
             }
             contentVos.add(contentVo);
         }

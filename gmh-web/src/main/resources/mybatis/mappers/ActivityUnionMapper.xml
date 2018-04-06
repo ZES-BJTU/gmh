@@ -38,11 +38,13 @@
 	<select id="selectByIds" parameterType="long" resultMap="BaseResultMap">
 		SELECT 
 		<include refid="Base_Column_List" />
- 		FROM activity a
-		LEFT JOIN activity_content ac
+ 		FROM 
+ 		activity a
+		LEFT JOIN 
+		activity_content ac
 		ON
 		a.`id` = ac.`activity_id` 
-		WHERE `id` IN 
+		WHERE a.`id` IN 
 		<foreach collection="list" item="id" separator="," open="(" close=")">
 			#{id:BIGINT}
 		</foreach>
@@ -50,8 +52,10 @@
 	<select id="selectAll" resultMap="BaseResultMap">
 		SELECT 
 		<include refid="Base_Column_List" />
- 		FROM activity a
-		LEFT JOIN activity_content ac
+ 		FROM 
+ 		activity a
+		LEFT JOIN 
+		activity_content ac
 		ON
 		a.`id` = ac.`activity_id` 
 	</select>

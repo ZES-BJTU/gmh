@@ -9,8 +9,9 @@ public class ActivityContentVo {
 
     private Long       id;
     private String     type;
-    private String     relatedId;
-    private String     content;
+    private Long       relatedId;
+    private String     relatedName;
+    private BigDecimal content;
     private BigDecimal number;
     private String     remark;
 

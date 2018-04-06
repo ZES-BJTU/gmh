@@ -3,7 +3,7 @@ package com.zes.squad.gmh.helper;
 public class SMSHelper {
 
     public static String generateAuthCode(int length) {
-        String digits = "0123456789";
+        String digits = "0123456789abcdefjhijklmnopqrstuvwxyz";
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < length; i++) {
             int index = (int) (Math.random() * (digits.length()));

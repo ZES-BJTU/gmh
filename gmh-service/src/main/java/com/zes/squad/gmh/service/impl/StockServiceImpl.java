@@ -9,6 +9,7 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.helper.ExcelHelper.generateNumericCell;
 import static com.zes.squad.gmh.helper.ExcelHelper.generateStringCell;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -336,10 +337,10 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public Workbook exportStocks() {
+    public Workbook exportStocks(Date beginTime, Date endTime) {
         Workbook workbook = new SXSSFWorkbook();
         Sheet sheet = workbook.createSheet("库存流水统计");
-        List<StockFlowUnion> unions = stockFlowUnionMapper.selectAll();
+        List<StockFlowUnion> unions = stockFlowUnionMapper.selectAll(beginTime, endTime);
         if (CollectionUtils.isEmpty(unions)) {
             return workbook;
         }

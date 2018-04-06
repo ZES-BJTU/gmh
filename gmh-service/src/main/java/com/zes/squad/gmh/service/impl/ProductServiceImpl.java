@@ -9,6 +9,7 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.helper.ExcelHelper.generateNumericCell;
 import static com.zes.squad.gmh.helper.ExcelHelper.generateStringCell;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -350,10 +351,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Workbook exportProducts() {
+    public Workbook exportProducts(Date beginTime, Date endTime) {
         Workbook workbook = new SXSSFWorkbook();
         Sheet sheet = workbook.createSheet("产品流水统计");
-        List<ProductFlowUnion> unions = productFlowUnionMapper.selectAll();
+        List<ProductFlowUnion> unions = productFlowUnionMapper.selectAll(beginTime, endTime);
         if (CollectionUtils.isEmpty(unions)) {
             return workbook;
         }

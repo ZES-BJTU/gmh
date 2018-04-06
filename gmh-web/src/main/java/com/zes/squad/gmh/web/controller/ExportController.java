@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zes.squad.gmh.common.helper.LogicHelper;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.service.ProjectService;
 import com.zes.squad.gmh.service.StockService;
@@ -36,20 +39,26 @@ public class ExportController {
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
+
     @RequestMapping(path = "/stocks", method = { RequestMethod.GET })
-    public ModelAndView doExportStocks(ModelMap map, HttpServletRequest request, HttpServletResponse response)
+    public ModelAndView doExportStocks(ModelMap map, HttpServletRequest request, HttpServletResponse response,
+                                       Date beginTime, Date endTime)
             throws Exception {
+        LogicHelper.ensureParameterValid(beginTime.after(beginTime), "起始时间不能晚于截止时间");
         map.put("fileName", "库存流水.xlsx");
-        Workbook workbook = stockService.exportStocks();
+        Workbook workbook = stockService.exportStocks(beginTime, endTime);
         ExcelView excelView = new ExcelView();
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
+
     @RequestMapping(path = "/products", method = { RequestMethod.GET })
-    public ModelAndView doExportProducts(ModelMap map, HttpServletRequest request, HttpServletResponse response)
+    public ModelAndView doExportProducts(ModelMap map, HttpServletRequest request, HttpServletResponse response,
+                                         Date beginTime, Date endTime)
             throws Exception {
+        LogicHelper.ensureParameterValid(beginTime.after(beginTime), "起始时间不能晚于截止时间");
         map.put("fileName", "产品流水.xlsx");
-        Workbook workbook = productService.exportProducts();
+        Workbook workbook = productService.exportProducts(beginTime, endTime);
         ExcelView excelView = new ExcelView();
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);

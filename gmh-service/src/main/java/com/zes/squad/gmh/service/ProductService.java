@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -192,8 +193,10 @@ public interface ProductService {
     /**
      * 导出产品
      * 
+     * @param beginTime
+     * @param endTime
      * @return
      */
-    Workbook exportProducts();
+    Workbook exportProducts(Date beginTime, Date endTime);
 
 }

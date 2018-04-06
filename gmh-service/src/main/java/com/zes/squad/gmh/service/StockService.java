@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -188,8 +189,10 @@ public interface StockService {
     /**
      * 导出库存
      * 
+     * @param beginTime
+     * @param endTime
      * @return
      */
-    Workbook exportStocks();
+    Workbook exportStocks(Date beginTime, Date endTime);
 
 }

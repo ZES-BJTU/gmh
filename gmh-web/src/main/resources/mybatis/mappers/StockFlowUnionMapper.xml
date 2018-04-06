@@ -50,5 +50,13 @@
 		store se
 		ON
 		sf.`store_id` = se.`id`
+		<where>
+			<if test="beginTime != null">
+				pf.`created_time` >= #{beginTime:TIMESTAMP}
+			</if>
+			<if test="endTime != null">
+				AND pf.`created_time` <![CDATA[<=]]> #{endTime:TIMESTAMP}
+			</if>
+		</where>
 	</select>
 </mapper>

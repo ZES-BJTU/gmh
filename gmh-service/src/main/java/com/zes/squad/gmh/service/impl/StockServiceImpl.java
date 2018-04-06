@@ -6,10 +6,16 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfi
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+import static com.zes.squad.gmh.helper.ExcelHelper.generateNumericCell;
+import static com.zes.squad.gmh.helper.ExcelHelper.generateStringCell;
 
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +26,8 @@ import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.enums.FlowTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.common.util.DateUtils;
+import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.StockQueryCondition;
 import com.zes.squad.gmh.entity.condition.StockTypeQueryCondition;
@@ -27,9 +35,12 @@ import com.zes.squad.gmh.entity.po.StockAmountPo;
 import com.zes.squad.gmh.entity.po.StockFlowPo;
 import com.zes.squad.gmh.entity.po.StockPo;
 import com.zes.squad.gmh.entity.po.StockTypePo;
+import com.zes.squad.gmh.entity.po.StorePo;
+import com.zes.squad.gmh.entity.union.StockFlowUnion;
 import com.zes.squad.gmh.entity.union.StockUnion;
 import com.zes.squad.gmh.mapper.StockAmountMapper;
 import com.zes.squad.gmh.mapper.StockFlowMapper;
+import com.zes.squad.gmh.mapper.StockFlowUnionMapper;
 import com.zes.squad.gmh.mapper.StockMapper;
 import com.zes.squad.gmh.mapper.StockTypeMapper;
 import com.zes.squad.gmh.mapper.StockUnionMapper;
@@ -39,15 +50,17 @@ import com.zes.squad.gmh.service.StockService;
 public class StockServiceImpl implements StockService {
 
     @Autowired
-    private StockTypeMapper   stockTypeMapper;
+    private StockTypeMapper      stockTypeMapper;
     @Autowired
-    private StockMapper       stockMapper;
+    private StockMapper          stockMapper;
     @Autowired
-    private StockUnionMapper  stockUnionMapper;
+    private StockUnionMapper     stockUnionMapper;
     @Autowired
-    private StockAmountMapper stockAmountMapper;
+    private StockAmountMapper    stockAmountMapper;
     @Autowired
-    private StockFlowMapper   stockFlowMapper;
+    private StockFlowMapper      stockFlowMapper;
+    @Autowired
+    private StockFlowUnionMapper stockFlowUnionMapper;
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
@@ -320,6 +333,73 @@ public class StockServiceImpl implements StockService {
         }
         PageInfo<StockUnion> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
+    }
+
+    @Override
+    public Workbook exportStocks() {
+        Workbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("库存流水统计");
+        List<StockFlowUnion> unions = stockFlowUnionMapper.selectAll();
+        if (CollectionUtils.isEmpty(unions)) {
+            return workbook;
+        }
+        buildSheetByStockFlowUnions(sheet, unions);
+        return workbook;
+    }
+
+    private void buildSheetByStockFlowUnions(Sheet sheet, List<StockFlowUnion> unions) {
+        int rowNum = 0;
+        int columnNum = 0;
+        Row row = sheet.createRow(rowNum++);
+        generateStringCell(row, columnNum++, "门店名称");
+        generateStringCell(row, columnNum++, "库存分类名称");
+        generateStringCell(row, columnNum++, "库存代码");
+        generateStringCell(row, columnNum++, "库存名称");
+        generateStringCell(row, columnNum++, "库存计量单位");
+        generateStringCell(row, columnNum++, "库存流水分类");
+        generateStringCell(row, columnNum++, "库存流水数量");
+        generateStringCell(row, columnNum++, "库存流水状态");
+        generateStringCell(row, columnNum++, "库存流水时间");
+        for (StockFlowUnion union : unions) {
+            StockTypePo typePo = union.getStockTypePo();
+            ensureEntityExist(typePo, "库存分类不存在");
+            StockPo po = union.getStockPo();
+            ensureEntityExist(po, "库存不存在");
+            StockFlowPo flowPo = union.getStockFlowPo();
+            ensureEntityExist(po, "库存流水不存在");
+            StorePo storePo = union.getStorePo();
+            ensureEntityExist(po, "库存流水所属门店不存在");
+            columnNum = 0;
+            row = sheet.createRow(rowNum++);
+            //门店名称
+            generateStringCell(row, columnNum++, storePo.getName());
+            //库存分类名称
+            generateStringCell(row, columnNum++, typePo.getName());
+            //库存代码
+            generateStringCell(row, columnNum++, po.getCode());
+            //库存名称
+            generateStringCell(row, columnNum++, po.getName());
+            //库存计量单位
+            generateStringCell(row, columnNum++, po.getUnitName());
+            //库存流水分类
+            generateStringCell(row, columnNum++, EnumUtils.getDescByKey(flowPo.getType(), FlowTypeEnum.class));
+            //库存流水数量
+            generateNumericCell(row, columnNum++, flowPo.getAmount().doubleValue());
+            //库存流水状态
+            generateStringCell(row, columnNum++, getStatusDesc(flowPo.getStatus()));
+            //库存流水时间
+            generateStringCell(row, columnNum++, DateUtils.formatDateTime(flowPo.getCreatedTime()));
+        }
+    }
+
+    private String getStatusDesc(int status) {
+        if (status == 1) {
+            return "有效";
+        }
+        if (status == 1) {
+            return "无效";
+        }
+        return "错误";
     }
 
 }

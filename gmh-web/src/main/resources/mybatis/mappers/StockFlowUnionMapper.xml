@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.StockFlowUnionMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.union.StockFlowUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<association property="stockTypePo"
+			resultMap="com.zes.squad.gmh.mapper.StockTypeMapper.BaseResultMap"
+			columnPrefix="st_" />
+		<association property="stockPo"
+			resultMap="com.zes.squad.gmh.mapper.StockMapper.BaseResultMap"
+			columnPrefix="sk_" />
+		<association property="stockFlowPo"
+			resultMap="com.zes.squad.gmh.mapper.StockFlowMapper.BaseResultMap"
+			columnPrefix="sf_" />
+		<association property="storePo"
+			resultMap="com.zes.squad.gmh.mapper.StoreMapper.BaseResultMap"
+			columnPrefix="se_" />
+	</resultMap>
+	<select id="selectAll" resultMap="BaseResultMap">
+		SELECT
+		sf.`id` AS id,
+		st.`id` AS st_id,
+		st.`name` AS st_name,
+		sk.`id` AS sk_id,
+		sk.`stock_type_id` AS sk_stock_type_id,
+		sk.`code` AS sk_code,
+		sk.`name` AS sk_name,
+		sk.`unit_name` AS sk_unit_name,
+		sf.`id` AS sf_id,
+		sf.`stock_id` AS sf_stock_id,
+		sf.`record_id` AS sf_record_id,
+		sf.`type` AS sf_type,
+		sf.`amount` AS sf_amount,
+		sf.`store_id` AS sf_store_id,
+		sf.`status` AS sf_status,
+		sf.`created_time` AS sf_created_time,
+		se.`id` AS se_id,
+		se.`name` AS se_name
+		FROM
+		stock_flow sf
+		LEFT JOIN
+		stock sk
+		ON
+		sf.`stock_id` = sk.`id`
+		LEFT JOIN
+		stock_type st
+		ON
+		sk.`stock_type_id` = st.`id`
+		LEFT JOIN
+		store se
+		ON
+		sf.`store_id` = se.`id`
+	</select>
+</mapper>

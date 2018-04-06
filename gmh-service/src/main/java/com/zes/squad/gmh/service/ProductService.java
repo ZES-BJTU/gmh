@@ -2,6 +2,8 @@ package com.zes.squad.gmh.service;
 
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductTypeQueryCondition;
@@ -155,7 +157,7 @@ public interface ProductService {
      * @param flowPo
      */
     void reduceProductAmount(ProductFlowPo flowPo);
-    
+
     /**
      * 根据消费记录id将产品流水置为无效
      * 
@@ -186,5 +188,12 @@ public interface ProductService {
      * @return
      */
     PagedList<ProductUnion> listPagedProductsWithAmount(ProductQueryCondition condition);
+
+    /**
+     * 导出产品
+     * 
+     * @return
+     */
+    Workbook exportProducts();
 
 }

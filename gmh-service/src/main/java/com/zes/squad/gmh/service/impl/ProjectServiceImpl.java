@@ -179,7 +179,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!Strings.isNullOrEmpty(code)) {
             ProjectPo po = projectMapper.selectByCode(code);
             if (po != null) {
-                ensureConditionSatisfied(po.getId().equals(projectId), "项目编码已被占用");
+                ensureConditionSatisfied(po.getId().equals(projectId), "项目代码已被占用");
             }
         }
         int row = projectMapper.updateSelective(projectPo);
@@ -224,7 +224,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Long queryProjectByCode(String code) {
-        ensureParameterExist(code, "项目编码为空");
+        ensureParameterExist(code, "项目代码为空");
         ProjectPo po = projectMapper.selectByCode(code);
         if (po == null) {
             return null;
@@ -270,14 +270,14 @@ public class ProjectServiceImpl implements ProjectService {
         Row row = sheet.createRow(rowNum++);
         generateStringCell(row, columnNum++, "顶层分类名称");
         generateStringCell(row, columnNum++, "项目分类名称");
-        generateStringCell(row, columnNum++, "项目编码");
+        generateStringCell(row, columnNum++, "项目代码");
         generateStringCell(row, columnNum++, "项目名称");
         generateStringCell(row, columnNum++, "项目单价");
         generateStringCell(row, columnNum++, "项目积分");
         generateStringCell(row, columnNum++, "实习生项目积分");
         generateStringCell(row, columnNum++, "备注");
         generateStringCell(row, columnNum++, "项目所需库存分类名称");
-        generateStringCell(row, columnNum++, "项目所需库存编码");
+        generateStringCell(row, columnNum++, "项目所需库存代码");
         generateStringCell(row, columnNum++, "项目所需库存名称");
         generateStringCell(row, columnNum++, "项目所需库存数量");
         generateStringCell(row, columnNum++, "项目所需库存计量单位");
@@ -294,7 +294,7 @@ public class ProjectServiceImpl implements ProjectService {
             generateStringCell(row, columnNum++, EnumUtils.getDescByKey(typePo.getTopType(), TopTypeEnum.class));
             //项目分类名称
             generateStringCell(row, columnNum++, typePo.getName());
-            //项目编码
+            //项目代码
             generateStringCell(row, columnNum++, po.getCode());
             //项目名称
             generateStringCell(row, columnNum++, po.getName());
@@ -323,7 +323,7 @@ public class ProjectServiceImpl implements ProjectService {
                 ensureEntityExist(stockPo, "项目所需库存为空");
                 //项目所需库存分类名称
                 generateStringCell(row, columnNum++, stockTypePo.getName());
-                //项目所需库存编码
+                //项目所需库存代码
                 generateStringCell(row, columnNum++, stockPo.getCode());
                 //项目所需库存名称
                 generateStringCell(row, columnNum++, stockPo.getName());

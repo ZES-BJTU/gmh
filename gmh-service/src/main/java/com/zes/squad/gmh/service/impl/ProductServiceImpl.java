@@ -6,10 +6,16 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureConditionSatisfi
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+import static com.zes.squad.gmh.helper.ExcelHelper.generateNumericCell;
+import static com.zes.squad.gmh.helper.ExcelHelper.generateStringCell;
 
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +26,8 @@ import com.google.common.collect.Lists;
 import com.zes.squad.gmh.common.enums.FlowTypeEnum;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.common.util.DateUtils;
+import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ProductAmountQueryCondition;
 import com.zes.squad.gmh.entity.condition.ProductQueryCondition;
@@ -28,9 +36,12 @@ import com.zes.squad.gmh.entity.po.ProductAmountPo;
 import com.zes.squad.gmh.entity.po.ProductFlowPo;
 import com.zes.squad.gmh.entity.po.ProductPo;
 import com.zes.squad.gmh.entity.po.ProductTypePo;
+import com.zes.squad.gmh.entity.po.StorePo;
+import com.zes.squad.gmh.entity.union.ProductFlowUnion;
 import com.zes.squad.gmh.entity.union.ProductUnion;
 import com.zes.squad.gmh.mapper.ProductAmountMapper;
 import com.zes.squad.gmh.mapper.ProductFlowMapper;
+import com.zes.squad.gmh.mapper.ProductFlowUnionMapper;
 import com.zes.squad.gmh.mapper.ProductMapper;
 import com.zes.squad.gmh.mapper.ProductTypeMapper;
 import com.zes.squad.gmh.mapper.ProductUnionMapper;
@@ -40,15 +51,17 @@ import com.zes.squad.gmh.service.ProductService;
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private ProductTypeMapper   productTypeMapper;
+    private ProductTypeMapper      productTypeMapper;
     @Autowired
-    private ProductMapper       productMapper;
+    private ProductMapper          productMapper;
     @Autowired
-    private ProductUnionMapper  productUnionMapper;
+    private ProductUnionMapper     productUnionMapper;
     @Autowired
-    private ProductAmountMapper productAmountMapper;
+    private ProductAmountMapper    productAmountMapper;
     @Autowired
-    private ProductFlowMapper   productFlowMapper;
+    private ProductFlowMapper      productFlowMapper;
+    @Autowired
+    private ProductFlowUnionMapper productFlowUnionMapper;
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override
@@ -281,7 +294,7 @@ public class ProductServiceImpl implements ProductService {
         ensureConditionSatisfied(record == 1, "库存数量修改失败");
 
     }
-    
+
     @Transactional(rollbackFor = { Throwable.class })
     @Override
     public void modifyFlowInvalid(Long recordId) {
@@ -334,6 +347,76 @@ public class ProductServiceImpl implements ProductService {
         }
         PageInfo<ProductUnion> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
+    }
+
+    @Override
+    public Workbook exportProducts() {
+        Workbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("产品流水统计");
+        List<ProductFlowUnion> unions = productFlowUnionMapper.selectAll();
+        if (CollectionUtils.isEmpty(unions)) {
+            return workbook;
+        }
+        buildSheetByProductFlowUnions(sheet, unions);
+        return workbook;
+    }
+
+    private void buildSheetByProductFlowUnions(Sheet sheet, List<ProductFlowUnion> unions) {
+        int rowNum = 0;
+        int columnNum = 0;
+        Row row = sheet.createRow(rowNum++);
+        generateStringCell(row, columnNum++, "门店名称");
+        generateStringCell(row, columnNum++, "产品分类名称");
+        generateStringCell(row, columnNum++, "产品代码");
+        generateStringCell(row, columnNum++, "产品名称");
+        generateStringCell(row, columnNum++, "产品计量单位");
+        generateStringCell(row, columnNum++, "产品单价");
+        generateStringCell(row, columnNum++, "产品流水分类");
+        generateStringCell(row, columnNum++, "产品流水数量");
+        generateStringCell(row, columnNum++, "产品流水状态");
+        generateStringCell(row, columnNum++, "产品流水时间");
+        for (ProductFlowUnion union : unions) {
+            ProductTypePo typePo = union.getProductTypePo();
+            ensureEntityExist(typePo, "产品分类不存在");
+            ProductPo po = union.getProductPo();
+            ensureEntityExist(po, "产品不存在");
+            ProductFlowPo flowPo = union.getProductFlowPo();
+            ensureEntityExist(po, "产品流水不存在");
+            StorePo storePo = union.getStorePo();
+            ensureEntityExist(po, "产品流水所属门店不存在");
+            columnNum = 0;
+            row = sheet.createRow(rowNum++);
+            //门店名称
+            generateStringCell(row, columnNum++, storePo.getName());
+            //产品分类名称
+            generateStringCell(row, columnNum++, typePo.getName());
+            //产品代码
+            generateStringCell(row, columnNum++, po.getCode());
+            //产品名称
+            generateStringCell(row, columnNum++, po.getName());
+            //产品计量单位
+            generateStringCell(row, columnNum++, po.getUnitName());
+            //产品单价
+            generateNumericCell(row, columnNum++, po.getUnitPrice().doubleValue());
+            //产品流水分类
+            generateStringCell(row, columnNum++, EnumUtils.getDescByKey(flowPo.getType(), FlowTypeEnum.class));
+            //产品流水数量
+            generateNumericCell(row, columnNum++, flowPo.getAmount().doubleValue());
+            //产品流水状态
+            generateStringCell(row, columnNum++, getStatusDesc(flowPo.getStatus()));
+            //产品流水时间
+            generateStringCell(row, columnNum++, DateUtils.formatDateTime(flowPo.getCreatedTime()));
+        }
+    }
+
+    private String getStatusDesc(int status) {
+        if (status == 1) {
+            return "有效";
+        }
+        if (status == 1) {
+            return "无效";
+        }
+        return "错误";
     }
 
 }

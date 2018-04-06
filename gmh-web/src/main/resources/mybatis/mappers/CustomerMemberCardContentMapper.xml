@@ -14,7 +14,6 @@
 	<resultMap id="UnionResultMap"
 		type="com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion">
 		<id column="id" jdbcType="BIGINT" property="id" />
-		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="related_id" jdbcType="BIGINT" property="relatedId" />
 		<result column="related_name" jdbcType="VARCHAR" property="relatedName" />
 		<result column="content" jdbcType="DECIMAL" property="content" />
@@ -32,7 +31,6 @@
 	
 	<select id="getContentList" parameterType="long" resultMap="UnionResultMap">
 		select
-		c.`type` as `type`,
 		c.`related_id` as `related_id`,
 		p.`name` as `related_name`,
 		c.`content` as `content`,

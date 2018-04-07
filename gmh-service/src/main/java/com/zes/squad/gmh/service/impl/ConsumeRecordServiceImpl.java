@@ -158,6 +158,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		customerMemberCardPo.setRemainingMoney(memberCardPo.getAmount());
 
 		consumeRecord.setCustomerId(customerPo.getId());
+		if(consumeRecord.getPaymentWay()==4)
+			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
 		customerMemberCardMapper.insert(customerMemberCardPo);
@@ -205,7 +207,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-
+		
+		if(consumeRecord.getPaymentWay()==4)
+			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.projectNumberAdd(oldNumber + 1);
 
@@ -225,7 +229,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-
+		if(consumeRecord.getPaymentWay()==4)
+			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.activityNumberAdd(oldNumber + 1);
 

@@ -8,10 +8,11 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ConsumeTypeEnum {
 
-    BUYPRODUCT(0, "买产品"),
-    DOPROJECT(1, "做美容"),
-    BUYCARD(2, "办卡");
-
+    CARD(1, "办卡"),
+    PRODUCT(2, "买产品"),
+    PROJECT(3, "做项目"),
+	ACTIVITY(4,"参加活动");
+	
     private int    key;
     private String desc;
 

@@ -46,7 +46,7 @@
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		customer_member_card
-		(`customer_id`,`member_card_id`,`remaining_money`,`project_id`,`remaining_times`,`project_discount`,`product_discount`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
+		(`customer_id`,`member_card_id`,`remaining_money`,`project_discount`,`product_discount`,`is_valid`,`is_returned`,`is_turned`,`unique_identifier`,`store_id`)
 		VALUES
 		(#{customerId, jdbcType=BIGINT},
 		#{memberCardId,

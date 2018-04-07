@@ -27,7 +27,7 @@
 		<result column="coupon_amount" jdbcType="INTEGER" property="couponAmount" />	
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo">
-		INSERT INTO consume_record_product
+		INSERT INTO consume_record_gift
 		(`consume_record_id`,`trade_serial_number`,`type`,`product_id`,`product_amount`,`project_id`,`project_amount`,`coupon_money`,`coupon_amount`)
 		VALUES
 		(#{consumeRecordId,jdbcType=BIGINT},

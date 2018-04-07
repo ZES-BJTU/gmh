@@ -8,6 +8,7 @@ import lombok.Data;
 public class AppointmentProjectUnion {
 
 	private Long projectId;
+	private String projectCode;
     private String projectName;
     private Long employeeId;
     private String employeeName;

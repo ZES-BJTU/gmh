@@ -27,9 +27,9 @@
 		customer_activity_content(`customer_activity_id`,`type`,`related_id`,`content`,`number`)
 		values(
 		#{customerActivityId,jdbcType=BIGINT},
-		#{type,jdbcType=BIGINT}
-		#{relatedId,jdbcType=BIGINT}
-		#{content,jdbcType=VARCHAR}
+		#{type,jdbcType=BIGINT},
+		#{relatedId,jdbcType=BIGINT},
+		#{content,jdbcType=VARCHAR},
 		#{number,jdbcType=DECIMAL})
 	</insert>
 

@@ -52,6 +52,7 @@ import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
 import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
+import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.service.StockService;
 
 @Service("consumeRecordService")
@@ -81,6 +82,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private CustomerActivityMapper customerActivityMapper;
 	@Autowired
 	private StockService stockService;
+	@Autowired
+	private ProductService productService;
 	@Autowired
 	private CustomerMapper customerMapper;
 
@@ -176,12 +179,18 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			gift.setConsumeRecordId(consumeRecord.getId());
 			consumeRecordGiftMapper.insert(gift);
 			if (gift.getProjectId() != null) {
-				customerMemberCardContentPo.setRelatedId(gift.getProjectId());
-				customerMemberCardContentPo.setAmount(gift.getProjectAmount());
+				CustomerMemberCardContentPo tmpcustomerMemberCardContentPo = new CustomerMemberCardContentPo();
+				tmpcustomerMemberCardContentPo.setCustomerMemberCardId(memberCardPo.getId());
+				tmpcustomerMemberCardContentPo.setRelatedId(gift.getProjectId());
+				tmpcustomerMemberCardContentPo.setAmount(gift.getProjectAmount());
+				customerMemberCardContentMapper.insert(tmpcustomerMemberCardContentPo);
 			}
 			if (gift.getCouponMoney() != null) {
-				customerMemberCardContentPo.setContent(gift.getCouponMoney());
-				customerMemberCardContentPo.setAmount(gift.getCouponAmount());
+				CustomerMemberCardContentPo tmpCustomerMemberCardContentPo = new CustomerMemberCardContentPo();
+				tmpCustomerMemberCardContentPo.setCustomerMemberCardId(memberCardPo.getId());
+				tmpCustomerMemberCardContentPo.setContent(gift.getCouponMoney());
+				tmpCustomerMemberCardContentPo.setAmount(gift.getCouponAmount());
+				customerMemberCardContentMapper.insert(tmpCustomerMemberCardContentPo);
 			}
 		}
 		calAmount(consumeRecord, consumeRecordDetails, gifts);
@@ -223,13 +232,15 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		ConsumeRecordDetailPo detail = consumeRecordDetails.get(0);
 		detail.setConsumeRecordId(consumeRecord.getId());
 		consumeRecordDetailMapper.insert(detail);
-
+		
+		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
+		
 		CustomerActivityPo caPo = new CustomerActivityPo();
-		caPo.setCustomerId(consumeRecord.getCustomerId());
+		caPo.setCustomerId(customerPo.getId());
 		caPo.setActivityId(consumeRecord.getActivityId());
 		caPo.setStoreId(ThreadContext.getUserStoreId());
 		customerActivityMapper.insert(caPo);
-		List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(caPo.getId());
+		List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(consumeRecord.getActivityId());
 
 		for (ActivityContentPo ac : acList) {
 			CustomerActivityContentPo cacPo = CommonConverter.map(ac, CustomerActivityContentPo.class);
@@ -429,6 +440,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				flowPo.setStatus(1);
 				flowPo.setStoreId(ThreadContext.getUserStoreId());
 				flowPo.setType(3);
+				productService.reduceProductAmount(flowPo);
 			}
 			if (detail.getProjectId() != null) {
 				List<ProjectStockPo> projectStockPos = projectStockMapper.getProjectStockByProId(detail.getProjectId());
@@ -454,6 +466,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				flowPo.setStatus(1);
 				flowPo.setStoreId(ThreadContext.getUserStoreId());
 				flowPo.setType(3);
+				productService.reduceProductAmount(flowPo);
 			}
 		}
 

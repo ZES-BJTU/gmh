@@ -21,12 +21,11 @@
 	</resultMap>
 	
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardContentPo" >
-		insert into customer_member_card_content values(
-		`customer_member_card_id`=#{customerMemberCardId,jdbcType=BIGINT},
-		`type`=#{type,jdbcType=INTEGER},
-		`related_id`=#{relatedId,jdbcType=BIGINT},
-		`content`=#{content,jdbcType=DECIMAL},
-		`amount`=#{amount,jdbcType=INTEGER})
+		insert into customer_member_card_content (`customer_member_card_id`,`related_id`,`content`,`amount`  ) values(
+		#{customerMemberCardId,jdbcType=BIGINT},
+		#{relatedId,jdbcType=BIGINT},
+		#{content,jdbcType=DECIMAL},
+		#{amount,jdbcType=INTEGER})
 	</insert>
 	
 	<select id="getContentList" parameterType="long" resultMap="UnionResultMap">

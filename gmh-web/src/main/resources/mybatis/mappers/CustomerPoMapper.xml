@@ -85,4 +85,9 @@
 		where
 		id=#{id,jdbcType=INTEGER}
 	</select>
+	<select id="getByMobile" parameterType="string" resultMap="BaseResultMap">
+		select * from customer
+		where
+		mobile=#{mobile,jdbcType=VARCHAR}
+	</select>
 </mapper>

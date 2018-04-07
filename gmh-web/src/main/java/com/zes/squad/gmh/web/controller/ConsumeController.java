@@ -169,10 +169,12 @@ public class ConsumeController {
 		if (consumeRecordPo.getPaymentWay() == 31) {
 			ensureParameterExist(consumeRecordPo.getPayWayId(), "请选择会员卡");
 			ensureParameterExist(consumeRecordPo.getPayWayContentId(), "请选择会员卡");
+			ensureParameterExist(consumeRecordPo.getCouponAmount(), "请输入代金券数量");
 		}
 		if (consumeRecordPo.getPaymentWay() == 32) {
 			ensureParameterExist(consumeRecordPo.getPayWayId(), "请选择活动");
 			ensureParameterExist(consumeRecordPo.getPayWayContentId(), "请选择活动");
+			ensureParameterExist(consumeRecordPo.getCouponAmount(), "请输入代金券数量");
 		}
 
 

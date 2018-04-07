@@ -16,6 +16,7 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
+import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
@@ -117,9 +118,11 @@ public class ConsumeController {
 	
 	private ConsumeRecordVo buildAppointmentVoByUnion(ConsumeRecordUnion consumeRecordUnion) {
 		ConsumeRecordVo vo = CommonConverter.map(consumeRecordUnion.getConsumeRecordPo(), ConsumeRecordVo.class);
+		
+		CustomerPo customerPo = customerMapper.getByMobile(consumeRecordUnion.getConsumeRecordPo().getCustomerMobile());		
 		vo.setConsumeRecordDetailUnions(consumeRecordUnion.getConsumeRecordDetailUnion());
 		vo.setConsumeRecordGiftUnions(consumeRecordUnion.getConsumeRecordGiftUnion());
-		vo.setCustomerName(customerMapper.getById(consumeRecordUnion.getConsumeRecordPo().getCustomerId()).getName());
+		vo.setCustomerName(customerPo.getName());
 		return vo;
 	}
 }

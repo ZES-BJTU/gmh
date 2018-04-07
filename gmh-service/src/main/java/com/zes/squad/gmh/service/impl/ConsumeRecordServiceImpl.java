@@ -382,7 +382,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 					} else
 						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
 				}
-			}
+			}else
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请选择会员卡");
 
 		} else if (paymentWay == 2) {
 

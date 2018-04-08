@@ -15,6 +15,7 @@
 	</resultMap>
 	<resultMap
 		type="com.zes.squad.gmh.entity.union.CustomerActivityContentUnion" id="UnionMap">
+		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="type" jdbcType="INTEGER" property="type" />
 		<result column="related_id" jdbcType="BIGINT" property="relatedId" />
 		<result column="related_name" jdbcType="BIGINT" property="relatedName" />
@@ -35,6 +36,7 @@
 
 	<select id="getProductListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
 		select
+		cac.`id` as id,
 		cac.`type` as type,
 		p.`name` as `related_name`,
 		cac.`number` as `number`
@@ -48,6 +50,7 @@
 	</select>
 	<select id="getProjectListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
 		select
+		cac.`id` as id,
 		cac.`type` as type,
 		p.`name` as `related_name`,
 		cac.`number` as `number`
@@ -61,6 +64,7 @@
 	</select>
 	<select id="getCardListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
 		select
+		cac.`id` as id,
 		cac.`type` as type,
 		p.`name` as `related_name`,
 		cac.`number` as `number`
@@ -73,7 +77,7 @@
 		cac.`type`=2;
 	</select>
 	<select id="getCouponListByCustomerActivityId" parameterType="long" resultMap="UnionMap">
-		select `type`,`content`,`number` from
+		select `id`,`type`,`content`,`number` from
 		customer_activity_content
 		where
 		`customer_activity_id`=#{customerActivityId,jdbcType=BIGINT}
@@ -81,7 +85,7 @@
 		`type`=4;
 	</select>
 	<select id="getById" parameterType="long" resultMap="UnionMap">
-		select `type`,`content`,`number` from
+		select `id`,`type`,`content`,`number` from
 		customer_activity_content
 		where
 		`id`=#{id,jdbcType=BIGINT};

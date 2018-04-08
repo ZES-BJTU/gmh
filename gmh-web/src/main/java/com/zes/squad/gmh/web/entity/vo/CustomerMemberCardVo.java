@@ -12,7 +12,6 @@ public class CustomerMemberCardVo {
 	private String customerName;
 	private String memberCardName;
 	private BigDecimal remainingMoney;
-//	private Integer remainingTimes;
 	private List<CustomerMemberCardContentVo> customerMemberCardContent;
 	private String isValid;
 	private String isReturned;

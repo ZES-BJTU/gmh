@@ -23,6 +23,7 @@ import com.zes.squad.gmh.service.CustomerActivityService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.CustomerActivityQueryParams;
+import com.zes.squad.gmh.web.entity.param.PaymentParams;
 import com.zes.squad.gmh.web.entity.vo.CustomerActivityContentVo;
 import com.zes.squad.gmh.web.entity.vo.CustomerActivityVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
@@ -44,14 +45,27 @@ public class CustomerActivityController {
 		if (CollectionUtils.isEmpty(pagedUnions.getData())) {
 			return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize()));
 		}
-		List<CustomerActivityVo> customerMemberCardVos = new ArrayList<CustomerActivityVo>();
+		List<CustomerActivityVo> customerActivityVos = new ArrayList<CustomerActivityVo>();
 		for (CustomerActivityUnion caUnion : pagedUnions.getData()) {
 			CustomerActivityVo customerActivitydVo = buildAppointmentVoByUnion(caUnion);
-			customerMemberCardVos.add(customerActivitydVo);
+			customerActivityVos.add(customerActivitydVo);
 		}
 		return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
-				pagedUnions.getTotalCount(), customerMemberCardVos));
+				pagedUnions.getTotalCount(), customerActivityVos));
 	}
+	
+	@RequestMapping(path ="/getActivityPay", method = {RequestMethod.PUT})
+	public JsonResult<List<CustomerActivityVo>> doGetCardPay(@RequestBody PaymentParams params){
+		List<CustomerActivityUnion> unionList = customerActivityService.getCardListByMobile(params.getCustomerMobile());
+		List<CustomerActivityVo> customerActivityVos = new ArrayList<CustomerActivityVo>();
+		for (CustomerActivityUnion caUnion : unionList) {
+			CustomerActivityVo customerActivitydVo = buildAppointmentVoByUnion(caUnion);
+			customerActivityVos.add(customerActivitydVo);
+		}
+		
+		return JsonResults.success(customerActivityVos);
+	}
+	
 	private CustomerActivityVo buildAppointmentVoByUnion(CustomerActivityUnion caUnion) {
 		CustomerActivityVo vo = CommonConverter.map(caUnion, CustomerActivityVo.class);
 		List<CustomerActivityContentVo> cacvList = new ArrayList<CustomerActivityContentVo>();

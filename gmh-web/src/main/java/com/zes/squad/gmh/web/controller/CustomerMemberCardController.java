@@ -25,6 +25,7 @@ import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ChangeCardStoreParams;
 import com.zes.squad.gmh.web.entity.param.CustomerMemberCardQueryParams;
+import com.zes.squad.gmh.web.entity.param.PaymentParams;
 import com.zes.squad.gmh.web.entity.param.ReturnCardParams;
 import com.zes.squad.gmh.web.entity.param.TurnCardParams;
 import com.zes.squad.gmh.web.entity.vo.CustomerMemberCardVo;
@@ -99,7 +100,19 @@ public class CustomerMemberCardController {
 		customerMemberCardService.changeStore(po,params.getNewStoreId());
 		return JsonResults.success();
 	}
-
+	
+	@RequestMapping(path ="/getCardPay", method = {RequestMethod.PUT})
+	public JsonResult<List<CustomerMemberCardVo>> doGetCardPay(@RequestBody PaymentParams params){
+		List<CustomerMemberCardUnion> unionList = customerMemberCardService.getCardListByMobile(params.getCustomerMobile());
+		List<CustomerMemberCardVo> customerMemberCardVos = new ArrayList<CustomerMemberCardVo>();
+		for (CustomerMemberCardUnion customerMemberCardUnion : unionList) {
+			CustomerMemberCardVo customerMemberCardVo = buildAppointmentVoByUnion(customerMemberCardUnion);
+			customerMemberCardVos.add(customerMemberCardVo);
+		}	
+		
+		return JsonResults.success(customerMemberCardVos);
+	}
+	
 	private CustomerMemberCardVo buildAppointmentVoByUnion(CustomerMemberCardUnion customerMemberCardUnion) {
 
 //		List<CustomerMemberCardContentUnion> cmccuList = customerMemberCardUnion.getCustomerMemberCardContent();

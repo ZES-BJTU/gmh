@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.service;
 
+import java.util.List;
+
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
@@ -16,4 +18,6 @@ public interface CustomerMemberCardService {
 	void turnCard(CustomerMemberCardPo po,Long cardId);
 	
 	void changeStore(CustomerMemberCardPo po, Long storeId);
+
+	List<CustomerMemberCardUnion> getCardListByMobile(String customerMobile);
 }

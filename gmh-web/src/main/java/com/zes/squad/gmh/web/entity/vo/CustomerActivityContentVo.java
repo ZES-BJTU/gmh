@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class CustomerActivityContentVo {
 	
+	private Long id;
 	private String type;
 	private String relatedName;
 	private BigDecimal content;

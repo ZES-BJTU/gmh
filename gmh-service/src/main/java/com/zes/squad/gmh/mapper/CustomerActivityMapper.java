@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.zes.squad.gmh.entity.condition.CustomerActivityQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerActivityPo;
@@ -13,4 +14,6 @@ public interface CustomerActivityMapper {
 	List<CustomerActivityUnion> listByCondition(CustomerActivityQueryCondition condition);
 
 	CustomerActivityPo getById(Long id);
+
+	List<CustomerActivityUnion> getActivityListByCustomerId(Map<String, Object> map);
 }

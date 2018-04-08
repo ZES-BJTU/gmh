@@ -48,4 +48,25 @@
 		</where>		
 	</select>
 	
+	<select id="getActivityListByCustomerId"
+		parameterType="map"
+		resultMap="UnionMap">
+		SELECT
+		ca.`id` as `id`,
+		c.`name` as `customer_name`,
+		a.`name` as `activity_name`
+		from
+		customer_activity ca
+		left join customer c
+		on
+		ca.`customer_id`=c.`id`
+		left join activity a
+		on
+		ca.`activity_id`=a.`id`
+		where
+		ca.`store_id`=#{storeId,jdbcType=BIGINT}
+		and
+		ca.`customer_id`=#{customerId,jdbcType=BIGINT}
+	</select>
+	
 </mapper>

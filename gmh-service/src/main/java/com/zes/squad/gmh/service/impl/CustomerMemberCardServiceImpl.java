@@ -1,7 +1,9 @@
 package com.zes.squad.gmh.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,9 @@ import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
+import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
+import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
@@ -27,7 +31,8 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	private CustomerMemberCardContentMapper customerMemberCardContentMapper;
 //	@Autowired
 //	private MemberCardService memberCardService;
-
+	@Autowired
+	private CustomerMapper customerMapper;
 	@Override
 	public PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition condition) {
 		int pageNum = condition.getPageNum();
@@ -104,6 +109,21 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		oldCard.setStoreId(storeId);
 		customerMemberCardMapper.insert(oldCard);
 
+	}
+
+	@Override
+	public List<CustomerMemberCardUnion> getCardListByMobile(String customerMobile) {
+		Map<String,Object> map = new HashMap<String,Object>();		
+		map.put("storeId", ThreadContext.getUserStoreId());
+		CustomerPo customer = customerMapper.getByMobile(customerMobile);
+		map.put("customerId", customer.getId());
+		List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper
+				.getCardListByCustomerId(map);
+		for(CustomerMemberCardUnion cmcu:customerMemberCardUnions){
+			cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getContentList(cmcu.getId()));
+		}
+			
+		return customerMemberCardUnions;
 	}
 	
 

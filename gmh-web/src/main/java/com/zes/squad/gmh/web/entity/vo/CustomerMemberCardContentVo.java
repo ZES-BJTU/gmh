@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class CustomerMemberCardContentVo {
 	private Long id;
-	private String typeName;
 	private Long relatedId;
 	private String relatedName;
 	private BigDecimal content;

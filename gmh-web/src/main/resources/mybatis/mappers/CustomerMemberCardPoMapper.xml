@@ -102,6 +102,43 @@
 		
 	</select>
 	
+	<select id="getCardListByCustomerId"
+		parameterType="map"
+		resultMap="union">
+		select
+		cmd.`id` as `id`,
+		cus.`name` as `customer_name`,
+		c.`name` as `member_card_name`,
+		cmd.`remaining_money` as `remaining_money`,
+		cmd.`is_valid` as
+		`is_valid`,
+		cmd.`project_discount` as `project_discount`,
+		cmd.`product_discount` as `product_discount`,
+		cmd.`is_returned` as `is_returned`,
+		cmd.`returned_reason` as
+		`returned_reason`,
+		cmd.`returned_time` as `returned_time`,
+		cmd.`returned_money` as `returned_money`,
+		cmd.`is_turned` as
+		`is_turned`,
+		cmd.`turned_reason` as `turned_reason`,
+		cmd.`turned_time`
+		as `turned_time`,
+		cmd.`turned_money` as `turned_money`,
+		cmd.`unique_identifier` as `unique_identifier`
+		from
+		customer_member_card cmd
+		left join customer cus on
+		cus.`id`=cmd.`customer_id`
+		left join member_card c on
+		cmd.`member_card_id`=c.`id`
+		where
+		cmd.`store_id`=#{storeId,jdbcType=BIGINT}
+		and
+		cmd.`customer_id`=#{customerId,jdbcType=BIGINT}
+		
+	</select>
+	
 	<select id="changedListCustomerMemberCardByCondition"
 		parameterType="com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition"
 		resultMap="union">

@@ -30,6 +30,7 @@
 	
 	<select id="getContentList" parameterType="long" resultMap="UnionResultMap">
 		select
+		c.`id` as `id`,
 		c.`related_id` as `related_id`,
 		p.`name` as `related_name`,
 		c.`content` as `content`,

@@ -142,7 +142,9 @@
 		where id in
 		(select appointment_id from appointment_project 
 		where 
-		begin_time <![CDATA[ > ]]>curdate())
+		begin_time <![CDATA[ > ]]>now()
+		and
+		begin_time<![CDATA[ < ]]>date_add(curdate(), interval 2 day))
 	</select>
 
 </mapper>

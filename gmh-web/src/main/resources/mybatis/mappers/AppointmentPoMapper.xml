@@ -145,6 +145,8 @@
 		begin_time <![CDATA[ > ]]>now()
 		and
 		begin_time<![CDATA[ < ]]>date_add(curdate(), interval 2 day))
+		and
+		status=1
 	</select>
 
 </mapper>

@@ -60,7 +60,8 @@
 		parameterType="com.zes.squad.gmh.entity.condition.AppointmentQueryCondition"
 		resultMap="BaseResultMap">
 		SELECT
-		id, customer_name, customer_mobile, customer_gender, is_vip, customer_id,
+		id, customer_name, customer_mobile, customer_gender, is_vip,
+		customer_id,
 		is_line, status, remarks
 		from
 		appointment
@@ -133,4 +134,15 @@
 		</set>
 		WHERE `id` = #{id:BIGINT}
 	</update>
+
+	<select id="listRemindAppointment"
+		parameterType="com.zes.squad.gmh.entity.condition.AppointmentQueryCondition"
+		resultMap="BaseResultMap">
+		select * from appointment 
+		where id in
+		(select appointment_id from appointment_project 
+		where 
+		begin_time <![CDATA[ > ]]>curdate())
+	</select>
+
 </mapper>

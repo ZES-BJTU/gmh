@@ -27,4 +27,11 @@ public interface AppointmentService {
     boolean isFree(Long employeeId, Date beginTime, Date endTime);
     
     boolean isAllFree(List<AppointmentProjectParams> apList);
+    /**
+     * 查询需要短信提醒的预约
+     * 
+     * @param 
+     * @return
+     */
+    List<AppointmentUnion> getRemindAppointment();
 }

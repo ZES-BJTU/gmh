@@ -75,6 +75,12 @@ public class AppointmentController {
 			return JsonResults.fail(1000, "预约冲突");
 	}
 
+	@RequestMapping(path = "/remind", method = { RequestMethod.PUT })
+	public JsonResult<List<AppointmentUnion>> doRemindAppointment() {
+		List<AppointmentUnion> unionList = appointmentService.getRemindAppointment();
+		return JsonResults.success(unionList);
+	}
+	
 	@RequestMapping(path = "/cancel/{appointmentId}", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCancleAppointment(@PathVariable("appointmentId") Long appointmentId) {
 		appointmentService.cancelAppointment(appointmentId);

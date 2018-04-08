@@ -10,5 +10,6 @@ import lombok.Data;
 public class AppointmentUnion {
 
     private AppointmentPo                 appointmentPo;
+    private StoreUnion                    storeUnion;
     private List<AppointmentProjectUnion> appointmentProjects;
 }

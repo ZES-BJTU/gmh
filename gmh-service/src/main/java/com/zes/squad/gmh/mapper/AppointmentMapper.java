@@ -20,4 +20,6 @@ public interface AppointmentMapper {
     List<AppointmentPo> listAppointmentByCondition(AppointmentQueryCondition condition);
     
     List<EmployeeTimeTable> queryEmployeeTimeTable(Map<String,Object> map);
+    
+    List<AppointmentPo> listRemindAppointment();
 }

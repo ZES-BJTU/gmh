@@ -21,14 +21,17 @@ import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.AppointmentQueryCondition;
 import com.zes.squad.gmh.entity.po.AppointmentPo;
 import com.zes.squad.gmh.entity.po.AppointmentProjectPo;
+import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.union.AppointmentProjectParams;
 import com.zes.squad.gmh.entity.union.AppointmentProjectUnion;
 import com.zes.squad.gmh.entity.union.AppointmentUnion;
 import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
 import com.zes.squad.gmh.mapper.AppointmentMapper;
 import com.zes.squad.gmh.mapper.AppointmentProjectMapper;
+import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.AppointmentService;
 import com.zes.squad.gmh.service.ProjectService;
+import com.zes.squad.gmh.service.StoreService;
 
 @Service("appointmentService")
 public class AppointmentServiceImpl implements AppointmentService {
@@ -39,10 +42,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private AppointmentProjectMapper appointmentProjectMapper;
 	@Autowired
 	private ProjectService projectService;
-
+	@Autowired
+	private StoreService storeService;
+	@Autowired
+	private CustomerMapper customerMapper;
 	@Override
 	public void createAppointment(AppointmentPo appointmentPo,
 			List<AppointmentProjectParams> appointmentPorjectParams) {
+		
+		CustomerPo customer = customerMapper.getByMobile(appointmentPo.getCustomerMobile());
+		if(customer!=null){
+			appointmentPo.setCustomerId(customer.getId());
+		}
 		appointmentPo.setStoreId(ThreadContext.getUserStoreId());
 		appointmentPo.setStatus(1);
 		appointmentMapper.insert(appointmentPo);
@@ -245,6 +256,24 @@ public class AppointmentServiceImpl implements AppointmentService {
 			appointmentProjectMapper.insert(po);
 		}
 
+	}
+
+	@Override
+	public List<AppointmentUnion> getRemindAppointment() {
+		List<AppointmentUnion> appointmentUnions = new ArrayList<AppointmentUnion>();
+		List<AppointmentPo> appointmentPos = appointmentMapper.listRemindAppointment();
+		AppointmentUnion appointmentUnion = new AppointmentUnion();
+
+		for (AppointmentPo appointmentPo : appointmentPos) {
+			List<AppointmentProjectUnion> appointmentProjectUnions = new ArrayList<AppointmentProjectUnion>();
+			appointmentProjectUnions = appointmentProjectMapper
+					.getAppointmentProjectUnionByAppId(appointmentPo.getId());
+			appointmentUnion.setAppointmentPo(appointmentPo);
+			appointmentUnion.setAppointmentProjects(appointmentProjectUnions);
+			appointmentUnion.setStoreUnion(storeService.queryStoreDetail(appointmentPo.getStoreId()));
+			appointmentUnions.add(CommonConverter.map(appointmentUnion, AppointmentUnion.class));
+		}
+		return appointmentUnions;
 	}
 
 }

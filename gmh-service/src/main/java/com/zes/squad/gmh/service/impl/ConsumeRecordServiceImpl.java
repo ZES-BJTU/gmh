@@ -49,7 +49,9 @@ import com.zes.squad.gmh.mapper.CustomerActivityMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
+import com.zes.squad.gmh.mapper.ProductFlowMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
+import com.zes.squad.gmh.mapper.StockFlowMapper;
 import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.ProductService;
@@ -70,6 +72,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private ConsumeRecordGiftMapper consumeRecordGiftMapper;
 	@Autowired
 	private ProjectStockMapper projectStockMapper;
+	@Autowired
+	private ProductFlowMapper productFlowMapper;
+	@Autowired
+	private StockFlowMapper stockFlowMapper;
 	@Autowired
 	private CustomerMemberCardMapper customerMemberCardMapper;
 	@Autowired
@@ -158,7 +164,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		customerMemberCardPo.setRemainingMoney(memberCardPo.getAmount());
 
 		consumeRecord.setCustomerId(customerPo.getId());
-		if(consumeRecord.getPaymentWay()==4)
+		if (consumeRecord.getPaymentWay() == 4)
 			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
@@ -207,8 +213,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-		
-		if(consumeRecord.getPaymentWay()==4)
+
+		if (consumeRecord.getPaymentWay() == 4)
 			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.projectNumberAdd(oldNumber + 1);
@@ -229,7 +235,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-		if(consumeRecord.getPaymentWay()==4)
+		if (consumeRecord.getPaymentWay() == 4)
 			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.activityNumberAdd(oldNumber + 1);
@@ -237,9 +243,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		ConsumeRecordDetailPo detail = consumeRecordDetails.get(0);
 		detail.setConsumeRecordId(consumeRecord.getId());
 		consumeRecordDetailMapper.insert(detail);
-		
+
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
-		
+
 		CustomerActivityPo caPo = new CustomerActivityPo();
 		caPo.setCustomerId(customerPo.getId());
 		caPo.setActivityId(consumeRecord.getActivityId());
@@ -313,27 +319,30 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	}
 
 	@Override
-	public void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,
+	public void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts, Long id, MemberCardPo memberCardPo) {
 		consumeRecordMapper.modify(id);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (consumeRecord.getConsumeType() == 1) {
 			map = getTradeSerialNumber("C");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createCardConsumeRecord(map, consumeRecord, consumeRecordProducts, gifts, memberCardPo);
+			createCardConsumeRecord(map, consumeRecord, consumeRecordDetails, gifts, memberCardPo);
 		} else if (consumeRecord.getConsumeType() == 2) {
 			map = getTradeSerialNumber("B");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProductConsumeRecord(map, consumeRecord, consumeRecordProducts);
+			createProductConsumeRecord(map, consumeRecord, consumeRecordDetails);
 		} else if (consumeRecord.getConsumeType() == 3) {
 			map = getTradeSerialNumber("D");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProjectConsumeRecord(map, consumeRecord, consumeRecordProducts);
+			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetails);
 		} else if (consumeRecord.getConsumeType() == 4) {
 			map = getTradeSerialNumber("A");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createActivityConsumeRecord(map, consumeRecord, consumeRecordProducts);
+			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetails);
 		}
+
+		recoverAmount(id);
+		recoverMoney(consumeRecord,consumeRecordDetails);
 	}
 
 	@Override
@@ -387,29 +396,27 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 					} else
 						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
 				}
-			}else
+			} else
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请选择会员卡");
 
 		} else if (paymentWay == 2) {
 
+			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
+			if (consumeRecordDetails.size() != 1)
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动选择有误");
 
-				CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
-				if(consumeRecordDetails.size() != 1)
-					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动选择有误");
-				
-				if(cacu.getNumber().intValue()>=1){
-					Map<String,Object> map = new HashMap<String,Object>();
-					map.put("id", payWayContentId);
-					map.put("amount", cacu.getNumber().subtract(new BigDecimal(1)));
-					customerActivityContentMapper.updateAmount(map);
-					return;
-				}else{
-					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动余额不足");
-				}
-			
-			
+			if (cacu.getNumber().intValue() >= 1) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("id", payWayContentId);
+				map.put("amount", cacu.getNumber().subtract(new BigDecimal(1)));
+				customerActivityContentMapper.updateAmount(map);
+				return;
+			} else {
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动余额不足");
+			}
+
 		} else if (paymentWay == 31) {
-			//使用会员卡代金券
+			// 使用会员卡代金券
 			CustomerMemberCardContentUnion cmccu = customerMemberCardContentMapper
 					.getContent(consumeRecord.getPayWayContentId());
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -417,19 +424,19 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			map.put("amount", cmccu.getAmount() - consumeRecordDetails.get(0).getAmount().intValue());
 			customerMemberCardContentMapper.calAmount(map);
 			return;
-		}else if (paymentWay == 32) {
-			//使用活动代金券
+		} else if (paymentWay == 32) {
+			// 使用活动代金券
 			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
-			if(consumeRecordDetails.size() != 1)
+			if (consumeRecordDetails.size() != 1)
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动选择有误");
-			
-			if(cacu.getNumber().intValue()>=1){
-				Map<String,Object> map = new HashMap<String,Object>();
+
+			if (cacu.getNumber().intValue() >= 1) {
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("id", payWayContentId);
 				map.put("amount", cacu.getNumber().subtract(new BigDecimal(1)));
 				customerActivityContentMapper.updateAmount(map);
 				return;
-			}else{
+			} else {
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动余额不足");
 			}
 		}
@@ -475,6 +482,65 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				productService.reduceProductAmount(flowPo);
 			}
 		}
+
+	}
+
+	private void recoverMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails) {
+		Integer paymentWay = consumeRecord.getPaymentWay();
+		Long payWayId = consumeRecord.getPayWayId();
+		Long payWayContentId = consumeRecord.getPayWayContentId();
+		// 会员卡支付
+		if (paymentWay == 1) {
+			//如果payWayContentId不为空，则说明原支付方式为扣除次数,否则为扣储值
+			if(payWayContentId!=null){
+				//根据payWayContentId恢复次数，及项目次数恢复次数
+				CustomerMemberCardContentUnion union = customerMemberCardContentMapper.getContent(payWayContentId);
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("id", payWayContentId);
+				map.put("amount", union.getAmount() + consumeRecordDetails.get(0).getAmount().intValue());
+				customerMemberCardContentMapper.calAmount(map);
+			}else{
+				//此时恢复储值金额
+				CustomerMemberCardPo cmcPo = customerMemberCardMapper.getById(payWayId);
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("id", payWayId);
+				map.put("remainMoney",cmcPo.getRemainingMoney().add(consumeRecord.getConsumeMoney()));
+			}
+		}
+		// 活动支付
+		if (paymentWay == 2) {
+			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("id", payWayContentId);
+			map.put("amount",cacu.getNumber().intValue() + consumeRecordDetails.get(0).getAmount().intValue());
+			customerActivityContentMapper.updateAmount(map);
+		}
+		// 会员卡代金券+现金
+		if (paymentWay == 31) {
+			CustomerMemberCardContentUnion union = customerMemberCardContentMapper.getContent(payWayContentId);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("id", payWayContentId);
+			map.put("amount", union.getAmount() + consumeRecord.getCouponAmount());
+			customerMemberCardContentMapper.calAmount(map);
+		}
+		// 活动代金券+现金
+		if (paymentWay == 2) {
+			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("id", payWayContentId);
+			map.put("amount",cacu.getNumber().intValue() + consumeRecord.getCouponAmount());
+			customerActivityContentMapper.updateAmount(map);
+		}
+	}
+
+	private void recoverAmount(Long consumeRecordId) {
+		Long storeId = ThreadContext.getUserStoreId();
+		List<StockFlowPo> stockFlowList = stockFlowMapper.selectByRecordId(consumeRecordId, storeId);
+		List<ProductFlowPo> productFlowList = productFlowMapper.selectByRecordId(consumeRecordId, storeId);
+		if (stockFlowList.size() != 0)
+			stockService.modifyFlowInvalid(consumeRecordId);
+		if (productFlowList.size() != 0)
+			productService.modifyFlowInvalid(consumeRecordId);
 
 	}
 

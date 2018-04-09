@@ -10,7 +10,9 @@
 		<result column="consume_type" jdbcType="INTEGER" property="consumeType" />
 		<result column="consume_money" jdbcType="DECIMAL" property="consumeMoney" />
 		<result column="payment_way" jdbcType="INTEGER" property="paymentWay" />
-		<result column="pay_way_id" jdbcType="INTEGER" property="payWayId" />
+		<result column="pay_way_id" jdbcType="BIGINT" property="payWayId" />
+		<result column="pay_way_content_id" jdbcType="BIGINT" property="payWayContentId" />
+		<result column="coupon_amount" jdbcType="INTEGER" property="couponAmount" />
 		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
 		<result column="is_modified" jdbcType="INTEGER" property="isModified" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -22,7 +24,7 @@
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordPo"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO consume_record
-		(`trade_serial_number`,`customer_id`,`customer_mobile`,`consume_type`,`consume_money`,`payment_way`,`pay_way_id`,`activity_id`,`is_modified`,`remark`,`store_id`,`consume_time`)
+		(`trade_serial_number`,`customer_id`,`customer_mobile`,`consume_type`,`consume_money`,`payment_way`,`pay_way_id`,`pay_way_content_id`,`coupon_amount`,`activity_id`,`is_modified`,`remark`,`store_id`,`consume_time`)
 		VALUES
 		(#{tradeSerialNumber, jdbcType=VARCHAR},
 		#{customerId,
@@ -33,7 +35,9 @@
 		#{consumeMoney, jdbcType=DECIMAL},
 		#{paymentWay,
 		jdbcType=INTEGER},
-		#{payWayId,jdbcType=INTEGER},
+		#{payWayId,jdbcType=BIGINT},
+		#{payWayContentId,jdbcType=BIGINT},
+		#{couponAmount,jdbcType=INTEGER},
 		#{activityId,
 		jdbcType=BIGINT},
 		#{isModified,

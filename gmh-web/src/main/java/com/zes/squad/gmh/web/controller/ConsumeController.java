@@ -80,7 +80,7 @@ public class ConsumeController {
 		return JsonResults.success();
 	}
 
-	@RequestMapping(path = "/modify", method = { RequestMethod.PUT })
+	@RequestMapping(path = "/modifyConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doModify(@RequestBody ConsumeCreateOrModifyParams params) {
 		checkConsumeCreateParams(params);
 		consumeRecordService.modify(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts(),

@@ -19,6 +19,7 @@ import com.zes.squad.gmh.entity.po.CustomerMemberCardContentPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
+import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
@@ -148,6 +149,18 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		}
 			
 		return customerMemberCardUnions;
+	}
+
+	@Override
+	public void rechargeOrBuyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal rechargeMoney) {
+		
+		CustomerMemberCardContentPo customerMemberCardContentPo = new CustomerMemberCardContentPo();
+		CustomerMemberCardPo customerMemberCardPo = new CustomerMemberCardPo();
+		
+		List<CustomerMemberCardContentUnion> customerMemberCardContentUnion = customerMemberCardContentMapper.getContentList(cardId);
+		
+		
+		
 	}
 	
 

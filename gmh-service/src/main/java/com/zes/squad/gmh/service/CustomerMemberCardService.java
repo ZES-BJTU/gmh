@@ -21,4 +21,6 @@ public interface CustomerMemberCardService {
 	void changeStore(CustomerMemberCardPo po, Long storeId);
 
 	List<CustomerMemberCardUnion> getCardListByMobile(String customerMobile);
+
+	void rechargeOrBuyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal rechargeMoney);
 }

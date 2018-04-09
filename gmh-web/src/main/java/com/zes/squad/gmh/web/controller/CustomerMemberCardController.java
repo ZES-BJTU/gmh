@@ -26,6 +26,7 @@ import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ChangeCardStoreParams;
 import com.zes.squad.gmh.web.entity.param.CustomerMemberCardQueryParams;
 import com.zes.squad.gmh.web.entity.param.PaymentParams;
+import com.zes.squad.gmh.web.entity.param.RechargeOrBuyProjectParams;
 import com.zes.squad.gmh.web.entity.param.ReturnCardParams;
 import com.zes.squad.gmh.web.entity.param.TurnCardParams;
 import com.zes.squad.gmh.web.entity.vo.CustomerMemberCardVo;
@@ -111,6 +112,14 @@ public class CustomerMemberCardController {
 		}	
 		
 		return JsonResults.success(customerMemberCardVos);
+	}
+	
+	@RequestMapping(path ="/rechargeOrBuyProject", method = {RequestMethod.PUT})
+	public JsonResult<Void> doRechargeOrBuyProject(@RequestBody RechargeOrBuyProjectParams params){
+		
+		customerMemberCardService.rechargeOrBuyProject(params.getCardId(),params.getProjectId(),params.getProjectTimes(),params.getRechargeMoney());
+		
+		return JsonResults.success();
 	}
 	
 	private CustomerMemberCardVo buildAppointmentVoByUnion(CustomerMemberCardUnion customerMemberCardUnion) {

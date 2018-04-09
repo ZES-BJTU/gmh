@@ -90,8 +90,8 @@ public class CustomerMemberCardController {
 	}
 	@RequestMapping(path = "/turn", method = { RequestMethod.PUT })
 	public JsonResult<Void> doTurnCard(@RequestBody TurnCardParams turnCardParams) {
-		CustomerMemberCardPo po = CommonConverter.map(turnCardParams, CustomerMemberCardPo.class);
-		customerMemberCardService.turnCard(po,turnCardParams.getNewCardId());
+
+		customerMemberCardService.turnCard(turnCardParams.getId(),turnCardParams.getNewCardId(),turnCardParams.getTurnedMoney(),turnCardParams.getTurnedReason());
 		return JsonResults.success();
 	}
 	@RequestMapping(path ="/changeStore", method = {RequestMethod.PUT})
@@ -114,9 +114,6 @@ public class CustomerMemberCardController {
 	}
 	
 	private CustomerMemberCardVo buildAppointmentVoByUnion(CustomerMemberCardUnion customerMemberCardUnion) {
-
-//		List<CustomerMemberCardContentUnion> cmccuList = customerMemberCardUnion.getCustomerMemberCardContent();
-		
 		
 		CustomerMemberCardVo vo = CommonConverter.map(customerMemberCardUnion, CustomerMemberCardVo.class);
 		vo.setIsReturned(EnumUtils.getDescByKey(customerMemberCardUnion.getIsReturned(), YesOrNoEnum.class));

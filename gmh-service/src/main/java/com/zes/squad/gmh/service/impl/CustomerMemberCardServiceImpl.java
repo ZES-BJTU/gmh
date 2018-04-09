@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,12 +15,15 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
+import com.zes.squad.gmh.entity.po.CustomerMemberCardContentPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
+import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
+import com.zes.squad.gmh.mapper.MemberCardMapper;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
 
 @Service("customerMemberCardService")
@@ -27,6 +31,8 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 
 	@Autowired
 	private CustomerMemberCardMapper customerMemberCardMapper;
+	@Autowired
+	private MemberCardMapper memberCardMapper;
 	@Autowired
 	private CustomerMemberCardContentMapper customerMemberCardContentMapper;
 //	@Autowired
@@ -72,25 +78,43 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	}
 
 	@Override
-	public void turnCard(CustomerMemberCardPo po, Long cardId) {
-		CustomerMemberCardPo oldCard = customerMemberCardMapper.getById(po.getId());
+	public void turnCard(Long oldCardId,Long newCardId,BigDecimal returnedMoney,String reason) {
+		CustomerMemberCardPo oldCard = customerMemberCardMapper.getById(oldCardId);
 		CustomerMemberCardPo newCard = new CustomerMemberCardPo();
 		// MemberCardUnion mcp =
 		// memberCardService.queryMemberCardDetail(cardId);
 		oldCard.setIsTurned(1);
 		oldCard.setIsValid(0);
 		oldCard.setTurnedTime(new Date());
-		oldCard.setTurnedMoney(po.getTurnedMoney());
-		oldCard.setTurnedReason(po.getTurnedReason());
+		oldCard.setTurnedMoney(returnedMoney);
+		oldCard.setTurnedReason(reason);
 		customerMemberCardMapper.turnCard(oldCard);
+		
 		newCard.setCustomerId(oldCard.getCustomerId());
 		newCard.setIsValid(1);
-		newCard.setMemberCardId(cardId);
+		newCard.setMemberCardId(newCardId);
 		newCard.setUniqueIdentifier(oldCard.getUniqueIdentifier());
 		newCard.setStoreId(ThreadContext.getUserStoreId());
-		// TODO 补充新卡剩余内容
+		MemberCardPo memberCard = memberCardMapper.selectById(newCardId);
+		CustomerMemberCardContentPo cardContent = new CustomerMemberCardContentPo();
+		
+		if(memberCard.getType()==1){
+			cardContent.setRelatedId(memberCard.getProjectId());
+			cardContent.setAmount(memberCard.getTimes());
+		}
+		if(memberCard.getType()==2){
+			newCard.setRemainingMoney(memberCard.getAmount());
+		}
+		if(memberCard.getType()==3){
+			cardContent.setRelatedId(memberCard.getProjectId());
+			cardContent.setAmount(memberCard.getTimes());
+			newCard.setRemainingMoney(memberCard.getAmount());
+		}
 		customerMemberCardMapper.insert(newCard);
-
+		if(memberCard.getType()!=2){
+			cardContent.setCustomerMemberCardId(memberCard.getId());
+			customerMemberCardContentMapper.insert(cardContent);
+		}
 	}
 
 	@Override

@@ -114,10 +114,18 @@ public class CustomerMemberCardController {
 		return JsonResults.success(customerMemberCardVos);
 	}
 	
-	@RequestMapping(path ="/rechargeOrBuyProject", method = {RequestMethod.PUT})
+	@RequestMapping(path ="/recharge", method = {RequestMethod.PUT})
 	public JsonResult<Void> doRecharge(@RequestBody RechargeOrBuyProjectParams params){
 		
-//		customerMemberCardService.recharge(params.getCardId(),params.getRechargeMoney());
+		customerMemberCardService.recharge(params.getCardId(),params.getRechargeMoney());
+		
+		return JsonResults.success();
+	}
+	
+	@RequestMapping(path ="/buyProject", method = {RequestMethod.PUT})
+	public JsonResult<Void> doBuyProject(@RequestBody RechargeOrBuyProjectParams params){
+		
+		customerMemberCardService.buyProject(params.getCardId(), params.getProjectId(), params.getProjectTimes(), params.getUseRemainMoney());
 		
 		return JsonResults.success();
 	}

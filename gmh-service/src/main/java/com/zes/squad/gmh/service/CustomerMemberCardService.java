@@ -23,4 +23,6 @@ public interface CustomerMemberCardService {
 	List<CustomerMemberCardUnion> getCardListByMobile(String customerMobile);
 
 	void recharge(Long cardId, BigDecimal rechargeMoney);
+	
+	void buyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal useRemainMoney);
 }

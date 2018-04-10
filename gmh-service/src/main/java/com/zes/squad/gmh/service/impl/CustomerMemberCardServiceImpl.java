@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
@@ -152,11 +154,15 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	}
 
 	
-	private void rechargeOrBuyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal useRemainMoney) {
+	public void buyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal useRemainMoney) {
 
 		CustomerMemberCardContentPo customerMemberCardContentPo = new CustomerMemberCardContentPo();
 		CustomerMemberCardPo customerMemberCardPo = customerMemberCardMapper.getById(cardId);
 
+		if(customerMemberCardPo.getRemainingMoney().compareTo(useRemainMoney)==-1){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
+		}
+		
 		List<CustomerMemberCardContentUnion> customerMemberCardContentUnions = customerMemberCardContentMapper
 				.getContentList(cardId);
 
@@ -195,14 +201,19 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		
 		//调整会员卡余额
 		Map<String,Object> moneyMap = new HashMap<String,Object>();
-		
-
+		moneyMap.put("id", cardId);
+		moneyMap.put("remainMoney", customerMemberCardPo.getRemainingMoney().subtract(useRemainMoney));
+		customerMemberCardMapper.calRemainMoney(moneyMap);
 
 	}
 
 	@Override
 	public void recharge(Long cardId, BigDecimal rechargeMoney) {
-		
+		CustomerMemberCardPo customerMemberCardPo = customerMemberCardMapper.getById(cardId);
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("id", cardId);
+		map.put("remainMoney", customerMemberCardPo.getRemainingMoney().add(rechargeMoney));
+		customerMemberCardMapper.calRemainMoney(map);
 		
 	}
 

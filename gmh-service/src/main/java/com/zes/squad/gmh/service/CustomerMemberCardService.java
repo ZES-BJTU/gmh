@@ -22,5 +22,5 @@ public interface CustomerMemberCardService {
 
 	List<CustomerMemberCardUnion> getCardListByMobile(String customerMobile);
 
-	void rechargeOrBuyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal rechargeMoney);
+	void recharge(Long cardId, BigDecimal rechargeMoney);
 }

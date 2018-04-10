@@ -18,11 +18,13 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
+import com.zes.squad.gmh.entity.po.ActivityPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
+import com.zes.squad.gmh.mapper.ActivityUnionMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.web.common.JsonResults;
@@ -39,7 +41,8 @@ public class ConsumeController {
 	private ConsumeRecordService consumeRecordService;
 	@Autowired
 	private CustomerMapper customerMapper;
-
+	@Autowired
+	private ActivityUnionMapper activityUnionMapper;
 	@RequestMapping(path = "/createProductConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateProductConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String, Object> map = consumeRecordService.getTradeSerialNumber("B");
@@ -132,11 +135,51 @@ public class ConsumeController {
 
 	private ConsumeRecordVo buildAppointmentVoByUnion(ConsumeRecordUnion consumeRecordUnion) {
 		ConsumeRecordVo vo = CommonConverter.map(consumeRecordUnion.getConsumeRecordPo(), ConsumeRecordVo.class);
-
+		ConsumeRecordPo po = consumeRecordUnion.getConsumeRecordPo();
+		
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecordUnion.getConsumeRecordPo().getCustomerMobile());
-		vo.setConsumeRecordDetailUnions(consumeRecordUnion.getConsumeRecordDetailUnion());
-		vo.setConsumeRecordGiftUnions(consumeRecordUnion.getConsumeRecordGiftUnion());
+		vo.setConsumeRecordDetailUnion(consumeRecordUnion.getConsumeRecordDetailUnion());
+		vo.setConsumeRecordGiftUnion(consumeRecordUnion.getConsumeRecordGiftUnion());
 		vo.setCustomerName(customerPo.getName());
+		if(po.getActivityId()!=null){
+			ActivityPo activity = activityUnionMapper.selectById(po.getActivityId()).getActivityPo();
+			vo.setActivityName(activity.getName());
+		}
+		if(po.getConsumeType()==1){
+			vo.setConsumeType("办卡");
+		}
+		if(po.getConsumeType()==2){
+			vo.setConsumeType("买产品");
+		}
+		if(po.getConsumeType()==3){
+			vo.setConsumeType("做项目");
+		}
+		if(po.getConsumeType()==4){
+			vo.setConsumeType("参加活动");
+		}
+		if(po.getConsumeType()==5){
+			vo.setConsumeType("充值");
+		}
+		
+		if(po.getPaymentWay()==1){
+			vo.setPaymentWayName("会员卡");
+		}
+		if(po.getPaymentWay()==2){
+			vo.setPaymentWayName("活动");
+		}
+		if(po.getPaymentWay()==3){
+			vo.setPaymentWayName("现金");
+		}
+		if(po.getPaymentWay()==31){
+			vo.setPaymentWayName("现金及代金券");
+		}
+		if(po.getPaymentWay()==32){
+			vo.setPaymentWayName("现金及代金券");
+		}
+		if(po.getPaymentWay()==4){
+			vo.setPaymentWayName("赠送");
+		}
+		
 		return vo;
 	}
 

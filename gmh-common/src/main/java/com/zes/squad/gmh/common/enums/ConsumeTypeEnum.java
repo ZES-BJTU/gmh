@@ -11,8 +11,8 @@ public enum ConsumeTypeEnum {
     CARD(1, "办卡"),
     PRODUCT(2, "买产品"),
     PROJECT(3, "做项目"),
-	ACTIVITY(4,"参加活动");
-	
+	ACTIVITY(4,"参加活动"),
+	RECHARGE(5,"充值");
     private int    key;
     private String desc;
 

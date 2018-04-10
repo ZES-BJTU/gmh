@@ -117,7 +117,7 @@ public class CustomerMemberCardController {
 	@RequestMapping(path ="/recharge", method = {RequestMethod.PUT})
 	public JsonResult<Void> doRecharge(@RequestBody RechargeOrBuyProjectParams params){
 		
-		customerMemberCardService.recharge(params.getCardId(),params.getRechargeMoney());
+		customerMemberCardService.recharge(params.getCardId(),params.getRechargeMoney(),params.getConsultantId(),params.getSalesManId());
 		
 		return JsonResults.success();
 	}

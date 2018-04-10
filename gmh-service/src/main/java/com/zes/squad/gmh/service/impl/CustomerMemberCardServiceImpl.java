@@ -17,12 +17,16 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.CustomerMemberCardQueryCondition;
+import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
+import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardContentPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
+import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
+import com.zes.squad.gmh.mapper.ConsumeRecordMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
@@ -42,7 +46,10 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	// private MemberCardService memberCardService;
 	@Autowired
 	private CustomerMapper customerMapper;
-
+	@Autowired
+	private ConsumeRecordMapper consumeRecordMapper;
+	@Autowired
+	private ConsumeRecordDetailMapper consumeRecordDetailMapper;
 	@Override
 	public PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition condition) {
 		int pageNum = condition.getPageNum();
@@ -208,12 +215,32 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	}
 
 	@Override
-	public void recharge(Long cardId, BigDecimal rechargeMoney) {
+	public void recharge(Long cardId, BigDecimal rechargeMoney,Long consultantId, Long salesManId) {
+		//更新客户会员卡记录
 		CustomerMemberCardPo customerMemberCardPo = customerMemberCardMapper.getById(cardId);
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("id", cardId);
 		map.put("remainMoney", customerMemberCardPo.getRemainingMoney().add(rechargeMoney));
 		customerMemberCardMapper.calRemainMoney(map);
+		
+		//将此次充值记录到消费记录中
+		CustomerPo customer = customerMapper.getById(customerMemberCardPo.getCustomerId());
+		ConsumeRecordPo consumeRecord = new ConsumeRecordPo();
+		consumeRecord.setConsumeMoney(rechargeMoney);
+		consumeRecord.setConsumeTime(new Date());
+		consumeRecord.setConsumeType(5);
+		consumeRecord.setCustomerMobile(customer.getMobile());
+		consumeRecord.setPaymentWay(3);
+		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
+		consumeRecord.setCustomerId(customer.getId());
+		consumeRecordMapper.insert(consumeRecord);
+		//消费内容
+		ConsumeRecordDetailPo consumeRecordDetailPo = new ConsumeRecordDetailPo();
+		consumeRecordDetailPo.setCardId(cardId);
+		consumeRecordDetailPo.setConsultantId(consultantId);
+		consumeRecordDetailPo.setConsumeRecordId(consumeRecord.getId());
+		consumeRecordDetailPo.setSalesManId(salesManId);
+		consumeRecordDetailMapper.insert(consumeRecordDetailPo);
 		
 	}
 

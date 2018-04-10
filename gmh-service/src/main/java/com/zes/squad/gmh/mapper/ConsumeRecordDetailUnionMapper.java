@@ -6,6 +6,6 @@ import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 
 public interface ConsumeRecordDetailUnionMapper {
 
-	List<ConsumeRecordDetailUnion> getRecordDetailUnionByTradeSerialNumber(String tradeSerialNumber);
+	List<ConsumeRecordDetailUnion> getRecordDetailUnionByConsumeRecordId(Long consumeRecordId);
 	
 }

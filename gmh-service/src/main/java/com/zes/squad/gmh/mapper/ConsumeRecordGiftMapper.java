@@ -9,6 +9,6 @@ public interface ConsumeRecordGiftMapper {
 
 	void insert(ConsumeRecordGiftPo gift);
 
-	List<ConsumeRecordGiftUnion> getRecordGiftUnionByTradeSerialNumber(String tradeSerialNumber);
+	List<ConsumeRecordGiftUnion> getRecordGiftUnionByConsumeRecordId(Long consumeRecordId);
 	
 }

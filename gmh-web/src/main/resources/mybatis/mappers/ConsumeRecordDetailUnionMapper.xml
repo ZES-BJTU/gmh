@@ -12,12 +12,13 @@
 		<result column="consultant_name" jdbcType="VARCHAR" property="consultantName" />
 		<result column="sales_man_name" jdbcType="VARCHAR" property="salesManName" />
 	</resultMap>
-	<select id="getRecordDetailUnionByTradeSerialNumber" parameterType="String" resultMap="BaseResultMap">
+	<select id="getRecordDetailUnionByConsumeRecordId" parameterType="long" resultMap="BaseResultMap">
 			select 
 		crd.`product_id` as `product_id`,
 		d.`name` as `product_name`,
 		crd.`project_id` as `project_id`,
 		j.`name` as `project_name`,
+		mc.`name` as `card_name`,
 		crd.`amount` as `amount`,
 		e1.`name` as `operator_name`,
 		e2.`name` as `consultant_name`,
@@ -28,7 +29,8 @@
 		left join project j on j.`id`=crd.`project_id`
 		left join employee e1 on e1.`id`=crd.`operator_id`
 		left join employee e2 on e2.`id`=crd.`consultant_id`
+		left join member_card mc on mc.`id`=crd.`card_id`
 		left join employee e3 on e3.`id`=crd.`sales_man_id`
-        where crd.`trade_serial_number`= #{tradeSerialNumber,jdbcType=VARCHAR}
+        where crd.`consume_record_id`= #{consumeRecordId,jdbcType=VARCHAR}
 	</select>
 </mapper>

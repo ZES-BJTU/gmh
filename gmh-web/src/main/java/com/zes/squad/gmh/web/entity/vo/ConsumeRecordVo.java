@@ -26,6 +26,6 @@ public class ConsumeRecordVo {
 	private Integer isModified;
 	private String remark;
 	private DateTime consumeTime;
-	private List<ConsumeRecordDetailUnion> consumeRecordDetailUnions;
-	private List<ConsumeRecordGiftUnion> consumeRecordGiftUnions;
+	private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
+	private List<ConsumeRecordGiftUnion> consumeRecordGiftUnion;
 }

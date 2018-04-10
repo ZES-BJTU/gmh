@@ -278,9 +278,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		for (ConsumeRecordPo consumeRecordPo : consumeRecordPos) {
 			consumeRecordUnion.setConsumeRecordPo(consumeRecordPo);
 			consumeRecordDetailUnioins = consumeRecordDetailUnionMapper
-					.getRecordDetailUnionByTradeSerialNumber(consumeRecordPo.getTradeSerialNumber());
+					.getRecordDetailUnionByConsumeRecordId(consumeRecordPo.getId());
 			consumeRecordGiftUnions = consumeRecordGiftMapper
-					.getRecordGiftUnionByTradeSerialNumber(consumeRecordPo.getTradeSerialNumber());
+					.getRecordGiftUnionByConsumeRecordId(consumeRecordPo.getId());
 			consumeRecordUnion.setConsumeRecordDetailUnion(consumeRecordDetailUnioins);
 			consumeRecordUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
 			consumeRecordUnions.add(CommonConverter.map(consumeRecordUnion, ConsumeRecordUnion.class));
@@ -306,9 +306,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		for (ConsumeRecordPo consumeRecordPo : consumeRecordPos) {
 			consumeRecordUnion.setConsumeRecordPo(consumeRecordPo);
 			consumeRecordDetailUnioins = consumeRecordDetailUnionMapper
-					.getRecordDetailUnionByTradeSerialNumber(consumeRecordPo.getTradeSerialNumber());
+					.getRecordDetailUnionByConsumeRecordId(consumeRecordPo.getId());
 			consumeRecordGiftUnions = consumeRecordGiftMapper
-					.getRecordGiftUnionByTradeSerialNumber(consumeRecordPo.getTradeSerialNumber());
+					.getRecordGiftUnionByConsumeRecordId(consumeRecordPo.getId());
 			consumeRecordUnion.setConsumeRecordDetailUnion(consumeRecordDetailUnioins);
 			consumeRecordUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
 			consumeRecordUnions.add(CommonConverter.map(consumeRecordUnion, ConsumeRecordUnion.class));

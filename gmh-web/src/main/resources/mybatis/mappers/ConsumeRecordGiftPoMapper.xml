@@ -40,7 +40,7 @@
 		#{couponMoney, jdbcType=DECIMAL},
 		#{couponAmount, jdbcType=INTEGER})
 	</insert>
-	<select id="getRecordGiftUnionByTradeSerialNumber" parameterType="String" resultMap="GiftUnion">
+	<select id="getRecordGiftUnionByConsumeRecordId" parameterType="long" resultMap="GiftUnion">
 		select 
 		g.`product_id` as `product_id`,
 		d.`name` as `product_name`,
@@ -55,6 +55,6 @@
 		left join product d on d.`id`=g.`product_id`
 		left join project j on j.`id`=g.`project_id`
 		where
-		g.`trade_serial_number`=#{tradeSerialNumber,jdbcType=VARCHAR}
+		g.`consume_record_id`=#{consumeRecordId,jdbcType=VARCHAR}
 	</select>
 </mapper>

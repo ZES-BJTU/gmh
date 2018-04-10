@@ -12,5 +12,7 @@ public class RechargeOrBuyProjectParams {
 	private Integer projectTimes;
 	private BigDecimal useRemainMoney;
 	private BigDecimal rechargeMoney;
+	private Long consultantId;
+	private Long salesManId;
 	
 }

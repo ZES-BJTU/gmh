@@ -33,7 +33,7 @@
 		LEFT JOIN activity_content ac
 		ON
 		a.`id` = ac.`activity_id` 
-		WHERE `id` = #{id:BIGINT}
+		WHERE a.`id` = #{id:BIGINT}
 	</select>
 	<select id="selectByIds" parameterType="long" resultMap="BaseResultMap">
 		SELECT 

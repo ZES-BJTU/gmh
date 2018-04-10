@@ -26,6 +26,7 @@ import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ChangeCardStoreParams;
 import com.zes.squad.gmh.web.entity.param.CustomerMemberCardQueryParams;
 import com.zes.squad.gmh.web.entity.param.PaymentParams;
+import com.zes.squad.gmh.web.entity.param.RechargeOrBuyProjectParams;
 import com.zes.squad.gmh.web.entity.param.ReturnCardParams;
 import com.zes.squad.gmh.web.entity.param.TurnCardParams;
 import com.zes.squad.gmh.web.entity.vo.CustomerMemberCardVo;
@@ -90,8 +91,8 @@ public class CustomerMemberCardController {
 	}
 	@RequestMapping(path = "/turn", method = { RequestMethod.PUT })
 	public JsonResult<Void> doTurnCard(@RequestBody TurnCardParams turnCardParams) {
-		CustomerMemberCardPo po = CommonConverter.map(turnCardParams, CustomerMemberCardPo.class);
-		customerMemberCardService.turnCard(po,turnCardParams.getNewCardId());
+
+		customerMemberCardService.turnCard(turnCardParams.getId(),turnCardParams.getNewCardId(),turnCardParams.getTurnedMoney(),turnCardParams.getTurnedReason());
 		return JsonResults.success();
 	}
 	@RequestMapping(path ="/changeStore", method = {RequestMethod.PUT})
@@ -113,10 +114,15 @@ public class CustomerMemberCardController {
 		return JsonResults.success(customerMemberCardVos);
 	}
 	
-	private CustomerMemberCardVo buildAppointmentVoByUnion(CustomerMemberCardUnion customerMemberCardUnion) {
-
-//		List<CustomerMemberCardContentUnion> cmccuList = customerMemberCardUnion.getCustomerMemberCardContent();
+	@RequestMapping(path ="/rechargeOrBuyProject", method = {RequestMethod.PUT})
+	public JsonResult<Void> doRecharge(@RequestBody RechargeOrBuyProjectParams params){
 		
+//		customerMemberCardService.recharge(params.getCardId(),params.getRechargeMoney());
+		
+		return JsonResults.success();
+	}
+	
+	private CustomerMemberCardVo buildAppointmentVoByUnion(CustomerMemberCardUnion customerMemberCardUnion) {
 		
 		CustomerMemberCardVo vo = CommonConverter.map(customerMemberCardUnion, CustomerMemberCardVo.class);
 		vo.setIsReturned(EnumUtils.getDescByKey(customerMemberCardUnion.getIsReturned(), YesOrNoEnum.class));

@@ -15,4 +15,5 @@ public interface CustomerMemberCardContentMapper {
 	CustomerMemberCardContentUnion getContent(Long id);
 	
 	void calAmount(Map<String,Object> map);
+
 }

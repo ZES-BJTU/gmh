@@ -10,6 +10,7 @@ import com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
+import com.zes.squad.gmh.entity.union.PrintUnion;
 
 public interface ConsumeRecordService {
 
@@ -35,4 +36,6 @@ public interface ConsumeRecordService {
 	PagedList<ConsumeRecordUnion> changedListPagedConsumeRecords(ConsumeRecordQueryCondition condition);
 
 	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,List<ConsumeRecordGiftPo> gifts,MemberCardPo memberCardPo);
+
+	PrintUnion getPrint(Long consumeRecordId);
 }

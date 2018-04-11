@@ -14,4 +14,6 @@ public interface ConsumeRecordMapper {
 	List<ConsumeRecordPo> changedListConsumeRecordByCondition(ConsumeRecordQueryCondition condition);
 	
 	void modify(Long id);
+	
+	ConsumeRecordPo getById(Long id);
 }

@@ -39,6 +39,8 @@ import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
+import com.zes.squad.gmh.entity.union.PrintUnion;
+import com.zes.squad.gmh.entity.union.StoreUnion;
 import com.zes.squad.gmh.mapper.ActivityContentMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordDetailUnionMapper;
@@ -56,6 +58,7 @@ import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.service.StockService;
+import com.zes.squad.gmh.service.StoreService;
 
 @Service("consumeRecordService")
 public class ConsumeRecordServiceImpl implements ConsumeRecordService {
@@ -92,7 +95,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private ProductService productService;
 	@Autowired
 	private CustomerMapper customerMapper;
-
+	@Autowired
+	private StoreService storeService;
+	
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -542,6 +547,27 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		if (productFlowList.size() != 0)
 			productService.modifyFlowInvalid(consumeRecordId);
 
+	}
+
+	@Override
+	public PrintUnion getPrint(Long consumeRecordId) {
+		PrintUnion printUnion = new PrintUnion();
+		ConsumeRecordPo consumeRecordPo = new ConsumeRecordPo();
+		StoreUnion storeUnion = new StoreUnion();
+		List<ConsumeRecordDetailUnion> consumeRecordDetailUnions = new ArrayList<ConsumeRecordDetailUnion>();
+		List<ConsumeRecordGiftUnion> consumeRecordGiftUnions = new ArrayList<ConsumeRecordGiftUnion>();
+		
+		consumeRecordPo = consumeRecordMapper.getById(consumeRecordId);
+		storeUnion = storeService.queryStoreDetail(ThreadContext.getUserStoreId());
+		consumeRecordDetailUnions = consumeRecordDetailUnionMapper
+				.getRecordDetailUnionByConsumeRecordId(consumeRecordId);
+		consumeRecordGiftUnions = consumeRecordGiftMapper.getRecordGiftUnionByConsumeRecordId(consumeRecordId);
+		printUnion.setConsumeRecordDetailUnion(consumeRecordDetailUnions);
+		printUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
+		printUnion.setConsumeRecordPo(consumeRecordPo);
+		printUnion.setStorePo(storeUnion.getStorePo());
+		
+		return printUnion;
 	}
 
 }

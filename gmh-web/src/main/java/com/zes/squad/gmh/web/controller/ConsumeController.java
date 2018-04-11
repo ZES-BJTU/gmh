@@ -24,6 +24,7 @@ import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
+import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.mapper.ActivityUnionMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
@@ -33,6 +34,8 @@ import com.zes.squad.gmh.web.entity.param.ConsumeCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.ConsumeRecordQueryParams;
 import com.zes.squad.gmh.web.entity.param.PrintParams;
 import com.zes.squad.gmh.web.entity.vo.ConsumeRecordVo;
+import com.zes.squad.gmh.web.entity.vo.PrintVo;
+import com.zes.squad.gmh.web.entity.vo.StoreVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
 @RequestMapping(path = "/consume")
@@ -44,6 +47,7 @@ public class ConsumeController {
 	private CustomerMapper customerMapper;
 	@Autowired
 	private ActivityUnionMapper activityUnionMapper;
+
 	@RequestMapping(path = "/createProductConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateProductConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String, Object> map = consumeRecordService.getTradeSerialNumber("B");
@@ -91,14 +95,14 @@ public class ConsumeController {
 				params.getConsumeRecordPo().getId(), params.getMemberCardPo());
 		return JsonResults.success();
 	}
-	
+
 	@RequestMapping(path = "/print", method = { RequestMethod.PUT })
-	public JsonResult<Void> doPrint(@RequestBody PrintParams params) {
-		
-		
-		return JsonResults.success();
+	public JsonResult<PrintVo> doPrint(@RequestBody PrintParams params) {
+
+		PrintUnion printUnion =	consumeRecordService.getPrint(params.getConsumeRecordId());
+		PrintVo printVo = buildPrintVoByUnion(printUnion);
+		return JsonResults.success(printVo);
 	}
-	
 
 	@RequestMapping(path = "/list", method = { RequestMethod.PUT })
 	public JsonResult<PagedList<ConsumeRecordVo>> doListPagedConsumeRecord(
@@ -145,50 +149,50 @@ public class ConsumeController {
 	private ConsumeRecordVo buildAppointmentVoByUnion(ConsumeRecordUnion consumeRecordUnion) {
 		ConsumeRecordVo vo = CommonConverter.map(consumeRecordUnion.getConsumeRecordPo(), ConsumeRecordVo.class);
 		ConsumeRecordPo po = consumeRecordUnion.getConsumeRecordPo();
-		
+
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecordUnion.getConsumeRecordPo().getCustomerMobile());
 		vo.setConsumeRecordDetailUnion(consumeRecordUnion.getConsumeRecordDetailUnion());
 		vo.setConsumeRecordGiftUnion(consumeRecordUnion.getConsumeRecordGiftUnion());
 		vo.setCustomerName(customerPo.getName());
-		if(po.getActivityId()!=null){
+		if (po.getActivityId() != null) {
 			ActivityPo activity = activityUnionMapper.selectById(po.getActivityId()).getActivityPo();
 			vo.setActivityName(activity.getName());
 		}
-		if(po.getConsumeType()==1){
+		if (po.getConsumeType() == 1) {
 			vo.setConsumeType("办卡");
 		}
-		if(po.getConsumeType()==2){
+		if (po.getConsumeType() == 2) {
 			vo.setConsumeType("买产品");
 		}
-		if(po.getConsumeType()==3){
+		if (po.getConsumeType() == 3) {
 			vo.setConsumeType("做项目");
 		}
-		if(po.getConsumeType()==4){
+		if (po.getConsumeType() == 4) {
 			vo.setConsumeType("参加活动");
 		}
-		if(po.getConsumeType()==5){
+		if (po.getConsumeType() == 5) {
 			vo.setConsumeType("充值");
 		}
-		
-		if(po.getPaymentWay()==1){
+
+		if (po.getPaymentWay() == 1) {
 			vo.setPaymentWayName("会员卡");
 		}
-		if(po.getPaymentWay()==2){
+		if (po.getPaymentWay() == 2) {
 			vo.setPaymentWayName("活动");
 		}
-		if(po.getPaymentWay()==3){
+		if (po.getPaymentWay() == 3) {
 			vo.setPaymentWayName("现金");
 		}
-		if(po.getPaymentWay()==31){
+		if (po.getPaymentWay() == 31) {
 			vo.setPaymentWayName("现金及代金券");
 		}
-		if(po.getPaymentWay()==32){
+		if (po.getPaymentWay() == 32) {
 			vo.setPaymentWayName("现金及代金券");
 		}
-		if(po.getPaymentWay()==4){
+		if (po.getPaymentWay() == 4) {
 			vo.setPaymentWayName("赠送");
 		}
-		
+
 		return vo;
 	}
 
@@ -229,7 +233,57 @@ public class ConsumeController {
 			ensureParameterExist(consumeRecordPo.getCouponAmount(), "请输入代金券数量");
 		}
 
+	}
+	
+	private PrintVo buildPrintVoByUnion(PrintUnion printUnion){
+		
+		PrintVo printVo = new PrintVo();
+		ConsumeRecordPo consumeRecordPo = printUnion.getConsumeRecordPo();
+		ConsumeRecordVo consumeRecordVo= CommonConverter.map(consumeRecordPo, ConsumeRecordVo.class);
+		StoreVo storeVo = CommonConverter.map(printUnion.getStorePo(), StoreVo.class);
+		consumeRecordVo.setConsumeRecordDetailUnion(printUnion.getConsumeRecordDetailUnion());
+		consumeRecordVo.setConsumeRecordGiftUnion(printUnion.getConsumeRecordGiftUnion());
+		if (consumeRecordPo.getActivityId() != null) {
+			ActivityPo activity = activityUnionMapper.selectById(consumeRecordPo.getActivityId()).getActivityPo();
+			consumeRecordVo.setActivityName(activity.getName());
+		}
+		if (consumeRecordPo.getConsumeType() == 1) {
+			consumeRecordVo.setConsumeType("办卡");
+		}
+		if (consumeRecordPo.getConsumeType() == 2) {
+			consumeRecordVo.setConsumeType("买产品");
+		}
+		if (consumeRecordPo.getConsumeType() == 3) {
+			consumeRecordVo.setConsumeType("做项目");
+		}
+		if (consumeRecordPo.getConsumeType() == 4) {
+			consumeRecordVo.setConsumeType("参加活动");
+		}
+		if (consumeRecordPo.getConsumeType() == 5) {
+			consumeRecordVo.setConsumeType("充值");
+		}
 
+		if (consumeRecordPo.getPaymentWay() == 1) {
+			consumeRecordVo.setPaymentWayName("会员卡");
+		}
+		if (consumeRecordPo.getPaymentWay() == 2) {
+			consumeRecordVo.setPaymentWayName("活动");
+		}
+		if (consumeRecordPo.getPaymentWay() == 3) {
+			consumeRecordVo.setPaymentWayName("现金");
+		}
+		if (consumeRecordPo.getPaymentWay() == 31) {
+			consumeRecordVo.setPaymentWayName("现金及代金券");
+		}
+		if (consumeRecordPo.getPaymentWay() == 32) {
+			consumeRecordVo.setPaymentWayName("现金及代金券");
+		}
+		if (consumeRecordPo.getPaymentWay() == 4) {
+			consumeRecordVo.setPaymentWayName("赠送");
+		}
+		printVo.setConsumeRecordVo(consumeRecordVo);		
+		printVo.setStoreVo(storeVo);
+		return printVo;
 	}
 
 }

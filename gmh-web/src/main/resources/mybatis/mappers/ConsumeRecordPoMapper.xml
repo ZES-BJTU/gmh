@@ -120,4 +120,17 @@
 		where
 		id = #{id,jdbcType=BIGINT}
 	</update>
+	
+	<select id="getById"
+		parameterType="long"
+		resultMap="BaseResultMap">
+		SELECT
+		*
+		from
+		consume_record
+		where
+		`id`=#{id,jdbcType=BIGINT}
+
+	</select>
+	
 </mapper>

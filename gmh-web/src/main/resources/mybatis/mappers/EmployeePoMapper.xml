@@ -122,7 +122,7 @@
 	</select>
 	<select id="selectByWorkType" resultMap="BaseResultMap">
 		SELECT
-		e.`id`, e.`name`
+		DISTINCT e.`id`, e.`name`
 		FROM 
 		employee e
 		LEFT JOIN
@@ -139,7 +139,7 @@
 	</select>
 	<select id="selectByWorkTypes" resultMap="BaseResultMap">
 		SELECT
-		e.`id`, e.`name`
+		DISTINCT e.`id`, e.`name`
 		FROM 
 		employee e
 		LEFT JOIN

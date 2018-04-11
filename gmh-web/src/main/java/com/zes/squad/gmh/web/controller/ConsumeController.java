@@ -31,6 +31,7 @@ import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ConsumeCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.ConsumeRecordQueryParams;
+import com.zes.squad.gmh.web.entity.param.PrintParams;
 import com.zes.squad.gmh.web.entity.vo.ConsumeRecordVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
@@ -90,6 +91,14 @@ public class ConsumeController {
 				params.getConsumeRecordPo().getId(), params.getMemberCardPo());
 		return JsonResults.success();
 	}
+	
+	@RequestMapping(path = "/print", method = { RequestMethod.PUT })
+	public JsonResult<Void> doPrint(@RequestBody PrintParams params) {
+		
+		
+		return JsonResults.success();
+	}
+	
 
 	@RequestMapping(path = "/list", method = { RequestMethod.PUT })
 	public JsonResult<PagedList<ConsumeRecordVo>> doListPagedConsumeRecord(

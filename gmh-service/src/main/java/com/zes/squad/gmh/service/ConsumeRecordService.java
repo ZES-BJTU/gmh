@@ -1,7 +1,10 @@
 package com.zes.squad.gmh.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
@@ -38,4 +41,9 @@ public interface ConsumeRecordService {
 	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordProducts,List<ConsumeRecordGiftPo> gifts,MemberCardPo memberCardPo);
 
 	PrintUnion getPrint(Long consumeRecordId);
+
+	Workbook exportConsumeRecord(Date beginTime, Date endTime);
+
+	Workbook exportEmployeeIntegral(Date beginTime, Date endTime);
+
 }

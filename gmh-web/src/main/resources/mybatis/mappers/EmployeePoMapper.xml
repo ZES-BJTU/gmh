@@ -157,4 +157,29 @@
 			</foreach>
 		</if>
 	</select>
+	<select id="getOfficialOperatorId" parameterType="long" resultType="long">
+		select id from employee
+		where
+		id in(
+		select employee_id from
+		employee_work
+		where
+		work_type in(1,2,3)
+		)
+		and 
+		store_id=#{storeId,jdbcType=BIGINT}
+	</select>
+	<select id="getInternOperatorId" parameterType="long" resultType="long">
+		select id from employee
+		where
+		id in(
+		select employee_id from
+		employee_work
+		where
+		work_type in=4
+		)
+		and 
+		store_id=#{storeId,jdbcType=BIGINT}
+	</select>
+	
 </mapper>

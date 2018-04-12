@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zes.squad.gmh.common.helper.LogicHelper;
 import com.zes.squad.gmh.context.ThreadContext;
+import com.zes.squad.gmh.service.ConsumeRecordService;
+import com.zes.squad.gmh.service.CustomerService;
 import com.zes.squad.gmh.service.ProductConvertStockService;
 import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.service.ProjectService;
@@ -35,7 +37,10 @@ public class ExportController {
     private ProductService             productService;
     @Autowired
     private ProductConvertStockService productConvertStockService;
-
+    @Autowired
+    private ConsumeRecordService consumeRecordService;
+    @Autowired
+    private CustomerService customerService;
     @RequestMapping(path = "/projects", method = { RequestMethod.GET })
     public ModelAndView doExportProjects(ModelMap map, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -89,5 +94,40 @@ public class ExportController {
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
+    
+    @RequestMapping(path = "/consumeRecord", method = { RequestMethod.GET })
+    public ModelAndView doExportConsumeRecord(ModelMap map, HttpServletRequest request, HttpServletResponse response,
+                                               Date beginTime, Date endTime)
+            throws Exception {
+        if (beginTime != null && endTime != null) {
+            LogicHelper.ensureParameterValid(endTime.after(beginTime), "起始时间不能晚于截止时间");
+        }
+        map.put("fileName", "消费记录.xlsx");
+        Workbook workbook = consumeRecordService.exportConsumeRecord(beginTime, endTime);
+        ExcelView excelView = new ExcelView();
+        excelView.buildExcelDocument(map, workbook, request, response);
+        return new ModelAndView(excelView, map);
+    }
+    
+    @RequestMapping(path = "/customer", method = { RequestMethod.GET })
+    public ModelAndView doExportCustomer(ModelMap map, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
+        map.put("fileName", "顾客信息.xlsx");
+        Workbook workbook = customerService.exportCustomerRecord();
+        ExcelView excelView = new ExcelView();
+        excelView.buildExcelDocument(map, workbook, request, response);
+        return new ModelAndView(excelView, map);
+    }
+    
+    @RequestMapping(path = "/employeePerformance", method = { RequestMethod.GET })
+    public ModelAndView doExportCustomer(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
+            throws Exception {
+
+        map.put("fileName", "员工绩效.xlsx");
+        Workbook workbook = consumeRecordService.exportEmployeeIntegral(beginTime, endTime);
+        ExcelView excelView = new ExcelView();
+        excelView.buildExcelDocument(map, workbook, request, response);
+        return new ModelAndView(excelView, map);
+    }
 }

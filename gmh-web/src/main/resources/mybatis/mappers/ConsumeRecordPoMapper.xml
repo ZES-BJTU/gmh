@@ -21,6 +21,13 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
+	<resultMap id="IntegralMap"
+		type="com.zes.squad.gmh.entity.union.EmployeeIntegralUnion">
+		<result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
+		<result column="integral" jdbcType="DECIMAL" property="integral" />
+	</resultMap>
+
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordPo"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO consume_record
@@ -120,10 +127,8 @@
 		where
 		id = #{id,jdbcType=BIGINT}
 	</update>
-	
-	<select id="getById"
-		parameterType="long"
-		resultMap="BaseResultMap">
+
+	<select id="getById" parameterType="long" resultMap="BaseResultMap">
 		SELECT
 		*
 		from
@@ -132,5 +137,55 @@
 		`id`=#{id,jdbcType=BIGINT}
 
 	</select>
-	
+
+	<select id="getIntegralEmployeeIntegralByEmployeeId" parameterType="map"
+		resultMap="IntegralMap">
+		select
+		crd.`operator_id` as `employee_id`,
+		em.`name` as `employee_name`,
+		pro.`integral` as
+		`integral`
+		from consume_record_detail crd
+		left join employee em on
+		crd.`operator_id`=em.`id`
+		left join project pro on
+		crd.`project_id`=
+		pro.`id`
+		where
+		crd.`operator_id` =#{employeeId,jdbcType=BIGINT}
+		and
+		<if test="beginTime != null">
+			AND <![CDATA[#{beginTime,jdbcType=TIMESTAMP}<= crd.`create_time` ]]>
+		</if>
+		<if test="endTime != null">
+			AND <![CDATA[ consume_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
+		</if>
+	</select>
+
+	<select id="getConsumeIdListByTime" parameterType="map"
+		resultType="long">
+		SELECT
+		id
+		from
+		consume_record
+		<where>
+			<if test="storeId != null">
+				`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="consumeType != null ">
+				AND `consume_type` = #{consumeType, jdbcType=INTEGER}
+			</if>
+			<if test="beginTime != null and endTime != null">
+				AND <![CDATA[#{beginTime,jdbcType=TIMESTAMP}<= consume_time <= #{endTime,jdbcType=TIMESTAMP} ]]>
+			</if>
+			<if test="beginTime != null and endTime == null">
+				AND <![CDATA[ consume_time >= #{beginTime,jdbcType=TIMESTAMP}  ]]>
+			</if>
+			<if test="beginTime == null and endTime != null">
+				AND <![CDATA[ consume_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
+			</if>
+		</where>
+
+	</select>
+
 </mapper>

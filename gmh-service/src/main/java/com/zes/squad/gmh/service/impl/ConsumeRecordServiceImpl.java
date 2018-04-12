@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.service.impl;
 
+import static com.zes.squad.gmh.helper.ExcelHelper.generateStringCell;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +45,7 @@ import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
+import com.zes.squad.gmh.entity.union.EmployeeIntegralUnion;
 import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.entity.union.StoreUnion;
 import com.zes.squad.gmh.mapper.ActivityContentMapper;
@@ -51,6 +58,7 @@ import com.zes.squad.gmh.mapper.CustomerActivityMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
+import com.zes.squad.gmh.mapper.EmployeeMapper;
 import com.zes.squad.gmh.mapper.ProductFlowMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
 import com.zes.squad.gmh.mapper.StockFlowMapper;
@@ -97,7 +105,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private CustomerMapper customerMapper;
 	@Autowired
 	private StoreService storeService;
-	
+	@Autowired
+	private EmployeeMapper employeeMapper;
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -347,7 +356,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 
 		recoverAmount(id);
-		recoverMoney(consumeRecord,consumeRecordDetails);
+		recoverMoney(consumeRecord, consumeRecordDetails);
 	}
 
 	@Override
@@ -496,34 +505,34 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		Long payWayContentId = consumeRecord.getPayWayContentId();
 		// 会员卡支付
 		if (paymentWay == 1) {
-			//如果payWayContentId不为空，则说明原支付方式为扣除次数,否则为扣储值
-			if(payWayContentId!=null){
-				//根据payWayContentId恢复次数，及项目次数恢复次数
+			// 如果payWayContentId不为空，则说明原支付方式为扣除次数,否则为扣储值
+			if (payWayContentId != null) {
+				// 根据payWayContentId恢复次数，及项目次数恢复次数
 				CustomerMemberCardContentUnion union = customerMemberCardContentMapper.getContent(payWayContentId);
-				Map<String,Object> map = new HashMap<String,Object>();
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("id", payWayContentId);
 				map.put("amount", union.getAmount() + consumeRecordDetails.get(0).getAmount().intValue());
 				customerMemberCardContentMapper.calAmount(map);
-			}else{
-				//此时恢复储值金额
+			} else {
+				// 此时恢复储值金额
 				CustomerMemberCardPo cmcPo = customerMemberCardMapper.getById(payWayId);
-				Map<String,Object> map = new HashMap<String,Object>();
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("id", payWayId);
-				map.put("remainMoney",cmcPo.getRemainingMoney().add(consumeRecord.getConsumeMoney()));
+				map.put("remainMoney", cmcPo.getRemainingMoney().add(consumeRecord.getConsumeMoney()));
 			}
 		}
 		// 活动支付
 		if (paymentWay == 2) {
 			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
-			Map<String,Object> map = new HashMap<String,Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", payWayContentId);
-			map.put("amount",cacu.getNumber().intValue() + consumeRecordDetails.get(0).getAmount().intValue());
+			map.put("amount", cacu.getNumber().intValue() + consumeRecordDetails.get(0).getAmount().intValue());
 			customerActivityContentMapper.updateAmount(map);
 		}
 		// 会员卡代金券+现金
 		if (paymentWay == 31) {
 			CustomerMemberCardContentUnion union = customerMemberCardContentMapper.getContent(payWayContentId);
-			Map<String,Object> map = new HashMap<String,Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", payWayContentId);
 			map.put("amount", union.getAmount() + consumeRecord.getCouponAmount());
 			customerMemberCardContentMapper.calAmount(map);
@@ -531,9 +540,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		// 活动代金券+现金
 		if (paymentWay == 2) {
 			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
-			Map<String,Object> map = new HashMap<String,Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", payWayContentId);
-			map.put("amount",cacu.getNumber().intValue() + consumeRecord.getCouponAmount());
+			map.put("amount", cacu.getNumber().intValue() + consumeRecord.getCouponAmount());
 			customerActivityContentMapper.updateAmount(map);
 		}
 	}
@@ -556,7 +565,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		StoreUnion storeUnion = new StoreUnion();
 		List<ConsumeRecordDetailUnion> consumeRecordDetailUnions = new ArrayList<ConsumeRecordDetailUnion>();
 		List<ConsumeRecordGiftUnion> consumeRecordGiftUnions = new ArrayList<ConsumeRecordGiftUnion>();
-		
+
 		consumeRecordPo = consumeRecordMapper.getById(consumeRecordId);
 		storeUnion = storeService.queryStoreDetail(ThreadContext.getUserStoreId());
 		consumeRecordDetailUnions = consumeRecordDetailUnionMapper
@@ -566,8 +575,82 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		printUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
 		printUnion.setConsumeRecordPo(consumeRecordPo);
 		printUnion.setStorePo(storeUnion.getStorePo());
-		
+
 		return printUnion;
 	}
+
+	@Override
+	public Workbook exportConsumeRecord(Date beginTime, Date endTime) {
+		ConsumeRecordQueryCondition condition = new ConsumeRecordQueryCondition();
+		condition.setBeginTime(beginTime);
+		condition.setEndTime(endTime);
+		condition.setStoreId(ThreadContext.getUserStoreId());
+//		PagedList<ConsumeRecordUnion> unionPagedList = changedListPagedConsumeRecords(condition);
+//		List<ConsumeRecordUnion> unionList = unionPagedList.getData();
+//		Workbook workbook = new SXSSFWorkbook();
+//		Sheet sheet = workbook.createSheet("消费记录");
+		
+
+		return null;
+	}
+
+	@Override
+	public Workbook exportEmployeeIntegral(Date beginTime, Date endTime) {
+
+		List<Long> officialEmployeeIds = employeeMapper.getOfficialOperatorId(ThreadContext.getUserStoreId());
+		List<Long> internEmployeeIds = employeeMapper.getInternOperatorId(ThreadContext.getUserStoreId());
+		List<Long> employeeIds = officialEmployeeIds;
+		employeeIds.addAll(internEmployeeIds);
+		List<EmployeeIntegralUnion> employeeTotalIntegralUnions = new ArrayList<EmployeeIntegralUnion>();
+		for(Long employeeId : employeeIds){
+			Map<String,Object> map = new HashMap<String,Object>();			
+			map.put("employeeId", employeeId);
+			map.put("beginTime", beginTime);
+			map.put("endTime", endTime);
+			List<EmployeeIntegralUnion> employeeIntegralUnions = consumeRecordMapper.getIntegralEmployeeIntegralByEmployeeId(map);
+			EmployeeIntegralUnion employeeTotalIntegralUnion = new EmployeeIntegralUnion();
+			BigDecimal totalIntegral = new BigDecimal(0);
+			for(EmployeeIntegralUnion union : employeeIntegralUnions){
+				totalIntegral = totalIntegral.add(union.getIntegral());
+				employeeTotalIntegralUnion.setEmployeeId(employeeId);
+				employeeTotalIntegralUnion.setEmployeeName(union.getEmployeeName());
+			}
+			employeeTotalIntegralUnions.add(CommonConverter.map(employeeTotalIntegralUnion,EmployeeIntegralUnion.class));
+			
+		}
+		
+		Workbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("员工积分");
+        if (CollectionUtils.isEmpty(employeeTotalIntegralUnions)) {
+            return workbook;
+        }
+        buildSheetByEmployeeIntegralUnion(sheet, employeeTotalIntegralUnions);
+
+		return workbook;
+	}
+
+	private void buildSheetByEmployeeIntegralUnion(Sheet sheet,
+			List<EmployeeIntegralUnion> employeeTotalIntegralUnions) {
+		 int rowNum = 0;
+	        int columnNum = 0;
+	        Row row = sheet.createRow(rowNum++);
+	        generateStringCell(row, columnNum++, "员工姓名");
+	        generateStringCell(row, columnNum++, "员工积分");
+	        for (EmployeeIntegralUnion union : employeeTotalIntegralUnions) {
+	            columnNum = 0;
+	            row = sheet.createRow(rowNum++);
+	            //姓名
+	            generateStringCell(row, columnNum++, union.getEmployeeName());
+	            //积分
+	            generateStringCell(row, columnNum++, union.getTotalIntegral().toString());
+	            
+	        }
+		
+	}
+
+
+
+	
+	
 
 }

@@ -82,5 +82,9 @@ public interface EmployeeMapper {
      * @return
      */
     List<EmployeePo> selectByWorkTypes(@Param("workTypes") List<Integer> workTypes, @Param("storeId") Long storeId);
+    
+    List<Long> getOfficialOperatorId(Long storeId);
+    
+    List<Long> getInternOperatorId(Long storeId);
 
 }

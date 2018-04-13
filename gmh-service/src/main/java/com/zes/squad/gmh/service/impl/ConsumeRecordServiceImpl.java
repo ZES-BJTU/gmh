@@ -664,7 +664,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	public BigDecimal doCalMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo) {
 		
-		
+		CustomerMemberCardPo customerMemberCardPo = customerMemberCardMapper.getById(consumeRecord.getPayWayId());
 		if(consumeRecord.getConsumeType()==3){//做项目
 			Long payWayId = consumeRecord.getPayWayId();
 			
@@ -697,6 +697,12 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
 				money.add(productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
 			}
+			if(customerMemberCardPo.getProductDiscount()!=null){
+				if(customerMemberCardPo.getProductDiscount().compareTo(new BigDecimal(0))==0){
+					return money;
+				}else
+					return money.multiply(customerMemberCardPo.getProductDiscount());
+			}else
 			return money;
 			
 		}else{

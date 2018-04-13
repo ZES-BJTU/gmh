@@ -26,6 +26,7 @@ import com.zes.squad.gmh.entity.union.AppointmentProjectParams;
 import com.zes.squad.gmh.entity.union.AppointmentProjectUnion;
 import com.zes.squad.gmh.entity.union.AppointmentUnion;
 import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
+import com.zes.squad.gmh.entity.union.OperatorTimeTableUnion;
 import com.zes.squad.gmh.mapper.AppointmentMapper;
 import com.zes.squad.gmh.mapper.AppointmentProjectMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
@@ -274,6 +275,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 			appointmentUnions.add(CommonConverter.map(appointmentUnion, AppointmentUnion.class));
 		}
 		return appointmentUnions;
+	}
+
+	@Override
+	public List<OperatorTimeTableUnion> queryOperatorTimeTable(Long operatorId, Date beginTime, Date endTime) {
+		
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("operatorId", operatorId);
+		map.put("beginTime", beginTime);
+		map.put("endTime", endTime);
+		map.put("storeId", ThreadContext.getUserStoreId());
+		List<OperatorTimeTableUnion> unionList = appointmentProjectMapper.queryOperatorTimeTable(map);
+		
+		
+		return unionList;
 	}
 
 }

@@ -433,21 +433,25 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			// 使用会员卡代金券
 			CustomerMemberCardContentUnion cmccu = customerMemberCardContentMapper
 					.getContent(consumeRecord.getPayWayContentId());
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("id", cmccu.getId());
-			map.put("amount", cmccu.getAmount() - consumeRecordDetails.get(0).getAmount().intValue());
-			customerMemberCardContentMapper.calAmount(map);
-			return;
+			
+			if (cmccu.getAmount()>= consumeRecord.getCouponAmount()){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("id", cmccu.getId());
+				map.put("amount", cmccu.getAmount() - consumeRecordDetails.get(0).getAmount().intValue());
+				customerMemberCardContentMapper.calAmount(map);
+				return;
+			}else{
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
+			}
+			
 		} else if (paymentWay == 32) {
 			// 使用活动代金券
 			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
-			if (consumeRecordDetails.size() != 1)
-				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动选择有误");
-
-			if (cacu.getNumber().intValue() >= 1) {
+			
+			if (cacu.getNumber().intValue()>= consumeRecord.getCouponAmount()) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("id", payWayContentId);
-				map.put("amount", cacu.getNumber().subtract(new BigDecimal(1)));
+				map.put("amount", cacu.getNumber().subtract(new BigDecimal(consumeRecord.getCouponAmount())));
 				customerActivityContentMapper.updateAmount(map);
 				return;
 			} else {

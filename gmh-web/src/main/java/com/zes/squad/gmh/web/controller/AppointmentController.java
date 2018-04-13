@@ -23,6 +23,7 @@ import com.zes.squad.gmh.entity.po.AppointmentPo;
 import com.zes.squad.gmh.entity.po.AppointmentProjectPo;
 import com.zes.squad.gmh.entity.union.AppointmentUnion;
 import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
+import com.zes.squad.gmh.entity.union.OperatorTimeTableUnion;
 import com.zes.squad.gmh.mapper.AppointmentProjectMapper;
 import com.zes.squad.gmh.service.AppointmentService;
 import com.zes.squad.gmh.web.common.JsonResults;
@@ -30,6 +31,7 @@ import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.AppointmentCreateOrModifyParams;
 import com.zes.squad.gmh.web.entity.param.AppointmentQueryParams;
 import com.zes.squad.gmh.web.entity.param.QueryEmployeeTimeTableParams;
+import com.zes.squad.gmh.web.entity.param.QueryOperatorTimeTableParams;
 import com.zes.squad.gmh.web.entity.vo.AppointmentVo;
 import com.zes.squad.gmh.web.helper.CheckHelper;
 
@@ -118,7 +120,15 @@ public class AppointmentController {
 				params.getDate());
 		return JsonResults.success(timeTableList);
 	}
-
+	
+	@RequestMapping(path = "/operatorTimeTableList", method = { RequestMethod.PUT })
+	public JsonResult<List<OperatorTimeTableUnion>> queryOperatorList(
+			@RequestBody QueryOperatorTimeTableParams params) {
+		List<OperatorTimeTableUnion> operatorTimeTableList = appointmentService.queryOperatorTimeTable(params.getOperatorId(),
+				params.getBeginTime(),params.getEndTime());
+		return JsonResults.success(operatorTimeTableList);
+	}
+	
 	private AppointmentVo buildAppointmentVoByUnion(AppointmentUnion appointmentUnion) {
 		AppointmentVo vo = CommonConverter.map(appointmentUnion.getAppointmentPo(), AppointmentVo.class);
 		vo.setCustomerGender(

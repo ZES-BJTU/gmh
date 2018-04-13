@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zes.squad.gmh.mapper.AppointmentProjectMapper">
-	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.AppointmentProjectPo">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.po.AppointmentProjectPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="appointment_id" jdbcType="INTEGER" property="appointmentId" />
 		<result column="project_id" jdbcType="INTEGER" property="projectId" />
@@ -11,50 +12,107 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-	
-	<resultMap id="AppointmentProjectUnionMap" type="com.zes.squad.gmh.entity.union.AppointmentProjectUnion">	
+
+	<resultMap id="AppointmentProjectUnionMap"
+		type="com.zes.squad.gmh.entity.union.AppointmentProjectUnion">
 		<result column="project_id" jdbcType="INTEGER" property="projectId" />
 		<result column="project_code" jdbcType="VARCHAR" property="projectCode" />
-		<result column="employee_id" jdbcType="INTEGER" property="employeeId" />	
+		<result column="employee_id" jdbcType="INTEGER" property="employeeId" />
 		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
 		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
 		<result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
 		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
 	</resultMap>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo" useGeneratedKeys="true" keyProperty="id">
+
+	<resultMap id="OperatorUnionMap"
+		type="com.zes.squad.gmh.entity.union.OperatorTimeTableUnion">
+
+		<result column="employee_id" jdbcType="BIGINT" property="operatorId" />
+		<result column="employee_name" jdbcType="VARCHAR" property="operatorName" />
+		<result column="project_id" jdbcType="BIGINT" property="projectId" />
+		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
+		<result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+		<result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.AppointmentProjectPo"
+		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO appointment_project
 		(`appointment_id`,`project_id`,`employee_id`,`begin_time`,`end_time`)
 		VALUES
 		(#{appointmentId, jdbcType=INTEGER},
-		#{projectId, jdbcType=INTEGER},
+		#{projectId,
+		jdbcType=INTEGER},
 		#{employeeId, jdbcType=INTEGER},
-		#{beginTime, jdbcType=TIMESTAMP},
+		#{beginTime,
+		jdbcType=TIMESTAMP},
 		#{endTime, jdbcType=TIMESTAMP})
 	</insert>
-	<select id="getAppointmentProjectUnionByAppId" parameterType="long" resultMap="AppointmentProjectUnionMap">
+	<select id="getAppointmentProjectUnionByAppId" parameterType="long"
+		resultMap="AppointmentProjectUnionMap">
 		SELECT
-		p.name as project_name,p.code as project_code, e.name as employee_name,project_id,employee_id, begin_time, end_time from 
+		p.name as project_name,p.code as project_code, e.name
+		as employee_name,project_id,employee_id, begin_time, end_time from
 		appointment_project ap
 		left join project p
 		on ap.`project_id` = p.`id`
 		left join employee e
 		on ap.`employee_id` = e.`id`
-        where
-        ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
+		where
+		ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
 	</select>
-	<select id="getListByAppointmentId" parameterType="long" resultMap="BaseResultMap">
+	<select id="getListByAppointmentId" parameterType="long"
+		resultMap="BaseResultMap">
 		select * from appointment_project ap
-        where
-        ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
+		where
+		ap.`appointment_id`= #{appoentmentId, jdbcType=INTEGER}
 	</select>
 	<delete id="delById" parameterType="long">
-		delete from appointment_project
+		delete from
+		appointment_project
 		where
 		id=#{id,jdbcType=INTEGER}
 	</delete>
 	<delete id="delByAppointmentId" parameterType="long">
-		delete from appointment_project
+		delete from
+		appointment_project
 		where
 		appointment_id=#{appointmentId,jdbcType=INTEGER}
 	</delete>
+	<select id="queryOperatorTimeTable" parameterType="map"
+		resultMap="OperatorUnionMap">
+		select
+		app.`employee_id` as `employee_id`,
+		app.`project_id` as
+		`project_id`,
+		app.`begin_time` as `begin_time`,
+		app.`end_time` as
+		`end_time`,
+		em.`name` as `employee_name`,
+		p.`name` as `project_name`
+		from appointment_project app
+		
+		left join employee em on
+		em.`id`=app.employee_id
+		left join project p on
+		p.id=app.project_id
+		<where>
+			<if test="operatorId != null">
+				app.`employee_id` = #{operatorId, jdbcType=BIGINT}
+			</if>
+			<if test="beginTime != null">
+				app.`begin_time` <![CDATA[ >=  ]]>
+				#{beginTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="endTime != null">
+				app.`end_time` <![CDATA[ <=  ]]>
+				#{endTime, jdbcType=TIMESTAMP}
+			</if>
+		</where>
+		and
+		app.`appointment_id` in
+		(select id from appointment where status=1 and
+		store_id=#{storeId,jdbcType=BIGINT}
+		)
+	</select>
 </mapper>

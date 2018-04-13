@@ -1,5 +1,6 @@
 package com.zes.squad.gmh.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,5 +46,8 @@ public interface ConsumeRecordService {
 	Workbook exportConsumeRecord(Date beginTime, Date endTime);
 
 	Workbook exportEmployeeIntegral(Date beginTime, Date endTime);
+
+	BigDecimal doCalMoney(ConsumeRecordPo consumeRecordPo, List<ConsumeRecordDetailPo> consumeRecordDetails,
+			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo);
 
 }

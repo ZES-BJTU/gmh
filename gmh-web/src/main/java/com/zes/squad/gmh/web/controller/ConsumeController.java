@@ -2,6 +2,7 @@ package com.zes.squad.gmh.web.controller;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,14 @@ public class ConsumeController {
 		consumeRecordService.createConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails(),
 				params.getGifts(), params.getMemberCardPo());
 		return JsonResults.success();
+	}
+	
+	@RequestMapping(path = "/calMoney", method = { RequestMethod.PUT })
+	public JsonResult<BigDecimal> doCalMoney(@RequestBody ConsumeCreateOrModifyParams params) {
+		checkConsumeCreateParams(params);
+		BigDecimal money = consumeRecordService.doCalMoney(params.getConsumeRecordPo(), params.getConsumeRecordDetails(),
+				params.getGifts(), params.getMemberCardPo());
+		return JsonResults.success(money);
 	}
 
 	@RequestMapping(path = "/modifyConsume", method = { RequestMethod.PUT })

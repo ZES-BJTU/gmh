@@ -60,6 +60,7 @@ import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.mapper.EmployeeMapper;
 import com.zes.squad.gmh.mapper.ProductFlowMapper;
+import com.zes.squad.gmh.mapper.ProductMapper;
 import com.zes.squad.gmh.mapper.ProjectMapper;
 import com.zes.squad.gmh.mapper.ProjectStockMapper;
 import com.zes.squad.gmh.mapper.StockFlowMapper;
@@ -110,7 +111,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private EmployeeMapper employeeMapper;
 	@Autowired
 	private ProjectMapper projectMapper;
-
+	@Autowired
+	private ProductMapper productMapper;
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -661,34 +663,46 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	@Override
 	public BigDecimal doCalMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo) {
-		// Integer paymentWay = consumeRecord.getPaymentWay();
-		Long payWayId = consumeRecord.getPayWayId();
+		
+		
+		if(consumeRecord.getConsumeType()==3){//做项目
+			Long payWayId = consumeRecord.getPayWayId();
+			
+			List<CustomerMemberCardContentUnion> cardContentLists = customerMemberCardContentMapper
+					.getProjectContentList(payWayId);
 
-		List<CustomerMemberCardContentUnion> cardContentLists = customerMemberCardContentMapper
-				.getProjectContentList(payWayId);
-		// List<ConsumeRecordDetailPo> tmpconsumeRecordDetails = new
-		// ArrayList<ConsumeRecordDetailPo>();
-		List<Integer> indexes = new ArrayList<Integer>();
-		for (int i = 0; i < consumeRecordDetails.size(); i++) {
-			for (CustomerMemberCardContentUnion content : cardContentLists) {
-				if (content.getRelatedId() == consumeRecordDetails.get(i).getProjectId()) {
-					if (content.getAmount() >= consumeRecordDetails.get(i).getAmount().intValue()) {
-						indexes.add(CommonConverter.map(i, Integer.class));
-						break;
-					}else{
-						consumeRecordDetails.get(i).setAmount(consumeRecordDetails.get(i).getAmount().subtract(new BigDecimal(content.getAmount())));
+			List<Integer> indexes = new ArrayList<Integer>();
+			for (int i = 0; i < consumeRecordDetails.size(); i++) {
+				for (CustomerMemberCardContentUnion content : cardContentLists) {
+					if (content.getRelatedId() == consumeRecordDetails.get(i).getProjectId()) {
+						if (content.getAmount() >= consumeRecordDetails.get(i).getAmount().intValue()) {
+							indexes.add(CommonConverter.map(i, Integer.class));
+							break;
+						}else{
+							consumeRecordDetails.get(i).setAmount(consumeRecordDetails.get(i).getAmount().subtract(new BigDecimal(content.getAmount())));
+						}
 					}
 				}
 			}
+			for (Integer index : indexes) {
+				consumeRecordDetails.remove(index);
+			}
+			BigDecimal money = new BigDecimal(0);
+			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
+				money.add(projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
+			}
+			return money;
+		}else if(consumeRecord.getConsumeType()==3){//买产品
+			BigDecimal money = new BigDecimal(0);
+			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
+				money.add(productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+			}
+			return money;
+			
+		}else{
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡不支持此项购买");
 		}
-		for (Integer index : indexes) {
-			consumeRecordDetails.remove(index);
-		}
-		BigDecimal money = new BigDecimal(0);
-		for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
-			money.add(projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
-		}
-		return money;
+		
 
 	}
 

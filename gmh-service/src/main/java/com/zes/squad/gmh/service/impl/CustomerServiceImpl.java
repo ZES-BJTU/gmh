@@ -74,7 +74,7 @@ public class CustomerServiceImpl implements CustomerService {
 		ensureEntityExist(storeId, "当前用户不属于任何门店");
 		
 		CustomerQueryCondition condition = new CustomerQueryCondition();
-		condition.setStoreId(storeId);		
+		
 		List<CustomerPo> unions = customerMapper.selectByCondition(condition);
 		
 		if (CollectionUtils.isEmpty(unions)) {

@@ -189,7 +189,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecordDetailMapper.insert(consumeRecordDetailPo);
 
 		CustomerMemberCardContentPo customerMemberCardContentPo = new CustomerMemberCardContentPo();
-		customerMemberCardContentPo.setCustomerMemberCardId(memberCardPo.getId());
+		customerMemberCardContentPo.setCustomerMemberCardId(customerMemberCardPo.getId());
 		if (memberCardPo.getType() != 2) {
 
 			customerMemberCardContentPo.setRelatedId(memberCardPo.getProjectId());

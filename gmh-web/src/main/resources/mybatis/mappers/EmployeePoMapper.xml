@@ -176,7 +176,7 @@
 		select employee_id from
 		employee_work
 		where
-		work_type in=4
+		work_type =4
 		)
 		and 
 		store_id=#{storeId,jdbcType=BIGINT}

@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.YesOrNoEnum;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
@@ -104,7 +108,8 @@ public class CustomerMemberCardController {
 	
 	@RequestMapping(path ="/getCardPay", method = {RequestMethod.PUT})
 	public JsonResult<List<CustomerMemberCardVo>> doGetCardPay(@RequestBody PaymentParams params){
-		List<CustomerMemberCardUnion> unionList = customerMemberCardService.getCardListByMobile(params.getCustomerMobile());
+		checkCardPayParams(params);
+		List<CustomerMemberCardUnion> unionList = customerMemberCardService.getCardListByMobile(params.getPaymentWay(),params.getCustomerMobile());
 		List<CustomerMemberCardVo> customerMemberCardVos = new ArrayList<CustomerMemberCardVo>();
 		for (CustomerMemberCardUnion customerMemberCardUnion : unionList) {
 			CustomerMemberCardVo customerMemberCardVo = buildAppointmentVoByUnion(customerMemberCardUnion);
@@ -138,5 +143,15 @@ public class CustomerMemberCardController {
 		vo.setIsTurned(EnumUtils.getDescByKey(customerMemberCardUnion.getIsTurned(), YesOrNoEnum.class));
 		
 		return vo;
+	}
+	
+	private void checkCardPayParams(PaymentParams params) {
+		
+		ensureParameterExist(params.getPaymentWay(), "未输入支付方式");
+		ensureParameterExist(params.getCustomerMobile(), "未输入会员手机号");
+		if(!(params.getPaymentWay()==1||params.getPaymentWay()==31)){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式输入有误");
+		}
+
 	}
 }

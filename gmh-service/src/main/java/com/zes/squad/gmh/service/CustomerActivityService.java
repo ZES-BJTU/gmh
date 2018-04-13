@@ -11,6 +11,7 @@ public interface CustomerActivityService {
 	PagedList<CustomerActivityUnion> listPagedCustomerActivity(
 			CustomerActivityQueryCondition customerActivityQueryCondition);
 
-	List<CustomerActivityUnion> getCardListByMobile(String customerMobile);
-
+	List<CustomerActivityUnion> getAcitvityListByMobile(Integer paymentWay,String customerMobile);
+	
+	
 }

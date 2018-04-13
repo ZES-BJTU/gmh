@@ -20,7 +20,7 @@ public interface CustomerMemberCardService {
 	
 	void changeStore(CustomerMemberCardPo po, Long storeId);
 
-	List<CustomerMemberCardUnion> getCardListByMobile(String customerMobile);
+	List<CustomerMemberCardUnion> getCardListByMobile(Integer paymentWay,String customerMobile);
 
 	void recharge(Long cardId, BigDecimal rechargeMoney, Long consultantId, Long salesManId);
 	

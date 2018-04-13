@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.enums.ActivityContentTypeEnum;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
@@ -56,7 +60,8 @@ public class CustomerActivityController {
 	
 	@RequestMapping(path ="/getActivityPay", method = {RequestMethod.PUT})
 	public JsonResult<List<CustomerActivityVo>> doGetCardPay(@RequestBody PaymentParams params){
-		List<CustomerActivityUnion> unionList = customerActivityService.getCardListByMobile(params.getCustomerMobile());
+		checkActivityPayParams(params);
+		List<CustomerActivityUnion> unionList = customerActivityService.getAcitvityListByMobile(params.getPaymentWay(),params.getCustomerMobile());
 		List<CustomerActivityVo> customerActivityVos = new ArrayList<CustomerActivityVo>();
 		for (CustomerActivityUnion caUnion : unionList) {
 			CustomerActivityVo customerActivitydVo = buildAppointmentVoByUnion(caUnion);
@@ -76,5 +81,15 @@ public class CustomerActivityController {
 		}
 		vo.setCustomerActivityContents(cacvList);
 		return vo;
+	}
+	
+	private void checkActivityPayParams(PaymentParams params) {
+	
+		ensureParameterExist(params.getPaymentWay(), "未输入支付方式");
+		ensureParameterExist(params.getCustomerMobile(), "未输入会员手机号");
+		if(!(params.getPaymentWay()==2||params.getPaymentWay()==32)){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式输入有误");
+		}
+
 	}
 }

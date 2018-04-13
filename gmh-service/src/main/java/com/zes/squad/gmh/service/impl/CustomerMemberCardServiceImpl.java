@@ -147,14 +147,20 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	}
 
 	@Override
-	public List<CustomerMemberCardUnion> getCardListByMobile(String customerMobile) {
+	public List<CustomerMemberCardUnion> getCardListByMobile(Integer paymentWay,String customerMobile) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("storeId", ThreadContext.getUserStoreId());
 		CustomerPo customer = customerMapper.getByMobile(customerMobile);
 		map.put("customerId", customer.getId());
 		List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper.getCardListByCustomerId(map);
-		for (CustomerMemberCardUnion cmcu : customerMemberCardUnions) {
-			cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getContentList(cmcu.getId()));
+		if(paymentWay==1){
+			for (CustomerMemberCardUnion cmcu : customerMemberCardUnions) {
+				cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getProjectContentList(cmcu.getId()));
+			}
+		}else if(paymentWay==31){
+			for (CustomerMemberCardUnion cmcu : customerMemberCardUnions) {
+				cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getCouponContentList(cmcu.getId()));
+			}
 		}
 
 		return customerMemberCardUnions;

@@ -49,7 +49,38 @@
 		where
 		`id`=#{id,jdbcType=BIGINT}
 	</update>
+	<select id="getCouponContentList" parameterType="long" resultMap="UnionResultMap">
+		select
+		c.`id` as `id`,
+		c.`related_id` as `related_id`,
+		p.`name` as `related_name`,
+		c.`content` as `content`,
+		c.`amount` as `amount`
+		from customer_member_card_content c
+		left join project p
+		on c.`related_id` = p.`id`
+		   
+		where
+		c.`customer_member_card_id`=#{customerMemberCardId,jdbcType=BIGINT}
+		and
+		c.`content`!="null"
+	</select>
 	
-	
+	<select id="getProjectContentList" parameterType="long" resultMap="UnionResultMap">
+		select
+		c.`id` as `id`,
+		c.`related_id` as `related_id`,
+		p.`name` as `related_name`,
+		c.`content` as `content`,
+		c.`amount` as `amount`
+		from customer_member_card_content c
+		left join project p
+		on c.`related_id` = p.`id`
+		   
+		where
+		c.`customer_member_card_id`=#{customerMemberCardId,jdbcType=BIGINT}
+		and
+		c.`related_id`!="null"
+	</select>
 	
 </mapper>

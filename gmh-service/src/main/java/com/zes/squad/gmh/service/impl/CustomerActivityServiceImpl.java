@@ -63,9 +63,25 @@ public class CustomerActivityServiceImpl implements CustomerActivityService {
 
 		return allList;
 	}
+	
+	private List<CustomerActivityContentUnion> getProContentUnion(Long id) {
+		List<CustomerActivityContentUnion> productList = customerActivityContentMapper
+				.getProductListByCustomerActivityId(id);
+		List<CustomerActivityContentUnion> projectList = customerActivityContentMapper
+				.getProjectListByCustomerActivityId(id);
+		List<CustomerActivityContentUnion> cardtList = customerActivityContentMapper
+				.getCardListByCustomerActivityId(id);
+
+		List<CustomerActivityContentUnion> allList = new ArrayList<CustomerActivityContentUnion>();
+		allList.addAll(projectList);
+		allList.addAll(productList);
+		allList.addAll(cardtList);
+
+		return allList;
+	}
 
 	@Override
-	public List<CustomerActivityUnion> getCardListByMobile(String customerMobile) {
+	public List<CustomerActivityUnion> getAcitvityListByMobile(Integer paymentWay,String customerMobile) {
 		
 		Map<String,Object> map = new HashMap<String,Object>();		
 		map.put("storeId", ThreadContext.getUserStoreId());
@@ -73,9 +89,18 @@ public class CustomerActivityServiceImpl implements CustomerActivityService {
 		map.put("customerId", customer.getId());
 		List<CustomerActivityUnion> customerActivityUnions = customerActivityMapper
 				.getActivityListByCustomerId(map);
-		for (CustomerActivityUnion cau : customerActivityUnions) {
-			cau.setCustomerActivityContents(getAllContentUnion(cau.getId()));
+		if(paymentWay==32){
+			for (CustomerActivityUnion cau : customerActivityUnions) {
+				cau.setCustomerActivityContents(customerActivityContentMapper
+						.getCouponListByCustomerActivityId(cau.getId()));
+			}
+		}else if(paymentWay==2){
+			for (CustomerActivityUnion cau : customerActivityUnions) {
+				cau.setCustomerActivityContents(getProContentUnion(cau.getId()));
+			}
 		}
+		
 		return customerActivityUnions;
 	}
+
 }

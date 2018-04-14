@@ -268,9 +268,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.activityNumberAdd(oldNumber + 1);
 
-		ConsumeRecordDetailPo detail = consumeRecordDetails.get(0);
-		detail.setConsumeRecordId(consumeRecord.getId());
-		consumeRecordDetailMapper.insert(detail);
+//		ConsumeRecordDetailPo detail = consumeRecordDetails.get(0);
+//		detail.setConsumeRecordId(consumeRecord.getId());
+//		consumeRecordDetailMapper.insert(detail);
 
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
 
@@ -534,44 +534,51 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 
 	private void calAmount(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts) {
-		for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
-			if (detail.getProductId() != null) {
-				ProductFlowPo flowPo = new ProductFlowPo();
-				flowPo.setAmount(detail.getAmount());
-				flowPo.setProductId(detail.getProductId());
-				flowPo.setRecordId(consumeRecord.getId());
-				flowPo.setStatus(1);
-				flowPo.setStoreId(ThreadContext.getUserStoreId());
-				flowPo.setType(3);
-				productService.reduceProductAmount(flowPo);
+		if(consumeRecordDetails!=null){
+			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
+				if (detail.getProductId() != null) {
+					ProductFlowPo flowPo = new ProductFlowPo();
+					flowPo.setAmount(detail.getAmount());
+					flowPo.setProductId(detail.getProductId());
+					flowPo.setRecordId(consumeRecord.getId());
+					flowPo.setStatus(1);
+					flowPo.setStoreId(ThreadContext.getUserStoreId());
+					flowPo.setType(3);
+					productService.reduceProductAmount(flowPo);
+				}
+				if (detail.getProjectId() != null) {
+					List<ProjectStockPo> projectStockPos = projectStockMapper.getProjectStockByProId(detail.getProjectId());
+					for (ProjectStockPo projectStockPo : projectStockPos) {
+						StockFlowPo stockFlowPo = new StockFlowPo();
+						stockFlowPo.setAmount(projectStockPo.getStockConsumptionAmount());
+						stockFlowPo.setRecordId(consumeRecord.getId());
+						stockFlowPo.setStatus(1);
+						stockFlowPo.setStockId(projectStockPo.getStockId());
+						stockFlowPo.setStoreId(ThreadContext.getUserStoreId());
+						stockFlowPo.setType(3);
+						stockService.reduceStockAmount(stockFlowPo);
+					}
+				}
+
 			}
-			if (detail.getProjectId() != null) {
-				List<ProjectStockPo> projectStockPos = projectStockMapper.getProjectStockByProId(detail.getProjectId());
-				for (ProjectStockPo projectStockPo : projectStockPos) {
-					StockFlowPo stockFlowPo = new StockFlowPo();
-					stockFlowPo.setAmount(projectStockPo.getStockConsumptionAmount());
-					stockFlowPo.setRecordId(consumeRecord.getId());
-					stockFlowPo.setStatus(1);
-					stockFlowPo.setStockId(projectStockPo.getStockId());
-					stockFlowPo.setStoreId(ThreadContext.getUserStoreId());
-					stockFlowPo.setType(3);
-					stockService.reduceStockAmount(stockFlowPo);
+		}
+		
+		if(gifts!=null){
+			for (ConsumeRecordGiftPo gift : gifts) {
+				if (gift.getProductId() != null) {
+					ProductFlowPo flowPo = new ProductFlowPo();
+					flowPo.setAmount(new BigDecimal(gift.getProductAmount()));
+					flowPo.setProductId(gift.getProductId());
+					flowPo.setRecordId(consumeRecord.getId());
+					flowPo.setStatus(1);
+					flowPo.setStoreId(ThreadContext.getUserStoreId());
+					flowPo.setType(3);
+					productService.reduceProductAmount(flowPo);
 				}
 			}
-
 		}
-		for (ConsumeRecordGiftPo gift : gifts) {
-			if (gift.getProductId() != null) {
-				ProductFlowPo flowPo = new ProductFlowPo();
-				flowPo.setAmount(new BigDecimal(gift.getProductAmount()));
-				flowPo.setProductId(gift.getProductId());
-				flowPo.setRecordId(consumeRecord.getId());
-				flowPo.setStatus(1);
-				flowPo.setStoreId(ThreadContext.getUserStoreId());
-				flowPo.setType(3);
-				productService.reduceProductAmount(flowPo);
-			}
-		}
+		
+		
 	}
 
 	private void recoverMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails) {

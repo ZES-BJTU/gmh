@@ -631,6 +631,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				employeeTotalIntegralUnion.setEmployeeId(employeeId);
 				employeeTotalIntegralUnion.setEmployeeName(union.getEmployeeName());
 			}
+			if(employeeIntegralUnions.size()==0){
+				employeeTotalIntegralUnion.setEmployeeId(employeeId);
+				employeeTotalIntegralUnion.setEmployeeName(employeeMapper.selectById(employeeId).getName());
+			}
 			employeeTotalIntegralUnion.setTotalIntegral(totalIntegral);
 			employeeTotalIntegralUnions
 					.add(CommonConverter.map(employeeTotalIntegralUnion, EmployeeIntegralUnion.class));

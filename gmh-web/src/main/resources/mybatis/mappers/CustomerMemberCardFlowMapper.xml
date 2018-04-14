@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.CustomerMemberCardFlowMapper">
+	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerMemberCardFlowPo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="consume_record_id" jdbcType="BIGINT" property="consumeRecordId" />
+		<result column="customer_member_card_id" jdbcType="BIGINT" property="customerMemberCardId" />
+		<result column="money" jdbcType="DECIMAL" property="money" />
+		<result column="customer_member_card_content_id" jdbcType="BIGINT" property="customerMemberCardContentId" />
+		<result column="amount" jdbcType="INTEGER" property="amount" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerMemberCardFlowPo">
+		insert into customer_member_card_flow(consume_record_id,customer_member_card_id,money,customer_member_card_content_id,amount )
+		values(
+		#{consumeRecordId,jdbcType=BIGINT},
+		#{customerMemberCardId,jdbcType=BIGINT},
+		#{money,jdbcType=DECIMAL},
+		#{customer_member_card_content_id,jdbcType=BIGINT},
+		#{amount,jdbcType=INTEGER}
+		)
+	</insert>
+	<select id="getListByConsumeRecordId" parameterType="long" resultMap="BaseResultMap">
+		select * from customer_member_card_flow
+		where
+		consume_record_id=#{consumeRecordId,jdbcType=BIGINT}	
+	</select>
+</mapper>

@@ -20,4 +20,6 @@ public interface CustomerMemberCardContentMapper {
 	
 	List<CustomerMemberCardContentUnion> getProjectContentList(Long customerMemberCardId);
 
+	CustomerMemberCardContentPo getByCustomerMemberCardIdRelatedId(Map<String, Object> map);
+
 }

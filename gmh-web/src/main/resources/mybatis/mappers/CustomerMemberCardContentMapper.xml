@@ -82,5 +82,11 @@
 		and
 		c.`related_id`!="null"
 	</select>
-	
+	<select id="getByCustomerMemberCardIdRelatedId" parameterType="map" resultMap="resultMap">
+		select * from customer_member_card_content
+		where
+		customer_member_card_id=#{customerMemberCardId,jdbcType=BIGINT}
+		and
+		related_id=#{relatedId,jdbcType=BIGINT}
+	</select>
 </mapper>

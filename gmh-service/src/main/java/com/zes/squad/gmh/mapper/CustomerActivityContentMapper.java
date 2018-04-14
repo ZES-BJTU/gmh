@@ -21,4 +21,6 @@ public interface CustomerActivityContentMapper {
 	CustomerActivityContentUnion getById(Long id);
 
 	void updateAmount(Map<String, Object> map);
+
+	CustomerActivityContentPo getByActivityContentIdRelatedId(Map<String, Object> map);
 }

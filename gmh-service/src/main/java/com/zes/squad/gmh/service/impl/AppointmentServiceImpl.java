@@ -54,6 +54,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 		CustomerPo customer = customerMapper.getByMobile(appointmentPo.getCustomerMobile());
 		if(customer!=null){
 			appointmentPo.setCustomerId(customer.getId());
+			appointmentPo.setCustomerGender(customer.getGender());
+			appointmentPo.setCustomerName(customer.getName());
+		}else{
+			CustomerPo tmpCustomer = new CustomerPo();
+			tmpCustomer.setGender(appointmentPo.getCustomerGender());
+			tmpCustomer.setInputTime(new Date());
+			tmpCustomer.setMobile(appointmentPo.getCustomerMobile());
+			tmpCustomer.setName(appointmentPo.getCustomerName());
+			customerMapper.insert(tmpCustomer);
+			appointmentPo.setCustomerId(tmpCustomer.getId());
 		}
 		appointmentPo.setStoreId(ThreadContext.getUserStoreId());
 		appointmentPo.setStatus(1);

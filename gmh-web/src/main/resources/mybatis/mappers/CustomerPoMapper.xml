@@ -14,7 +14,7 @@
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
-	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerPo">
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerPo" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO customer
 		(`name`,`gender`,`mobile`,`birthday`,`source`,`store_id`,`remark`)
 		VALUES

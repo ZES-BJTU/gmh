@@ -762,25 +762,54 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			List<CustomerMemberCardContentUnion> cardContentLists = customerMemberCardContentMapper
 					.getProjectContentList(payWayId);
 
-			List<Integer> indexes = new ArrayList<Integer>();
-			for (int i = 0; i < consumeRecordDetails.size(); i++) {
-				for (CustomerMemberCardContentUnion content : cardContentLists) {
-					if (content.getRelatedId() == consumeRecordDetails.get(i).getProjectId()) {
-						if (content.getAmount() >= consumeRecordDetails.get(i).getAmount().intValue()) {
-							indexes.add(CommonConverter.map(i, Integer.class));
-							break;
-						} else {
-							consumeRecordDetails.get(i).setAmount(consumeRecordDetails.get(i).getAmount()
-									.subtract(new BigDecimal(content.getAmount())));
-						}
+//			List<Integer> indexes = new ArrayList<Integer>();
+//			for (int i = 0; i < consumeRecordDetails.size(); i++) {
+//				for (CustomerMemberCardContentUnion content : cardContentLists) {
+//					if (content.getRelatedId() == consumeRecordDetails.get(i).getProjectId()) {
+//						if (content.getAmount() >= consumeRecordDetails.get(i).getAmount().intValue()) {
+//							indexes.add(i);
+//							break;
+//						} else {
+//							consumeRecordDetails.get(i).setAmount(consumeRecordDetails.get(i).getAmount()
+//									.subtract(new BigDecimal(content.getAmount())));
+//						}
+//					}
+//				}
+//			}
+//			for (Integer index : indexes) {
+//				consumeRecordDetails.remove(index);
+//			}
+//			BigDecimal money = new BigDecimal(0);
+//			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
+//				money = money.add(
+//						projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
+//			}
+//			return money;
+			List<ConsumeRecordDetailPo> byMoney = new ArrayList<ConsumeRecordDetailPo>();
+			List<ConsumeRecordDetailPo> byTimes = new ArrayList<ConsumeRecordDetailPo>();
+			for (int i = 0; i < consumeRecordDetails.size(); i++){
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("customerMemberCardId", payWayId);
+				map.put("relatedId", consumeRecordDetails.get(i).getProjectId());
+				CustomerMemberCardContentPo contentPo = customerMemberCardContentMapper.getByCustomerMemberCardIdRelatedId(map);
+				if(contentPo==null){//说明此会员卡中没有该项目，该项目需要扣储值支付
+					byMoney.add(consumeRecordDetails.get(i));
+				}else{//说明此会员卡中有该项目，可以扣次数
+					if(contentPo.getAmount()>=consumeRecordDetails.get(i).getAmount().intValue()){//会员卡中余量足够
+						byTimes.add(consumeRecordDetails.get(i));
+					}else{//会员卡中余量不够
+						ConsumeRecordDetailPo tmpByMoney = consumeRecordDetails.get(i);
+						tmpByMoney.setAmount(consumeRecordDetails.get(i).getAmount().subtract(new BigDecimal(contentPo.getAmount())));
+						byMoney.add(CommonConverter.map(tmpByMoney,ConsumeRecordDetailPo.class));
+						ConsumeRecordDetailPo tmpByTimes = consumeRecordDetails.get(i);
+						tmpByTimes.setAmount(new BigDecimal(contentPo.getAmount()));
+						byTimes.add(CommonConverter.map(tmpByTimes,ConsumeRecordDetailPo.class));
+						
 					}
 				}
 			}
-			for (Integer index : indexes) {
-				consumeRecordDetails.remove(index);
-			}
 			BigDecimal money = new BigDecimal(0);
-			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
+			for (ConsumeRecordDetailPo detail : byMoney) {
 				money = money.add(
 						projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
 			}

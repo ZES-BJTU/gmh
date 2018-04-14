@@ -449,7 +449,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 							Map<String, Object> contentMap = new HashMap<String, Object>();
 							contentMap.put("id", contentPo.getId());
 							contentMap.put("amount", contentPo.getAmount() - detail.getAmount().intValue());
-							customerMemberCardContentMapper.calAmount(map);
+							customerMemberCardContentMapper.calAmount(contentMap);
 							cardFlowPo.setCustomerMemberCardContentId(contentPo.getId());
 							cardFlowPo.setAmount(detail.getAmount().intValue());
 							customerMemberCardFlowMapper.insert(cardFlowPo);
@@ -457,7 +457,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 							Map<String, Object> contentMap = new HashMap<String, Object>();
 							contentMap.put("id", contentPo.getId());
 							contentMap.put("amount", 0);
-							customerMemberCardContentMapper.calAmount(map);
+							customerMemberCardContentMapper.calAmount(contentMap);
 							cardFlowPo.setCustomerMemberCardContentId(contentPo.getId());
 							cardFlowPo.setAmount(detail.getAmount().intValue());
 							customerMemberCardFlowMapper.insert(cardFlowPo);

@@ -224,7 +224,7 @@ public class ConsumeController {
 		}
 		if (consumeRecordPo.getPaymentWay() == 1) {
 			ensureParameterExist(consumeRecordPo.getPayWayId(), "请选择会员卡");
-			ensureParameterExist(consumeRecordPo.getPayWayContentId(), "请选择会员卡");
+//			ensureParameterExist(consumeRecordPo.getPayWayContentId(), "请选择会员卡");
 		}
 		if (consumeRecordPo.getPaymentWay() == 2) {
 			ensureParameterExist(consumeRecordPo.getPayWayId(), "请选择活动");

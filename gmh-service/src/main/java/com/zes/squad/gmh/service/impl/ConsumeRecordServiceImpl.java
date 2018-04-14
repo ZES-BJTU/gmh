@@ -402,6 +402,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			CustomerMemberCardFlowPo cardFlowPo = new CustomerMemberCardFlowPo();
 			cardFlowPo.setConsumeRecordId(consumeRecord.getId());
 			if (consumeType == 2) {// 买产品
+				if(cmcPo.getRemainingMoney()==null){
+					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "次会员卡没有储值功能，不支持购买产品");
+				}
 				if (cmcPo.getRemainingMoney().compareTo(consumeRecord.getConsumeMoney()) >= 0) {
 					Map<String, Object> cardMap = new HashMap<String, Object>();
 					cardMap.put("id", consumeRecord.getPayWayId());
@@ -414,19 +417,26 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				} else {
 					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
 				}
-			} else if (consumeType == 3) { // 做项目
+			} else if (consumeType == 3) { // 做项目				
+				
 				//先扣余额，如果不足则返回余额不足消息
-				if (cmcPo.getRemainingMoney().compareTo(consumeRecord.getConsumeMoney()) >= 0) {
-					Map<String, Object> cardMap = new HashMap<String, Object>();
-					cardMap.put("id", consumeRecord.getPayWayId());
-					cardMap.put("remainMoney", cmcPo.getRemainingMoney().subtract(consumeRecord.getConsumeMoney()));
-					customerMemberCardMapper.calRemainMoney(cardMap);
-					cardFlowPo.setCustomerMemberCardId(payWayId);
-					cardFlowPo.setMoney(consumeRecord.getConsumeMoney());
-					customerMemberCardFlowMapper.insert(cardFlowPo);
-				} else {
-					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
+				if(consumeRecord.getConsumeMoney()!=null){
+					if(cmcPo.getRemainingMoney()==null){
+						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "次会员卡没有储值功能，不支持购买产品");
+					}
+					if (cmcPo.getRemainingMoney().compareTo(consumeRecord.getConsumeMoney()) >= 0) {
+						Map<String, Object> cardMap = new HashMap<String, Object>();
+						cardMap.put("id", consumeRecord.getPayWayId());
+						cardMap.put("remainMoney", cmcPo.getRemainingMoney().subtract(consumeRecord.getConsumeMoney()));
+						customerMemberCardMapper.calRemainMoney(cardMap);
+						cardFlowPo.setCustomerMemberCardId(payWayId);
+						cardFlowPo.setMoney(consumeRecord.getConsumeMoney());
+						customerMemberCardFlowMapper.insert(cardFlowPo);
+					} else {
+						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
+					}
 				}
+				
 				//扣除项目
 				for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
 					Map<String, Object> map = new HashMap<String, Object>();

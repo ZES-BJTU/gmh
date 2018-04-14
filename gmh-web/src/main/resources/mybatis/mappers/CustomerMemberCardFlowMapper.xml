@@ -17,7 +17,7 @@
 		#{consumeRecordId,jdbcType=BIGINT},
 		#{customerMemberCardId,jdbcType=BIGINT},
 		#{money,jdbcType=DECIMAL},
-		#{customer_member_card_content_id,jdbcType=BIGINT},
+		#{customerMemberCardContentId,jdbcType=BIGINT},
 		#{amount,jdbcType=INTEGER}
 		)
 	</insert>

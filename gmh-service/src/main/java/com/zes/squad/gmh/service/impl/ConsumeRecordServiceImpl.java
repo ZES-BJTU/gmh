@@ -689,13 +689,13 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			}
 			BigDecimal money = new BigDecimal(0);
 			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
-				money.add(projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
+				money = money.add(projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
 			}
 			return money;
-		}else if(consumeRecord.getConsumeType()==3){//买产品
+		}else if(consumeRecord.getConsumeType()==2){//买产品
 			BigDecimal money = new BigDecimal(0);
 			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
-				money.add(productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+				money = money.add(productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
 			}
 			if(customerMemberCardPo.getProductDiscount()!=null){
 				if(customerMemberCardPo.getProductDiscount().compareTo(new BigDecimal(0))==0){

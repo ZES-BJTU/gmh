@@ -91,7 +91,7 @@ public class ConsumeController {
 	
 	@RequestMapping(path = "/calMoney", method = { RequestMethod.PUT })
 	public JsonResult<BigDecimal> doCalMoney(@RequestBody ConsumeCreateOrModifyParams params) {
-		checkConsumeCreateParams(params);
+
 		BigDecimal money = consumeRecordService.doCalMoney(params.getConsumeRecordPo(), params.getConsumeRecordDetails(),
 				params.getGifts(), params.getMemberCardPo());
 		return JsonResults.success(money);

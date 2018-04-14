@@ -195,6 +195,15 @@ public class ProductServiceImpl implements ProductService {
         ensureCollectionNotEmpty(pos, "请先新建产品");
         return pos;
     }
+    
+    @Override
+    public List<ProductPo> listStoreAllProducts() {
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何一家门店");
+        List<ProductPo> pos = productMapper.selectStoreAll(storeId);
+        ensureCollectionNotEmpty(pos, "请先新建产品");
+        return pos;
+    }
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override

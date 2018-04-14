@@ -114,6 +114,13 @@ public interface ProductService {
      * @return
      */
     List<ProductPo> listAllProducts();
+    
+    /**
+     * 查询本门店所有产品
+     * 
+     * @return
+     */
+    List<ProductPo> listStoreAllProducts();
 
     /**
      * 添加商品数量

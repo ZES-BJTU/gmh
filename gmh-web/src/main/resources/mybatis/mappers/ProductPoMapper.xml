@@ -90,4 +90,21 @@
 		<include refid="Base_Column_List"/>
 		FROM product
 	</select>
+	<select id="selectStoreAll" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		p.`id`, 
+		p.`product_type_id`, 
+		p.`code`,
+		p.`name`, 
+		p.`unit_name`, 
+		p.`unit_price`
+		FROM product p
+		LEFT JOIN
+		product_amount pa
+		ON
+		p.`id` = pa.`product_id`
+		<where>
+			pa.`amount` > 0 AND pa.`store_id` = #{storeId:BIGINT}
+		</where>
+	</select>
 </mapper>

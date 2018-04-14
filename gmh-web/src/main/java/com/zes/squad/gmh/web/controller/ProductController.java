@@ -179,6 +179,13 @@ public class ProductController {
         List<ProductVo> vos = CommonConverter.mapList(pos, ProductVo.class);
         return JsonResults.success(vos);
     }
+    
+    @RequestMapping(path = "/store/all", method = { RequestMethod.GET })
+    public JsonResult<List<ProductVo>> doListStoreAllProducts() {
+        List<ProductPo> pos = productService.listStoreAllProducts();
+        List<ProductVo> vos = CommonConverter.mapList(pos, ProductVo.class);
+        return JsonResults.success(vos);
+    }
 
     @RequestMapping(path = "/amount", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)

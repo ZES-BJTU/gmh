@@ -144,18 +144,22 @@ public class MemberCardController {
         if (params.getProjectId() != null) {
             ensureParameterExist(params.getTimes(), "请输入会员卡对应项目次数");
             ensureParameterValid(params.getTimes().intValue() > 0, "会员卡对应项目次数应大于0");
-            //            ensureParameterExist(params.getProjectDiscount(), "请输入会员卡对应项目折扣");
-            ensureParameterValid((params.getProjectDiscount().compareTo(BigDecimal.ZERO) == 1)
-                    && ((params.getProjectDiscount().compareTo(BigDecimal.ONE) == 0)
-                            || (params.getProjectDiscount().compareTo(BigDecimal.ONE) == -1)),
-                    "会员卡对应项目折扣错误");
+            if (params.getProjectDiscount() != null) {
+                ensureParameterValid(
+                        (params.getProjectDiscount().compareTo(BigDecimal.ZERO) == 1)
+                                && ((params.getProjectDiscount().compareTo(BigDecimal.ONE) == 0)
+                                        || (params.getProjectDiscount().compareTo(BigDecimal.ONE) == -1)),
+                        "会员卡对应项目折扣错误");
+            }
         } else if (params.getAmount() != null) {
             ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "会员卡储值应大于0");
-            //            ensureParameterExist(params.getProductDiscount(), "请输入会员卡对应项目折扣");
-            ensureParameterValid((params.getProductDiscount().compareTo(BigDecimal.ZERO) == 1)
-                    && ((params.getProductDiscount().compareTo(BigDecimal.ONE) == 0)
-                            || (params.getProductDiscount().compareTo(BigDecimal.ONE) == -1)),
-                    "会员卡对应产品折扣错误");
+            if (params.getProductDiscount() != null) {
+                ensureParameterValid(
+                        (params.getProductDiscount().compareTo(BigDecimal.ZERO) == 1)
+                                && ((params.getProductDiscount().compareTo(BigDecimal.ONE) == 0)
+                                        || (params.getProductDiscount().compareTo(BigDecimal.ONE) == -1)),
+                        "会员卡对应产品折扣错误");
+            }
         } else {
             throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_INVALID_PARAMETER, "请输入会员卡具体信息");
         }

@@ -12,9 +12,12 @@
 
 	<bean id="appointmentTask" class="com.zes.squad.gmh.web.task.AppointmentTask" />
 
-	<task:scheduler id="gmhScheduler" />
+	<task:executor id="executor" pool-size="2" />
 
-	<task:annotation-driven />
+	<task:scheduler id="gmhScheduler" pool-size="2" />
+
+	<task:annotation-driven executor="executor"
+		scheduler="gmhScheduler" />
 
 	<task:scheduled-tasks scheduler="gmhScheduler">
 		<task:scheduled ref="appointmentTask" method="remindCustomers"

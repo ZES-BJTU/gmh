@@ -813,6 +813,11 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				money = money.add(
 						projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
 			}
+			if(customerMemberCardPo.getProjectDiscount()!=null){
+				if(customerMemberCardPo.getProjectDiscount().compareTo(new BigDecimal(0))!=0){
+					money = money.multiply(customerMemberCardPo.getProjectDiscount());
+				}
+			}
 			return money;
 		} else if (consumeRecord.getConsumeType() == 2) {// 买产品
 			BigDecimal money = new BigDecimal(0);

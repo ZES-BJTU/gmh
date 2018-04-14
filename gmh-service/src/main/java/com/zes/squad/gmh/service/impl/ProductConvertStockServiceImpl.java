@@ -137,6 +137,8 @@ public class ProductConvertStockServiceImpl implements ProductConvertStockServic
             ProductAmountPo existingProductAmountPo = productAmountMapper.selectByProductAndStore(po.getProductId(),
                     storeId);
             ensureEntityExist(existingProductAmountPo, "该门店无此产品");
+            ensureConditionSatisfied(existingProductAmountPo.getAmount().compareTo(po.getProductAmount()) != -1,
+                    "产品余量不足");
             ProductAmountPo productAmountPo = new ProductAmountPo();
             productAmountPo.setId(existingProductAmountPo.getId());
             productAmountPo.setAmount(po.getProductAmount());
@@ -162,6 +164,7 @@ public class ProductConvertStockServiceImpl implements ProductConvertStockServic
             ensureConditionSatisfied(record == 1, "修改产品余量失败");
             StockAmountPo existingStockAmountPo = stockAmountMapper.selectByStockAndStore(po.getStockId(), storeId);
             ensureEntityExist(existingProductAmountPo, "该门店无此库存");
+            ensureConditionSatisfied(existingStockAmountPo.getAmount().compareTo(po.getStockAmount()) != -1, "库存余量不足");
             StockAmountPo stockAmountPo = new StockAmountPo();
             stockAmountPo.setId(existingStockAmountPo.getId());
             stockAmountPo.setAmount(po.getStockAmount());

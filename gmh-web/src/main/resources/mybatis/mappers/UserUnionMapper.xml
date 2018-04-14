@@ -87,7 +87,7 @@
 		ON
 		u.`store_id` = s.`id`
 		<where>
-			ut.`token` IS NOT NULL
+			ut.`token` IS NOT NULL AND u.`role` = 3
 		</where>
 	</select>
 </mapper>

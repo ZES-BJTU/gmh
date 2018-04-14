@@ -40,6 +40,7 @@ import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.po.ProductFlowPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
 import com.zes.squad.gmh.entity.po.StockFlowPo;
+import com.zes.squad.gmh.entity.union.ActivityUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
@@ -49,6 +50,7 @@ import com.zes.squad.gmh.entity.union.EmployeeIntegralUnion;
 import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.entity.union.StoreUnion;
 import com.zes.squad.gmh.mapper.ActivityContentMapper;
+import com.zes.squad.gmh.mapper.ActivityUnionMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordDetailUnionMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordGiftMapper;
@@ -113,6 +115,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private ProjectMapper projectMapper;
 	@Autowired
 	private ProductMapper productMapper;
+	@Autowired
+	private ActivityUnionMapper activityUnionMapper;
+	
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -659,15 +664,37 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 
 	}
-
+	
 	@Override
 	public BigDecimal doCalMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo) {
+		BigDecimal money = new BigDecimal(0);
+		Integer paymentWay = consumeRecord.getPaymentWay();
+		if(paymentWay==1){
+			money = doCalCardMoney(consumeRecord,consumeRecordDetails,gifts,memberCardPo);
+		}else if(paymentWay==31||paymentWay==32){
+			money = calCouponMoney(consumeRecord,consumeRecordDetails,gifts,memberCardPo);
+		}else if(paymentWay==3){
+			money = doCalCashMoney(consumeRecord,consumeRecordDetails,gifts,memberCardPo);
+		}
+		else{
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式选择有误");
+		}
 		
+		return money;
+	
+	}
+
+
+	public BigDecimal doCalCardMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
+			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo) {
+		if(consumeRecord.getPayWayId()==null){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请选择会员卡");
+		}
 		CustomerMemberCardPo customerMemberCardPo = customerMemberCardMapper.getById(consumeRecord.getPayWayId());
-		if(consumeRecord.getConsumeType()==3){//做项目
+		if (consumeRecord.getConsumeType() == 3) {// 做项目
 			Long payWayId = consumeRecord.getPayWayId();
-			
+
 			List<CustomerMemberCardContentUnion> cardContentLists = customerMemberCardContentMapper
 					.getProjectContentList(payWayId);
 
@@ -678,8 +705,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 						if (content.getAmount() >= consumeRecordDetails.get(i).getAmount().intValue()) {
 							indexes.add(CommonConverter.map(i, Integer.class));
 							break;
-						}else{
-							consumeRecordDetails.get(i).setAmount(consumeRecordDetails.get(i).getAmount().subtract(new BigDecimal(content.getAmount())));
+						} else {
+							consumeRecordDetails.get(i).setAmount(consumeRecordDetails.get(i).getAmount()
+									.subtract(new BigDecimal(content.getAmount())));
 						}
 					}
 				}
@@ -689,27 +717,100 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			}
 			BigDecimal money = new BigDecimal(0);
 			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
-				money = money.add(projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
+				money = money.add(
+						projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
 			}
 			return money;
-		}else if(consumeRecord.getConsumeType()==2){//买产品
+		} else if (consumeRecord.getConsumeType() == 2) {// 买产品
 			BigDecimal money = new BigDecimal(0);
 			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
-				money = money.add(productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+				money = money.add(
+						productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
 			}
-			if(customerMemberCardPo.getProductDiscount()!=null){
-				if(customerMemberCardPo.getProductDiscount().compareTo(new BigDecimal(0))==0){
+			if (customerMemberCardPo.getProductDiscount() != null) {
+				if (customerMemberCardPo.getProductDiscount().compareTo(new BigDecimal(0)) == 0) {
 					return money;
-				}else
+				} else
 					return money.multiply(customerMemberCardPo.getProductDiscount());
-			}else
-			return money;
-			
-		}else{
+			} else
+				return money;
+
+		} else {
 			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡不支持此项购买");
 		}
-		
+	}
 
+	public BigDecimal calCouponMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
+			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo) {
+		Integer consumeType = consumeRecord.getConsumeType();
+		Integer paymentWay = consumeRecord.getPaymentWay();
+		Long payWayContentId = consumeRecord.getPayWayContentId();
+		BigDecimal money = new BigDecimal(0);
+		if(payWayContentId==null){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请选择代金券");
+		}
+		// 买产品
+		if (consumeType == 2) {		
+			//原价总价
+			for(ConsumeRecordDetailPo detail : consumeRecordDetails){
+				money = money.add(
+						productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+			}
+			if (paymentWay == 31) {// 会员卡代金券+现金------------减去代金券后剩余钱数
+				CustomerMemberCardContentUnion customerMemberCardContentUnion = customerMemberCardContentMapper.getContent(payWayContentId);
+				money = money.subtract(customerMemberCardContentUnion.getContent().multiply(new BigDecimal(consumeRecord.getCouponAmount())));
+				return money;
+			} else if (paymentWay == 32) {// 活动代金券+现金------------减去代金券后剩余钱数
+				CustomerActivityContentUnion customerActivityContentUnion = customerActivityContentMapper.getById(payWayContentId);
+				money = money.subtract(customerActivityContentUnion.getContent().multiply(new BigDecimal(consumeRecord.getCouponAmount())));
+				return money;
+			} else {
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "不支持使用此支付方式");
+			}
+		} else if (consumeType == 3) {// 做项目
+			//原价总价
+			for(ConsumeRecordDetailPo detail : consumeRecordDetails){
+				money = money.add(
+						projectMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+			}
+			if (paymentWay == 31) {// 会员卡代金券+现金------------减去代金券后剩余钱数
+				CustomerMemberCardContentUnion customerMemberCardContentUnion = customerMemberCardContentMapper.getContent(payWayContentId);
+				money = money.subtract(customerMemberCardContentUnion.getContent().multiply(new BigDecimal(consumeRecord.getCouponAmount())));
+				return money;
+			} else if (paymentWay == 32) {// 活动代金券+现金------------减去代金券后剩余钱数
+				CustomerActivityContentUnion customerActivityContentUnion = customerActivityContentMapper.getById(payWayContentId);
+				money = money.subtract(customerActivityContentUnion.getContent().multiply(new BigDecimal(consumeRecord.getCouponAmount())));
+				return money;
+			} else {
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "不支持使用此支付方式");
+			}
+		} else {
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "不支持使用此支付方式");
+		}
+
+	}
+	
+	public BigDecimal doCalCashMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
+			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo){
+		Integer consumeType = consumeRecord.getConsumeType();
+		BigDecimal money = new BigDecimal(0);
+		if (consumeType == 1){ //办卡
+			money =  memberCardPo.getPrice();
+		}else if(consumeType == 2){ //买产品
+			for(ConsumeRecordDetailPo detail : consumeRecordDetails){
+				money = money.add(
+						productMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+			}
+		}else if(consumeType == 3){ //做项目
+			for(ConsumeRecordDetailPo detail : consumeRecordDetails){
+				money = money.add(
+						projectMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+			}
+		}else if(consumeType == 4){ //买活动
+			ActivityUnion activityUnion = activityUnionMapper.selectById(consumeRecord.getActivityId());
+			money = activityUnion.getActivityPo().getPrice();
+		}
+		return money;
 	}
 
 }

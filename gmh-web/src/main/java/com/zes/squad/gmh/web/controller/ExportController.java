@@ -110,7 +110,7 @@ public class ExportController {
     }
     
     @RequestMapping(path = "/customer", method = { RequestMethod.GET })
-    public ModelAndView doExportCustomer(ModelMap map, HttpServletRequest request, HttpServletResponse response)
+    public ModelAndView doExportCustomer(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
             throws Exception {
 
         map.put("fileName", "顾客信息.xlsx");
@@ -121,7 +121,7 @@ public class ExportController {
     }
     
     @RequestMapping(path = "/employeePerformance", method = { RequestMethod.GET })
-    public ModelAndView doExportCustomer(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
+    public ModelAndView doExportEmployeePerformance(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
             throws Exception {
 
         map.put("fileName", "员工绩效.xlsx");

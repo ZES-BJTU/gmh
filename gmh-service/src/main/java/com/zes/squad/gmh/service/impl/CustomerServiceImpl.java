@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zes.squad.gmh.common.enums.GenderEnum;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.common.util.EnumUtils;
@@ -33,6 +35,9 @@ public class CustomerServiceImpl implements CustomerService {
 	private CustomerMapper customerMapper;
 
 	public int insert(CustomerPo customerPo) {
+		CustomerPo tmp = customerMapper.getByMobile(customerPo.getMobile());
+		if(tmp!=null)
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "已存在该顾客信息");
 		customerPo.setStoreId(ThreadContext.getUserStoreId());
 		int i = customerMapper.insert(customerPo);
 		return i;

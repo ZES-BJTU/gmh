@@ -147,6 +147,7 @@
 		cmd.`remaining_money` as `remaining_money`,
 		cmd.`is_valid` as
 		`is_valid`,
+		c.`name` as `member_card_name`,
 		cmd.`project_discount` as `project_discount`,
 		cmd.`product_discount` as `product_discount`,
 		cmd.`is_returned` as `is_returned`,
@@ -165,6 +166,8 @@
 		customer_member_card cmd
 		left join customer cus on
 		cus.`id`=cmd.`customer_id`
+		left join member_card c on
+		cmd.`member_card_id`=c.`id`
 		<where>
 			<if test="storeId != null">
 				cmd.`store_id` = #{storeId, jdbcType=BIGINT}

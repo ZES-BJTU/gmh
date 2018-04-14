@@ -12,7 +12,7 @@
 
 	<bean id="appointmentTask" class="com.zes.squad.gmh.web.task.AppointmentTask" />
 
-	<task:scheduler id="gmhScheduler" />
+	<task:scheduler id="gmhScheduler" pool-size="2"/>
 
 	<task:annotation-driven />
 

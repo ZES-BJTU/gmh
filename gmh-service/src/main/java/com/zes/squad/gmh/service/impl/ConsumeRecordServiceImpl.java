@@ -216,14 +216,14 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			consumeRecordGiftMapper.insert(gift);
 			if (gift.getProjectId() != null) {
 				CustomerMemberCardContentPo tmpcustomerMemberCardContentPo = new CustomerMemberCardContentPo();
-				tmpcustomerMemberCardContentPo.setCustomerMemberCardId(memberCardPo.getId());
+				tmpcustomerMemberCardContentPo.setCustomerMemberCardId(customerMemberCardPo.getId());
 				tmpcustomerMemberCardContentPo.setRelatedId(gift.getProjectId());
 				tmpcustomerMemberCardContentPo.setAmount(gift.getProjectAmount());
 				customerMemberCardContentMapper.insert(tmpcustomerMemberCardContentPo);
 			}
 			if (gift.getCouponMoney() != null) {
 				CustomerMemberCardContentPo tmpCustomerMemberCardContentPo = new CustomerMemberCardContentPo();
-				tmpCustomerMemberCardContentPo.setCustomerMemberCardId(memberCardPo.getId());
+				tmpCustomerMemberCardContentPo.setCustomerMemberCardId(customerMemberCardPo.getId());
 				tmpCustomerMemberCardContentPo.setContent(gift.getCouponMoney());
 				tmpCustomerMemberCardContentPo.setAmount(gift.getCouponAmount());
 				customerMemberCardContentMapper.insert(tmpCustomerMemberCardContentPo);

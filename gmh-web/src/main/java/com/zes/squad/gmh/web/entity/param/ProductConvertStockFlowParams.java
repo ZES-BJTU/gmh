@@ -13,8 +13,6 @@ public class ProductConvertStockFlowParams {
     private BigDecimal productAmount;
     private Long       stockId;
     private BigDecimal stockAmount;
-    private Long       fromStoreId;
-    private Long       toStoreId;
     private String     remark;
 
 }

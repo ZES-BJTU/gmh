@@ -50,6 +50,7 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	private ConsumeRecordMapper consumeRecordMapper;
 	@Autowired
 	private ConsumeRecordDetailMapper consumeRecordDetailMapper;
+
 	@Override
 	public PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition condition) {
 		int pageNum = condition.getPageNum();
@@ -147,17 +148,17 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	}
 
 	@Override
-	public List<CustomerMemberCardUnion> getCardListByMobile(Integer paymentWay,String customerMobile) {
+	public List<CustomerMemberCardUnion> getCardListByMobile(Integer paymentWay, String customerMobile) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("storeId", ThreadContext.getUserStoreId());
 		CustomerPo customer = customerMapper.getByMobile(customerMobile);
 		map.put("customerId", customer.getId());
 		List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper.getCardListByCustomerId(map);
-		if(paymentWay==1){
+		if (paymentWay == 1) {
 			for (CustomerMemberCardUnion cmcu : customerMemberCardUnions) {
 				cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getProjectContentList(cmcu.getId()));
 			}
-		}else if(paymentWay==31){
+		} else if (paymentWay == 31) {
 			for (CustomerMemberCardUnion cmcu : customerMemberCardUnions) {
 				cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getCouponContentList(cmcu.getId()));
 			}
@@ -166,54 +167,51 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		return customerMemberCardUnions;
 	}
 
-	
 	public void buyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal useRemainMoney) {
 
 		CustomerMemberCardContentPo customerMemberCardContentPo = new CustomerMemberCardContentPo();
 		CustomerMemberCardPo customerMemberCardPo = customerMemberCardMapper.getById(cardId);
 
-		if(customerMemberCardPo.getRemainingMoney().compareTo(useRemainMoney)==-1){
+		if (customerMemberCardPo.getRemainingMoney().compareTo(useRemainMoney) == -1) {
 			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
 		}
-		
+
 		List<CustomerMemberCardContentUnion> customerMemberCardContentUnions = customerMemberCardContentMapper
 				.getContentList(cardId);
 
-			// 如果会员卡中存在疗程并且包含新项目，则在原项目剩余次数中添加次数或补充新项目
-			if (customerMemberCardContentUnions.size() != 0) {
-				boolean have = false;
-				Map<String, Object> map = new HashMap<String, Object>();
+		// 如果会员卡中存在疗程并且包含新项目，则在原项目剩余次数中添加次数或补充新项目
+		if (customerMemberCardContentUnions.size() != 0) {
+			boolean have = false;
+			Map<String, Object> map = new HashMap<String, Object>();
 
-				for (CustomerMemberCardContentUnion cmccu : customerMemberCardContentUnions) {
+			for (CustomerMemberCardContentUnion cmccu : customerMemberCardContentUnions) {
 
-					if (cmccu.getRelatedId() == projectId) {
+				if (cmccu.getRelatedId() == projectId) {
 
-						map.put("id", cmccu.getId());
-						map.put("amount", cmccu.getAmount() + projectTimes);
-						have = true;
-						break;
-					}
+					map.put("id", cmccu.getId());
+					map.put("amount", cmccu.getAmount() + projectTimes);
+					have = true;
+					break;
 				}
-				if (have) {
-					customerMemberCardContentMapper.calAmount(map);
-				} else {
-					customerMemberCardContentPo.setCustomerMemberCardId(cardId);
-					customerMemberCardContentPo.setRelatedId(projectId);
-					customerMemberCardContentPo.setAmount(projectTimes);
-					customerMemberCardContentMapper.insert(customerMemberCardContentPo);
-				}
-
-			} else {																	//如果原会员卡中本身不存在项目 则直接添加
+			}
+			if (have) {
+				customerMemberCardContentMapper.calAmount(map);
+			} else {
 				customerMemberCardContentPo.setCustomerMemberCardId(cardId);
 				customerMemberCardContentPo.setRelatedId(projectId);
 				customerMemberCardContentPo.setAmount(projectTimes);
 				customerMemberCardContentMapper.insert(customerMemberCardContentPo);
 			}
 
-		
-		
-		//调整会员卡余额
-		Map<String,Object> moneyMap = new HashMap<String,Object>();
+		} else { // 如果原会员卡中本身不存在项目 则直接添加
+			customerMemberCardContentPo.setCustomerMemberCardId(cardId);
+			customerMemberCardContentPo.setRelatedId(projectId);
+			customerMemberCardContentPo.setAmount(projectTimes);
+			customerMemberCardContentMapper.insert(customerMemberCardContentPo);
+		}
+
+		// 调整会员卡余额
+		Map<String, Object> moneyMap = new HashMap<String, Object>();
 		moneyMap.put("id", cardId);
 		moneyMap.put("remainMoney", customerMemberCardPo.getRemainingMoney().subtract(useRemainMoney));
 		customerMemberCardMapper.calRemainMoney(moneyMap);
@@ -221,15 +219,19 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	}
 
 	@Override
-	public void recharge(Long cardId, BigDecimal rechargeMoney,Long consultantId, Long salesManId) {
-		//更新客户会员卡记录
+	public void recharge(Long cardId, BigDecimal rechargeMoney, Long consultantId, Long salesManId) {
+		// 更新客户会员卡记录
 		CustomerMemberCardPo customerMemberCardPo = customerMemberCardMapper.getById(cardId);
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("id", cardId);
-		map.put("remainMoney", customerMemberCardPo.getRemainingMoney().add(rechargeMoney));
+		if (customerMemberCardPo.getRemainingMoney() == null) {
+			map.put("remainMoney", rechargeMoney);
+		} else {
+			map.put("remainMoney", customerMemberCardPo.getRemainingMoney().add(rechargeMoney));
+		}
 		customerMemberCardMapper.calRemainMoney(map);
-		
-		//将此次充值记录到消费记录中
+
+		// 将此次充值记录到消费记录中
 		CustomerPo customer = customerMapper.getById(customerMemberCardPo.getCustomerId());
 		ConsumeRecordPo consumeRecord = new ConsumeRecordPo();
 		consumeRecord.setConsumeMoney(rechargeMoney);
@@ -240,14 +242,14 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setCustomerId(customer.getId());
 		consumeRecordMapper.insert(consumeRecord);
-		//消费内容
+		// 消费内容
 		ConsumeRecordDetailPo consumeRecordDetailPo = new ConsumeRecordDetailPo();
 		consumeRecordDetailPo.setCardId(cardId);
 		consumeRecordDetailPo.setConsultantId(consultantId);
 		consumeRecordDetailPo.setConsumeRecordId(consumeRecord.getId());
 		consumeRecordDetailPo.setSalesManId(salesManId);
 		consumeRecordDetailMapper.insert(consumeRecordDetailPo);
-		
+
 	}
 
 }

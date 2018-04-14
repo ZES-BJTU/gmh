@@ -153,12 +153,12 @@
 		pro.`id`
 		where
 		crd.`operator_id` =#{employeeId,jdbcType=BIGINT}
-		and
+		
 		<if test="beginTime != null">
-			AND <![CDATA[#{beginTime,jdbcType=TIMESTAMP}<= crd.`created_time` ]]>
+			<![CDATA[#{beginTime,jdbcType=TIMESTAMP}<= crd.`created_time` ]]>
 		</if>
 		<if test="endTime != null">
-			AND <![CDATA[ crd.`created_time` <= #{endTime,jdbcType=TIMESTAMP}  ]]>
+			<![CDATA[ crd.`created_time` <= #{endTime,jdbcType=TIMESTAMP}  ]]>
 		</if>
 	</select>
 

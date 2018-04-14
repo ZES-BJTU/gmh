@@ -395,35 +395,35 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		Long payWayContentId = consumeRecord.getPayWayContentId();
 
 		if (paymentWay == 1) {
-			if (consumeRecord.getPayWayContentId() != null) {
-				CustomerMemberCardContentUnion cmccu = customerMemberCardContentMapper
-						.getContent(consumeRecord.getPayWayContentId());
-				CustomerMemberCardPo cmcPo = customerMemberCardMapper.getById(payWayId);
-				if (cmccu.getRelatedId() != null) {
-					if (consumeRecordDetails.size() == 1
-							&& cmccu.getRelatedId() == consumeRecordDetails.get(0).getProjectId()) {
-						if (cmccu.getAmount() > consumeRecordDetails.get(0).getAmount().intValue()) {
-							Map<String, Object> map = new HashMap<String, Object>();
-							map.put("id", cmccu.getId());
-							map.put("amount", cmccu.getAmount() - consumeRecordDetails.get(0).getAmount().intValue());
-							customerMemberCardContentMapper.calAmount(map);
-							return;
-						} else
-							throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡剩余次数不足");
-					} else
-						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "选择有误");
-				} else {
-					if (cmcPo.getRemainingMoney().compareTo(consumeRecord.getConsumeMoney()) >= 0) {
-						Map<String, Object> cardMap = new HashMap<String, Object>();
-						cardMap.put("id", consumeRecord.getPayWayId());
-						cardMap.put("remainMoney", cmcPo.getRemainingMoney().subtract(consumeRecord.getConsumeMoney()));
-						return;
-					} else
-						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
-				}
-			} else
-				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请选择会员卡");
-
+//			if (consumeRecord.getPayWayContentId() != null) {
+//				CustomerMemberCardContentUnion cmccu = customerMemberCardContentMapper
+//						.getContent(consumeRecord.getPayWayContentId());
+//				CustomerMemberCardPo cmcPo = customerMemberCardMapper.getById(payWayId);
+//				if (cmccu.getRelatedId() != null) {
+//					if (consumeRecordDetails.size() == 1
+//							&& cmccu.getRelatedId() == consumeRecordDetails.get(0).getProjectId()) {
+//						if (cmccu.getAmount() > consumeRecordDetails.get(0).getAmount().intValue()) {
+//							Map<String, Object> map = new HashMap<String, Object>();
+//							map.put("id", cmccu.getId());
+//							map.put("amount", cmccu.getAmount() - consumeRecordDetails.get(0).getAmount().intValue());
+//							customerMemberCardContentMapper.calAmount(map);
+//							return;
+//						} else
+//							throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡剩余次数不足");
+//					} else
+//						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "选择有误");
+//				} else {
+//					if (cmcPo.getRemainingMoney().compareTo(consumeRecord.getConsumeMoney()) >= 0) {
+//						Map<String, Object> cardMap = new HashMap<String, Object>();
+//						cardMap.put("id", consumeRecord.getPayWayId());
+//						cardMap.put("remainMoney", cmcPo.getRemainingMoney().subtract(consumeRecord.getConsumeMoney()));
+//						return;
+//					} else
+//						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
+//				}
+//			} else
+//				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请选择会员卡");
+			
 		} else if (paymentWay == 2) {
 
 			CustomerActivityContentUnion cacu = customerActivityContentMapper.getById(payWayContentId);
@@ -631,6 +631,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				employeeTotalIntegralUnion.setEmployeeId(employeeId);
 				employeeTotalIntegralUnion.setEmployeeName(union.getEmployeeName());
 			}
+			employeeTotalIntegralUnion.setTotalIntegral(totalIntegral);
 			employeeTotalIntegralUnions
 					.add(CommonConverter.map(employeeTotalIntegralUnion, EmployeeIntegralUnion.class));
 

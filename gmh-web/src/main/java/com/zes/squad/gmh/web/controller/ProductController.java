@@ -31,6 +31,7 @@ import com.zes.squad.gmh.service.ProductService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ProductAmountParams;
+import com.zes.squad.gmh.web.entity.param.ProductConvertParams;
 import com.zes.squad.gmh.web.entity.param.ProductParams;
 import com.zes.squad.gmh.web.entity.param.ProductQueryParams;
 import com.zes.squad.gmh.web.entity.param.ProductTypeParams;
@@ -179,7 +180,7 @@ public class ProductController {
         List<ProductVo> vos = CommonConverter.mapList(pos, ProductVo.class);
         return JsonResults.success(vos);
     }
-    
+
     @RequestMapping(path = "/store/all", method = { RequestMethod.GET })
     public JsonResult<List<ProductVo>> doListStoreAllProducts() {
         List<ProductPo> pos = productService.listStoreAllProducts();
@@ -263,6 +264,21 @@ public class ProductController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
+    }
+
+    @RequestMapping(path = "/amount/convert/{productId}", method = { RequestMethod.PATCH })
+    public JsonResult<Void> doConvertProductAmount(@PathVariable("productId") Long productId,
+                                                   ProductConvertParams params) {
+        ensureParameterExist(productId, "请选择产品");
+        ensureParameterExist(params, "请选择产品");
+        ensureParameterExist(params.getAmount(), "请输入产品转出数量");
+        ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "产品转出数量应大于0");
+        ensureParameterExist(params.getToStoreId(), "请输入产品转入门店");
+        params.setProductId(productId);
+        ProductAmountPo po = CommonConverter.map(params, ProductAmountPo.class);
+        po.setStoreId(params.getToStoreId());
+        productService.convertProductAmount(po);
+        return JsonResults.success();
     }
 
     private ProductVo buildProductVoByUnion(ProductUnion union) {

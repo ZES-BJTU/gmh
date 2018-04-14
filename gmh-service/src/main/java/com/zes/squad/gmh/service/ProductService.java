@@ -114,7 +114,7 @@ public interface ProductService {
      * @return
      */
     List<ProductPo> listAllProducts();
-    
+
     /**
      * 查询本门店所有产品
      * 
@@ -196,6 +196,13 @@ public interface ProductService {
      * @return
      */
     PagedList<ProductUnion> listPagedProductsWithAmount(ProductQueryCondition condition);
+
+    /**
+     * 转出产品
+     * 
+     * @param po
+     */
+    void convertProductAmount(ProductAmountPo po);
 
     /**
      * 导出产品

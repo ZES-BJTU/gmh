@@ -195,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
         ensureCollectionNotEmpty(pos, "请先新建产品");
         return pos;
     }
-    
+
     @Override
     public List<ProductPo> listStoreAllProducts() {
         Long storeId = ThreadContext.getUserStoreId();
@@ -357,6 +357,42 @@ public class ProductServiceImpl implements ProductService {
         }
         PageInfo<ProductUnion> info = new PageInfo<>(unions);
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
+    }
+
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public void convertProductAmount(ProductAmountPo po) {
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何门店");
+        ensureConditionSatisfied(!po.getStoreId().equals(storeId), "只支持跨门店调货");
+        //查询本门店
+        ProductAmountPo currentStoreProduct = productAmountMapper.selectByProductAndStore(po.getProductId(), storeId);
+        ensureEntityExist(currentStoreProduct, "本店无对应产品");
+        ensureConditionSatisfied(currentStoreProduct.getAmount().compareTo(po.getAmount()) != -1, "本店产品余量不足");
+        ProductAmountPo currentStoreProductAmountPo = new ProductAmountPo();
+        currentStoreProductAmountPo.setId(currentStoreProduct.getId());
+        currentStoreProductAmountPo.setAmount(currentStoreProduct.getAmount());
+        int record = productAmountMapper.reduceAmount(currentStoreProductAmountPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
+        ProductFlowPo productFlowOutPo = new ProductFlowPo();
+        productFlowOutPo.setProductId(po.getProductId());
+        productFlowOutPo.setType(FlowTypeEnum.ADJUSTMENT_OUT.getKey());
+        productFlowOutPo.setAmount(po.getAmount());
+        productFlowOutPo.setStoreId(storeId);
+        record = productFlowMapper.insert(productFlowOutPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
+        //查询目标门店
+        ProductAmountPo targetStoreProduct = productAmountMapper.selectByProductAndStore(po.getProductId(),
+                po.getStoreId());
+        if (targetStoreProduct == null) {
+            ProductAmountPo targetProductAmountPo = new ProductAmountPo();
+            targetProductAmountPo.setProductId(po.getProductId());
+            targetProductAmountPo.setAmount(po.getAmount());
+            targetProductAmountPo.setStoreId(po.getStoreId());
+            record = productAmountMapper.insert(currentStoreProductAmountPo);
+            ensureConditionSatisfied(record == 1, "跨门店调货失败");
+            return;
+        }
     }
 
     @Override

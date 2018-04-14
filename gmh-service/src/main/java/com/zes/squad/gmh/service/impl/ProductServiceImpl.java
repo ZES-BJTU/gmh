@@ -371,7 +371,7 @@ public class ProductServiceImpl implements ProductService {
         ensureConditionSatisfied(currentStoreProduct.getAmount().compareTo(po.getAmount()) != -1, "本店产品余量不足");
         ProductAmountPo currentStoreProductAmountPo = new ProductAmountPo();
         currentStoreProductAmountPo.setId(currentStoreProduct.getId());
-        currentStoreProductAmountPo.setAmount(currentStoreProduct.getAmount());
+        currentStoreProductAmountPo.setAmount(po.getAmount());
         int record = productAmountMapper.reduceAmount(currentStoreProductAmountPo);
         ensureConditionSatisfied(record == 1, "跨门店调货失败");
         ProductFlowPo productFlowOutPo = new ProductFlowPo();
@@ -389,10 +389,29 @@ public class ProductServiceImpl implements ProductService {
             targetProductAmountPo.setProductId(po.getProductId());
             targetProductAmountPo.setAmount(po.getAmount());
             targetProductAmountPo.setStoreId(po.getStoreId());
-            record = productAmountMapper.insert(currentStoreProductAmountPo);
+            record = productAmountMapper.insert(targetProductAmountPo);
+            ensureConditionSatisfied(record == 1, "跨门店调货失败");
+            ProductFlowPo productFlowInPo = new ProductFlowPo();
+            productFlowInPo.setProductId(po.getProductId());
+            productFlowInPo.setType(FlowTypeEnum.ADJUSTMENT_IN.getKey());
+            productFlowInPo.setAmount(po.getAmount());
+            productFlowInPo.setStoreId(po.getStoreId());
+            record = productFlowMapper.insert(productFlowInPo);
             ensureConditionSatisfied(record == 1, "跨门店调货失败");
             return;
         }
+        ProductAmountPo targetProductAmountPo = new ProductAmountPo();
+        targetProductAmountPo.setId(targetStoreProduct.getId());
+        targetProductAmountPo.setAmount(po.getAmount());
+        record = productAmountMapper.addAmount(targetProductAmountPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
+        ProductFlowPo productFlowInPo = new ProductFlowPo();
+        productFlowInPo.setProductId(po.getProductId());
+        productFlowInPo.setType(FlowTypeEnum.ADJUSTMENT_IN.getKey());
+        productFlowInPo.setAmount(po.getAmount());
+        productFlowInPo.setStoreId(po.getStoreId());
+        record = productFlowMapper.insert(productFlowInPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
     }
 
     @Override

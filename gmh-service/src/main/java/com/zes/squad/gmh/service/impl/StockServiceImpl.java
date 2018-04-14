@@ -336,6 +336,60 @@ public class StockServiceImpl implements StockService {
         return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
     }
 
+    @Transactional(rollbackFor = { Throwable.class })
+    @Override
+    public void convertStockAmount(StockAmountPo po) {
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何门店");
+        ensureConditionSatisfied(!po.getStoreId().equals(storeId), "只支持跨门店调货");
+        //查询本门店
+        StockAmountPo currentStoreStock = stockAmountMapper.selectByStockAndStore(po.getStockId(), storeId);
+        ensureEntityExist(currentStoreStock, "本店无对应产品");
+        ensureConditionSatisfied(currentStoreStock.getAmount().compareTo(po.getAmount()) != -1, "本店库存余量不足");
+        StockAmountPo currentStoreStockAmountPo = new StockAmountPo();
+        currentStoreStockAmountPo.setId(currentStoreStock.getId());
+        currentStoreStockAmountPo.setAmount(po.getAmount());
+        int record = stockAmountMapper.reduceAmount(currentStoreStockAmountPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
+        StockFlowPo StockFlowOutPo = new StockFlowPo();
+        StockFlowOutPo.setStockId(po.getStockId());
+        StockFlowOutPo.setType(FlowTypeEnum.ADJUSTMENT_OUT.getKey());
+        StockFlowOutPo.setAmount(po.getAmount());
+        StockFlowOutPo.setStoreId(storeId);
+        record = stockFlowMapper.insert(StockFlowOutPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
+        //查询目标门店
+        StockAmountPo targetStoreStock = stockAmountMapper.selectByStockAndStore(po.getStockId(), po.getStoreId());
+        if (targetStoreStock == null) {
+            StockAmountPo targetStockAmountPo = new StockAmountPo();
+            targetStockAmountPo.setStockId(po.getStockId());
+            targetStockAmountPo.setAmount(po.getAmount());
+            targetStockAmountPo.setStoreId(po.getStoreId());
+            record = stockAmountMapper.insert(targetStockAmountPo);
+            ensureConditionSatisfied(record == 1, "跨门店调货失败");
+            StockFlowPo StockFlowInPo = new StockFlowPo();
+            StockFlowInPo.setStockId(po.getStockId());
+            StockFlowInPo.setType(FlowTypeEnum.ADJUSTMENT_IN.getKey());
+            StockFlowInPo.setAmount(po.getAmount());
+            StockFlowInPo.setStoreId(po.getStoreId());
+            record = stockFlowMapper.insert(StockFlowInPo);
+            ensureConditionSatisfied(record == 1, "跨门店调货失败");
+            return;
+        }
+        StockAmountPo targetStockAmountPo = new StockAmountPo();
+        targetStockAmountPo.setId(targetStoreStock.getId());
+        targetStockAmountPo.setAmount(po.getAmount());
+        record = stockAmountMapper.addAmount(targetStockAmountPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
+        StockFlowPo StockFlowInPo = new StockFlowPo();
+        StockFlowInPo.setStockId(po.getStockId());
+        StockFlowInPo.setType(FlowTypeEnum.ADJUSTMENT_IN.getKey());
+        StockFlowInPo.setAmount(po.getAmount());
+        StockFlowInPo.setStoreId(po.getStoreId());
+        record = stockFlowMapper.insert(StockFlowInPo);
+        ensureConditionSatisfied(record == 1, "跨门店调货失败");
+    }
+
     @Override
     public Workbook exportStocks(Date beginTime, Date endTime) {
         Workbook workbook = new SXSSFWorkbook();

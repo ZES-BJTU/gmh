@@ -187,6 +187,13 @@ public interface StockService {
     PagedList<StockUnion> listPagedStocksWithAmount(StockQueryCondition condition);
 
     /**
+     * 转出产品
+     * 
+     * @param po
+     */
+    void convertStockAmount(StockAmountPo po);
+
+    /**
      * 导出库存
      * 
      * @param beginTime

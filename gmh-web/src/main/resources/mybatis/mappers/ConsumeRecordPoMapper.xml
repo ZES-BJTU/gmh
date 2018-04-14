@@ -158,7 +158,7 @@
 			AND <![CDATA[#{beginTime,jdbcType=TIMESTAMP}<= crd.`create_time` ]]>
 		</if>
 		<if test="endTime != null">
-			AND <![CDATA[ consume_time <= #{endTime,jdbcType=TIMESTAMP}  ]]>
+			AND <![CDATA[ crd.`create_time` <= #{endTime,jdbcType=TIMESTAMP}  ]]>
 		</if>
 	</select>
 

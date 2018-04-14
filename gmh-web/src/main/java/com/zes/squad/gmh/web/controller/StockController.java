@@ -32,6 +32,7 @@ import com.zes.squad.gmh.service.StockService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.StockAmountParams;
+import com.zes.squad.gmh.web.entity.param.StockConvertParams;
 import com.zes.squad.gmh.web.entity.param.StockParams;
 import com.zes.squad.gmh.web.entity.param.StockQueryParams;
 import com.zes.squad.gmh.web.entity.param.StockTypeParams;
@@ -270,6 +271,21 @@ public class StockController {
         }
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
+    }
+    
+    @RequestMapping(path = "/amount/convert/{stockId}", method = { RequestMethod.PATCH })
+    public JsonResult<Void> doConvertProductAmount(@PathVariable("stockId") Long stockId,
+                                                   StockConvertParams params) {
+        ensureParameterExist(stockId, "请选择库存");
+        ensureParameterExist(params, "请选择库存");
+        ensureParameterExist(params.getAmount(), "请输入库存转出数量");
+        ensureParameterValid(params.getAmount().compareTo(BigDecimal.ZERO) == 1, "库存转出数量应大于0");
+        ensureParameterExist(params.getToStoreId(), "请输入库存转入门店");
+        params.setStockId(stockId);
+        StockAmountPo po = CommonConverter.map(params, StockAmountPo.class);
+        po.setStoreId(params.getToStoreId());
+        stockService.convertStockAmount(po);
+        return JsonResults.success();
     }
 
     private StockVo buildStockVoByUnion(StockUnion union) {

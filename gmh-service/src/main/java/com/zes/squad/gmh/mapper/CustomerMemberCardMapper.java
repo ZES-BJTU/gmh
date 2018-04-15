@@ -27,6 +27,8 @@ public interface CustomerMemberCardMapper {
 	void calRemainMoney(Map<String,Object> map);
 
 	List<CustomerMemberCardUnion> getCardListByCustomerId(Map<String,Object> map);
+
+	List<CustomerMemberCardUnion> listCustomerMemberCardByCustomerId(Map<String,Object> map);
 	
 	
 }

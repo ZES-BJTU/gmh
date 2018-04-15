@@ -97,13 +97,13 @@ public class ExportController {
     
     @RequestMapping(path = "/consumeRecord", method = { RequestMethod.GET })
     public ModelAndView doExportConsumeRecord(ModelMap map, HttpServletRequest request, HttpServletResponse response,
-                                               Date beginTime, Date endTime)
+                                               Date beginTime, Date endTime, Integer consumeType)
             throws Exception {
         if (beginTime != null && endTime != null) {
             LogicHelper.ensureParameterValid(endTime.after(beginTime), "起始时间不能晚于截止时间");
         }
         map.put("fileName", "消费记录.xlsx");
-        Workbook workbook = consumeRecordService.exportConsumeRecord(beginTime, endTime);
+        Workbook workbook = consumeRecordService.exportConsumeRecord(consumeType,beginTime, endTime);
         ExcelView excelView = new ExcelView();
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);

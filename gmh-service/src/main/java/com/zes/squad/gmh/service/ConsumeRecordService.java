@@ -43,7 +43,7 @@ public interface ConsumeRecordService {
 
 	PrintUnion getPrint(Long consumeRecordId);
 
-	Workbook exportConsumeRecord(Date beginTime, Date endTime);
+	Workbook exportConsumeRecord(Integer consumeType, Date beginTime, Date endTime);
 
 	Workbook exportEmployeeIntegral(Date beginTime, Date endTime);
 

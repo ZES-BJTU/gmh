@@ -47,6 +47,7 @@ import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
+import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.entity.union.EmployeeIntegralUnion;
 import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.entity.union.StoreUnion;
@@ -124,6 +125,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private CustomerMemberCardFlowMapper customerMemberCardFlowMapper;
 	@Autowired
 	private MemberCardMapper memberCardMapper;
+
+
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -271,9 +274,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.activityNumberAdd(oldNumber + 1);
 
-//		ConsumeRecordDetailPo detail = consumeRecordDetails.get(0);
-//		detail.setConsumeRecordId(consumeRecord.getId());
-//		consumeRecordDetailMapper.insert(detail);
+		// ConsumeRecordDetailPo detail = consumeRecordDetails.get(0);
+		// detail.setConsumeRecordId(consumeRecord.getId());
+		// consumeRecordDetailMapper.insert(detail);
 
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
 
@@ -285,12 +288,12 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(consumeRecord.getActivityId());
 
 		for (ActivityContentPo ac : acList) {
-			if(ac.getType()==1||ac.getType()==4){ //项目或代金券
+			if (ac.getType() == 1 || ac.getType() == 4) { // 项目或代金券
 				CustomerActivityContentPo cacPo = CommonConverter.map(ac, CustomerActivityContentPo.class);
 				cacPo.setCustomerActivityId(caPo.getId());
 				customerActivityContentMapper.insert(cacPo);
 			}
-			if(ac.getType()==2){//如果类型是会员卡，则建立会员卡信息
+			if (ac.getType() == 2) {// 如果类型是会员卡，则建立会员卡信息
 				MemberCardPo memberCardPo = memberCardMapper.selectById(ac.getRelatedId());
 				CustomerMemberCardPo customerMemberCardPo = new CustomerMemberCardPo();
 
@@ -308,7 +311,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				customerMemberCardPo.setProjectDiscount(memberCardPo.getProjectDiscount());
 				customerMemberCardPo.setRemainingMoney(memberCardPo.getAmount());
 				customerMemberCardMapper.insert(customerMemberCardPo);
-				
+
 				CustomerMemberCardContentPo customerMemberCardContentPo = new CustomerMemberCardContentPo();
 				customerMemberCardContentPo.setCustomerMemberCardId(customerMemberCardPo.getId());
 				if (memberCardPo.getType() != 2) {
@@ -316,10 +319,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 					customerMemberCardContentPo.setAmount(memberCardPo.getTimes());
 					customerMemberCardContentMapper.insert(customerMemberCardContentPo);
 				}
-				
-				
+
 			}
-			
+
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);
@@ -437,14 +439,15 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			CustomerMemberCardFlowPo cardFlowPo = new CustomerMemberCardFlowPo();
 			cardFlowPo.setConsumeRecordId(consumeRecord.getId());
 			if (consumeType == 2) {// 买产品
-				if(cmcPo.getRemainingMoney()==null){
-					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "次会员卡没有储值功能，不支持购买产品");
+				if (cmcPo.getRemainingMoney() == null) {
+					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+							"次会员卡没有储值功能，不支持购买产品");
 				}
 				if (cmcPo.getRemainingMoney().compareTo(consumeRecord.getConsumeMoney()) >= 0) {
 					Map<String, Object> cardMap = new HashMap<String, Object>();
 					cardMap.put("id", consumeRecord.getPayWayId());
 					cardMap.put("remainMoney", cmcPo.getRemainingMoney().subtract(consumeRecord.getConsumeMoney()));
-					customerMemberCardMapper.calRemainMoney(cardMap);					
+					customerMemberCardMapper.calRemainMoney(cardMap);
 					cardFlowPo.setCustomerMemberCardId(payWayId);
 					cardFlowPo.setMoney(consumeRecord.getConsumeMoney());
 					customerMemberCardFlowMapper.insert(cardFlowPo);
@@ -452,12 +455,13 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				} else {
 					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
 				}
-			} else if (consumeType == 3) { // 做项目				
-				
-				//先扣余额，如果不足则返回余额不足消息
-				if(consumeRecord.getConsumeMoney()!=null){
-					if(cmcPo.getRemainingMoney()==null){
-						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "次会员卡没有储值功能，不支持购买产品");
+			} else if (consumeType == 3) { // 做项目
+
+				// 先扣余额，如果不足则返回余额不足消息
+				if (consumeRecord.getConsumeMoney() != null) {
+					if (cmcPo.getRemainingMoney() == null) {
+						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+								"次会员卡没有储值功能，不支持购买产品");
 					}
 					if (cmcPo.getRemainingMoney().compareTo(consumeRecord.getConsumeMoney()) >= 0) {
 						Map<String, Object> cardMap = new HashMap<String, Object>();
@@ -471,8 +475,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 						throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
 					}
 				}
-				
-				//扣除项目
+
+				// 扣除项目
 				for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("customerMemberCardId", payWayId);
@@ -488,7 +492,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 							cardFlowPo.setCustomerMemberCardContentId(contentPo.getId());
 							cardFlowPo.setAmount(detail.getAmount().intValue());
 							customerMemberCardFlowMapper.insert(cardFlowPo);
-						}else{
+						} else {
 							Map<String, Object> contentMap = new HashMap<String, Object>();
 							contentMap.put("id", contentPo.getId());
 							contentMap.put("amount", 0);
@@ -499,38 +503,40 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 						}
 					}
 				}
-				
+
 			} else {
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式选择有误");
 			}
 		} else if (paymentWay == 2) {
-			if(consumeType!=3){
+			if (consumeType != 3) {
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式选择有误");
 			}
-			//判断活动剩余中知否有这些项目并且剩余数量充足
-			for (ConsumeRecordDetailPo detail : consumeRecordDetails){
-				Map<String,Object> map = new HashMap<String,Object>();
+			// 判断活动剩余中知否有这些项目并且剩余数量充足
+			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerActivityId", payWayId);
 				map.put("relatedId", detail.getProjectId());
-				CustomerActivityContentPo contentPo = customerActivityContentMapper.getByActivityContentIdRelatedId(map);
-				if(contentPo==null)
+				CustomerActivityContentPo contentPo = customerActivityContentMapper
+						.getByActivityContentIdRelatedId(map);
+				if (contentPo == null)
 					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动剩余中无此项目");
-				if(contentPo.getNumber().intValue()<detail.getAmount().intValue()){
+				if (contentPo.getNumber().intValue() < detail.getAmount().intValue()) {
 					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "活动剩余不足");
 				}
 			}
-			//如果剩余数量足够，则扣除数量
-			for (ConsumeRecordDetailPo detail : consumeRecordDetails){
-				Map<String,Object> map = new HashMap<String,Object>();
+			// 如果剩余数量足够，则扣除数量
+			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerActivityId", payWayId);
 				map.put("relatedId", detail.getProjectId());
-				CustomerActivityContentPo contentPo = customerActivityContentMapper.getByActivityContentIdRelatedId(map);
-				Map<String,Object> activityMap = new HashMap<String,Object>();
+				CustomerActivityContentPo contentPo = customerActivityContentMapper
+						.getByActivityContentIdRelatedId(map);
+				Map<String, Object> activityMap = new HashMap<String, Object>();
 				activityMap.put("id", contentPo.getId());
 				activityMap.put("amount", contentPo.getNumber().subtract(detail.getAmount()));
 				customerActivityContentMapper.updateAmount(activityMap);
 			}
-			
+
 		} else if (paymentWay == 31) {
 			CustomerMemberCardFlowPo cardFlowPo = new CustomerMemberCardFlowPo();
 			cardFlowPo.setConsumeRecordId(consumeRecord.getId());
@@ -569,7 +575,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 
 	private void calAmount(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts) {
-		if(consumeRecordDetails!=null){
+		if (consumeRecordDetails != null) {
 			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
 				if (detail.getProductId() != null) {
 					ProductFlowPo flowPo = new ProductFlowPo();
@@ -582,7 +588,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 					productService.reduceProductAmount(flowPo);
 				}
 				if (detail.getProjectId() != null) {
-					List<ProjectStockPo> projectStockPos = projectStockMapper.getProjectStockByProId(detail.getProjectId());
+					List<ProjectStockPo> projectStockPos = projectStockMapper
+							.getProjectStockByProId(detail.getProjectId());
 					for (ProjectStockPo projectStockPo : projectStockPos) {
 						StockFlowPo stockFlowPo = new StockFlowPo();
 						stockFlowPo.setAmount(projectStockPo.getStockConsumptionAmount());
@@ -597,8 +604,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 
 			}
 		}
-		
-		if(gifts!=null){
+
+		if (gifts != null) {
 			for (ConsumeRecordGiftPo gift : gifts) {
 				if (gift.getProductId() != null) {
 					ProductFlowPo flowPo = new ProductFlowPo();
@@ -612,8 +619,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				}
 			}
 		}
-		
-		
+
 	}
 
 	private void recoverMoney(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -622,17 +628,19 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		Long payWayContentId = consumeRecord.getPayWayContentId();
 		// 会员卡支付
 		if (paymentWay == 1) {
-			List<CustomerMemberCardFlowPo> cardFlowPoList = customerMemberCardFlowMapper.getListByConsumeRecordId(consumeRecord.getId());
-			for(CustomerMemberCardFlowPo cardFlowPo : cardFlowPoList){
-				CustomerMemberCardContentUnion union = customerMemberCardContentMapper.getContent(cardFlowPo.getCustomerMemberCardContentId());
-				if(cardFlowPo.getAmount()!=null){//消费时为扣除次数
-					Map<String,Object> map = new HashMap<String,Object>();
+			List<CustomerMemberCardFlowPo> cardFlowPoList = customerMemberCardFlowMapper
+					.getListByConsumeRecordId(consumeRecord.getId());
+			for (CustomerMemberCardFlowPo cardFlowPo : cardFlowPoList) {
+				CustomerMemberCardContentUnion union = customerMemberCardContentMapper
+						.getContent(cardFlowPo.getCustomerMemberCardContentId());
+				if (cardFlowPo.getAmount() != null) {// 消费时为扣除次数
+					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("id", cardFlowPo.getCustomerMemberCardContentId());
 					map.put("amount", union.getAmount() + cardFlowPo.getAmount());
 					customerMemberCardContentMapper.calAmount(map);
-				}else if(cardFlowPo.getMoney()!=null){
+				} else if (cardFlowPo.getMoney() != null) {
 					CustomerMemberCardPo cmcPo = customerMemberCardMapper.getById(payWayId);
-					Map<String,Object> map = new HashMap<String,Object>();
+					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("id", cardFlowPo.getCustomerMemberCardId());
 					map.put("remainMoney", cmcPo.getRemainingMoney().add(cardFlowPo.getMoney()));
 					customerMemberCardMapper.calRemainMoney(map);
@@ -683,8 +691,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		StoreUnion storeUnion = new StoreUnion();
 		List<ConsumeRecordDetailUnion> consumeRecordDetailUnions = new ArrayList<ConsumeRecordDetailUnion>();
 		List<ConsumeRecordGiftUnion> consumeRecordGiftUnions = new ArrayList<ConsumeRecordGiftUnion>();
-
-		consumeRecordPo = consumeRecordMapper.getById(consumeRecordId);
+		
+		consumeRecordPo = consumeRecordMapper.getById(consumeRecordId);		
 		storeUnion = storeService.queryStoreDetail(ThreadContext.getUserStoreId());
 		consumeRecordDetailUnions = consumeRecordDetailUnionMapper
 				.getRecordDetailUnionByConsumeRecordId(consumeRecordId);
@@ -693,23 +701,93 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		printUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
 		printUnion.setConsumeRecordPo(consumeRecordPo);
 		printUnion.setStorePo(storeUnion.getStorePo());
-
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("storeId", consumeRecordPo.getStoreId());
+		map.put("customerId", consumeRecordPo.getCustomerId());
+		List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper
+				.listCustomerMemberCardByCustomerId(map);
+		for (CustomerMemberCardUnion cmcu : customerMemberCardUnions) {
+			cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getContentList(cmcu.getId()));
+		}
+		printUnion.setCustomerMemberCardUnions(customerMemberCardUnions);
 		return printUnion;
 	}
 
 	@Override
-	public Workbook exportConsumeRecord(Date beginTime, Date endTime) {
+	public Workbook exportConsumeRecord(Integer consumeType, Date beginTime, Date endTime) {
 		ConsumeRecordQueryCondition condition = new ConsumeRecordQueryCondition();
 		condition.setBeginTime(beginTime);
 		condition.setEndTime(endTime);
+		condition.setConsumeType(consumeType);
 		condition.setStoreId(ThreadContext.getUserStoreId());
-		// PagedList<ConsumeRecordUnion> unionPagedList =
-		// changedListPagedConsumeRecords(condition);
-		// List<ConsumeRecordUnion> unionList = unionPagedList.getData();
-		// Workbook workbook = new SXSSFWorkbook();
-		// Sheet sheet = workbook.createSheet("消费记录");
 
-		return null;
+		ConsumeRecordUnion consumeRecordUnion = new ConsumeRecordUnion();
+		List<ConsumeRecordUnion> consumeRecordUnions = new ArrayList<ConsumeRecordUnion>();
+		List<ConsumeRecordPo> consumeRecordPos = consumeRecordMapper.listConsumeRecordByCondition(condition);
+		List<ConsumeRecordDetailUnion> consumeRecordDetailUnioins = new ArrayList<ConsumeRecordDetailUnion>();
+		List<ConsumeRecordGiftUnion> consumeRecordGiftUnions = new ArrayList<ConsumeRecordGiftUnion>();
+		for (ConsumeRecordPo consumeRecordPo : consumeRecordPos) {
+			consumeRecordUnion.setConsumeRecordPo(consumeRecordPo);
+			consumeRecordDetailUnioins = consumeRecordDetailUnionMapper
+					.getRecordDetailUnionByConsumeRecordId(consumeRecordPo.getId());
+			consumeRecordGiftUnions = consumeRecordGiftMapper
+					.getRecordGiftUnionByConsumeRecordId(consumeRecordPo.getId());
+			consumeRecordUnion.setConsumeRecordDetailUnion(consumeRecordDetailUnioins);
+			consumeRecordUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
+			consumeRecordUnions.add(CommonConverter.map(consumeRecordUnion, ConsumeRecordUnion.class));
+		}
+
+		Workbook workbook = new SXSSFWorkbook();
+		Sheet sheet = workbook.createSheet("消费记录");
+		if (CollectionUtils.isEmpty(consumeRecordUnions)) {
+			return workbook;
+		}
+		if(consumeType==1){	//办卡
+			buildCardSheetByConsumeRecordUnion(sheet, consumeRecordUnions);
+		}
+		if(consumeType==2){	//做项目
+			buildProjectSheetByConsumeRecordUnion(sheet, consumeRecordUnions);
+		}
+		
+		
+		
+
+		return workbook;
+	}
+
+	private void buildProjectSheetByConsumeRecordUnion(Sheet sheet, List<ConsumeRecordUnion> consumeRecordUnions) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void buildCardSheetByConsumeRecordUnion(Sheet sheet, List<ConsumeRecordUnion> consumeRecordUnions) {
+		int rowNum = 0;
+		int columnNum = 0;
+		Row row = sheet.createRow(rowNum++);
+		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		generateStringCell(row, columnNum++, "客户姓名");
+		generateStringCell(row, columnNum++, "手机号");
+		generateStringCell(row, columnNum++, "消费类型");
+		generateStringCell(row, columnNum++, "卡名");
+		generateStringCell(row, columnNum++, "消费金额");
+		generateStringCell(row, columnNum++, "消费时间");
+		for (ConsumeRecordUnion union : consumeRecordUnions) {
+			columnNum = 0;
+			row = sheet.createRow(rowNum++);
+			// 客户姓名
+			generateStringCell(row, columnNum++, customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getName());
+			// 手机号
+			generateStringCell(row, columnNum++, customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getMobile());
+			// 消费类型
+			generateStringCell(row, columnNum++, "办卡");
+			// 卡名
+			generateStringCell(row, columnNum++, union.getConsumeRecordDetailUnion().get(0).getCardName());
+			// 金额
+			generateStringCell(row, columnNum++, union.getConsumeRecordPo().getConsumeMoney().toString());
+			// 时间
+			generateStringCell(row, columnNum++, formatter.format(union.getConsumeRecordPo().getConsumeTime()));
+
+		}
 	}
 
 	@Override
@@ -801,50 +879,28 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		if (consumeRecord.getConsumeType() == 3) {// 做项目
 			Long payWayId = consumeRecord.getPayWayId();
 
-
-//			List<Integer> indexes = new ArrayList<Integer>();
-//			for (int i = 0; i < consumeRecordDetails.size(); i++) {
-//				for (CustomerMemberCardContentUnion content : cardContentLists) {
-//					if (content.getRelatedId() == consumeRecordDetails.get(i).getProjectId()) {
-//						if (content.getAmount() >= consumeRecordDetails.get(i).getAmount().intValue()) {
-//							indexes.add(i);
-//							break;
-//						} else {
-//							consumeRecordDetails.get(i).setAmount(consumeRecordDetails.get(i).getAmount()
-//									.subtract(new BigDecimal(content.getAmount())));
-//						}
-//					}
-//				}
-//			}
-//			for (Integer index : indexes) {
-//				consumeRecordDetails.remove(index);
-//			}
-//			BigDecimal money = new BigDecimal(0);
-//			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
-//				money = money.add(
-//						projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
-//			}
-//			return money;
 			List<ConsumeRecordDetailPo> byMoney = new ArrayList<ConsumeRecordDetailPo>();
 			List<ConsumeRecordDetailPo> byTimes = new ArrayList<ConsumeRecordDetailPo>();
-			for (int i = 0; i < consumeRecordDetails.size(); i++){
+			for (int i = 0; i < consumeRecordDetails.size(); i++) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerMemberCardId", payWayId);
 				map.put("relatedId", consumeRecordDetails.get(i).getProjectId());
-				CustomerMemberCardContentPo contentPo = customerMemberCardContentMapper.getByCustomerMemberCardIdRelatedId(map);
-				if(contentPo==null){//说明此会员卡中没有该项目，该项目需要扣储值支付
+				CustomerMemberCardContentPo contentPo = customerMemberCardContentMapper
+						.getByCustomerMemberCardIdRelatedId(map);
+				if (contentPo == null) {// 说明此会员卡中没有该项目，该项目需要扣储值支付
 					byMoney.add(consumeRecordDetails.get(i));
-				}else{//说明此会员卡中有该项目，可以扣次数
-					if(contentPo.getAmount()>=consumeRecordDetails.get(i).getAmount().intValue()){//会员卡中余量足够
+				} else {// 说明此会员卡中有该项目，可以扣次数
+					if (contentPo.getAmount() >= consumeRecordDetails.get(i).getAmount().intValue()) {// 会员卡中余量足够
 						byTimes.add(consumeRecordDetails.get(i));
-					}else{//会员卡中余量不够
+					} else {// 会员卡中余量不够
 						ConsumeRecordDetailPo tmpByMoney = consumeRecordDetails.get(i);
-						tmpByMoney.setAmount(consumeRecordDetails.get(i).getAmount().subtract(new BigDecimal(contentPo.getAmount())));
-						byMoney.add(CommonConverter.map(tmpByMoney,ConsumeRecordDetailPo.class));
+						tmpByMoney.setAmount(consumeRecordDetails.get(i).getAmount()
+								.subtract(new BigDecimal(contentPo.getAmount())));
+						byMoney.add(CommonConverter.map(tmpByMoney, ConsumeRecordDetailPo.class));
 						ConsumeRecordDetailPo tmpByTimes = consumeRecordDetails.get(i);
 						tmpByTimes.setAmount(new BigDecimal(contentPo.getAmount()));
-						byTimes.add(CommonConverter.map(tmpByTimes,ConsumeRecordDetailPo.class));
-						
+						byTimes.add(CommonConverter.map(tmpByTimes, ConsumeRecordDetailPo.class));
+
 					}
 				}
 			}
@@ -853,8 +909,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 				money = money.add(
 						projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
 			}
-			if(customerMemberCardPo.getProjectDiscount()!=null){
-				if(customerMemberCardPo.getProjectDiscount().compareTo(new BigDecimal(0))!=0){
+			if (customerMemberCardPo.getProjectDiscount() != null) {
+				if (customerMemberCardPo.getProjectDiscount().compareTo(new BigDecimal(0)) != 0) {
 					money = money.multiply(customerMemberCardPo.getProjectDiscount());
 				}
 			}

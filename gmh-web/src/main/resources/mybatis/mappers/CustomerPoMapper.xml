@@ -68,12 +68,6 @@
 		from
 		customer
 		<where>
-			<if test="storeId != null">
-				`store_id` = #{storeId, jdbcType=BIGINT}
-			</if>
-			<if test="gender != null ">
-				AND `gender` = #{gender, jdbcType=TINYINT}
-			</if>
 			<if test="keyWords != null and keyWords != ''">
 				<bind name="condition" value="'%' + keyWords + '%'" />
 				CONCAT(`name`,`mobile`,`remark`,`source`) LIKE #{condition, jdbcType=VARCHAR}

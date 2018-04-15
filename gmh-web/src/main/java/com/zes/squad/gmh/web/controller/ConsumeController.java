@@ -252,6 +252,8 @@ public class ConsumeController {
 		StoreVo storeVo = CommonConverter.map(printUnion.getStorePo(), StoreVo.class);
 		consumeRecordVo.setConsumeRecordDetailUnion(printUnion.getConsumeRecordDetailUnion());
 		consumeRecordVo.setConsumeRecordGiftUnion(printUnion.getConsumeRecordGiftUnion());
+		CustomerPo customerPo = customerMapper.getByMobile(consumeRecordPo.getCustomerMobile());
+		consumeRecordVo.setCustomerName(customerPo.getName());
 		if (consumeRecordPo.getActivityId() != null) {
 			ActivityPo activity = activityUnionMapper.selectById(consumeRecordPo.getActivityId()).getActivityPo();
 			consumeRecordVo.setActivityName(activity.getName());
@@ -268,9 +270,7 @@ public class ConsumeController {
 		if (consumeRecordPo.getConsumeType() == 4) {
 			consumeRecordVo.setConsumeType("参加活动");
 		}
-		if (consumeRecordPo.getConsumeType() == 5) {
-			consumeRecordVo.setConsumeType("充值");
-		}
+		
 
 		if (consumeRecordPo.getPaymentWay() == 1) {
 			consumeRecordVo.setPaymentWayName("会员卡");

@@ -1,13 +1,13 @@
 package com.zes.squad.gmh.web.entity.vo;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 
 import lombok.Data;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime;
 
 @Data
 public class ConsumeRecordVo {
@@ -25,7 +25,7 @@ public class ConsumeRecordVo {
 	private String activityName;
 	private Integer isModified;
 	private String remark;
-	private DateTime consumeTime;
+	private Date consumeTime;
 	private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
 	private List<ConsumeRecordGiftUnion> consumeRecordGiftUnion;
 }

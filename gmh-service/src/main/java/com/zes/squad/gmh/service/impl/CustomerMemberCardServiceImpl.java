@@ -31,6 +31,8 @@ import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.mapper.MemberCardMapper;
+import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
+import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
 
 @Service("customerMemberCardService")
@@ -42,15 +44,16 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	private MemberCardMapper memberCardMapper;
 	@Autowired
 	private CustomerMemberCardContentMapper customerMemberCardContentMapper;
-	// @Autowired
-	// private MemberCardService memberCardService;
 	@Autowired
 	private CustomerMapper customerMapper;
 	@Autowired
 	private ConsumeRecordMapper consumeRecordMapper;
 	@Autowired
 	private ConsumeRecordDetailMapper consumeRecordDetailMapper;
-
+	@Autowired
+	private ConsumeRecordService consumeRecordService;
+	@Autowired
+	private TradeSerialNumberMapper tradeSerialNumberMapper;
 	@Override
 	public PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition condition) {
 		int pageNum = condition.getPageNum();
@@ -234,6 +237,16 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		// 将此次充值记录到消费记录中
 		CustomerPo customer = customerMapper.getById(customerMemberCardPo.getCustomerId());
 		ConsumeRecordPo consumeRecord = new ConsumeRecordPo();
+		
+		Map<String, Object> tmpMap = new HashMap<String, Object>();
+		tmpMap = consumeRecordService.getTradeSerialNumber("C");
+		
+		String tradeSerialNumber = (String) tmpMap.get("tradeSerialNumber");
+		Integer oldNumber = (Integer) tmpMap.get("oldNumber");
+		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
+		consumeRecord.setIsModified(0);
+		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
+		
 		consumeRecord.setConsumeMoney(rechargeMoney);
 		consumeRecord.setConsumeTime(new Date());
 		consumeRecord.setConsumeType(1);

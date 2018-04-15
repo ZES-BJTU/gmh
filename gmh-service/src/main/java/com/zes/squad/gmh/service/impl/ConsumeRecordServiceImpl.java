@@ -63,6 +63,7 @@ import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardFlowMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.mapper.EmployeeMapper;
+import com.zes.squad.gmh.mapper.MemberCardMapper;
 import com.zes.squad.gmh.mapper.ProductFlowMapper;
 import com.zes.squad.gmh.mapper.ProductMapper;
 import com.zes.squad.gmh.mapper.ProjectMapper;
@@ -121,6 +122,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private ActivityUnionMapper activityUnionMapper;
 	@Autowired
 	private CustomerMemberCardFlowMapper customerMemberCardFlowMapper;
+	@Autowired
+	private MemberCardMapper memberCardMapper;
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -282,9 +285,41 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(consumeRecord.getActivityId());
 
 		for (ActivityContentPo ac : acList) {
-			CustomerActivityContentPo cacPo = CommonConverter.map(ac, CustomerActivityContentPo.class);
-			cacPo.setCustomerActivityId(caPo.getId());
-			customerActivityContentMapper.insert(cacPo);
+			if(ac.getType()==1||ac.getType()==4){ //项目或代金券
+				CustomerActivityContentPo cacPo = CommonConverter.map(ac, CustomerActivityContentPo.class);
+				cacPo.setCustomerActivityId(caPo.getId());
+				customerActivityContentMapper.insert(cacPo);
+			}
+			if(ac.getType()==2){//如果类型是会员卡，则建立会员卡信息
+				MemberCardPo memberCardPo = memberCardMapper.selectById(ac.getRelatedId());
+				CustomerMemberCardPo customerMemberCardPo = new CustomerMemberCardPo();
+
+				if (customerPo == null)
+					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请先建立客户信息");
+
+				customerMemberCardPo.setCustomerId(customerPo.getId());
+				customerMemberCardPo.setIsReturned(0);
+				customerMemberCardPo.setIsTurned(0);
+				customerMemberCardPo.setIsValid(1);
+				customerMemberCardPo.setStoreId(ThreadContext.getUserStoreId());
+				customerMemberCardPo.setUniqueIdentifier(tradeSerialNumber);
+				customerMemberCardPo.setMemberCardId(memberCardPo.getId());
+				customerMemberCardPo.setProductDiscount(memberCardPo.getProductDiscount());
+				customerMemberCardPo.setProjectDiscount(memberCardPo.getProjectDiscount());
+				customerMemberCardPo.setRemainingMoney(memberCardPo.getAmount());
+				customerMemberCardMapper.insert(customerMemberCardPo);
+				
+				CustomerMemberCardContentPo customerMemberCardContentPo = new CustomerMemberCardContentPo();
+				customerMemberCardContentPo.setCustomerMemberCardId(customerMemberCardPo.getId());
+				if (memberCardPo.getType() != 2) {
+					customerMemberCardContentPo.setRelatedId(memberCardPo.getProjectId());
+					customerMemberCardContentPo.setAmount(memberCardPo.getTimes());
+					customerMemberCardContentMapper.insert(customerMemberCardContentPo);
+				}
+				
+				
+			}
+			
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);

@@ -25,6 +25,8 @@ public interface CustomerMemberCardMapper {
 	BigDecimal getBalanceById(Long id);
 	
 	void calRemainMoney(Map<String,Object> map);
+	
+	void changeStore(Map<String,Object> map);
 
 	List<CustomerMemberCardUnion> getCardListByCustomerId(Map<String,Object> map);
 

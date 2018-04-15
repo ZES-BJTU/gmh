@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zes.squad.gmh.common.converter.CommonConverter;
 import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
 import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
@@ -34,6 +35,7 @@ import com.zes.squad.gmh.mapper.MemberCardMapper;
 import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
+import com.zes.squad.gmh.web.entity.vo.CustomerMemberCardVo;
 
 @Service("customerMemberCardService")
 public class CustomerMemberCardServiceImpl implements CustomerMemberCardService {
@@ -54,6 +56,7 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 	private ConsumeRecordService consumeRecordService;
 	@Autowired
 	private TradeSerialNumberMapper tradeSerialNumberMapper;
+
 	@Override
 	public PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition condition) {
 		int pageNum = condition.getPageNum();
@@ -127,26 +130,73 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		}
 		customerMemberCardMapper.insert(newCard);
 		if (memberCard.getType() != 2) {
-			cardContent.setCustomerMemberCardId(memberCard.getId());
+			cardContent.setCustomerMemberCardId(newCard.getId());
 			customerMemberCardContentMapper.insert(cardContent);
 		}
+
+		// 将此次交易记录到消费记录中
+		CustomerPo customer = customerMapper.getById(newCard.getCustomerId());
+		ConsumeRecordPo consumeRecord = new ConsumeRecordPo();
+
+		Map<String, Object> tmpMap = new HashMap<String, Object>();
+		tmpMap = consumeRecordService.getTradeSerialNumber("C");
+
+		String tradeSerialNumber = (String) tmpMap.get("tradeSerialNumber");
+		Integer oldNumber = (Integer) tmpMap.get("oldNumber");
+		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
+		consumeRecord.setIsModified(0);
+		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
+
+		consumeRecord.setConsumeMoney(returnedMoney);
+		consumeRecord.setConsumeTime(new Date());
+		consumeRecord.setConsumeType(1);
+		consumeRecord.setCustomerMobile(customer.getMobile());
+		consumeRecord.setPaymentWay(3);
+		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
+		consumeRecord.setCustomerId(customer.getId());
+		consumeRecord.setRemark("换卡");
+		consumeRecordMapper.insert(consumeRecord);
+
 	}
 
 	@Override
-	public void changeStore(CustomerMemberCardPo po, Long storeId) {
+	public void changeStore(CustomerMemberCardPo po, Long storeId, BigDecimal money, String reason) {
 		CustomerMemberCardPo oldCard = customerMemberCardMapper.getById(po.getId());
-		// CustomerMemberCardPo newCard = new CustomerMemberCardPo();
-		po.setIsTurned(1);
-		po.setIsValid(0);
-		po.setTurnedTime(new Date());
-		customerMemberCardMapper.turnCard(po);
-		// newCard.setCustomerId(oldCard.getCustomerId());
-		// newCard.setIsValid(1);
-		// newCard.setMemberCardId(oldCard.getMemberCardId());
-		// newCard.setUniqueIdentifier(oldCard.getUniqueIdentifier());
-		// newCard.setStoreId(storeId);
-		oldCard.setStoreId(storeId);
-		customerMemberCardMapper.insert(oldCard);
+		CustomerMemberCardPo newCard = CommonConverter.map(oldCard, CustomerMemberCardPo.class);
+		newCard.setIsTurned(1);
+		newCard.setIsValid(0);
+		newCard.setTurnedTime(new Date());
+		newCard.setTurnedReason(reason);
+		
+		// 将此次交易记录到消费记录中
+		CustomerPo customer = customerMapper.getById(oldCard.getCustomerId());
+		ConsumeRecordPo consumeRecord = new ConsumeRecordPo();
+
+		Map<String, Object> tmpMap = new HashMap<String, Object>();
+		tmpMap = consumeRecordService.getTradeSerialNumber("C");
+
+		String tradeSerialNumber = (String) tmpMap.get("tradeSerialNumber");
+		Integer oldNumber = (Integer) tmpMap.get("oldNumber");
+		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
+		consumeRecord.setIsModified(0);
+		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
+
+		consumeRecord.setConsumeMoney(money);
+		consumeRecord.setConsumeTime(new Date());
+		consumeRecord.setConsumeType(1);
+		consumeRecord.setCustomerMobile(customer.getMobile());
+		consumeRecord.setPaymentWay(3);
+		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
+		consumeRecord.setCustomerId(customer.getId());
+		consumeRecord.setRemark("转店");
+		consumeRecordMapper.insert(consumeRecord);
+
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("id", oldCard.getId());
+		map.put("storeId", storeId);
+		customerMemberCardMapper.changeStore(map);
+		newCard.setId(null);
+		customerMemberCardMapper.insert(newCard);
 
 	}
 
@@ -237,16 +287,16 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		// 将此次充值记录到消费记录中
 		CustomerPo customer = customerMapper.getById(customerMemberCardPo.getCustomerId());
 		ConsumeRecordPo consumeRecord = new ConsumeRecordPo();
-		
+
 		Map<String, Object> tmpMap = new HashMap<String, Object>();
 		tmpMap = consumeRecordService.getTradeSerialNumber("C");
-		
+
 		String tradeSerialNumber = (String) tmpMap.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) tmpMap.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setIsModified(0);
 		tradeSerialNumberMapper.cardNumberAdd(oldNumber + 1);
-		
+
 		consumeRecord.setConsumeMoney(rechargeMoney);
 		consumeRecord.setConsumeTime(new Date());
 		consumeRecord.setConsumeType(1);

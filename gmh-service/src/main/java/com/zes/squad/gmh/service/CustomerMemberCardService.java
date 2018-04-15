@@ -18,7 +18,7 @@ public interface CustomerMemberCardService {
 
 	void turnCard(Long oldCardId,Long newCardId,BigDecimal returnedMoney,String reason);
 	
-	void changeStore(CustomerMemberCardPo po, Long storeId);
+	void changeStore(CustomerMemberCardPo po, Long storeId, BigDecimal money, String reason);
 
 	List<CustomerMemberCardUnion> getCardListByMobile(Integer paymentWay,String customerMobile);
 

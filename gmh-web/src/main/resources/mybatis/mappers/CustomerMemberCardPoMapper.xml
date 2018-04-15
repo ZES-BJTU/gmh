@@ -102,10 +102,11 @@
 			</if>
 			<if test="keyWords != null and keyWords != ''">
 				<bind name="condition" value="'%' + keyWords + '%'" />
+				and
 				`customer_name` LIKE #{condition, jdbcType=VARCHAR}
 			</if>
 		</where>
-
+		and cmd.`is_valid`=1
 	</select>
 
 	<select id="listCustomerMemberCardByCustomerId"
@@ -271,6 +272,14 @@
 		customer_member_card
 		set
 		`remaining_money`=#{remainMoney,jdbcType=DECIMAL}
+		where
+		`id`=#{id,jdbcType=BIGINT}
+	</update>
+	<update id="changeStore" parameterType="map">
+		update
+		customer_member_card
+		set
+		`store_id`=#{storeId,jdbcType=DECIMAL}
 		where
 		`id`=#{id,jdbcType=BIGINT}
 	</update>

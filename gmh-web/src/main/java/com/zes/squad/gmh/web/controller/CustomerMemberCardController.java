@@ -102,7 +102,7 @@ public class CustomerMemberCardController {
 	@RequestMapping(path ="/changeStore", method = {RequestMethod.PUT})
 	public JsonResult<Void> doChangeStore(@RequestBody ChangeCardStoreParams params){
 		CustomerMemberCardPo po = CommonConverter.map(params, CustomerMemberCardPo.class);
-		customerMemberCardService.changeStore(po,params.getNewStoreId());
+		customerMemberCardService.changeStore(po,params.getNewStoreId(),params.getTurnedMoney(),params.getTurnedReason());
 		return JsonResults.success();
 	}
 	

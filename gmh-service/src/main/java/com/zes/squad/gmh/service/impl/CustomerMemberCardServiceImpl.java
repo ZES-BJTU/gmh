@@ -236,11 +236,12 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 		ConsumeRecordPo consumeRecord = new ConsumeRecordPo();
 		consumeRecord.setConsumeMoney(rechargeMoney);
 		consumeRecord.setConsumeTime(new Date());
-		consumeRecord.setConsumeType(5);
+		consumeRecord.setConsumeType(1);
 		consumeRecord.setCustomerMobile(customer.getMobile());
 		consumeRecord.setPaymentWay(3);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setCustomerId(customer.getId());
+		consumeRecord.setRemark("充值");
 		consumeRecordMapper.insert(consumeRecord);
 		// 消费内容
 		ConsumeRecordDetailPo consumeRecordDetailPo = new ConsumeRecordDetailPo();

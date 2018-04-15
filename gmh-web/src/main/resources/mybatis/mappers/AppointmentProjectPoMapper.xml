@@ -104,7 +104,7 @@
 				app.`begin_time` <![CDATA[ >=  ]]>
 				#{beginTime, jdbcType=TIMESTAMP}
 			</if>
-			<if test="endTime != null">
+			<if test="begin_time != null">
 				app.`end_time` <![CDATA[ <=  ]]>
 				#{endTime, jdbcType=TIMESTAMP}
 			</if>

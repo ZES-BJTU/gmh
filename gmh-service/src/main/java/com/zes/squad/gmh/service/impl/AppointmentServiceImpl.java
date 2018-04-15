@@ -288,7 +288,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public List<OperatorTimeTableUnion> queryOperatorTimeTable(Long operatorId, Date beginTime, Date endTime) {
+	public PagedList<OperatorTimeTableUnion> queryOperatorTimeTable(Long operatorId, Date beginTime, Date endTime, int pageNum, int pageSize) {
 		
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("operatorId", operatorId);
@@ -296,9 +296,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		map.put("endTime", endTime);
 		map.put("storeId", ThreadContext.getUserStoreId());
 		List<OperatorTimeTableUnion> unionList = appointmentProjectMapper.queryOperatorTimeTable(map);
-		
-		
-		return unionList;
+
+		PageHelper.startPage(pageNum, pageSize);
+		PageInfo<OperatorTimeTableUnion> info = new PageInfo<>(unionList);
+		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unionList);
 	}
 
 }

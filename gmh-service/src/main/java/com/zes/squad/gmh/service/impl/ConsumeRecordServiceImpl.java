@@ -801,8 +801,6 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		if (consumeRecord.getConsumeType() == 3) {// 做项目
 			Long payWayId = consumeRecord.getPayWayId();
 
-			List<CustomerMemberCardContentUnion> cardContentLists = customerMemberCardContentMapper
-					.getProjectContentList(payWayId);
 
 //			List<Integer> indexes = new ArrayList<Integer>();
 //			for (int i = 0; i < consumeRecordDetails.size(); i++) {

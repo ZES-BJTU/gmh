@@ -122,10 +122,10 @@ public class AppointmentController {
 	}
 	
 	@RequestMapping(path = "/operatorTimeTableList", method = { RequestMethod.PUT })
-	public JsonResult<List<OperatorTimeTableUnion>> queryOperatorList(
+	public JsonResult<PagedList<OperatorTimeTableUnion>> queryOperatorList(
 			@RequestBody QueryOperatorTimeTableParams params) {
-		List<OperatorTimeTableUnion> operatorTimeTableList = appointmentService.queryOperatorTimeTable(params.getOperatorId(),
-				params.getBeginTime(),params.getEndTime());
+		PagedList<OperatorTimeTableUnion> operatorTimeTableList = appointmentService.queryOperatorTimeTable(params.getOperatorId(),
+				params.getBeginTime(),params.getEndTime(),params.getPageNum(),params.getPageSize());
 		return JsonResults.success(operatorTimeTableList);
 	}
 	

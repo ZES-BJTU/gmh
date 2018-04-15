@@ -36,5 +36,5 @@ public interface AppointmentService {
      */
     List<AppointmentUnion> getRemindAppointment();
 
-	List<OperatorTimeTableUnion> queryOperatorTimeTable(Long operatorId, Date beginTime, Date endTime);
+	PagedList<OperatorTimeTableUnion> queryOperatorTimeTable(Long operatorId, Date beginTime, Date endTime, int pageNum, int pageSize);
 }

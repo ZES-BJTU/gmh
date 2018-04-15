@@ -35,7 +35,7 @@ import com.zes.squad.gmh.mapper.MemberCardMapper;
 import com.zes.squad.gmh.mapper.TradeSerialNumberMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.CustomerMemberCardService;
-import com.zes.squad.gmh.web.entity.vo.CustomerMemberCardVo;
+
 
 @Service("customerMemberCardService")
 public class CustomerMemberCardServiceImpl implements CustomerMemberCardService {

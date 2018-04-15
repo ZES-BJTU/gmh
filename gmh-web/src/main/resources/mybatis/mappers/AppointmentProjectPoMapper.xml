@@ -91,28 +91,32 @@
 		em.`name` as `employee_name`,
 		p.`name` as `project_name`
 		from appointment_project app
-		
+
 		left join employee em on
 		em.`id`=app.employee_id
 		left join project p on
 		p.id=app.project_id
 		<where>
+			<if test="storeId != null">
+				store_id=#{storeId,jdbcType=BIGINT}
+			</if>
 			<if test="operatorId != null">
-				app.`employee_id` = #{operatorId, jdbcType=BIGINT}
+				and app.`employee_id` = #{operatorId, jdbcType=BIGINT}
 			</if>
 			<if test="beginTime != null">
+				and
 				app.`begin_time` <![CDATA[ >=  ]]>
 				#{beginTime, jdbcType=TIMESTAMP}
 			</if>
 			<if test="begin_time != null">
+				and
 				app.`end_time` <![CDATA[ <=  ]]>
 				#{endTime, jdbcType=TIMESTAMP}
 			</if>
 		</where>
 		and
 		app.`appointment_id` in
-		(select id from appointment where status=1 and
-		store_id=#{storeId,jdbcType=BIGINT}
+		(select id from appointment where status=1
 		)
 	</select>
 </mapper>

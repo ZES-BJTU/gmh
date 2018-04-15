@@ -21,10 +21,12 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zes.squad.gmh.common.converter.CommonConverter;
+import com.zes.squad.gmh.common.enums.PaymentWayEnum;
 import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
 import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
+import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
 import com.zes.squad.gmh.entity.po.ActivityContentPo;
@@ -126,7 +128,6 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	@Autowired
 	private MemberCardMapper memberCardMapper;
 
-
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails) {
@@ -180,7 +181,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-
+		consumeRecord.setConsumeTime(new Date());
 		CustomerMemberCardPo customerMemberCardPo = new CustomerMemberCardPo();
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
 		if (customerPo == null)
@@ -247,7 +248,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
-
+		consumeRecord.setConsumeTime(new Date());
+		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
+		consumeRecord.setCustomerId(customerPo.getId());
 		if (consumeRecord.getPaymentWay() == 4)
 			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
@@ -269,16 +272,13 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
 		consumeRecord.setStoreId(ThreadContext.getUserStoreId());
 		consumeRecord.setIsModified(0);
+		consumeRecord.setConsumeTime(new Date());
+		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
+		consumeRecord.setCustomerId(customerPo.getId());
 		if (consumeRecord.getPaymentWay() == 4)
 			consumeRecord.setConsumeMoney(new BigDecimal(0));
 		consumeRecordMapper.insert(consumeRecord);
 		tradeSerialNumberMapper.activityNumberAdd(oldNumber + 1);
-
-		// ConsumeRecordDetailPo detail = consumeRecordDetails.get(0);
-		// detail.setConsumeRecordId(consumeRecord.getId());
-		// consumeRecordDetailMapper.insert(detail);
-
-		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
 
 		CustomerActivityPo caPo = new CustomerActivityPo();
 		caPo.setCustomerId(customerPo.getId());
@@ -691,8 +691,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		StoreUnion storeUnion = new StoreUnion();
 		List<ConsumeRecordDetailUnion> consumeRecordDetailUnions = new ArrayList<ConsumeRecordDetailUnion>();
 		List<ConsumeRecordGiftUnion> consumeRecordGiftUnions = new ArrayList<ConsumeRecordGiftUnion>();
-		
-		consumeRecordPo = consumeRecordMapper.getById(consumeRecordId);		
+
+		consumeRecordPo = consumeRecordMapper.getById(consumeRecordId);
 		storeUnion = storeService.queryStoreDetail(ThreadContext.getUserStoreId());
 		consumeRecordDetailUnions = consumeRecordDetailUnionMapper
 				.getRecordDetailUnionByConsumeRecordId(consumeRecordId);
@@ -701,7 +701,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		printUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
 		printUnion.setConsumeRecordPo(consumeRecordPo);
 		printUnion.setStorePo(storeUnion.getStorePo());
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("storeId", consumeRecordPo.getStoreId());
 		map.put("customerId", consumeRecordPo.getCustomerId());
 		List<CustomerMemberCardUnion> customerMemberCardUnions = customerMemberCardMapper
@@ -742,29 +742,171 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		if (CollectionUtils.isEmpty(consumeRecordUnions)) {
 			return workbook;
 		}
-		if(consumeType==1){	//办卡
+		if (consumeType == 1) { // 办卡
 			buildCardSheetByConsumeRecordUnion(sheet, consumeRecordUnions);
 		}
-		if(consumeType==2){	//做项目
+		if (consumeType == 2) { // 做项目
 			buildProjectSheetByConsumeRecordUnion(sheet, consumeRecordUnions);
 		}
-		
-		
-		
+		if (consumeType == 3) { // 买产品
+			buildProductSheetByConsumeRecordUnion(sheet, consumeRecordUnions);
+		}
+		if (consumeType == 4) { // 参加活动
+			buildActivitySheetByConsumeRecordUnion(sheet, consumeRecordUnions);
+		}
 
 		return workbook;
 	}
 
+	private void buildActivitySheetByConsumeRecordUnion(Sheet sheet, List<ConsumeRecordUnion> consumeRecordUnions) {
+		int rowNum = 0;
+		int columnNum = 0;
+		Row row = sheet.createRow(rowNum++);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		generateStringCell(row, columnNum++, "客户姓名");
+		generateStringCell(row, columnNum++, "手机号");
+		generateStringCell(row, columnNum++, "消费类型");
+		generateStringCell(row, columnNum++, "活动名称");
+		generateStringCell(row, columnNum++, "消费金额");
+		generateStringCell(row, columnNum++, "消费时间");
+		for (ConsumeRecordUnion union : consumeRecordUnions) {
+			columnNum = 0;
+			row = sheet.createRow(rowNum++);
+			// 客户姓名
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getName());
+			// 手机号
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getMobile());
+			// 消费类型
+			generateStringCell(row, columnNum++, "购买活动");
+			// 活动名称
+			generateStringCell(row, columnNum++, activityUnionMapper.selectById(union.getConsumeRecordPo().getActivityId()).getActivityPo().getName());
+			// 金额
+			generateStringCell(row, columnNum++, union.getConsumeRecordPo().getConsumeMoney().toString());
+			// 时间
+			generateStringCell(row, columnNum++, formatter.format(union.getConsumeRecordPo().getConsumeTime()));
+
+		}
+
+	}
+
+	private void buildProductSheetByConsumeRecordUnion(Sheet sheet, List<ConsumeRecordUnion> consumeRecordUnions) {
+		int rowNum = 0;
+		int columnNum = 0;
+		int defaultStockColumnNum = 7;
+		Row row = sheet.createRow(rowNum++);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		generateStringCell(row, columnNum++, "客户姓名");
+		generateStringCell(row, columnNum++, "手机号");
+		generateStringCell(row, columnNum++, "消费类型");
+		generateStringCell(row, columnNum++, "支付方式");
+		generateStringCell(row, columnNum++, "支付方式名称");
+		generateStringCell(row, columnNum++, "消费金额");
+		generateStringCell(row, columnNum++, "消费时间");
+		generateStringCell(row, columnNum++, "产品名称");
+		generateStringCell(row, columnNum++, "数量");
+		for (ConsumeRecordUnion union : consumeRecordUnions) {
+			columnNum = 0;
+			row = sheet.createRow(rowNum++);
+			// 客户姓名
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getName());
+			// 手机号
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getMobile());
+			// 消费类型
+			generateStringCell(row, columnNum++, "购买产品");
+			// 支付方式
+			generateStringCell(row, columnNum++, EnumUtils.getDescByKey(union.getConsumeRecordPo().getPaymentWay(), PaymentWayEnum.class));
+			// 支付方式名称
+			if(union.getConsumeRecordPo().getPaymentWay()==1||union.getConsumeRecordPo().getPaymentWay()==31){
+				generateStringCell(row, columnNum++, memberCardMapper.selectById(union.getConsumeRecordPo().getPayWayId()).getName());
+			}else if(union.getConsumeRecordPo().getPaymentWay()==2||union.getConsumeRecordPo().getPaymentWay()==32){
+				generateStringCell(row, columnNum++, "活动");
+			}else{
+				generateStringCell(row, columnNum++, "");
+			}
+			// 金额
+			generateStringCell(row, columnNum++, union.getConsumeRecordPo().getConsumeMoney().toString());
+			// 时间
+			generateStringCell(row, columnNum++, formatter.format(union.getConsumeRecordPo().getConsumeTime()));
+			for (int i = 0; i < union.getConsumeRecordDetailUnion().size(); i++) {
+				columnNum = defaultStockColumnNum;
+				if (i > 0) {
+					row = sheet.createRow(rowNum++);
+				}
+				// 产品名称
+				generateStringCell(row, columnNum++, union.getConsumeRecordDetailUnion().get(i).getProductName());
+				// 产品数量
+				generateStringCell(row, columnNum++, union.getConsumeRecordDetailUnion().get(i).getAmount().toString());
+			}
+
+		}
+
+	}
+
 	private void buildProjectSheetByConsumeRecordUnion(Sheet sheet, List<ConsumeRecordUnion> consumeRecordUnions) {
-		// TODO Auto-generated method stub
-		
+		int rowNum = 0;
+		int columnNum = 0;
+		int defaultStockColumnNum = 7;
+		Row row = sheet.createRow(rowNum++);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		generateStringCell(row, columnNum++, "客户姓名");
+		generateStringCell(row, columnNum++, "手机号");
+		generateStringCell(row, columnNum++, "消费类型");
+		generateStringCell(row, columnNum++, "支付方式");
+		generateStringCell(row, columnNum++, "支付方式名称");
+		generateStringCell(row, columnNum++, "消费金额");
+		generateStringCell(row, columnNum++, "消费时间");
+		generateStringCell(row, columnNum++, "项目名称");
+		generateStringCell(row, columnNum++, "数量");
+		for (ConsumeRecordUnion union : consumeRecordUnions) {
+			columnNum = 0;
+			row = sheet.createRow(rowNum++);
+			// 客户姓名
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getName());
+			// 手机号
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getMobile());
+			// 消费类型
+			generateStringCell(row, columnNum++, "做项目");
+			// 支付方式
+			generateStringCell(row, columnNum++, EnumUtils.getDescByKey(union.getConsumeRecordPo().getPaymentWay(), PaymentWayEnum.class));
+			// 支付方式名称
+			if(union.getConsumeRecordPo().getPaymentWay()==1||union.getConsumeRecordPo().getPaymentWay()==31){
+				generateStringCell(row, columnNum++, memberCardMapper.selectById(union.getConsumeRecordPo().getPayWayId()).getName());
+			}else if(union.getConsumeRecordPo().getPaymentWay()==2||union.getConsumeRecordPo().getPaymentWay()==32){
+				generateStringCell(row, columnNum++, "活动");
+			}else{
+				generateStringCell(row, columnNum++, "");
+			}
+			// 金额
+			generateStringCell(row, columnNum++, union.getConsumeRecordPo().getConsumeMoney().toString());
+			// 时间
+			generateStringCell(row, columnNum++, formatter.format(union.getConsumeRecordPo().getConsumeTime()));
+			for (int i = 0; i < union.getConsumeRecordDetailUnion().size(); i++) {
+				columnNum = defaultStockColumnNum;
+				if (i > 0) {
+					row = sheet.createRow(rowNum++);
+				}
+				// 产品名称
+				generateStringCell(row, columnNum++, union.getConsumeRecordDetailUnion().get(i).getProjectName());
+				// 产品数量
+				generateStringCell(row, columnNum++, union.getConsumeRecordDetailUnion().get(i).getAmount().toString());
+			}
+
+		}
+
+
 	}
 
 	private void buildCardSheetByConsumeRecordUnion(Sheet sheet, List<ConsumeRecordUnion> consumeRecordUnions) {
 		int rowNum = 0;
 		int columnNum = 0;
 		Row row = sheet.createRow(rowNum++);
-		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		generateStringCell(row, columnNum++, "客户姓名");
 		generateStringCell(row, columnNum++, "手机号");
 		generateStringCell(row, columnNum++, "消费类型");
@@ -775,9 +917,11 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			columnNum = 0;
 			row = sheet.createRow(rowNum++);
 			// 客户姓名
-			generateStringCell(row, columnNum++, customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getName());
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getName());
 			// 手机号
-			generateStringCell(row, columnNum++, customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getMobile());
+			generateStringCell(row, columnNum++,
+					customerMapper.getById(union.getConsumeRecordPo().getCustomerId()).getMobile());
 			// 消费类型
 			generateStringCell(row, columnNum++, "办卡");
 			// 卡名

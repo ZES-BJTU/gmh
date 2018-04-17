@@ -27,6 +27,7 @@
 			expression="org.springframework.stereotype.Component" />
 	</context:component-scan>
 
+	<import resource="classpath:spring/aop.xml" />
 	<import resource="classpath:spring/db.xml" />
 	<import resource="classpath:spring/redis.xml" />
 	<!-- <import resource="classpath:spring/task.xml" /> -->

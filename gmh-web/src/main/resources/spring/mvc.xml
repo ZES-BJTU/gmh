@@ -13,8 +13,6 @@
 			expression="org.springframework.stereotype.Controller" />
 		<context:include-filter type="annotation"
 			expression="org.springframework.web.bind.annotation.RestController" />
-		<context:include-filter type="annotation"
-			expression="org.springframework.web.bind.annotation.RestControllerAdvice" />
 	</context:component-scan>
 
 	<mvc:annotation-driven conversion-service="customConversionService">

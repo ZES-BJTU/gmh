@@ -19,17 +19,17 @@ public class ControllerInterceptor implements MethodInterceptor {
         try {
             Object result = invocation.proceed();
             long endTime = System.currentTimeMillis();
-            log.error(">>>>>调用controller成功, controller is {}, params is {}, 接口耗时:{}ms", getApiInfo(invocation),
+            log.error(">>>>>调用controller成功, 调用方法 :{}, 接口耗时:{}ms", getApiInfo(invocation),
                     JsonUtils.toJson(invocation.getArguments()), endTime - beginTime);
             return result;
         } catch (GmhException e) {
             long endTime = System.currentTimeMillis();
-            log.error(">>>>>调用controller异常, controller is {}, params is {}, 接口耗时:{}ms", getApiInfo(invocation),
+            log.error(">>>>>调用controller异常, 调用方法 :{}, 接口耗时:{}ms", getApiInfo(invocation),
                     JsonUtils.toJson(invocation.getArguments()), endTime - beginTime, e);
             return JsonResults.fail(e.getCode(), e.getMessage());
         } catch (Exception e) {
             long endTime = System.currentTimeMillis();
-            log.error(">>>>>调用controller异常, controller is {}, params is {}, 接口耗时:{}ms", getApiInfo(invocation),
+            log.error(">>>>>调用controller异常, 调用方法 :{}, 接口耗时:{}ms", getApiInfo(invocation),
                     JsonUtils.toJson(invocation.getArguments()), endTime - beginTime, e);
             return JsonResults.fail(ErrorCodeEnum.UNKNOWN_EXCEPTION.getCode(), "服务器开小差了");
         }

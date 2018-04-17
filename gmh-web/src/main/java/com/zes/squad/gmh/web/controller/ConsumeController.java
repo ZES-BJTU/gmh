@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zes.squad.gmh.common.converter.CommonConverter;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
@@ -53,7 +55,7 @@ public class ConsumeController {
 	public JsonResult<Void> doCreateProductConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String, Object> map = consumeRecordService.getTradeSerialNumber("B");
 		consumeRecordService.createProductConsumeRecord(map, params.getConsumeRecordPo(),
-				params.getConsumeRecordDetails());
+				params.getConsumeRecordDetails(),params.getConsumeSaleEmployees());
 		return JsonResults.success();
 	}
 
@@ -61,7 +63,7 @@ public class ConsumeController {
 	public JsonResult<Void> doCreateCardConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String, Object> map = consumeRecordService.getTradeSerialNumber("C");
 		consumeRecordService.createCardConsumeRecord(map, params.getConsumeRecordPo(), params.getConsumeRecordDetails(),
-				params.getGifts(), params.getMemberCardPo());
+				params.getGifts(), params.getMemberCardPo(),params.getConsumeSaleEmployees());
 		return JsonResults.success();
 	}
 
@@ -69,7 +71,7 @@ public class ConsumeController {
 	public JsonResult<Void> doCreateProjectConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String, Object> map = consumeRecordService.getTradeSerialNumber("D");
 		consumeRecordService.createProjectConsumeRecord(map, params.getConsumeRecordPo(),
-				params.getConsumeRecordDetails());
+				params.getConsumeRecordDetails(),params.getConsumeSaleEmployees());
 		return JsonResults.success();
 	}
 
@@ -77,15 +79,25 @@ public class ConsumeController {
 	public JsonResult<Void> doCreateActivityConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String, Object> map = consumeRecordService.getTradeSerialNumber("A");
 		consumeRecordService.createActivityConsumeRecord(map, params.getConsumeRecordPo(),
-				params.getConsumeRecordDetails());
+				params.getConsumeRecordDetails(),params.getConsumeSaleEmployees());
 		return JsonResults.success();
 	}
 
 	@RequestMapping(path = "/createConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		checkConsumeCreateParams(params);
+		if(params.getConsumeSaleEmployees().size()!=0){
+			BigDecimal total = new BigDecimal(0);
+			for(int i=0;i<params.getConsumeSaleEmployees().size();i++){
+				total = total.add(params.getConsumeSaleEmployees().get(i).getPercent());
+			}
+			if(total.compareTo(new BigDecimal(100))!=0){
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+						"销售员及顾问分担比例总和不为100");
+			}
+		}
 		consumeRecordService.createConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails(),
-				params.getGifts(), params.getMemberCardPo());
+				params.getGifts(), params.getMemberCardPo(),params.getConsumeSaleEmployees());
 		return JsonResults.success();
 	}
 	
@@ -101,7 +113,7 @@ public class ConsumeController {
 	public JsonResult<Void> doModify(@RequestBody ConsumeCreateOrModifyParams params) {
 		checkConsumeCreateParams(params);
 		consumeRecordService.modify(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts(),
-				params.getConsumeRecordPo().getId(), params.getMemberCardPo());
+				params.getConsumeRecordPo().getId(), params.getMemberCardPo(),params.getConsumeSaleEmployees());
 		return JsonResults.success();
 	}
 
@@ -162,6 +174,7 @@ public class ConsumeController {
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecordUnion.getConsumeRecordPo().getCustomerMobile());
 		vo.setConsumeRecordDetailUnion(consumeRecordUnion.getConsumeRecordDetailUnion());
 		vo.setConsumeRecordGiftUnion(consumeRecordUnion.getConsumeRecordGiftUnion());
+		vo.setConsumeSaleEmployees(consumeRecordUnion.getConsumeSaleEmployees());
 		vo.setCustomerName(customerPo.getName());
 		if (po.getActivityId() != null) {
 			ActivityPo activity = activityUnionMapper.selectById(po.getActivityId()).getActivityPo();

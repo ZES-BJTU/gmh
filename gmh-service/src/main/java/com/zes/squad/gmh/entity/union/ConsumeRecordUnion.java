@@ -11,4 +11,5 @@ public class ConsumeRecordUnion {
 	private ConsumeRecordPo consumeRecordPo;
 	private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
 	private List<ConsumeRecordGiftUnion> consumeRecordGiftUnion;
+	private List<ConsumeSaleEmployeeUnion> consumeSaleEmployees;
 }

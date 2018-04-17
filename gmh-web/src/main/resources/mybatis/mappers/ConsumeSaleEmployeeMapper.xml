@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zes.squad.gmh.mapper.ConsumeSaleEmployeeMapper">
+	<resultMap id="BaseResultMap"
+		type="com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="consume_record_id" jdbcType="BIGINT" property="consumeRecordId" />
+		<result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+		<result column="percent" jdbcType="DECIMAL" property="percent" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+
+	<resultMap id="UnionMap"
+		type="com.zes.squad.gmh.entity.union.ConsumeSaleEmployeeUnion">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="consume_record_id" jdbcType="BIGINT" property="consumeRecordId" />
+		<result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
+		<result column="percent" jdbcType="DECIMAL" property="percent" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+	</resultMap>
+	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo">
+		insert into consume_sale_employee (`consume_record_id`,`employee_id`,`percent`) values
+		(#{consumeRecordId,jdbcType=BIGINT},
+		#{employeeId,jdbcType=BIGINT},
+		#{percent,jdbcType=DECIMAL}
+		)	
+	</insert>
+	<select id="getUnionByrecordId" parameterType="long" resultMap="UnionMap">
+		select cse.`consume_record_id` as `consume_record_id`,
+		cse.`employee_id` as `employee_id`,
+		em.`name` as `employee_name`,
+		cse.`percent` as `percent`
+		from consume_sale_employee cse
+		left join employee em
+		on
+		em.`id`=cse.`employee_id`
+		where
+		cse.`consume_record_id`=#{consumeRecordId,jdbcType=BIGINT}
+	</select>
+</mapper>

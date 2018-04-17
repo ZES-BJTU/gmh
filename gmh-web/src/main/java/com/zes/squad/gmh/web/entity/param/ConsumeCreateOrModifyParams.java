@@ -5,6 +5,7 @@ import java.util.List;
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
+import com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 
 import lombok.Data;
@@ -21,5 +22,6 @@ public class ConsumeCreateOrModifyParams extends QueryParams{
 	private List<ConsumeRecordDetailPo> consumeRecordDetails;
 	private MemberCardPo memberCardPo;
 	private List<ConsumeRecordGiftPo> gifts;
+	private List<ConsumeSaleEmployeePo> consumeSaleEmployees;
 
 }

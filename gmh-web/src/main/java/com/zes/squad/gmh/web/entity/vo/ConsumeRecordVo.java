@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
+import com.zes.squad.gmh.entity.union.ConsumeSaleEmployeeUnion;
 
 import lombok.Data;
 
@@ -28,4 +29,5 @@ public class ConsumeRecordVo {
 	private Date consumeTime;
 	private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
 	private List<ConsumeRecordGiftUnion> consumeRecordGiftUnion;
+	private List<ConsumeSaleEmployeeUnion> consumeSaleEmployees;
 }

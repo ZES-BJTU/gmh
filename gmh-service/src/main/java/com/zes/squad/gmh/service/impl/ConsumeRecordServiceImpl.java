@@ -33,6 +33,7 @@ import com.zes.squad.gmh.entity.po.ActivityContentPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordGiftPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
+import com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo;
 import com.zes.squad.gmh.entity.po.CustomerActivityContentPo;
 import com.zes.squad.gmh.entity.po.CustomerActivityPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardContentPo;
@@ -47,6 +48,7 @@ import com.zes.squad.gmh.entity.union.ActivityUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
+import com.zes.squad.gmh.entity.union.ConsumeSaleEmployeeUnion;
 import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
@@ -59,6 +61,7 @@ import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordDetailUnionMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordGiftMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordMapper;
+import com.zes.squad.gmh.mapper.ConsumeSaleEmployeeMapper;
 import com.zes.squad.gmh.mapper.CustomerActivityContentMapper;
 import com.zes.squad.gmh.mapper.CustomerActivityMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
@@ -127,10 +130,12 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private CustomerMemberCardFlowMapper customerMemberCardFlowMapper;
 	@Autowired
 	private MemberCardMapper memberCardMapper;
-
+	@Autowired
+	private ConsumeSaleEmployeeMapper consumeSaleEmployeeMapper;
+	
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
-			List<ConsumeRecordDetailPo> consumeRecordDetails) {
+			List<ConsumeRecordDetailPo> consumeRecordDetails,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -146,6 +151,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);
+		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
 	}
 
 	public Map<String, Object> getTradeSerialNumber(String type) {
@@ -175,7 +181,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	@Override
 	public void createCardConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails, List<ConsumeRecordGiftPo> gifts,
-			MemberCardPo memberCardPo) {
+			MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -238,11 +244,12 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, gifts);
 		calMoney(consumeRecord, consumeRecordDetails);
+		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
 	}
 
 	@Override
 	public void createProjectConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
-			List<ConsumeRecordDetailPo> consumeRecordDetails) {
+			List<ConsumeRecordDetailPo> consumeRecordDetails,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -262,11 +269,12 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);
+		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
 	}
 
 	@Override
 	public void createActivityConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
-			List<ConsumeRecordDetailPo> consumeRecordDetails) {
+			List<ConsumeRecordDetailPo> consumeRecordDetails,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -325,6 +333,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);
+		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
 	}
 
 	@Override
@@ -337,6 +346,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		List<ConsumeRecordPo> consumeRecordPos = consumeRecordMapper.listConsumeRecordByCondition(condition);
 		List<ConsumeRecordDetailUnion> consumeRecordDetailUnioins = new ArrayList<ConsumeRecordDetailUnion>();
 		List<ConsumeRecordGiftUnion> consumeRecordGiftUnions = new ArrayList<ConsumeRecordGiftUnion>();
+		List<ConsumeSaleEmployeeUnion> consumeSaleEmployees = new ArrayList<ConsumeSaleEmployeeUnion>();
 		if (CollectionUtils.isEmpty(consumeRecordPos)) {
 			return PagedLists.newPagedList(pageNum, pageSize);
 		}
@@ -346,8 +356,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 					.getRecordDetailUnionByConsumeRecordId(consumeRecordPo.getId());
 			consumeRecordGiftUnions = consumeRecordGiftMapper
 					.getRecordGiftUnionByConsumeRecordId(consumeRecordPo.getId());
+			consumeSaleEmployees = consumeSaleEmployeeMapper.getUnionByrecordId(consumeRecordPo.getId());
 			consumeRecordUnion.setConsumeRecordDetailUnion(consumeRecordDetailUnioins);
 			consumeRecordUnion.setConsumeRecordGiftUnion(consumeRecordGiftUnions);
+			consumeRecordUnion.setConsumeSaleEmployees(consumeSaleEmployees);
 			consumeRecordUnions.add(CommonConverter.map(consumeRecordUnion, ConsumeRecordUnion.class));
 		}
 		PageInfo<ConsumeRecordUnion> info = new PageInfo<>(consumeRecordUnions);
@@ -385,25 +397,25 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 
 	@Override
 	public void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
-			List<ConsumeRecordGiftPo> gifts, Long id, MemberCardPo memberCardPo) {
+			List<ConsumeRecordGiftPo> gifts, Long id, MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		consumeRecordMapper.modify(id);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (consumeRecord.getConsumeType() == 1) {
 			map = getTradeSerialNumber("C");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createCardConsumeRecord(map, consumeRecord, consumeRecordDetails, gifts, memberCardPo);
+			createCardConsumeRecord(map, consumeRecord, consumeRecordDetails, gifts, memberCardPo,consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 2) {
 			map = getTradeSerialNumber("B");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProductConsumeRecord(map, consumeRecord, consumeRecordDetails);
+			createProductConsumeRecord(map, consumeRecord, consumeRecordDetails,consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 3) {
 			map = getTradeSerialNumber("D");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetails);
+			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetails,consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 4) {
 			map = getTradeSerialNumber("A");
 			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetails);
+			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetails,consumeSaleEmployees);
 		}
 
 		recoverAmount(id);
@@ -412,20 +424,30 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 
 	@Override
 	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetail,
-			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo) {
+			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
+				
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (consumeRecord.getConsumeType() == 1) {
 			map = getTradeSerialNumber("C");
-			createCardConsumeRecord(map, consumeRecord, consumeRecordDetail, gifts, memberCardPo);
+			createCardConsumeRecord(map, consumeRecord, consumeRecordDetail, gifts, memberCardPo,consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 2) {
 			map = getTradeSerialNumber("B");
-			createProductConsumeRecord(map, consumeRecord, consumeRecordDetail);
+			createProductConsumeRecord(map, consumeRecord, consumeRecordDetail,consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 3) {
 			map = getTradeSerialNumber("D");
-			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetail);
+			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetail,consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 4) {
 			map = getTradeSerialNumber("A");
-			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetail);
+			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetail,consumeSaleEmployees);
+		}
+	}
+	
+	public void saveSaleEmployee(Long consumeRecordId,List<ConsumeSaleEmployeePo> consumeSaleEmployees){
+		
+		for(ConsumeSaleEmployeePo po: consumeSaleEmployees){
+			po.setConsumeRecordId(consumeRecordId);
+			po.setPercent(po.getPercent().divide(new BigDecimal(100)));
+			consumeSaleEmployeeMapper.insert(po);
 		}
 	}
 

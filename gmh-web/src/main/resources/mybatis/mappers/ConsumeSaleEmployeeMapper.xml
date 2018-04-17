@@ -13,13 +13,10 @@
 
 	<resultMap id="UnionMap"
 		type="com.zes.squad.gmh.entity.union.ConsumeSaleEmployeeUnion">
-		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="consume_record_id" jdbcType="BIGINT" property="consumeRecordId" />
 		<result column="employee_id" jdbcType="BIGINT" property="employeeId" />
 		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
 		<result column="percent" jdbcType="DECIMAL" property="percent" />
-		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
-		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo">
 		insert into consume_sale_employee (`consume_record_id`,`employee_id`,`percent`) values

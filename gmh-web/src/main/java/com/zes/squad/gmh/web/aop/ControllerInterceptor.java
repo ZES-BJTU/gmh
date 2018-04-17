@@ -38,7 +38,7 @@ public class ControllerInterceptor implements MethodInterceptor {
     private String getApiInfo(MethodInvocation invocation) {
         StringBuilder builder = new StringBuilder();
         builder.append(invocation.getThis().getClass().getName());
-        builder.append("#");
+        builder.append(".");
         builder.append(invocation.getMethod().getName());
         return builder.toString();
     }

@@ -203,8 +203,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		customerMemberCardPo.setStoreId(ThreadContext.getUserStoreId());
 		customerMemberCardPo.setUniqueIdentifier(tradeSerialNumber);
 		customerMemberCardPo.setMemberCardId(memberCardPo.getId());
-		customerMemberCardPo.setProductDiscount(consumeRecordDetails.get(0).getProductDiscount().divide(new BigDecimal(100)));
-		customerMemberCardPo.setProjectDiscount(consumeRecordDetails.get(0).getProjectDiscount().divide(new BigDecimal(100)));
+		customerMemberCardPo.setProductDiscount(memberCardPo.getProductDiscount().divide(new BigDecimal(100)));
+		customerMemberCardPo.setProjectDiscount(memberCardPo.getProjectDiscount().divide(new BigDecimal(100)));
 		customerMemberCardPo.setRemainingMoney(memberCardPo.getAmount());
 		customerMemberCardPo.setValidDate(consumeRecordDetails.get(0).getValidDate());
 		consumeRecord.setCustomerId(customerPo.getId());

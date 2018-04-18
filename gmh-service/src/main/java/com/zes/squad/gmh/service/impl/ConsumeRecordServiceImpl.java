@@ -193,7 +193,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
 		if (customerPo == null)
 			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请先建立客户信息");
-		if(consumeRecordDetails.size()>0){
+		if(consumeRecordDetails.size()>1){
 			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "每次只能购买一张卡");
 		}
 		customerMemberCardPo.setCustomerId(customerPo.getId());

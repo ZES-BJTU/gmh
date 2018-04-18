@@ -20,6 +20,8 @@ public class ConsumeRecordDetailPo extends Po{
 	private String productCode;
 	private Long projectId;
 	private String projectCode;
+	private BigDecimal projectDiscount;
+	private BigDecimal productDiscount;
 	private Long cardId;
 	private Date validDate;
 //	private String cardCode;

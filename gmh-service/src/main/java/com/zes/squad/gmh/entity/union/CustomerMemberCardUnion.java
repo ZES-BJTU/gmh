@@ -16,6 +16,7 @@ public class CustomerMemberCardUnion {
 //	private Integer remainingTimes;
 	private List<CustomerMemberCardContentUnion> customerMemberCardContent;
 	private Integer isValid;
+	private Date validDate;
 	private Integer isReturned;
 	private String returnedReason;
 	private Date returnedTime;

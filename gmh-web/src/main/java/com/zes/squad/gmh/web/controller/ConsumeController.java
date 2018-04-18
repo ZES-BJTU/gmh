@@ -24,6 +24,7 @@ import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
 import com.zes.squad.gmh.entity.po.ActivityPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
+import com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
@@ -86,6 +87,8 @@ public class ConsumeController {
 	@RequestMapping(path = "/createConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		checkConsumeCreateParams(params);
+		List<ConsumeSaleEmployeePo> consumeSaleEmployees = getconsumeSaleEmployeesFromParams(params.getEmployeeIds(),params.getPercents());
+		params.setConsumeSaleEmployees(consumeSaleEmployees);
 		if(params.getConsumeSaleEmployees().size()!=0){
 			BigDecimal total = new BigDecimal(0);
 			for(int i=0;i<params.getConsumeSaleEmployees().size();i++){
@@ -101,6 +104,27 @@ public class ConsumeController {
 		return JsonResults.success();
 	}
 	
+	private List<ConsumeSaleEmployeePo> getconsumeSaleEmployeesFromParams(List<Long> employeeIds,
+			List<BigDecimal> percents) {
+		List<ConsumeSaleEmployeePo> consumeSaleEmployees = new ArrayList<ConsumeSaleEmployeePo>();
+		if(employeeIds==null||percents==null)
+			return consumeSaleEmployees;
+		if(employeeIds.size()!=percents.size()){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+					"员工绩效积分输入有误");
+		}
+		
+		ConsumeSaleEmployeePo po = new ConsumeSaleEmployeePo();
+		for(int i=0;i<employeeIds.size();i++){
+			po.setEmployeeId(employeeIds.get(i));
+			po.setPercent(percents.get(i));
+			consumeSaleEmployees.add(CommonConverter.map(po,
+					ConsumeSaleEmployeePo.class));
+		}
+		
+		return consumeSaleEmployees;
+	}
+
 	@RequestMapping(path = "/calMoney", method = { RequestMethod.PUT })
 	public JsonResult<BigDecimal> doCalMoney(@RequestBody ConsumeCreateOrModifyParams params) {
 

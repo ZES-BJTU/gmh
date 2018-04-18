@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -192,7 +193,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
 		if (customerPo == null)
 			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请先建立客户信息");
-
+		if(consumeRecordDetails.size()>0){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "每次只能购买一张卡");
+		}
 		customerMemberCardPo.setCustomerId(customerPo.getId());
 		customerMemberCardPo.setIsReturned(0);
 		customerMemberCardPo.setIsTurned(0);
@@ -200,10 +203,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		customerMemberCardPo.setStoreId(ThreadContext.getUserStoreId());
 		customerMemberCardPo.setUniqueIdentifier(tradeSerialNumber);
 		customerMemberCardPo.setMemberCardId(memberCardPo.getId());
-		customerMemberCardPo.setProductDiscount(memberCardPo.getProductDiscount());
-		customerMemberCardPo.setProjectDiscount(memberCardPo.getProjectDiscount());
+		customerMemberCardPo.setProductDiscount(consumeRecordDetails.get(0).getProductDiscount().divide(new BigDecimal(100)));
+		customerMemberCardPo.setProjectDiscount(consumeRecordDetails.get(0).getProjectDiscount().divide(new BigDecimal(100)));
 		customerMemberCardPo.setRemainingMoney(memberCardPo.getAmount());
-
+		customerMemberCardPo.setValidDate(consumeRecordDetails.get(0).getValidDate());
 		consumeRecord.setCustomerId(customerPo.getId());
 		if (consumeRecord.getPaymentWay() == 4)
 			consumeRecord.setConsumeMoney(new BigDecimal(0));
@@ -394,7 +397,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), consumeRecordUnions);
 
 	}
-
+	@Transactional(rollbackFor = { Throwable.class })
 	@Override
 	public void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts, Long id, MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
@@ -421,7 +424,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		recoverAmount(id);
 		recoverMoney(consumeRecord, consumeRecordDetails);
 	}
-
+	@Transactional(rollbackFor = { Throwable.class })
 	@Override
 	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetail,
 			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {

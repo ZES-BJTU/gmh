@@ -22,6 +22,7 @@ public class CustomerMemberCardPo extends Po{
 	private BigDecimal projectDiscount;
 	private BigDecimal productDiscount;
 	private Integer isValid;
+	private Date validDate;
 	private Integer isReturned;
 	private String returnedReason;
 	private Date returnedTime;

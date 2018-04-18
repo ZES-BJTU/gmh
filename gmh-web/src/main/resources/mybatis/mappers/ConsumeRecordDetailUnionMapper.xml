@@ -7,6 +7,7 @@
 		<result column="project_id" jdbcType="BIGINT" property="projectId" />
 		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
 		<result column="card_name" jdbcType="VARCHAR" property="cardName" />
+		<result column="valid_date" jdbcType="TIMESTAMP" property="validDate" />
 		<result column="amount" jdbcType="INTEGER" property="amount" />
 		<result column="operator_name" jdbcType="VARCHAR" property="operatorName" />
 		<result column="consultant_name" jdbcType="VARCHAR" property="consultantName" />
@@ -19,6 +20,7 @@
 		crd.`project_id` as `project_id`,
 		j.`name` as `project_name`,
 		mc.`name` as `card_name`,
+		crd.`valid_date` as `valid_date`,
 		crd.`amount` as `amount`,
 		e1.`name` as `operator_name`,
 		e2.`name` as `consultant_name`,

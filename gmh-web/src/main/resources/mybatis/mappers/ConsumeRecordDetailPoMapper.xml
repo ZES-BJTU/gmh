@@ -8,6 +8,7 @@
 		<result column="product_id" jdbcType="BIGINT" property="productId" />
 		<result column="project_id" jdbcType="BIGINT" property="projectId" />
 		<result column="card_id" jdbcType="BIGINT" property="cardId" />
+		<result column="valid_date" jdbcType="TIMESTAMP" property="validDate" />
 		<result column="amount" jdbcType="DECIMAL" property="amount" />
 		<result column="operator_id" jdbcType="INTEGER" property="operatorId" />
 		<result column="consultant_id" jdbcType="INTEGER" property="consultantId" />
@@ -17,13 +18,14 @@
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo">
 		INSERT INTO consume_record_detail
-		(`consume_record_id`,`trade_serial_number`,`product_id`,`project_id`,`card_id`,`amount`,`operator_id`,`consultant_id`,`sales_man_id`)
+		(`consume_record_id`,`trade_serial_number`,`product_id`,`project_id`,`card_id`,`valid_date`,`amount`,`operator_id`,`consultant_id`,`sales_man_id`)
 		VALUES
 		(#{consumeRecordId,jdbcType=BIGINT},
 		#{tradeSerialNumber, jdbcType=VARCHAR},
 		#{productId, jdbcType=BIGINT},
 		#{projectId, jdbcType=BIGINT},
 		#{cardId, jdbcType=BIGINT},
+		#{validDate,jdbcType=TIMESTAMP},
 		#{amount, jdbcType=DECIMAL},
 		#{operatorId, jdbcType=INTEGER},
 		#{consultantId, jdbcType=INTEGER},

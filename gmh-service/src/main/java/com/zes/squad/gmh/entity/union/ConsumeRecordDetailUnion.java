@@ -1,5 +1,7 @@
 package com.zes.squad.gmh.entity.union;
 
+import java.util.Date;
+
 import lombok.Data;
 
 @Data
@@ -11,6 +13,7 @@ public class ConsumeRecordDetailUnion {
 	private String projectName;
 	private Long cardId;
 	private String cardName;
+	private Date validDate;
 	private Integer amount;
 	private String operatorName;
 	private String consultantName;

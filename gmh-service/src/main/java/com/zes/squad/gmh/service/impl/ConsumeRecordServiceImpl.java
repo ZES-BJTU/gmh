@@ -1196,7 +1196,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		} else if (consumeType == 3) { // 做项目
 			for (ConsumeRecordDetailPo detail : consumeRecordDetails) {
 				money = money.add(
-						projectMapper.selectById(detail.getProductId()).getUnitPrice().multiply(detail.getAmount()));
+						projectMapper.selectById(detail.getProjectId()).getUnitPrice().multiply(detail.getAmount()));
 			}
 		} else if (consumeType == 4) { // 买活动
 			ActivityUnion activityUnion = activityUnionMapper.selectById(consumeRecord.getActivityId());

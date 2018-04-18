@@ -67,6 +67,12 @@
 			<if test="storeId != null">
 				`store_id` = #{storeId, jdbcType=BIGINT}
 			</if>
+			<if test="projectId != null">
+				and
+				id in (select consume_record_id from consume_record_detail where 
+				project_id=#{projectId,jdbcType=BIGINT}
+				)
+			</if>
 			<if test="consumeType != null ">
 				AND `consume_type` = #{consumeType, jdbcType=INTEGER}
 			</if>
@@ -99,6 +105,12 @@
 		<where>
 			<if test="storeId != null">
 				`store_id` = #{storeId, jdbcType=BIGINT}
+			</if>
+			<if test="projectId != null">
+				and
+				id in (select consume_record_id from consume_record_detail where 
+				project_id=#{projectId,jdbcType=BIGINT}
+				)
 			</if>
 			<if test="consumeType != null ">
 				AND `consume_type` = #{consumeType, jdbcType=INTEGER}

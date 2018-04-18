@@ -11,6 +11,7 @@ import lombok.ToString;
 public class ConsumeRecordQueryCondition extends QueryCondition{
 	private Long storeId;
 	private Integer consumeType;
+	private Long projectId;
 	private Date beginTime;
 	private Date endTime;
 	private String keyWords;

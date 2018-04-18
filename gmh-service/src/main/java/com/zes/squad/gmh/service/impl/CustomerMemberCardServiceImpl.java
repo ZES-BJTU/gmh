@@ -316,4 +316,13 @@ public class CustomerMemberCardServiceImpl implements CustomerMemberCardService 
 
 	}
 
+	@Override
+	public void changeValidDate(Long id, Date validDate) {
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("id", id);
+		map.put("validDate", validDate);
+		customerMemberCardMapper.changeValidDate(map);
+		
+	}
+
 }

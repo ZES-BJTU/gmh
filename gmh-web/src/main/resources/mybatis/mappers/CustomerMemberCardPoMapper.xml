@@ -290,4 +290,12 @@
 		where
 		`id`=#{id,jdbcType=BIGINT}
 	</update>
+	<update id="changeValidDate" parameterType="map">
+		update
+		customer_member_card
+		set
+		`valid_date`=#{validDate,jdbcType=TIMESTAMP}
+		where
+		`id`=#{id,jdbcType=BIGINT}
+	</update>
 </mapper>

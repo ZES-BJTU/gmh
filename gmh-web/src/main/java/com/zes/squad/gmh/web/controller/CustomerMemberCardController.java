@@ -29,6 +29,7 @@ import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ChangeCardStoreParams;
 import com.zes.squad.gmh.web.entity.param.CustomerMemberCardQueryParams;
+import com.zes.squad.gmh.web.entity.param.ModifyValidDateParams;
 import com.zes.squad.gmh.web.entity.param.PaymentParams;
 import com.zes.squad.gmh.web.entity.param.RechargeOrBuyProjectParams;
 import com.zes.squad.gmh.web.entity.param.ReturnCardParams;
@@ -103,6 +104,11 @@ public class CustomerMemberCardController {
 	public JsonResult<Void> doChangeStore(@RequestBody ChangeCardStoreParams params){
 		CustomerMemberCardPo po = CommonConverter.map(params, CustomerMemberCardPo.class);
 		customerMemberCardService.changeStore(po,params.getNewStoreId(),params.getTurnedMoney(),params.getTurnedReason());
+		return JsonResults.success();
+	}
+	@RequestMapping(path ="/changeValidDate", method = {RequestMethod.PUT})
+	public JsonResult<Void> doChangeValidDate(@RequestBody ModifyValidDateParams params){
+		customerMemberCardService.changeValidDate(params.getId(),params.getValidDate());
 		return JsonResults.success();
 	}
 	

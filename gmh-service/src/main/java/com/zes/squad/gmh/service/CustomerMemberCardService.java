@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
@@ -25,4 +26,6 @@ public interface CustomerMemberCardService {
 	void recharge(Long cardId, BigDecimal rechargeMoney, Long consultantId, Long salesManId);
 	
 	void buyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal useRemainMoney);
+
+	void changeValidDate(Long id, Date validDate);
 }

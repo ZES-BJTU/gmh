@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.web.entity.vo;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
@@ -14,6 +15,7 @@ public class CustomerMemberCardVo {
 	private BigDecimal remainingMoney;
 	private List<CustomerMemberCardContentVo> customerMemberCardContent;
 	private String isValid;
+	private Date validDate;
 	private String isReturned;
 	private DateTime returnedTime;
 	private String returnedReason;

@@ -51,4 +51,6 @@ public interface ConsumeRecordService {
 	BigDecimal doCalMoney(ConsumeRecordPo consumeRecordPo, List<ConsumeRecordDetailPo> consumeRecordDetails,
 			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo);
 
+	Workbook exportEmployeeSale(Date beginTime, Date endTime);
+
 }

@@ -41,6 +41,7 @@ import com.zes.squad.gmh.entity.po.CustomerMemberCardContentPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardFlowPo;
 import com.zes.squad.gmh.entity.po.CustomerMemberCardPo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
+import com.zes.squad.gmh.entity.po.EmployeePo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
 import com.zes.squad.gmh.entity.po.ProductFlowPo;
 import com.zes.squad.gmh.entity.po.ProjectStockPo;
@@ -54,6 +55,7 @@ import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardContentUnion;
 import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 import com.zes.squad.gmh.entity.union.EmployeeIntegralUnion;
+import com.zes.squad.gmh.entity.union.EmployeeSaleMoney;
 import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.entity.union.StoreUnion;
 import com.zes.squad.gmh.mapper.ActivityContentMapper;
@@ -133,10 +135,10 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private MemberCardMapper memberCardMapper;
 	@Autowired
 	private ConsumeSaleEmployeeMapper consumeSaleEmployeeMapper;
-	
+
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
-			List<ConsumeRecordDetailPo> consumeRecordDetails,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
+			List<ConsumeRecordDetailPo> consumeRecordDetails, List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -152,7 +154,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);
-		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
+		saveSaleEmployee(consumeRecord.getId(), consumeSaleEmployees);
 	}
 
 	public Map<String, Object> getTradeSerialNumber(String type) {
@@ -182,7 +184,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	@Override
 	public void createCardConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails, List<ConsumeRecordGiftPo> gifts,
-			MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
+			MemberCardPo memberCardPo, List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -193,7 +195,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		CustomerPo customerPo = customerMapper.getByMobile(consumeRecord.getCustomerMobile());
 		if (customerPo == null)
 			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请先建立客户信息");
-		if(consumeRecordDetails.size()>1){
+		if (consumeRecordDetails.size() > 1) {
 			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "每次只能购买一张卡");
 		}
 		customerMemberCardPo.setCustomerId(customerPo.getId());
@@ -247,12 +249,12 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, gifts);
 		calMoney(consumeRecord, consumeRecordDetails);
-		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
+		saveSaleEmployee(consumeRecord.getId(), consumeSaleEmployees);
 	}
 
 	@Override
 	public void createProjectConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
-			List<ConsumeRecordDetailPo> consumeRecordDetails,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
+			List<ConsumeRecordDetailPo> consumeRecordDetails, List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -272,12 +274,12 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);
-		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
+		saveSaleEmployee(consumeRecord.getId(), consumeSaleEmployees);
 	}
 
 	@Override
 	public void createActivityConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
-			List<ConsumeRecordDetailPo> consumeRecordDetails,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
+			List<ConsumeRecordDetailPo> consumeRecordDetails, List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		String tradeSerialNumber = (String) map.get("tradeSerialNumber");
 		Integer oldNumber = (Integer) map.get("oldNumber");
 		consumeRecord.setTradeSerialNumber(tradeSerialNumber);
@@ -336,7 +338,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 		calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());
 		calMoney(consumeRecord, consumeRecordDetails);
-		saveSaleEmployee(consumeRecord.getId(),consumeSaleEmployees);
+		saveSaleEmployee(consumeRecord.getId(), consumeSaleEmployees);
 	}
 
 	@Override
@@ -397,57 +399,66 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), consumeRecordUnions);
 
 	}
+
 	@Transactional(rollbackFor = { Throwable.class })
 	@Override
 	public void modify(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetails,
-			List<ConsumeRecordGiftPo> gifts, Long id, MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
+			List<ConsumeRecordGiftPo> gifts, Long id, MemberCardPo memberCardPo,
+			List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		consumeRecordMapper.modify(id);
+		ConsumeRecordPo tmp = consumeRecordMapper.getById(id);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (consumeRecord.getConsumeType() == 1) {
 			map = getTradeSerialNumber("C");
-			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createCardConsumeRecord(map, consumeRecord, consumeRecordDetails, gifts, memberCardPo,consumeSaleEmployees);
+			map.replace("tradeSerialNumber", tmp.getTradeSerialNumber());
+			createCardConsumeRecord(map, consumeRecord, consumeRecordDetails, gifts, memberCardPo,
+					consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 2) {
 			map = getTradeSerialNumber("B");
-			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProductConsumeRecord(map, consumeRecord, consumeRecordDetails,consumeSaleEmployees);
+			map.replace("tradeSerialNumber", tmp.getTradeSerialNumber());
+			createProductConsumeRecord(map, consumeRecord, consumeRecordDetails, consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 3) {
 			map = getTradeSerialNumber("D");
-			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetails,consumeSaleEmployees);
+			map.replace("tradeSerialNumber", tmp.getTradeSerialNumber());
+			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetails, consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 4) {
 			map = getTradeSerialNumber("A");
-			map.replace("tradeSerialNumber", consumeRecord.getTradeSerialNumber());
-			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetails,consumeSaleEmployees);
+			map.replace("tradeSerialNumber", tmp.getTradeSerialNumber());
+			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetails, consumeSaleEmployees);
 		}
 
 		recoverAmount(id);
 		recoverMoney(consumeRecord, consumeRecordDetails);
 	}
+
 	@Transactional(rollbackFor = { Throwable.class })
 	@Override
 	public void createConsumeRecord(ConsumeRecordPo consumeRecord, List<ConsumeRecordDetailPo> consumeRecordDetail,
-			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo,List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
-				
+			List<ConsumeRecordGiftPo> gifts, MemberCardPo memberCardPo,
+			List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (consumeRecord.getConsumeType() == 1) {
 			map = getTradeSerialNumber("C");
-			createCardConsumeRecord(map, consumeRecord, consumeRecordDetail, gifts, memberCardPo,consumeSaleEmployees);
+			createCardConsumeRecord(map, consumeRecord, consumeRecordDetail, gifts, memberCardPo, consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 2) {
 			map = getTradeSerialNumber("B");
-			createProductConsumeRecord(map, consumeRecord, consumeRecordDetail,consumeSaleEmployees);
+			createProductConsumeRecord(map, consumeRecord, consumeRecordDetail, consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 3) {
 			map = getTradeSerialNumber("D");
-			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetail,consumeSaleEmployees);
+			createProjectConsumeRecord(map, consumeRecord, consumeRecordDetail, consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 4) {
 			map = getTradeSerialNumber("A");
-			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetail,consumeSaleEmployees);
+			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetail, consumeSaleEmployees);
 		}
 	}
-	
-	public void saveSaleEmployee(Long consumeRecordId,List<ConsumeSaleEmployeePo> consumeSaleEmployees){
+
+	public void saveSaleEmployee(Long consumeRecordId, List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
 		
-		for(ConsumeSaleEmployeePo po: consumeSaleEmployees){
+		if(consumeSaleEmployees==null){
+			return;
+		}
+		for (ConsumeSaleEmployeePo po : consumeSaleEmployees) {
 			po.setConsumeRecordId(consumeRecordId);
 			po.setPercent(po.getPercent().divide(new BigDecimal(100)));
 			consumeSaleEmployeeMapper.insert(po);
@@ -854,10 +865,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 					EnumUtils.getDescByKey(union.getConsumeRecordPo().getPaymentWay(), PaymentWayEnum.class));
 			// 支付方式名称
 			if (union.getConsumeRecordPo().getPaymentWay() == 1 || union.getConsumeRecordPo().getPaymentWay() == 31) {
-				generateStringCell(row, columnNum++,
-						 memberCardMapper.selectById(
-									customerMemberCardMapper.getById(union.getConsumeRecordPo().getPayWayId()).getMemberCardId())
-									.getName());
+				generateStringCell(row, columnNum++, memberCardMapper.selectById(
+						customerMemberCardMapper.getById(union.getConsumeRecordPo().getPayWayId()).getMemberCardId())
+						.getName());
 			} else if (union.getConsumeRecordPo().getPaymentWay() == 2
 					|| union.getConsumeRecordPo().getPaymentWay() == 32) {
 				generateStringCell(row, columnNum++, "活动");
@@ -1013,7 +1023,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		}
 
 		Workbook workbook = new SXSSFWorkbook();
-		Sheet sheet = workbook.createSheet("员工积分");
+		Sheet sheet = workbook.createSheet("绩效积分");
 		if (CollectionUtils.isEmpty(employeeTotalIntegralUnions)) {
 			return workbook;
 		}
@@ -1203,6 +1213,58 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			money = activityUnion.getActivityPo().getPrice();
 		}
 		return money;
+	}
+
+	@Override
+	public Workbook exportEmployeeSale(Date beginTime, Date endTime) {
+		List<EmployeePo> employees = employeeMapper.selectByWorkType(null, ThreadContext.getUserStoreId());
+
+		List<EmployeeSaleMoney> employeeSaleMoneyList = new ArrayList<EmployeeSaleMoney>();
+		List<EmployeeSaleMoney> employeeSaleTotalMoneyList = new ArrayList<EmployeeSaleMoney>();
+		EmployeeSaleMoney employeeSaleMoney = new EmployeeSaleMoney();
+		BigDecimal money = new BigDecimal(0);
+		for (EmployeePo employee : employees) {
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("employeeId", employee.getId());
+			map.put("beginTime", beginTime);
+			map.put("endTime", endTime);
+			employeeSaleMoneyList = consumeSaleEmployeeMapper.getSaleUnionByEmployeeId(map);
+			for (EmployeeSaleMoney tmp : employeeSaleMoneyList) {
+				money = money.add(tmp.getMoney());
+			}
+			employeeSaleMoney.setEmployeeId(employee.getId());
+			employeeSaleMoney.setTotalMoney(money);
+			employeeSaleMoney.setEmployeeName(employee.getName());
+			employeeSaleTotalMoneyList.add(CommonConverter.map(employeeSaleMoney, EmployeeSaleMoney.class));
+		}
+		
+		Workbook workbook = new SXSSFWorkbook();
+		Sheet sheet = workbook.createSheet("员工业绩");
+		if (CollectionUtils.isEmpty(employeeSaleTotalMoneyList)) {
+			return workbook;
+		}
+		buildSheetByEmployeeSale(sheet, employeeSaleTotalMoneyList);
+		
+		return workbook;
+	}
+
+	private void buildSheetByEmployeeSale(Sheet sheet, List<EmployeeSaleMoney> employeeSaleTotalMoneyList) {
+		int rowNum = 0;
+		int columnNum = 0;
+		Row row = sheet.createRow(rowNum++);
+		generateStringCell(row, columnNum++, "员工姓名");
+		generateStringCell(row, columnNum++, "员工业绩");
+		for (EmployeeSaleMoney union : employeeSaleTotalMoneyList) {
+			columnNum = 0;
+			row = sheet.createRow(rowNum++);
+			// 姓名
+			generateStringCell(row, columnNum++, union.getEmployeeName());
+			// 积分
+			generateStringCell(row, columnNum++, union.getTotalMoney().toString());
+
+		}
+		
 	}
 
 }

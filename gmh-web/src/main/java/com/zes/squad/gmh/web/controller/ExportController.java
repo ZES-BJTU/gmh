@@ -130,4 +130,14 @@ public class ExportController {
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
+    @RequestMapping(path = "/employeeSale", method = { RequestMethod.GET })
+    public ModelAndView doExportEmployeeSale(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
+            throws Exception {
+
+        map.put("fileName", "员工业绩.xlsx");
+        Workbook workbook = consumeRecordService.exportEmployeeSale(beginTime, endTime);
+        ExcelView excelView = new ExcelView();
+        excelView.buildExcelDocument(map, workbook, request, response);
+        return new ModelAndView(excelView, map);
+    }
 }

@@ -18,6 +18,13 @@
 		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
 		<result column="percent" jdbcType="DECIMAL" property="percent" />
 	</resultMap>
+	<resultMap id="SaleUnionMap"
+		type="com.zes.squad.gmh.entity.union.EmployeeSaleMoney">
+		<result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+		<result column="employee_name" jdbcType="VARCHAR" property="employeeName" />
+		<result column="money" jdbcType="DECIMAL" property="money" />
+		<result column="totalMoney" jdbcType="DECIMAL" property="totalMoney" />
+	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo">
 		insert into consume_sale_employee (`consume_record_id`,`employee_id`,`percent`) values
 		(#{consumeRecordId,jdbcType=BIGINT},
@@ -37,4 +44,25 @@
 		where
 		cse.`consume_record_id`=#{consumeRecordId,jdbcType=BIGINT}
 	</select>
+	<select id="getSaleUnionByEmployeeId" parameterType="map" resultMap="SaleUnionMap">
+		select cse.consume_record_id as consume_record_id,
+		cse.employee_id as employee_id, 
+		cr.consume_money*cse.percent as money 
+		from consume_sale_employee cse 
+		left join consume_record cr 
+		on cr.id=cse.consume_record_id 
+		where
+		employee_id=#{employeeId,jdbcType=BIGINT}
+		and cse.consume_record_id in(
+		select id from cr
+		where is_modified=0
+		<if test="beginTime != null">
+		and cr.beginTime <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endTime != null">
+		and cr.endTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
+		</if>
+		)	
+	</select>
+	
 </mapper>

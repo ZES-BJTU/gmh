@@ -11,7 +11,9 @@ public class CustomerActivityPo extends Po{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Long consumeRecordId;
 	private Long customerId;
+	private Integer isValid;
 	private Long activityId;
 	private Long storeId;
 }

@@ -16,4 +16,6 @@ public interface CustomerActivityMapper {
 	CustomerActivityPo getById(Long id);
 
 	List<CustomerActivityUnion> getActivityListByCustomerId(Map<String, Object> map);
+	
+	void setInvalid(Long consumeRecordId);
 }

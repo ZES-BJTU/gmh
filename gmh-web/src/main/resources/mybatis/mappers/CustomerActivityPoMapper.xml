@@ -4,7 +4,9 @@
 	<resultMap id="BaseResultMap" type="com.zes.squad.gmh.entity.po.CustomerActivityPo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
+		<result column="consume_record_id" jdbcType="BIGINT" property="consumeRecordId" />
 		<result column="activity_id" jdbcType="BIGINT" property="activityId" />
+		<result column="is_valid" jdbcType="TINYINT" property="isValid" />
 		<result column="store_id" jdbcType="BIGINT" property="storeId" />
 		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
 		<result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
@@ -15,10 +17,12 @@
 		<result column="activity_name" jdbcType="VARCHAR" property="activityName" />
 	</resultMap>
 	<insert id="insert" parameterType="com.zes.squad.gmh.entity.po.CustomerActivityPo" useGeneratedKeys="true" keyProperty="id">
-		insert into customer_activity(`customer_id`,`activity_id`,`store_id`)
+		insert into customer_activity(`customer_id`,`consume_record_id`,`activity_id`,`is_valid`,`store_id`)
 		values(
 		#{customerId,jdbcType=BIGINT},
+		#{consumeRecordId,jdbcType=BIGINT},
 		#{activityId,jdbcType=BIGINT},
+		#{isValid,jdbcType=TINYINT},
 		#{storeId,jdbcType=BIGINT})
 	</insert>
 	<select id="listByCondition"
@@ -36,16 +40,17 @@
 		left join activity a
 		on
 		ca.`activity_id`=a.`id`
-		<where>
+		where ca.is_valid=1
+		
 			<if test="keyWord != null and keyWord != ''">
 				<bind name="condition" value="'%' + keyWord + '%'" />
-				CONCAT(c.`name`,a.`name`) LIKE
+				and CONCAT(c.`name`,a.`name`) LIKE
 				#{condition, jdbcType=VARCHAR}
 			</if>
 			<if test="storeId != null and storeId != ''">
-				ca.`store_id`=#{storeId,jdbcType=BIGINT}
+				and ca.`store_id`=#{storeId,jdbcType=BIGINT}
 			</if>
-		</where>		
+				
 	</select>
 	
 	<select id="getActivityListByCustomerId"
@@ -68,5 +73,10 @@
 		and
 		ca.`customer_id`=#{customerId,jdbcType=BIGINT}
 	</select>
-	
+	<update id="setInvalid" parameterType="long">
+		update customer_activity set
+		is_valid=0
+		where
+		consume_record_id=#{consumeRecordId,jdbcType=BIGINT}	
+	</update>
 </mapper>

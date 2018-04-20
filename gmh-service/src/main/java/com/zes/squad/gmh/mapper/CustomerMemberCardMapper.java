@@ -33,4 +33,6 @@ public interface CustomerMemberCardMapper {
 	List<CustomerMemberCardUnion> listCustomerMemberCardByCustomerId(Map<String,Object> map);
 	
 	void changeValidDate(Map<String,Object> map);
+	
+	void setInvalid(String unique_identifier);
 }

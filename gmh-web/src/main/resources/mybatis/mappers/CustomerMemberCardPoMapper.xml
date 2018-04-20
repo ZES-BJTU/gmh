@@ -298,4 +298,12 @@
 		where
 		`id`=#{id,jdbcType=BIGINT}
 	</update>
+	<update id="setInvalid" parameterType="string">
+		update
+		customer_member_card
+		set
+		`is_valid`=0
+		where
+		`is_valid`=#{unique_identifier,jdbcType=VARCHAR}
+	</update>
 </mapper>

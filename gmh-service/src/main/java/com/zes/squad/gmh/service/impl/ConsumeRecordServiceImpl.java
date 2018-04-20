@@ -411,6 +411,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		if (consumeRecord.getConsumeType() == 1) {
 			map = getTradeSerialNumber("C");
 			map.replace("tradeSerialNumber", tmp.getTradeSerialNumber());
+			customerMemberCardMapper.setInvalid(tmp.getTradeSerialNumber());
 			createCardConsumeRecord(map, consumeRecord, consumeRecordDetails, gifts, memberCardPo,
 					consumeSaleEmployees);
 		} else if (consumeRecord.getConsumeType() == 2) {
@@ -424,6 +425,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		} else if (consumeRecord.getConsumeType() == 4) {
 			map = getTradeSerialNumber("A");
 			map.replace("tradeSerialNumber", tmp.getTradeSerialNumber());
+			customerActivityMapper.setInvalid(tmp.getId());
 			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetails, consumeSaleEmployees);
 		}
 

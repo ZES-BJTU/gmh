@@ -54,13 +54,13 @@
 		where
 		employee_id=#{employeeId,jdbcType=BIGINT}
 		and cse.consume_record_id in(
-		select id from cr
+		select id from consume_record
 		where is_modified=0
 		<if test="beginTime != null">
-		and cr.beginTime <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
+		and beginTime <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
 		</if>
 		<if test="endTime != null">
-		and cr.endTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
+		and endTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
 		</if>
 		)	
 	</select>

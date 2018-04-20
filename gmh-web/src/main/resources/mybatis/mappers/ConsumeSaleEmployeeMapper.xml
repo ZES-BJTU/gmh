@@ -57,10 +57,10 @@
 		select id from consume_record
 		where is_modified=0
 		<if test="beginTime != null">
-		and beginTime <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
+		and consume_time <![CDATA[ >= ]]> #{beginTime,jdbcType=TIMESTAMP}
 		</if>
 		<if test="endTime != null">
-		and endTime <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
+		and consume_time <![CDATA[ <= ]]> #{endTime,jdbcType=TIMESTAMP}
 		</if>
 		)	
 	</select>

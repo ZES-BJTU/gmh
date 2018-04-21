@@ -4,6 +4,7 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -100,8 +101,9 @@ public class ConsumeController {
                 }
             }
         }
+        List<BigDecimal> percentList = getPercentListByStr(params.getPercents());
         List<ConsumeSaleEmployeePo> consumeSaleEmployees = getconsumeSaleEmployeesFromParams(params.getEmployeeIds(),
-                params.getPercents());
+        		percentList);
         params.setConsumeSaleEmployees(consumeSaleEmployees);
         if (params.getConsumeSaleEmployees().size() != 0) {
             BigDecimal total = new BigDecimal(0);
@@ -117,7 +119,21 @@ public class ConsumeController {
         return JsonResults.success();
     }
 
-    private List<ConsumeSaleEmployeePo> getconsumeSaleEmployeesFromParams(List<Long> employeeIds,
+    private List<BigDecimal> getPercentListByStr(String percents) {
+		List<BigDecimal> list = new ArrayList<BigDecimal>();
+		if(percents==null || percents=="")
+			return list;
+		List<String> tmpList = Arrays.asList(percents.split(","));
+		if(tmpList.size()==0){
+			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "输入格式错误 请以英文逗号分隔");
+		}
+		for(String tmp : tmpList){
+			list.add(new BigDecimal(tmp));
+		}
+		return list;
+	}
+
+	private List<ConsumeSaleEmployeePo> getconsumeSaleEmployeesFromParams(List<Long> employeeIds,
                                                                           List<BigDecimal> percents) {
         List<ConsumeSaleEmployeePo> consumeSaleEmployees = new ArrayList<ConsumeSaleEmployeePo>();
         if (employeeIds == null || percents == null)

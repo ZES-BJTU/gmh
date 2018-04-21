@@ -1,6 +1,5 @@
 package com.zes.squad.gmh.web.entity.param;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
@@ -25,5 +24,5 @@ public class ConsumeCreateOrModifyParams extends QueryParams {
     private List<ConsumeRecordGiftPo>   gifts;
     private List<ConsumeSaleEmployeePo> consumeSaleEmployees;
     private List<Long>                  employeeIds;
-    private List<BigDecimal>            percents;
+    private String            percents;
 }

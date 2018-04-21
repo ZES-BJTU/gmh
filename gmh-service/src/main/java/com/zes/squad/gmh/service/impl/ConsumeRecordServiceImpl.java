@@ -146,7 +146,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
         consumeRecord.setTradeSerialNumber(tradeSerialNumber);
         consumeRecord.setStoreId(ThreadContext.getUserStoreId());
         consumeRecord.setIsModified(0);
-
+        consumeRecord.setConsumeTime(new Date());
         consumeRecordMapper.insert(consumeRecord);
         tradeSerialNumberMapper.productNumberAdd(oldNumber + 1);
 

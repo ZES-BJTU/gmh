@@ -192,6 +192,16 @@ public class StockServiceImpl implements StockService {
         ensureCollectionNotEmpty(pos, "请先新建库存");
         return pos;
     }
+    
+    @Override
+    public List<StockPo> listStoreAllStocks() {
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何一家门店");
+        List<StockPo> pos = stockMapper.selectStoreAll(storeId);
+        ensureCollectionNotEmpty(pos, "请先新建库存");
+        return pos;
+    }
+    
 
     @Transactional(rollbackFor = { Throwable.class })
     @Override

@@ -87,6 +87,22 @@
 		FROM
 		stock
 	</select>
+	<select id="selectStoreAll" parameterType="long" resultMap="BaseResultMap">
+		SELECT
+		s.`id`, 
+		s.`stock_type_id`, 
+		s.`code`,
+		s.`name`, 
+		s.`unit_name`, 
+		FROM stock s
+		LEFT JOIN
+		stock_amount sa
+		ON
+		s.`id` = sa.`stock_id`
+		<where>
+			sa.`amount` > 0 AND sa.`store_id` = #{storeId:BIGINT}
+		</where>
+	</select>
 	<select id="getById" parameterType="long" resultMap="BaseResultMap">
 		select * from stock
 		where

@@ -118,6 +118,13 @@ public interface StockService {
      * @return
      */
     List<StockPo> listAllStocks();
+    
+    /**
+     * 查询本店所有库存
+     * 
+     * @return
+     */
+    List<StockPo> listStoreAllStocks();
 
     /**
      * 新建库存容量

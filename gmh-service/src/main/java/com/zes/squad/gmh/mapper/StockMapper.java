@@ -70,6 +70,14 @@ public interface StockMapper {
      */
     List<StockPo> selectAll();
 
+    /**
+     * 查询门店所有库存
+     * 
+     * @param storeId
+     * @return
+     */
+    List<StockPo> selectStoreAll(Long storeId);
+
     StockPo getById(Long id);
 
     int updateTotalAmount(Map<String, Number> map);

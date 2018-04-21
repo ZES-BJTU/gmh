@@ -195,6 +195,13 @@ public class StockController {
         return JsonResults.success(vos);
     }
 
+    @RequestMapping(path = "/store/all", method = { RequestMethod.GET })
+    public JsonResult<List<StockVo>> doListStoreAllStocks() {
+        List<StockPo> pos = stockService.listStoreAllStocks();
+        List<StockVo> vos = CommonConverter.mapList(pos, StockVo.class);
+        return JsonResults.success(vos);
+    }
+
     @RequestMapping(path = "/amount", method = { RequestMethod.POST })
     @ResponseStatus(HttpStatus.CREATED)
     public JsonResult<StockAmountVo> doCreateStockAmount(@RequestBody StockAmountParams params) {

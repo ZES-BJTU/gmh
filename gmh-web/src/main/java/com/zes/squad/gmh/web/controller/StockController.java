@@ -272,10 +272,10 @@ public class StockController {
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
     }
-    
+
     @RequestMapping(path = "/amount/convert/{stockId}", method = { RequestMethod.PATCH })
     public JsonResult<Void> doConvertProductAmount(@PathVariable("stockId") Long stockId,
-                                                   StockConvertParams params) {
+                                                   @RequestBody StockConvertParams params) {
         ensureParameterExist(stockId, "请选择库存");
         ensureParameterExist(params, "请选择库存");
         ensureParameterExist(params.getAmount(), "请输入库存转出数量");

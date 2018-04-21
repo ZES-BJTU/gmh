@@ -268,7 +268,7 @@ public class ProductController {
 
     @RequestMapping(path = "/amount/convert/{productId}", method = { RequestMethod.PATCH })
     public JsonResult<Void> doConvertProductAmount(@PathVariable("productId") Long productId,
-                                                   ProductConvertParams params) {
+                                                   @RequestBody ProductConvertParams params) {
         ensureParameterExist(productId, "请选择产品");
         ensureParameterExist(params, "请选择产品");
         ensureParameterExist(params.getAmount(), "请输入产品转出数量");

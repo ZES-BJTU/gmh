@@ -58,6 +58,7 @@ import com.zes.squad.gmh.entity.union.EmployeeIntegralUnion;
 import com.zes.squad.gmh.entity.union.EmployeeSaleMoney;
 import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.entity.union.StoreUnion;
+import com.zes.squad.gmh.helper.SMSHelper;
 import com.zes.squad.gmh.mapper.ActivityContentMapper;
 import com.zes.squad.gmh.mapper.ActivityUnionMapper;
 import com.zes.squad.gmh.mapper.ConsumeRecordDetailMapper;
@@ -135,7 +136,6 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 	private MemberCardMapper memberCardMapper;
 	@Autowired
 	private ConsumeSaleEmployeeMapper consumeSaleEmployeeMapper;
-
 	@Override
 	public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
 			List<ConsumeRecordDetailPo> consumeRecordDetails, List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
@@ -453,6 +453,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 			map = getTradeSerialNumber("A");
 			createActivityConsumeRecord(map, consumeRecord, consumeRecordDetail, consumeSaleEmployees);
 		}
+		
 	}
 
 	public void saveSaleEmployee(Long consumeRecordId, List<ConsumeSaleEmployeePo> consumeSaleEmployees) {
@@ -472,8 +473,9 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		Long payWayId = consumeRecord.getPayWayId();
 		Long payWayContentId = consumeRecord.getPayWayContentId();
 		Integer consumeType = consumeRecord.getConsumeType();
-		CustomerMemberCardPo cmcPo = customerMemberCardMapper.getById(payWayId);
+		
 		if (paymentWay == 1) {
+			CustomerMemberCardPo cmcPo = customerMemberCardMapper.getById(payWayId);
 			CustomerMemberCardFlowPo cardFlowPo = new CustomerMemberCardFlowPo();
 			cardFlowPo.setConsumeRecordId(consumeRecord.getId());
 			if(cmcPo.getIsValid()==0){
@@ -549,7 +551,20 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 						}
 					}
 				}
-
+				CustomerMemberCardPo tmpCmcPo = customerMemberCardMapper.getById(payWayId);
+				List<CustomerMemberCardContentUnion> cardProjectLeftList = customerMemberCardContentMapper.getProjectContentList(tmpCmcPo.getId());
+				String moneyMessage = "";
+				String projectMessage = "";
+				String message = "";
+				if(tmpCmcPo.getRemainingMoney()!=null){
+					moneyMessage = "储值" + tmpCmcPo.getRemainingMoney().toString() + "元,";
+				}
+				for(int i=0;i<cardProjectLeftList.size();i++){
+					projectMessage = projectMessage + cardProjectLeftList.get(i).getRelatedName() + cardProjectLeftList.get(i).getAmount().toString() +",";
+				}
+				message = "{\"remain\":\"" + moneyMessage + projectMessage + " \" ";
+				SMSHelper.sendMessage(consumeRecord.getCustomerMobile(), "SMS_132395798", message);
+				
 			} else {
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式选择有误");
 			}

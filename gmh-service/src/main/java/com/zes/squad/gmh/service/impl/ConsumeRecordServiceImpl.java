@@ -476,6 +476,14 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 		if (paymentWay == 1) {
 			CustomerMemberCardFlowPo cardFlowPo = new CustomerMemberCardFlowPo();
 			cardFlowPo.setConsumeRecordId(consumeRecord.getId());
+			if(cmcPo.getIsValid()==0){
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+						"此会员卡已失效");
+			}
+			if(cmcPo.getValidDate().before(new Date())){
+				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+						"此会员卡已过期");
+			}
 			if (consumeType == 2) {// 买产品
 				if (cmcPo.getRemainingMoney() == null) {
 					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,

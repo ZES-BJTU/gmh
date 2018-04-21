@@ -42,6 +42,22 @@
 		where
 		c.`customer_member_card_id`=#{customerMemberCardId,jdbcType=BIGINT}
 	</select>
+	
+	<select id="getContent" parameterType="long" resultMap="UnionResultMap">
+		select
+		c.`id` as `id`,
+		c.`related_id` as `related_id`,
+		p.`name` as `related_name`,
+		c.`content` as `content`,
+		c.`amount` as `amount`
+		from customer_member_card_content c
+		left join project p
+		on c.`related_id` = p.`id`
+		   
+		where
+		c.`id`=#{id,jdbcType=BIGINT}
+	</select>
+	
 	<update id="calAmount" parameterType="map">
 		update customer_member_card_content
 		set
@@ -89,4 +105,5 @@
 		and
 		related_id=#{relatedId,jdbcType=BIGINT}
 	</select>
+	
 </mapper>

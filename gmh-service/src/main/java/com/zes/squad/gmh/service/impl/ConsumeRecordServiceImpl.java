@@ -302,6 +302,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
         caPo.setCustomerId(customerPo.getId());
         caPo.setActivityId(consumeRecord.getActivityId());
         caPo.setStoreId(ThreadContext.getUserStoreId());
+        caPo.setConsumeRecordId(consumeRecord.getId());
+        caPo.setIsValid(1);
         customerActivityMapper.insert(caPo);
         List<ActivityContentPo> acList = activityContentMapper.selectByActivityId(consumeRecord.getActivityId());
 
@@ -1184,12 +1186,18 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
                         .getContent(payWayContentId);
                 money = money.subtract(customerMemberCardContentUnion.getContent()
                         .multiply(new BigDecimal(consumeRecord.getCouponAmount())));
+                if(money.compareTo(new BigDecimal(0))<0){
+                	money = new BigDecimal(0);
+                }
                 return money;
             } else if (paymentWay == 32) {// 活动代金券+现金------------减去代金券后剩余钱数
                 CustomerActivityContentUnion customerActivityContentUnion = customerActivityContentMapper
                         .getById(payWayContentId);
                 money = money.subtract(customerActivityContentUnion.getContent()
                         .multiply(new BigDecimal(consumeRecord.getCouponAmount())));
+                if(money.compareTo(new BigDecimal(0))<0){
+                	money = new BigDecimal(0);
+                }
                 return money;
             } else {
                 throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "不支持使用此支付方式");

@@ -30,7 +30,7 @@ public class SMSHelper {
         return builder.toString();
     }
 
-    public static void sendMessage(String mobile, String templateCode, String params) {
+    public static boolean sendMessage(String mobile, String templateCode, String params) {
         LogicHelper.ensureParameterExist(mobile, "手机号为空");
         //设置超时时间-可自行调整
         System.setProperty("sun.net.client.defaultConnectTimeout", DEFAULT_TIME_OUT);
@@ -69,21 +69,21 @@ public class SMSHelper {
             sendSmsResponse = acsClient.getAcsResponse(request);
             if (sendSmsResponse == null) {
                 log.error("发送短信失败, mobile is {}, response is null");
-                return;
+                return false;
             }
             if (sendSmsResponse.getCode() == null) {
                 log.error("发送短信失败, mobile is {}, code is null");
-                return;
+                return false;
             }
             if (!Objects.equals(sendSmsResponse.getCode(), "OK")) {
                 log.error("发送短信失败, mobile is {}, code is {}, message is {}", sendSmsResponse.getCode(),
                         sendSmsResponse.getMessage());
-                return;
+                return true;
             }
         } catch (Exception e) {
             log.error("发送短信异常", e);
-            return;
         }
+        return false;
     }
 
 }

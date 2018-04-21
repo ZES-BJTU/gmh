@@ -16,6 +16,8 @@
 		scheduler="gmhScheduler" />
 
 	<task:scheduled-tasks scheduler="gmhScheduler">
+		<task:scheduled ref="appointmentTask" method="remindFrontDesk"
+			cron="${appointment.cron}" />
 		<task:scheduled ref="appointmentTask" method="remindCustomers"
 			cron="${appointment.cron}" />
 	</task:scheduled-tasks>

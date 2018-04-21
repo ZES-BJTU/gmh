@@ -41,7 +41,11 @@ public class MessageServiceImpl implements MessageService {
         //针对同一个手机号防刷
         String mobileCacheKey = String.format(CACHE_KEY_AUTH_CODE_PREFIX, mobile);
         String authCode = SMSHelper.generateAuthCode(6);
-        SMSHelper.sendMessage(mobile, MessageProperties.get("template.auth.code"), buildAuthCodeContent(authCode));
+        boolean result = SMSHelper.sendMessage(mobile, MessageProperties.get("template.auth.code"),
+                buildAuthCodeContent(authCode));
+        if (!result) {
+            throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_FAILED, "验证码发送失败, 请稍后再试");
+        }
         //验证码有效期默认5分钟
         cacheService.put(mobileCacheKey, authCode, CacheConsts.FIVE_MINUTE);
     }

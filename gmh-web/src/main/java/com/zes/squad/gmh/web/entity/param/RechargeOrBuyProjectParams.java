@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 public class RechargeOrBuyProjectParams {
-	
-	private Long cardId;
-	private Long projectId;
-	private Integer projectTimes;
-	private BigDecimal useRemainMoney;
-	private BigDecimal rechargeMoney;
-	private Long consultantId;
-	private Long salesManId;
-	
+
+    private Long       cardId;
+    private Long       projectId;
+    private Integer    projectTimes;
+    private BigDecimal useRemainMoney;
+    private BigDecimal rechargeMoney;
+    private Long       consultantId;
+    private Long       salesManId;
+
 }

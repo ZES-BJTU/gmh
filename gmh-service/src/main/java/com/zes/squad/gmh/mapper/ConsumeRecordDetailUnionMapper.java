@@ -6,6 +6,6 @@ import com.zes.squad.gmh.entity.union.ConsumeRecordDetailUnion;
 
 public interface ConsumeRecordDetailUnionMapper {
 
-	List<ConsumeRecordDetailUnion> getRecordDetailUnionByConsumeRecordId(Long consumeRecordId);
-	
+    List<ConsumeRecordDetailUnion> getRecordDetailUnionByConsumeRecordId(Long consumeRecordId);
+
 }

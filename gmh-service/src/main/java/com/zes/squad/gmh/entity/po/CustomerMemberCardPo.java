@@ -10,27 +10,27 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class CustomerMemberCardPo extends Po{
+public class CustomerMemberCardPo extends Po {
 
-	private static final long serialVersionUID = 1L;
-	
-	private Long customerId;
-	private Long memberCardId;
-	private BigDecimal remainingMoney;
-//	private Long projectId;
-//	private Integer remainingTimes;
-	private BigDecimal projectDiscount;
-	private BigDecimal productDiscount;
-	private Integer isValid;
-	private Date validDate;
-	private Integer isReturned;
-	private String returnedReason;
-	private Date returnedTime;
-	private BigDecimal returnedMoney;
-	private Integer isTurned;
-	private Date turnedTime;
-	private BigDecimal turnedMoney;
-	private String turnedReason;
-	private String uniqueIdentifier;
-	private Long storeId;
+    private static final long serialVersionUID = 1L;
+
+    private Long              customerId;
+    private Long              memberCardId;
+    private BigDecimal        remainingMoney;
+    //	private Long projectId;
+    //	private Integer remainingTimes;
+    private BigDecimal        projectDiscount;
+    private BigDecimal        productDiscount;
+    private Integer           isValid;
+    private Date              validDate;
+    private Integer           isReturned;
+    private String            returnedReason;
+    private Date              returnedTime;
+    private BigDecimal        returnedMoney;
+    private Integer           isTurned;
+    private Date              turnedTime;
+    private BigDecimal        turnedMoney;
+    private String            turnedReason;
+    private String            uniqueIdentifier;
+    private Long              storeId;
 }

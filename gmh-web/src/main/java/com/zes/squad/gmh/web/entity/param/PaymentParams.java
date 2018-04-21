@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class PaymentParams {
-	
-	private Integer paymentWay;
-	private String customerMobile;
-	
+
+    private Integer paymentWay;
+    private String  customerMobile;
+
 }

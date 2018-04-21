@@ -65,14 +65,14 @@ public class ExcelHelper {
         cell.setCellValue(stringCellValue);
         return cell;
     }
-    
+
     public static Cell generateNumericCell(Row row, int column, double numericCellValue) {
         Cell cell = row.createCell(column);
         cell.setCellType(CellType.NUMERIC);
         cell.setCellValue(numericCellValue);
         return cell;
     }
-    
+
     private static boolean containsIgnoreCase(List<String> comparedStrings, String comparedString) {
         if (comparedString == null) {
             for (int i = 0; i < comparedStrings.size(); i++) {

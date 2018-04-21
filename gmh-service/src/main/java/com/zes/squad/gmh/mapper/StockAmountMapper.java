@@ -55,7 +55,7 @@ public interface StockAmountMapper {
      * @return
      */
     int addAmountByStockAndStore(StockAmountPo po);
-    
+
     /**
      * 根据库存和门店批量修改数量
      * 

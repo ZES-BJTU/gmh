@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ConsumeGiftEnum {
-	 	
-		PROJECT(1, "项目"),
-	    PRODUCT(2, "产品"),
-		COUPON(3,"代金券");
-		
-	    private int    key;
-	    private String desc;
+
+    PROJECT(1, "项目"),
+    PRODUCT(2, "产品"),
+    COUPON(3, "代金券");
+
+    private int    key;
+    private String desc;
 }

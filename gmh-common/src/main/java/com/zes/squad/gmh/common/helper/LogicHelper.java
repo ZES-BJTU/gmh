@@ -78,7 +78,7 @@ public class LogicHelper {
             throw new GmhException(BUSINESS_EXCEPTION_EMPTY_COLLECTION, message);
         }
     }
-    
+
     public static <V> void ensureCollectionNotEmpty(Collection<V> objects, String message) {
         if (objects == null || objects.isEmpty()) {
             throw new GmhException(BUSINESS_EXCEPTION_EMPTY_COLLECTION, message);

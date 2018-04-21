@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class ChangeCardStoreParams {
-	private Long id;
-	private String turnedReason;
-	private BigDecimal turnedMoney;
-	private Long newStoreId;
+    private Long       id;
+    private String     turnedReason;
+    private BigDecimal turnedMoney;
+    private Long       newStoreId;
 }

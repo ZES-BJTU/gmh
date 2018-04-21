@@ -82,10 +82,10 @@ public class MemberCardController {
         ensureParameterExist(params, "请选择待修改会员卡");
         params.setId(id);
         checkMemberCardModifyParams(params);
-//        if (params.getProjectDiscount() != null) {
-//            params.setProjectDiscount(params.getProjectDiscount().divide(new BigDecimal("100")));
-//            params.setProductDiscount(params.getProductDiscount().divide(new BigDecimal("100")));
-//        }
+        //        if (params.getProjectDiscount() != null) {
+        //            params.setProjectDiscount(params.getProjectDiscount().divide(new BigDecimal("100")));
+        //            params.setProductDiscount(params.getProductDiscount().divide(new BigDecimal("100")));
+        //        }
         MemberCardPo po = CommonConverter.map(params, MemberCardPo.class);
         MemberCardPo newPo = memberCardService.modifyMemberCard(po);
         MemberCardVo vo = CommonConverter.map(newPo, MemberCardVo.class);

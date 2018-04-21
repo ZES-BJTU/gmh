@@ -13,21 +13,21 @@ import lombok.Data;
 @Data
 public class ConsumeRecordVo {
 
-	private Long id;
-	private String tradeSerialNumber;
-	private String customerName;
-	private String customerMobile;
-	private String consumeType;
-	private BigDecimal consumeMoney;
-	private Integer paymentWay;
-	private String paymentWayName;
-	private Integer payWayId;
-	private String PayWayName;
-	private String activityName;
-	private Integer isModified;
-	private String remark;
-	private Date consumeTime;
-	private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
-	private List<ConsumeRecordGiftUnion> consumeRecordGiftUnion;
-	private List<ConsumeSaleEmployeeUnion> consumeSaleEmployees;
+    private Long                           id;
+    private String                         tradeSerialNumber;
+    private String                         customerName;
+    private String                         customerMobile;
+    private String                         consumeType;
+    private BigDecimal                     consumeMoney;
+    private Integer                        paymentWay;
+    private String                         paymentWayName;
+    private Integer                        payWayId;
+    private String                         PayWayName;
+    private String                         activityName;
+    private Integer                        isModified;
+    private String                         remark;
+    private Date                           consumeTime;
+    private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
+    private List<ConsumeRecordGiftUnion>   consumeRecordGiftUnion;
+    private List<ConsumeSaleEmployeeUnion> consumeSaleEmployees;
 }

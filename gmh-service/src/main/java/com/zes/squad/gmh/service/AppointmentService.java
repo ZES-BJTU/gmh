@@ -16,25 +16,26 @@ public interface AppointmentService {
     void createAppointment(AppointmentPo appointmentPo, List<AppointmentProjectParams> appointmentPorjectParams);
 
     void modifyAppointment(AppointmentPo appointmentPo, List<AppointmentProjectParams> appointmentPorjectParams);
-    
+
     void cancelAppointment(Long appointmentId);
 
     void finishAppointment(Long appointmentId);
 
     PagedList<AppointmentUnion> listPagedAppointments(AppointmentQueryCondition condition);
 
-    List<EmployeeTimeTable> queryEmployeeTimeTable(Long employeeId,Date date);
-    
+    List<EmployeeTimeTable> queryEmployeeTimeTable(Long employeeId, Date date);
+
     boolean isFree(Long employeeId, Date beginTime, Date endTime);
-    
+
     boolean isAllFree(List<AppointmentProjectParams> apList);
+
     /**
      * 查询需要短信提醒的预约
      * 
-     * @param 
+     * @param
      * @return
      */
     List<AppointmentUnion> getRemindAppointment();
 
-	List<OperatorTimeTableUnion> queryOperatorTimeTable(Long operatorId, Date beginTime, Date endTime);
+    List<OperatorTimeTableUnion> queryOperatorTimeTable(Long operatorId, Date beginTime, Date endTime);
 }

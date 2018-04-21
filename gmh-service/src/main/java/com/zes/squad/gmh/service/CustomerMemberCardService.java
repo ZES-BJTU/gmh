@@ -11,21 +11,21 @@ import com.zes.squad.gmh.entity.union.CustomerMemberCardUnion;
 
 public interface CustomerMemberCardService {
 
-	PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition customerMemberCardQueryCondition);
-	
-	PagedList<CustomerMemberCardUnion> changedListPagedCustomerMemberCard(CustomerMemberCardQueryCondition customerMemberCardQueryCondition);
+    PagedList<CustomerMemberCardUnion> listPagedCustomerMemberCard(CustomerMemberCardQueryCondition customerMemberCardQueryCondition);
 
-	void returnCard(CustomerMemberCardPo po);
+    PagedList<CustomerMemberCardUnion> changedListPagedCustomerMemberCard(CustomerMemberCardQueryCondition customerMemberCardQueryCondition);
 
-	void turnCard(Long oldCardId,Long newCardId,BigDecimal returnedMoney,String reason);
-	
-	void changeStore(CustomerMemberCardPo po, Long storeId, BigDecimal money, String reason);
+    void returnCard(CustomerMemberCardPo po);
 
-	List<CustomerMemberCardUnion> getCardListByMobile(Integer paymentWay,String customerMobile);
+    void turnCard(Long oldCardId, Long newCardId, BigDecimal returnedMoney, String reason);
 
-	void recharge(Long cardId, BigDecimal rechargeMoney, Long consultantId, Long salesManId);
-	
-	void buyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal useRemainMoney);
+    void changeStore(CustomerMemberCardPo po, Long storeId, BigDecimal money, String reason);
 
-	void changeValidDate(Long id, Date validDate);
+    List<CustomerMemberCardUnion> getCardListByMobile(Integer paymentWay, String customerMobile);
+
+    void recharge(Long cardId, BigDecimal rechargeMoney, Long consultantId, Long salesManId);
+
+    void buyProject(Long cardId, Long projectId, Integer projectTimes, BigDecimal useRemainMoney);
+
+    void changeValidDate(Long id, Date validDate);
 }

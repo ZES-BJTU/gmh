@@ -31,65 +31,65 @@ import com.zes.squad.gmh.service.CustomerService;
 @Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
-	@Autowired
-	private CustomerMapper customerMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
 
-	public int insert(CustomerPo customerPo) {
-		CustomerPo tmp = customerMapper.getByMobile(customerPo.getMobile());
-		if(tmp!=null)
-			throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "已存在该顾客信息");
-		customerPo.setStoreId(ThreadContext.getUserStoreId());
-		int i = customerMapper.insert(customerPo);
-		return i;
-	}
+    public int insert(CustomerPo customerPo) {
+        CustomerPo tmp = customerMapper.getByMobile(customerPo.getMobile());
+        if (tmp != null)
+            throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "已存在该顾客信息");
+        customerPo.setStoreId(ThreadContext.getUserStoreId());
+        int i = customerMapper.insert(customerPo);
+        return i;
+    }
 
-	@Override
-	public int update(CustomerPo customerPo) {
-		customerPo.setStoreId(ThreadContext.getUserStoreId());
-		int i = customerMapper.update(customerPo);
-		return i;
-	}
+    @Override
+    public int update(CustomerPo customerPo) {
+        customerPo.setStoreId(ThreadContext.getUserStoreId());
+        int i = customerMapper.update(customerPo);
+        return i;
+    }
 
-	@Override
-	public int delete(Long id) {
-		int i = customerMapper.delete(id);
-		return i;
-	}
+    @Override
+    public int delete(Long id) {
+        int i = customerMapper.delete(id);
+        return i;
+    }
 
-	@Override
-	public PagedList<CustomerPo> listPagedCustomerPo(CustomerQueryCondition condition) {
-		int pageNum = condition.getPageNum();
-		int pageSize = condition.getPageSize();
-		PageHelper.startPage(pageNum, pageSize);
-		List<CustomerPo> unions = customerMapper.selectByCondition(condition);
-		if (CollectionUtils.isEmpty(unions)) {
-			return PagedLists.newPagedList(pageNum, pageSize);
-		}
-		PageInfo<CustomerPo> info = new PageInfo<>(unions);
-		return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
-	}
+    @Override
+    public PagedList<CustomerPo> listPagedCustomerPo(CustomerQueryCondition condition) {
+        int pageNum = condition.getPageNum();
+        int pageSize = condition.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+        List<CustomerPo> unions = customerMapper.selectByCondition(condition);
+        if (CollectionUtils.isEmpty(unions)) {
+            return PagedLists.newPagedList(pageNum, pageSize);
+        }
+        PageInfo<CustomerPo> info = new PageInfo<>(unions);
+        return PagedLists.newPagedList(info.getPageNum(), info.getPageSize(), info.getTotal(), unions);
+    }
 
-	@Override
-	public Workbook exportCustomerRecord() {
-		Workbook workbook = new SXSSFWorkbook();
-		Sheet sheet = workbook.createSheet("库存流水统计");
-		Long storeId = ThreadContext.getUserStoreId();
-		ensureEntityExist(storeId, "当前用户不属于任何门店");
-		
-		CustomerQueryCondition condition = new CustomerQueryCondition();
-		
-		List<CustomerPo> unions = customerMapper.selectByCondition(condition);
-		
-		if (CollectionUtils.isEmpty(unions)) {
-			return workbook;
-		}
-		buildSheetByCustomerUnions(sheet, unions);
-		return workbook;
+    @Override
+    public Workbook exportCustomerRecord() {
+        Workbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("库存流水统计");
+        Long storeId = ThreadContext.getUserStoreId();
+        ensureEntityExist(storeId, "当前用户不属于任何门店");
 
-	}
+        CustomerQueryCondition condition = new CustomerQueryCondition();
 
-	private void buildSheetByCustomerUnions(Sheet sheet, List<CustomerPo> pos) {
-		int rowNum = 0;
+        List<CustomerPo> unions = customerMapper.selectByCondition(condition);
+
+        if (CollectionUtils.isEmpty(unions)) {
+            return workbook;
+        }
+        buildSheetByCustomerUnions(sheet, unions);
+        return workbook;
+
+    }
+
+    private void buildSheetByCustomerUnions(Sheet sheet, List<CustomerPo> pos) {
+        int rowNum = 0;
         int columnNum = 0;
         Row row = sheet.createRow(rowNum++);
         generateStringCell(row, columnNum++, "姓名");
@@ -106,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
             //姓名
             generateStringCell(row, columnNum++, po.getName());
             //性别
-            generateStringCell(row, columnNum++, EnumUtils.getDescByKey(po.getGender(),GenderEnum.class));
+            generateStringCell(row, columnNum++, EnumUtils.getDescByKey(po.getGender(), GenderEnum.class));
             //电话
             generateStringCell(row, columnNum++, po.getMobile());
             //出生日期
@@ -122,7 +122,7 @@ public class CustomerServiceImpl implements CustomerService {
             //备注
             generateStringCell(row, columnNum++, po.getRemark());
         }
-		
-	}
+
+    }
 
 }

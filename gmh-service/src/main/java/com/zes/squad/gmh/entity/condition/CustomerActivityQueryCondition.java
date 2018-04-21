@@ -7,8 +7,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class CustomerActivityQueryCondition extends QueryCondition{
-	
-	private Long storeId;
-	private String keyWord;
+public class CustomerActivityQueryCondition extends QueryCondition {
+
+    private Long   storeId;
+    private String keyWord;
 }

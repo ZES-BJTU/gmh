@@ -10,7 +10,7 @@ import com.zes.squad.gmh.entity.union.EmployeeTimeTable;
 public interface AppointmentMapper {
 
     int insert(AppointmentPo appointmentPo);
-    
+
     int modify(AppointmentPo appointmentPo);
 
     int cancelAppointment(Long id);
@@ -18,8 +18,8 @@ public interface AppointmentMapper {
     int finishAppointment(Long id);
 
     List<AppointmentPo> listAppointmentByCondition(AppointmentQueryCondition condition);
-    
-    List<EmployeeTimeTable> queryEmployeeTimeTable(Map<String,Object> map);
-    
+
+    List<EmployeeTimeTable> queryEmployeeTimeTable(Map<String, Object> map);
+
     List<AppointmentPo> listRemindAppointment();
 }

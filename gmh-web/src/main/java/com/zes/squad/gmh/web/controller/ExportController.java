@@ -38,9 +38,10 @@ public class ExportController {
     @Autowired
     private ProductConvertStockService productConvertStockService;
     @Autowired
-    private ConsumeRecordService consumeRecordService;
+    private ConsumeRecordService       consumeRecordService;
     @Autowired
-    private CustomerService customerService;
+    private CustomerService            customerService;
+
     @RequestMapping(path = "/projects", method = { RequestMethod.GET })
     public ModelAndView doExportProjects(ModelMap map, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -94,23 +95,24 @@ public class ExportController {
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
-    
+
     @RequestMapping(path = "/consumeRecord", method = { RequestMethod.GET })
     public ModelAndView doExportConsumeRecord(ModelMap map, HttpServletRequest request, HttpServletResponse response,
-                                               Date beginTime, Date endTime, Integer consumeType)
+                                              Date beginTime, Date endTime, Integer consumeType)
             throws Exception {
         if (beginTime != null && endTime != null) {
             LogicHelper.ensureParameterValid(endTime.after(beginTime), "起始时间不能晚于截止时间");
         }
         map.put("fileName", "消费记录.xlsx");
-        Workbook workbook = consumeRecordService.exportConsumeRecord(consumeType,beginTime, endTime);
+        Workbook workbook = consumeRecordService.exportConsumeRecord(consumeType, beginTime, endTime);
         ExcelView excelView = new ExcelView();
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
-    
+
     @RequestMapping(path = "/customer", method = { RequestMethod.GET })
-    public ModelAndView doExportCustomer(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
+    public ModelAndView doExportCustomer(ModelMap map, HttpServletRequest request, HttpServletResponse response,
+                                         Date beginTime, Date endTime)
             throws Exception {
 
         map.put("fileName", "顾客信息.xlsx");
@@ -119,9 +121,10 @@ public class ExportController {
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
-    
+
     @RequestMapping(path = "/employeePerformance", method = { RequestMethod.GET })
-    public ModelAndView doExportEmployeePerformance(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
+    public ModelAndView doExportEmployeePerformance(ModelMap map, HttpServletRequest request,
+                                                    HttpServletResponse response, Date beginTime, Date endTime)
             throws Exception {
 
         map.put("fileName", "员工绩效.xlsx");
@@ -130,8 +133,10 @@ public class ExportController {
         excelView.buildExcelDocument(map, workbook, request, response);
         return new ModelAndView(excelView, map);
     }
+
     @RequestMapping(path = "/employeeSale", method = { RequestMethod.GET })
-    public ModelAndView doExportEmployeeSale(ModelMap map, HttpServletRequest request, HttpServletResponse response,Date beginTime, Date endTime)
+    public ModelAndView doExportEmployeeSale(ModelMap map, HttpServletRequest request, HttpServletResponse response,
+                                             Date beginTime, Date endTime)
             throws Exception {
 
         map.put("fileName", "员工业绩.xlsx");

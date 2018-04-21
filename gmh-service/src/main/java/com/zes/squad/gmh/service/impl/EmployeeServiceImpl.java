@@ -139,7 +139,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeePo> listEmployeesByWorkType(Integer workType) {
         return employeeMapper.selectByWorkType(workType, ThreadContext.getUserStoreId());
     }
-    
+
     @Override
     public List<EmployeePo> listEmployeesByWorkTypes(List<Integer> workTypes) {
         return employeeMapper.selectByWorkTypes(workTypes, ThreadContext.getUserStoreId());

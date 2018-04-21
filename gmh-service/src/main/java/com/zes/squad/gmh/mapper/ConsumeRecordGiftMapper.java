@@ -7,8 +7,8 @@ import com.zes.squad.gmh.entity.union.ConsumeRecordGiftUnion;
 
 public interface ConsumeRecordGiftMapper {
 
-	void insert(ConsumeRecordGiftPo gift);
+    void insert(ConsumeRecordGiftPo gift);
 
-	List<ConsumeRecordGiftUnion> getRecordGiftUnionByConsumeRecordId(Long consumeRecordId);
-	
+    List<ConsumeRecordGiftUnion> getRecordGiftUnionByConsumeRecordId(Long consumeRecordId);
+
 }

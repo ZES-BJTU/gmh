@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class QueryEmployeeTimeTableParams {
-	
-	private Long employeeId;
-	private Date date;
+
+    private Long employeeId;
+    private Date date;
 }

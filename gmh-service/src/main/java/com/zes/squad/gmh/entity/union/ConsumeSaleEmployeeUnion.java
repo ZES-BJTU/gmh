@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class ConsumeSaleEmployeeUnion {
-	
-	private Long consumeRecordId;
-	private Long employeeId;
-	private String employeeName;
-	private BigDecimal percent;
+
+    private Long       consumeRecordId;
+    private Long       employeeId;
+    private String     employeeName;
+    private BigDecimal percent;
 }

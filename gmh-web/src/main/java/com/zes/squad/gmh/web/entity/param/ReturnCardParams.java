@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class ReturnCardParams {
-	private Long id;
-	private String returnedReason;
-	private BigDecimal returnedMoney;
+    private Long       id;
+    private String     returnedReason;
+    private BigDecimal returnedMoney;
 }

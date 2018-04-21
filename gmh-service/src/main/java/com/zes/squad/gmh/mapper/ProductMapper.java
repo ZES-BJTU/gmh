@@ -76,7 +76,7 @@ public interface ProductMapper {
      * @return
      */
     List<ProductPo> selectAll();
-    
+
     /**
      * 查询本门店所有产品
      * 

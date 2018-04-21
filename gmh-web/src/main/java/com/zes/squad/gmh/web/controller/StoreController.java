@@ -70,8 +70,7 @@ public class StoreController extends BaseController {
     }
 
     @RequestMapping(path = "/{id}", method = { RequestMethod.PUT })
-    public JsonResult<StoreVo> doModifyStore(@PathVariable("id") Long id,
-                                             @RequestBody StoreParams params) {
+    public JsonResult<StoreVo> doModifyStore(@PathVariable("id") Long id, @RequestBody StoreParams params) {
         checkModifyStoreParams(id, params);
         params.setId(id);
         StorePo po = CommonConverter.map(params, StorePo.class);
@@ -125,7 +124,7 @@ public class StoreController extends BaseController {
         return JsonResults.success(PagedLists.newPagedList(pagedUnions.getPageNum(), pagedUnions.getPageSize(),
                 pagedUnions.getTotalCount(), vos));
     }
-    
+
     @RequestMapping(path = "/all", method = { RequestMethod.GET })
     public JsonResult<List<StoreVo>> doListStores() {
         List<StorePo> pos = storeService.listStores();

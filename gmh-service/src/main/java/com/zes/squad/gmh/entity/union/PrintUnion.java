@@ -6,12 +6,13 @@ import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
 import com.zes.squad.gmh.entity.po.StorePo;
 
 import lombok.Data;
+
 @Data
 public class PrintUnion {
 
-	private ConsumeRecordPo consumeRecordPo;
-	private StorePo storePo;
-	private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
-	private List<ConsumeRecordGiftUnion> consumeRecordGiftUnion;
-	private List<CustomerMemberCardUnion> customerMemberCardUnions;
+    private ConsumeRecordPo                consumeRecordPo;
+    private StorePo                        storePo;
+    private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
+    private List<ConsumeRecordGiftUnion>   consumeRecordGiftUnion;
+    private List<CustomerMemberCardUnion>  customerMemberCardUnions;
 }

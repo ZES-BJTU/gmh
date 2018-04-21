@@ -9,17 +9,17 @@ import com.zes.squad.gmh.entity.union.EmployeeIntegralUnion;
 
 public interface ConsumeRecordMapper {
 
-	int insert(ConsumeRecordPo consumeRecordPo);
+    int insert(ConsumeRecordPo consumeRecordPo);
 
-	List<ConsumeRecordPo> listConsumeRecordByCondition(ConsumeRecordQueryCondition condition);
-	
-	List<ConsumeRecordPo> changedListConsumeRecordByCondition(ConsumeRecordQueryCondition condition);
-	
-	void modify(Long id);
-	
-	ConsumeRecordPo getById(Long id);
-	
-	List<EmployeeIntegralUnion> getIntegralEmployeeIntegralByEmployeeId(Map<String,Object> map);
+    List<ConsumeRecordPo> listConsumeRecordByCondition(ConsumeRecordQueryCondition condition);
 
-	List<Long> getConsumeIdListByTime(Map<String, Object> map);
+    List<ConsumeRecordPo> changedListConsumeRecordByCondition(ConsumeRecordQueryCondition condition);
+
+    void modify(Long id);
+
+    ConsumeRecordPo getById(Long id);
+
+    List<EmployeeIntegralUnion> getIntegralEmployeeIntegralByEmployeeId(Map<String, Object> map);
+
+    List<Long> getConsumeIdListByTime(Map<String, Object> map);
 }

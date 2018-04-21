@@ -8,10 +8,10 @@ import com.zes.squad.gmh.entity.union.ConsumeSaleEmployeeUnion;
 import com.zes.squad.gmh.entity.union.EmployeeSaleMoney;
 
 public interface ConsumeSaleEmployeeMapper {
-	
-	List<ConsumeSaleEmployeeUnion> getUnionByrecordId(Long consumeRecordId);
-	
-	void insert(ConsumeSaleEmployeePo consumeSaleEmployee);
-	
-	List<EmployeeSaleMoney> getSaleUnionByEmployeeId(Map<String,Object> map); 
+
+    List<ConsumeSaleEmployeeUnion> getUnionByrecordId(Long consumeRecordId);
+
+    void insert(ConsumeSaleEmployeePo consumeSaleEmployee);
+
+    List<EmployeeSaleMoney> getSaleUnionByEmployeeId(Map<String, Object> map);
 }

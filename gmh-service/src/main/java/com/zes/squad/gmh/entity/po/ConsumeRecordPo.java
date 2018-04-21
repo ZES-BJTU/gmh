@@ -12,20 +12,20 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ConsumeRecordPo extends Po {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String tradeSerialNumber;
-	private Long customerId;
-	private String customerMobile;
-	private Integer consumeType;
-	private BigDecimal consumeMoney;
-	private Integer paymentWay;
-	private Long payWayId;
-	private Long payWayContentId;
-	private Integer couponAmount;
-	private Long activityId;
-	private Integer isModified;
-	private String remark;
-	private Date consumeTime;
-	private Long storeId;
+    private String            tradeSerialNumber;
+    private Long              customerId;
+    private String            customerMobile;
+    private Integer           consumeType;
+    private BigDecimal        consumeMoney;
+    private Integer           paymentWay;
+    private Long              payWayId;
+    private Long              payWayContentId;
+    private Integer           couponAmount;
+    private Long              activityId;
+    private Integer           isModified;
+    private String            remark;
+    private Date              consumeTime;
+    private Long              storeId;
 }

@@ -11,13 +11,11 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ConsumeRecordDetailWithCard extends ConsumeRecordDetailPo{
+public class ConsumeRecordDetailWithCard extends ConsumeRecordDetailPo {
 
+    private static final long serialVersionUID = 1L;
 
+    private Integer           times;
+    private BigDecimal        money;
 
-	private static final long serialVersionUID = 1L;
-	
-	private Integer times;
-	private BigDecimal money;
-	
 }

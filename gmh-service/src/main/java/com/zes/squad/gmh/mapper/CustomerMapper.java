@@ -7,15 +7,15 @@ import com.zes.squad.gmh.entity.po.CustomerPo;
 
 public interface CustomerMapper {
 
-	int insert(CustomerPo customerPo);
-	
-	int update(CustomerPo customerPo);
+    int insert(CustomerPo customerPo);
 
-	int delete(Long id);
+    int update(CustomerPo customerPo);
 
-	List<CustomerPo> selectByCondition(CustomerQueryCondition condition);
-	
-	CustomerPo getById(Long id);
-	
-	CustomerPo getByMobile(String mobile);
+    int delete(Long id);
+
+    List<CustomerPo> selectByCondition(CustomerQueryCondition condition);
+
+    CustomerPo getById(Long id);
+
+    CustomerPo getByMobile(String mobile);
 }

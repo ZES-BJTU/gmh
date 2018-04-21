@@ -12,12 +12,12 @@ public interface AppointmentProjectMapper {
     int insert(AppointmentProjectPo appointmentProjectPo);
 
     List<AppointmentProjectUnion> getAppointmentProjectUnionByAppId(Long appoentmentId);
-    
+
     int delById(Long id);
 
     int delByAppointmentId(Long appointmentId);
-    
+
     List<AppointmentProjectPo> getListByAppointmentId(Long appointmentId);
 
-	List<OperatorTimeTableUnion> queryOperatorTimeTable(Map<String, Object> map);
+    List<OperatorTimeTableUnion> queryOperatorTimeTable(Map<String, Object> map);
 }

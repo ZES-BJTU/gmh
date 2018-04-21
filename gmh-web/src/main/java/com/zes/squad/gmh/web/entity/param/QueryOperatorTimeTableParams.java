@@ -9,9 +9,9 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class QueryOperatorTimeTableParams extends QueryParams{
+public class QueryOperatorTimeTableParams extends QueryParams {
 
-	private Long operatorId;
-	private Date beginTime;
-	private Date endTime;
+    private Long operatorId;
+    private Date beginTime;
+    private Date endTime;
 }

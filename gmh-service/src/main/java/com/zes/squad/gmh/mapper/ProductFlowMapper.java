@@ -23,7 +23,7 @@ public interface ProductFlowMapper {
      * @return
      */
     int updateStatus(Long id);
-    
+
     /**
      * 根据消费记录id将流水设置无效
      * 

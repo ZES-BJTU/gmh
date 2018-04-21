@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class PrintParams {
 
-	private Long consumeRecordId;
+    private Long consumeRecordId;
 }

@@ -14,17 +14,16 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-public class ConsumeCreateOrModifyParams extends QueryParams{
-	
-	
-	private ConsumeRecordPo consumeRecordPo;	
-	private String validStr;
-	private List<ConsumeRecordDetailPo> consumeRecordDetails;
-	private MemberCardPo memberCardPo;
-	private List<ConsumeRecordGiftPo> gifts;
-	private List<ConsumeSaleEmployeePo> consumeSaleEmployees;
-	private List<Long> employeeIds;
-	private List<BigDecimal> percents;
+public class ConsumeCreateOrModifyParams extends QueryParams {
+
+    private ConsumeRecordPo             consumeRecordPo;
+    private String                      validStr;
+    private List<ConsumeRecordDetailPo> consumeRecordDetails;
+    private MemberCardPo                memberCardPo;
+    private List<ConsumeRecordGiftPo>   gifts;
+    private List<ConsumeSaleEmployeePo> consumeSaleEmployees;
+    private List<Long>                  employeeIds;
+    private List<BigDecimal>            percents;
 }

@@ -8,10 +8,8 @@ import com.zes.squad.gmh.entity.union.CustomerActivityUnion;
 
 public interface CustomerActivityService {
 
-	PagedList<CustomerActivityUnion> listPagedCustomerActivity(
-			CustomerActivityQueryCondition customerActivityQueryCondition);
+    PagedList<CustomerActivityUnion> listPagedCustomerActivity(CustomerActivityQueryCondition customerActivityQueryCondition);
 
-	List<CustomerActivityUnion> getAcitvityListByMobile(Integer paymentWay,String customerMobile);
-	
-	
+    List<CustomerActivityUnion> getAcitvityListByMobile(Integer paymentWay, String customerMobile);
+
 }

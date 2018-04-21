@@ -8,19 +8,19 @@ import com.zes.squad.gmh.entity.union.CustomerActivityContentUnion;
 
 public interface CustomerActivityContentMapper {
 
-	void insert(CustomerActivityContentPo customerActivityContentPo);
-	
-	List<CustomerActivityContentUnion> getProductListByCustomerActivityId(Long customerActivityId);
-	
-	List<CustomerActivityContentUnion> getProjectListByCustomerActivityId(Long customerActivityId);
-	
-	List<CustomerActivityContentUnion> getCardListByCustomerActivityId(Long customerActivityId);
-	
-	List<CustomerActivityContentUnion> getCouponListByCustomerActivityId(Long customerActivityId);
+    void insert(CustomerActivityContentPo customerActivityContentPo);
 
-	CustomerActivityContentUnion getById(Long id);
+    List<CustomerActivityContentUnion> getProductListByCustomerActivityId(Long customerActivityId);
 
-	void updateAmount(Map<String, Object> map);
+    List<CustomerActivityContentUnion> getProjectListByCustomerActivityId(Long customerActivityId);
 
-	CustomerActivityContentPo getByActivityContentIdRelatedId(Map<String, Object> map);
+    List<CustomerActivityContentUnion> getCardListByCustomerActivityId(Long customerActivityId);
+
+    List<CustomerActivityContentUnion> getCouponListByCustomerActivityId(Long customerActivityId);
+
+    CustomerActivityContentUnion getById(Long id);
+
+    void updateAmount(Map<String, Object> map);
+
+    CustomerActivityContentPo getByActivityContentIdRelatedId(Map<String, Object> map);
 }

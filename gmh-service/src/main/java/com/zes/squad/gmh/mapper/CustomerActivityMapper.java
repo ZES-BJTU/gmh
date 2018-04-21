@@ -9,13 +9,13 @@ import com.zes.squad.gmh.entity.union.CustomerActivityUnion;
 
 public interface CustomerActivityMapper {
 
-	void insert(CustomerActivityPo customerActivityPo);
-	
-	List<CustomerActivityUnion> listByCondition(CustomerActivityQueryCondition condition);
+    void insert(CustomerActivityPo customerActivityPo);
 
-	CustomerActivityPo getById(Long id);
+    List<CustomerActivityUnion> listByCondition(CustomerActivityQueryCondition condition);
 
-	List<CustomerActivityUnion> getActivityListByCustomerId(Map<String, Object> map);
-	
-	void setInvalid(Long consumeRecordId);
+    CustomerActivityPo getById(Long id);
+
+    List<CustomerActivityUnion> getActivityListByCustomerId(Map<String, Object> map);
+
+    void setInvalid(Long consumeRecordId);
 }

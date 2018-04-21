@@ -7,7 +7,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class CustomerActivityQueryParams extends QueryParams{
+public class CustomerActivityQueryParams extends QueryParams {
 
-	private String keyWord;
+    private String keyWord;
 }

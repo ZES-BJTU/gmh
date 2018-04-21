@@ -30,46 +30,50 @@ import com.zes.squad.gmh.web.helper.CheckHelper;
 @RestController
 public class CustomerController {
 
-	@Autowired
+    @Autowired
     private CustomerService customerService;
-	
-	 @RequestMapping(path = "/create", method = { RequestMethod.PUT })
-	    public JsonResult<Void> doCreateCustomer(@RequestBody CustomerCreateOrModifyParams params) {
-		 CustomerPo customer = CommonConverter.map(params, CustomerPo.class);
-		 	customerService.insert(customer);
-	        return JsonResults.success();
-	    }
-	 @RequestMapping(path = "/modify", method = { RequestMethod.PUT })
-	    public JsonResult<Void> doModifyCustomer(@RequestBody CustomerCreateOrModifyParams params) {
-		 CustomerPo customer = CommonConverter.map(params, CustomerPo.class);
-		 	customerService.update(customer);
-	        return JsonResults.success();
-	    }
-	 @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
-	    public JsonResult<Void> doDeleteCustomer(@PathVariable("id") Long id) {
-		 
-		 	customerService.delete(id);
-	        return JsonResults.success();
-	    }
-	 @RequestMapping(path = "/list", method = { RequestMethod.PUT })
-	    public JsonResult<PagedList<CustomerVo>> doListPagedAppointment(@RequestBody CustomerQueryParams params) {
-	        CheckHelper.checkPageParams(params);
-	        CustomerQueryCondition condition = CommonConverter.map(params, CustomerQueryCondition.class);
-	        PagedList<CustomerPo> customerPos = customerService.listPagedCustomerPo(condition);
-	        if (CollectionUtils.isEmpty(customerPos.getData())) {
-	            return JsonResults.success(PagedLists.newPagedList(customerPos.getPageNum(), customerPos.getPageSize()));
-	        }
-	        List<CustomerVo> vos = new ArrayList<CustomerVo>();
-	        for (CustomerPo po : customerPos.getData()) {
-	        	CustomerVo vo = buildCustomerVoByPo(po);
-	            vos.add(vo);
-	        }
-	        return JsonResults.success(PagedLists.newPagedList(customerPos.getPageNum(), customerPos.getPageSize(),
-	        		customerPos.getTotalCount(), vos));
-	    }
-	private CustomerVo buildCustomerVoByPo(CustomerPo po) {
-		CustomerVo vo = CommonConverter.map(po, CustomerVo.class);
-		vo.setGender(EnumUtils.getDescByKey(po.getGender(), GenderEnum.class));
-		return vo;
-	}
+
+    @RequestMapping(path = "/create", method = { RequestMethod.PUT })
+    public JsonResult<Void> doCreateCustomer(@RequestBody CustomerCreateOrModifyParams params) {
+        CustomerPo customer = CommonConverter.map(params, CustomerPo.class);
+        customerService.insert(customer);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/modify", method = { RequestMethod.PUT })
+    public JsonResult<Void> doModifyCustomer(@RequestBody CustomerCreateOrModifyParams params) {
+        CustomerPo customer = CommonConverter.map(params, CustomerPo.class);
+        customerService.update(customer);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/{id}", method = { RequestMethod.DELETE })
+    public JsonResult<Void> doDeleteCustomer(@PathVariable("id") Long id) {
+
+        customerService.delete(id);
+        return JsonResults.success();
+    }
+
+    @RequestMapping(path = "/list", method = { RequestMethod.PUT })
+    public JsonResult<PagedList<CustomerVo>> doListPagedAppointment(@RequestBody CustomerQueryParams params) {
+        CheckHelper.checkPageParams(params);
+        CustomerQueryCondition condition = CommonConverter.map(params, CustomerQueryCondition.class);
+        PagedList<CustomerPo> customerPos = customerService.listPagedCustomerPo(condition);
+        if (CollectionUtils.isEmpty(customerPos.getData())) {
+            return JsonResults.success(PagedLists.newPagedList(customerPos.getPageNum(), customerPos.getPageSize()));
+        }
+        List<CustomerVo> vos = new ArrayList<CustomerVo>();
+        for (CustomerPo po : customerPos.getData()) {
+            CustomerVo vo = buildCustomerVoByPo(po);
+            vos.add(vo);
+        }
+        return JsonResults.success(PagedLists.newPagedList(customerPos.getPageNum(), customerPos.getPageSize(),
+                customerPos.getTotalCount(), vos));
+    }
+
+    private CustomerVo buildCustomerVoByPo(CustomerPo po) {
+        CustomerVo vo = CommonConverter.map(po, CustomerVo.class);
+        vo.setGender(EnumUtils.getDescByKey(po.getGender(), GenderEnum.class));
+        return vo;
+    }
 }

@@ -60,7 +60,7 @@ public interface EmployeeService {
      * @return
      */
     List<EmployeePo> listEmployeesByWorkType(Integer workType);
-    
+
     /**
      * 根据工种查询员工
      * 

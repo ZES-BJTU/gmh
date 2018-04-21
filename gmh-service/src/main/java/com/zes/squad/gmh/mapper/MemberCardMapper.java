@@ -53,5 +53,5 @@ public interface MemberCardMapper {
      * @return
      */
     MemberCardPo selectByCode(String code);
-    
+
 }

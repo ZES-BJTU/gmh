@@ -22,7 +22,7 @@ public interface StockUnionMapper {
      * @return
      */
     List<StockUnion> selectByCondition(StockQueryCondition condition);
-    
+
     /**
      * 根据id查询
      * 
@@ -30,7 +30,7 @@ public interface StockUnionMapper {
      * @return
      */
     StockUnion selectWithAmountById(Long id);
-    
+
     /**
      * 根据条件模糊查询
      * 

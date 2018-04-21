@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class ModifyValidDateParams {
-	private Long id;
-	private Date validDate;
+    private Long id;
+    private Date validDate;
 }

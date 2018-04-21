@@ -7,14 +7,14 @@ import com.zes.squad.gmh.entity.condition.CustomerQueryCondition;
 import com.zes.squad.gmh.entity.po.CustomerPo;
 
 public interface CustomerService {
-	
-	int insert(CustomerPo customerPo);
-	
-	int update(CustomerPo customerPo);
-	
-	int delete(Long id);
-	
-	PagedList<CustomerPo> listPagedCustomerPo(CustomerQueryCondition condition);
 
-	Workbook exportCustomerRecord();
+    int insert(CustomerPo customerPo);
+
+    int update(CustomerPo customerPo);
+
+    int delete(Long id);
+
+    PagedList<CustomerPo> listPagedCustomerPo(CustomerQueryCondition condition);
+
+    Workbook exportCustomerRecord();
 }

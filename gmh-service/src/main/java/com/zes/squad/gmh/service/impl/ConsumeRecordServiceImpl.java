@@ -499,7 +499,6 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 					cardFlowPo.setCustomerMemberCardId(payWayId);
 					cardFlowPo.setMoney(consumeRecord.getConsumeMoney());
 					customerMemberCardFlowMapper.insert(cardFlowPo);
-					return;
 				} else {
 					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "会员卡余额不足");
 				}
@@ -551,23 +550,23 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
 						}
 					}
 				}
-				CustomerMemberCardPo tmpCmcPo = customerMemberCardMapper.getById(payWayId);
-				List<CustomerMemberCardContentUnion> cardProjectLeftList = customerMemberCardContentMapper.getProjectContentList(tmpCmcPo.getId());
-				String moneyMessage = "";
-				String projectMessage = "";
-				String message = "";
-				if(tmpCmcPo.getRemainingMoney()!=null){
-					moneyMessage = "储值" + tmpCmcPo.getRemainingMoney().toString() + "元,";
-				}
-				for(int i=0;i<cardProjectLeftList.size();i++){
-					projectMessage = projectMessage + cardProjectLeftList.get(i).getRelatedName() + cardProjectLeftList.get(i).getAmount().toString() +",";
-				}
-				message = "{\"remain\":\"" + moneyMessage + projectMessage + " \" ";
-				SMSHelper.sendMessage(consumeRecord.getCustomerMobile(), "SMS_132395798", message);
-				
 			} else {
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式选择有误");
 			}
+			CustomerMemberCardPo tmpCmcPo = customerMemberCardMapper.getById(payWayId);
+			List<CustomerMemberCardContentUnion> cardProjectLeftList = customerMemberCardContentMapper.getProjectContentList(tmpCmcPo.getId());
+			String moneyMessage = "";
+			String projectMessage = "";
+			String message = "";
+			if(tmpCmcPo.getRemainingMoney()!=null){
+				moneyMessage = "储值" + tmpCmcPo.getRemainingMoney().toString() + "元,";
+			}
+			for(int i=0;i<cardProjectLeftList.size();i++){
+				projectMessage = projectMessage + cardProjectLeftList.get(i).getRelatedName() + cardProjectLeftList.get(i).getAmount().toString() +",";
+			}
+			message = "{\"remain\":\"" + moneyMessage + projectMessage + " \"} ";
+			SMSHelper.sendMessage(consumeRecord.getCustomerMobile(), "SMS_132395798", message);
+			
 		} else if (paymentWay == 2) {
 			if (consumeType != 3) {
 				throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "支付方式选择有误");

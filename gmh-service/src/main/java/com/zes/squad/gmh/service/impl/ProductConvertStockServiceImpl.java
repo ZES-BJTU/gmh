@@ -145,7 +145,14 @@ public class ProductConvertStockServiceImpl implements ProductConvertStockServic
             record = productAmountMapper.reduceAmount(productAmountPo);
             ensureConditionSatisfied(record == 1, "修改产品余量失败");
             StockAmountPo existingStockAmountPo = stockAmountMapper.selectByStockAndStore(po.getStockId(), storeId);
-            ensureEntityExist(existingProductAmountPo, "该门店无此库存");
+            if (existingStockAmountPo == null) {
+                StockAmountPo stockAmountPo = new StockAmountPo();
+                stockAmountPo.setStockId(po.getStockId());
+                stockAmountPo.setAmount(po.getStockAmount());
+                stockAmountPo.setStoreId(storeId);
+                record = stockAmountMapper.insert(stockAmountPo);
+                ensureConditionSatisfied(record == 1, "修改库存余量失败");
+            }
             StockAmountPo stockAmountPo = new StockAmountPo();
             stockAmountPo.setId(existingStockAmountPo.getId());
             stockAmountPo.setAmount(po.getStockAmount());
@@ -156,7 +163,14 @@ public class ProductConvertStockServiceImpl implements ProductConvertStockServic
             //库存转化为产品(库存减少，产品增加)
             ProductAmountPo existingProductAmountPo = productAmountMapper.selectByProductAndStore(po.getProductId(),
                     storeId);
-            ensureEntityExist(existingProductAmountPo, "该门店无此产品");
+            if (existingProductAmountPo == null) {
+                ProductAmountPo productAmountPo = new ProductAmountPo();
+                productAmountPo.setProductId(po.getProductId());
+                productAmountPo.setAmount(po.getProductAmount());
+                productAmountPo.setStoreId(storeId);
+                record = productAmountMapper.insert(productAmountPo);
+                ensureConditionSatisfied(record == 1, "修改产品余量失败");
+            }
             ProductAmountPo productAmountPo = new ProductAmountPo();
             productAmountPo.setId(existingProductAmountPo.getId());
             productAmountPo.setAmount(po.getProductAmount());

@@ -33,6 +33,8 @@ public class AppointmentTask {
 
     private static final String CACHE_KET_APPOINTMENT_PREFIX = "_cache_key_appointment_%s";
 
+    private static final int    DEFAULT_APPOINTMENT_TIMEOUT  = 60 * 60;
+
     @Autowired
     private UserService         userService;
     @Autowired
@@ -78,7 +80,7 @@ public class AppointmentTask {
         //使用redis分布式锁保证多台机器同时执行定时任务每个预约短信只发送一次
         RedissonClient client = redisLock.getRedissonClient();
         if (client == null) {
-            log.error(">>>>>redis锁初始化失败");
+            log.error(">>>>>redis锁获取失败, redissonClient is null");
             return;
         }
         List<AppointmentUnion> unions = appointmentService.getRemindAppointment();
@@ -115,6 +117,7 @@ public class AppointmentTask {
                     appointmentMessage += "," + project.getProjectName();
                 }
             }
+            //预约消息不为空处理
             if (!Strings.isNullOrEmpty(appointmentMessage)) {
                 //以预约id作为缓存key唯一标识
                 String cacheKey = String.format(CACHE_KET_APPOINTMENT_PREFIX,
@@ -133,7 +136,8 @@ public class AppointmentTask {
                                         appointmentPo.getCustomerMobile());
                                 continue;
                             }
-                            cacheService.put(cacheKey, appointmentPo.getCustomerMobile());
+                            //每处理完一条预约在缓存中标识一下,避免和获取锁key重复,默认1小时过期
+                            cacheService.put(cacheKey, appointmentPo.getCustomerMobile(), DEFAULT_APPOINTMENT_TIMEOUT);
                         }
                     } catch (InterruptedException e) {
                         log.error("使用redis锁控制预约提醒异常", e);

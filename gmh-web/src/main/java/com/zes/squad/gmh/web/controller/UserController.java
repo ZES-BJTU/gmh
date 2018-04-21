@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.web.controller;
 
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureCollectionNotEmpty;
+import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
@@ -74,12 +75,12 @@ public class UserController extends BaseController {
         return JsonResults.success();
     }
 
-    @RequestMapping(path = "/applyAuthCode", method = { RequestMethod.PATCH })
-    public JsonResult<Void> doApplyAuthCode(@RequestBody MessageParams params) {
-        ensureParameterExist(params, "短信参数为空");
-        ensureParameterExist(params.getMobile(), "手机号为空");
-        messageService.sendAuthCode(params.getMobile());
-        userService.resetPassword(params.getMobile());
+    @RequestMapping(path = "/applyAuthCode", method = { RequestMethod.GET })
+    public JsonResult<Void> doApplyAuthCode(String mobile) {
+        ensureParameterExist(mobile, "手机号为空");
+        UserPo userPo = userService.queryUserByMobile(mobile);
+        ensureEntityExist(userPo, "非系统用户,请更换手机号后重试");
+        messageService.sendAuthCode(mobile);
         return JsonResults.success();
     }
 

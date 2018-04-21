@@ -6,7 +6,6 @@ import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureEntityNotExist;
 import static com.zes.squad.gmh.common.helper.LogicHelper.ensureParameterValid;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -34,12 +33,10 @@ import com.zes.squad.gmh.entity.po.StorePo;
 import com.zes.squad.gmh.entity.po.UserPo;
 import com.zes.squad.gmh.entity.po.UserTokenPo;
 import com.zes.squad.gmh.entity.union.UserUnion;
-import com.zes.squad.gmh.helper.SMSHelper;
 import com.zes.squad.gmh.mapper.StoreMapper;
 import com.zes.squad.gmh.mapper.UserMapper;
 import com.zes.squad.gmh.mapper.UserTokenMapper;
 import com.zes.squad.gmh.mapper.UserUnionMapper;
-import com.zes.squad.gmh.property.MessageProperties;
 import com.zes.squad.gmh.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -110,8 +107,6 @@ public class UserServiceImpl implements UserService {
     public void resetPassword(String mobile) {
         UserPo po = userMapper.selectByMobile(mobile);
         String resetPassword = encryptPassword(po.getAccount(), po.getSalt(), DEFAULT_PASSWORD);
-        String resetPasswordContent = MessageProperties.get("reset.password.content");
-        SMSHelper.sendMessage(po.getMobile(), MessageFormat.format(resetPasswordContent, DEFAULT_PASSWORD));
         userMapper.updatePassword(po.getId(), resetPassword);
     }
 
@@ -252,6 +247,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserUnion> listOnLineUsers() {
         return userUnionMapper.selectOnline();
+    }
+
+    @Override
+    public UserPo queryUserByMobile(String mobile) {
+        return userMapper.selectByMobile(mobile);
     }
 
 }

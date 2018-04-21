@@ -100,4 +100,12 @@ public interface UserService {
      */
     List<UserUnion> listOnLineUsers();
 
+    /**
+     * 根据手机号查询用户
+     * 
+     * @param mobile
+     * @return
+     */
+    UserPo queryUserByMobile(String mobile);
+
 }

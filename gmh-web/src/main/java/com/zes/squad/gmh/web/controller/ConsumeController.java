@@ -32,6 +32,7 @@ import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.mapper.ActivityUnionMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
+import com.zes.squad.gmh.service.MessageService;
 import com.zes.squad.gmh.web.common.JsonResults;
 import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 import com.zes.squad.gmh.web.entity.param.ConsumeCreateOrModifyParams;
@@ -51,7 +52,9 @@ public class ConsumeController {
 	private CustomerMapper customerMapper;
 	@Autowired
 	private ActivityUnionMapper activityUnionMapper;
-
+	@Autowired
+	private MessageService messageService;
+	
 	@RequestMapping(path = "/createProductConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateProductConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		Map<String, Object> map = consumeRecordService.getTradeSerialNumber("B");
@@ -87,6 +90,16 @@ public class ConsumeController {
 	@RequestMapping(path = "/createConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doCreateConsume(@RequestBody ConsumeCreateOrModifyParams params) {
 		checkConsumeCreateParams(params);
+		if(params.getConsumeRecordPo().getCouponAmount()!=null){
+			if(params.getConsumeRecordPo().getCouponAmount()>1){
+				if(params.getValidStr()==null){
+					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+							"请输入验证码");
+				}else{
+					messageService.validateAuthCode(params.getConsumeRecordPo().getCustomerMobile(), params.getValidStr());
+				}
+			}
+		}
 		List<ConsumeSaleEmployeePo> consumeSaleEmployees = getconsumeSaleEmployeesFromParams(params.getEmployeeIds(),params.getPercents());
 		params.setConsumeSaleEmployees(consumeSaleEmployees);
 		if(params.getConsumeSaleEmployees().size()!=0){
@@ -136,6 +149,17 @@ public class ConsumeController {
 	@RequestMapping(path = "/modifyConsume", method = { RequestMethod.PUT })
 	public JsonResult<Void> doModify(@RequestBody ConsumeCreateOrModifyParams params) {
 		checkConsumeCreateParams(params);
+		if(params.getConsumeRecordPo().getCouponAmount()!=null){
+			if(params.getConsumeRecordPo().getCouponAmount()>1){
+				if(params.getValidStr()==null){
+					throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED,
+							"请输入验证码");
+				}else{
+					messageService.validateAuthCode(params.getConsumeRecordPo().getCustomerMobile(), params.getValidStr());
+				}
+			}
+		}
+		
 		consumeRecordService.modify(params.getConsumeRecordPo(), params.getConsumeRecordDetails(), params.getGifts(),
 				params.getConsumeRecordPo().getId(), params.getMemberCardPo(),params.getConsumeSaleEmployees());
 		return JsonResults.success();

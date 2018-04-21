@@ -20,6 +20,7 @@ public class ConsumeCreateOrModifyParams extends QueryParams{
 	
 	
 	private ConsumeRecordPo consumeRecordPo;	
+	private String validStr;
 	private List<ConsumeRecordDetailPo> consumeRecordDetails;
 	private MemberCardPo memberCardPo;
 	private List<ConsumeRecordGiftPo> gifts;

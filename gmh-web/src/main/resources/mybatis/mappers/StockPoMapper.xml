@@ -93,7 +93,7 @@
 		s.`stock_type_id`, 
 		s.`code`,
 		s.`name`, 
-		s.`unit_name`, 
+		s.`unit_name`
 		FROM stock s
 		LEFT JOIN
 		stock_amount sa

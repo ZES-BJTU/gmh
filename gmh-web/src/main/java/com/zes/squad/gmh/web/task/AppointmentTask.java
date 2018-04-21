@@ -2,7 +2,6 @@ package com.zes.squad.gmh.web.task;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.redisson.api.RLock;
@@ -76,7 +75,7 @@ public class AppointmentTask {
     }
 
     public void remindCustomers() {
-        log.info(">>>>>预约信息提示用户定时任务开始运行>>>>>");
+        log.info(">>>>>预约短信提示用户定时任务开始运行>>>>>");
         //使用redis分布式锁保证多台机器同时执行定时任务每个预约短信只发送一次
         RedissonClient client = redisLock.getRedissonClient();
         if (client == null) {
@@ -121,13 +120,14 @@ public class AppointmentTask {
             if (!Strings.isNullOrEmpty(appointmentMessage)) {
                 //以预约id作为缓存key唯一标识
                 String cacheKey = String.format(CACHE_KET_APPOINTMENT_PREFIX,
-                        appointmentPo.getId() + appointmentPo.getCustomerMobile());
+                        appointmentPo.getId() + "_" + appointmentPo.getCustomerMobile());
                 String mobile = cacheService.get(cacheKey);
                 if (Strings.isNullOrEmpty(mobile)) {
                     //缓存信息不存在说明这个预约没处理过
-                    RLock lock = client.getLock(String.format(CACHE_KET_APPOINTMENT_PREFIX, appointmentPo.getId()));
+                    RLock lock = client
+                            .getLock(String.format(CACHE_KET_APPOINTMENT_PREFIX, "lock_" + appointmentPo.getId()));
                     try {
-                        if (lock.tryLock(5, TimeUnit.SECONDS)) {
+                        if (lock.tryLock()) {
                             //尝试获取锁,获取成功后执行发送逻辑,失败释放锁,5秒的参数防止死锁,如果到了5秒无论如何都会释放(并不是说到了5秒才释放)
                             boolean result = SMSHelper.sendMessage(appointmentPo.getCustomerMobile(),
                                     MessageProperties.get("template.appointment"), appointmentMessage);
@@ -139,18 +139,18 @@ public class AppointmentTask {
                             //每处理完一条预约在缓存中标识一下,避免和获取锁key重复,默认1小时过期
                             cacheService.put(cacheKey, appointmentPo.getCustomerMobile(), DEFAULT_APPOINTMENT_TIMEOUT);
                         }
-                    } catch (InterruptedException e) {
-                        log.error("使用redis锁控制预约提醒异常", e);
+                    } catch (Exception e) {
+                        log.error("使用redis锁控制预约短信提醒异常", e);
                     } finally {
-                        if (lock != null) {
-                            //手动释放锁
+                        if (lock != null && lock.isHeldByCurrentThread()) {
+                            //手动释放锁,没有isHeldByCurrentThread判断会存在跨线程释放锁
                             lock.unlock();
                         }
                     }
                 }
             }
         }
-        log.info(">>>>>预约信息提示用户定时任务结束运行>>>>>");
+        log.info(">>>>>预约短信提示用户定时任务结束运行>>>>>");
     }
 
 }

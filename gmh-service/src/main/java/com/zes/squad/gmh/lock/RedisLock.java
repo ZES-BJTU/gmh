@@ -6,11 +6,12 @@ import org.redisson.config.Config;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-//@Component("redisLock")
+@Component("redisLock")
 public class RedisLock implements InitializingBean, DisposableBean {
 
     @Value("${redis.host}")

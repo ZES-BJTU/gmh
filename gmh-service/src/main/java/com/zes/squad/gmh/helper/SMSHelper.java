@@ -79,7 +79,7 @@ public class SMSHelper {
                 log.error("发送短信失败, mobile is {}, code is null");
                 throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_FAILED, "短信服务不可用");
             }
-            if (!Objects.equals(sendSmsResponse.getCode(), "OK")) {
+            if (!Objects.equals(sendSmsResponse.getCode(), SMSCodeEnum.OK.getKey())) {
                 log.error("发送短信失败, mobile is {}, code is {}, message is {}", sendSmsResponse.getCode(),
                         sendSmsResponse.getMessage());
                 if (EnumUtils.containsKey(sendSmsResponse.getCode(), SMSCodeEnum.class)) {

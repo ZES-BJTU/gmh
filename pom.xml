@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.zes.squad</groupId>
 	<artifactId>gmh</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
-	<description>光美奂父工程</description>
+	<description>光美焕父工程</description>
 
 	<modules>
 		<module>gmh-common</module>

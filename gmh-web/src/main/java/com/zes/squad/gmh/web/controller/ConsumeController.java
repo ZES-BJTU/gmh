@@ -22,16 +22,19 @@ import com.zes.squad.gmh.common.page.PagedLists;
 import com.zes.squad.gmh.common.page.PagedLists.PagedList;
 import com.zes.squad.gmh.context.ThreadContext;
 import com.zes.squad.gmh.entity.condition.ConsumeRecordQueryCondition;
+import com.zes.squad.gmh.entity.condition.UserQueryCondition;
 import com.zes.squad.gmh.entity.po.ActivityPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordDetailPo;
 import com.zes.squad.gmh.entity.po.ConsumeRecordPo;
 import com.zes.squad.gmh.entity.po.ConsumeSaleEmployeePo;
 import com.zes.squad.gmh.entity.po.CustomerPo;
 import com.zes.squad.gmh.entity.po.MemberCardPo;
+import com.zes.squad.gmh.entity.po.UserPo;
 import com.zes.squad.gmh.entity.union.ConsumeRecordUnion;
 import com.zes.squad.gmh.entity.union.PrintUnion;
 import com.zes.squad.gmh.mapper.ActivityUnionMapper;
 import com.zes.squad.gmh.mapper.CustomerMapper;
+import com.zes.squad.gmh.mapper.UserMapper;
 import com.zes.squad.gmh.service.ConsumeRecordService;
 import com.zes.squad.gmh.service.MessageService;
 import com.zes.squad.gmh.web.common.JsonResults;
@@ -51,6 +54,8 @@ public class ConsumeController {
     private ConsumeRecordService consumeRecordService;
     @Autowired
     private CustomerMapper       customerMapper;
+    @Autowired
+    private UserMapper       userMapper;
     @Autowired
     private ActivityUnionMapper  activityUnionMapper;
     @Autowired
@@ -91,12 +96,25 @@ public class ConsumeController {
     @RequestMapping(path = "/createConsume", method = { RequestMethod.PUT })
     public JsonResult<Void> doCreateConsume(@RequestBody ConsumeCreateOrModifyParams params) {
         checkConsumeCreateParams(params);
+        UserQueryCondition uerQueryCondition = new UserQueryCondition();
+    	uerQueryCondition.setRole(2);
+    	uerQueryCondition.setStoreId(ThreadContext.getUserStoreId());
+    	List<Long> managerList = userMapper.selectIdsByCondition(uerQueryCondition);
+    	UserPo managerUser = userMapper.selectById(managerList.get(0));
+    	if(managerList.size()==0 || managerList.size()>1){
+    		throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "店铺信息异常");
+    	}
+    	
+        if(params.getConsumeRecordPo().getCouponAmount()>1 && (params.getValidStr()=="" || params.getValidStr()==null)){
+        	
+        	messageService.sendAuthCode(managerUser.getMobile());
+        }
         if (params.getConsumeRecordPo().getCouponAmount() != null) {
             if (params.getConsumeRecordPo().getCouponAmount() > 1) {
                 if (params.getValidStr() == null) {
                     throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请输入验证码");
                 } else {
-                    messageService.validateAuthCode(params.getConsumeRecordPo().getCustomerMobile(),
+                    messageService.validateAuthCode(managerUser.getMobile(),
                             params.getValidStr());
                 }
             }
@@ -114,6 +132,7 @@ public class ConsumeController {
                 throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "销售员及顾问分担比例总和不为100");
             }
         }
+        
         consumeRecordService.createConsumeRecord(params.getConsumeRecordPo(), params.getConsumeRecordDetails(),
                 params.getGifts(), params.getMemberCardPo(), params.getConsumeSaleEmployees());
         return JsonResults.success();
@@ -163,12 +182,25 @@ public class ConsumeController {
     @RequestMapping(path = "/modifyConsume", method = { RequestMethod.PUT })
     public JsonResult<Void> doModify(@RequestBody ConsumeCreateOrModifyParams params) {
         checkConsumeCreateParams(params);
+        UserQueryCondition uerQueryCondition = new UserQueryCondition();
+    	uerQueryCondition.setRole(2);
+    	uerQueryCondition.setStoreId(ThreadContext.getUserStoreId());
+    	List<Long> managerList = userMapper.selectIdsByCondition(uerQueryCondition);
+    	UserPo managerUser = userMapper.selectById(managerList.get(0));
+    	if(managerList.size()==0 || managerList.size()>1){
+    		throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "店铺信息异常");
+    	}
+    	
+        if(params.getConsumeRecordPo().getCouponAmount()>1 && (params.getValidStr()=="" || params.getValidStr()==null)){
+        	
+        	messageService.sendAuthCode(managerUser.getMobile());
+        }
         if (params.getConsumeRecordPo().getCouponAmount() != null) {
             if (params.getConsumeRecordPo().getCouponAmount() > 1) {
                 if (params.getValidStr() == null) {
                     throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "请输入验证码");
                 } else {
-                    messageService.validateAuthCode(params.getConsumeRecordPo().getCustomerMobile(),
+                    messageService.validateAuthCode(managerUser.getMobile(),
                             params.getValidStr());
                 }
             }

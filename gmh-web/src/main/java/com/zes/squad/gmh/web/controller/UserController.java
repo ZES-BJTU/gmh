@@ -179,7 +179,7 @@ public class UserController extends BaseController {
     private void checkUserCreateParams(UserParams params) {
         UserPo user = ThreadContext.getCurrentUser();
         ensureParameterExist(params, "用户信息为空");
-        ensureParameterNotExist(params.getId(), "用户标识应为空");
+        ensureParameterNotExist(params.getId(), "用户已存在");
         ensureParameterExist(params.getRole(), "用户身份为空");
         ensureParameterValid(EnumUtils.containsKey(params.getRole(), UserRoleEnum.class), "用户身份错误");
         if (user.getRole().intValue() == UserRoleEnum.ADMINISTRATOR.getKey()) {

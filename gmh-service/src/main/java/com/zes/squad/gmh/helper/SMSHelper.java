@@ -10,7 +10,11 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.zes.squad.gmh.common.enums.SMSCodeEnum;
+import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.helper.LogicHelper;
+import com.zes.squad.gmh.common.util.EnumUtils;
 import com.zes.squad.gmh.property.MessageProperties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,21 +73,27 @@ public class SMSHelper {
             sendSmsResponse = acsClient.getAcsResponse(request);
             if (sendSmsResponse == null) {
                 log.error("发送短信失败, mobile is {}, response is null");
-                return false;
+                throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_FAILED, "短信服务不可用");
             }
             if (sendSmsResponse.getCode() == null) {
                 log.error("发送短信失败, mobile is {}, code is null");
-                return false;
+                throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_FAILED, "短信服务不可用");
             }
             if (!Objects.equals(sendSmsResponse.getCode(), "OK")) {
                 log.error("发送短信失败, mobile is {}, code is {}, message is {}", sendSmsResponse.getCode(),
                         sendSmsResponse.getMessage());
-                return true;
+                if (EnumUtils.containsKey(sendSmsResponse.getCode(), SMSCodeEnum.class)) {
+                    throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_FAILED,
+                            EnumUtils.getDescByKey(sendSmsResponse.getCode(), SMSCodeEnum.class));
+                } else {
+                    throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_FAILED, "短信服务不可用");
+                }
             }
+            return true;
         } catch (Exception e) {
             log.error("发送短信异常", e);
+            throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_FAILED, "短信服务不可用");
         }
-        return false;
     }
 
 }

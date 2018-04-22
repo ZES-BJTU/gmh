@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zes.squad.gmh.cache.CacheService;
+import com.zes.squad.gmh.common.exception.GmhException;
 import com.zes.squad.gmh.common.util.DateUtils;
 import com.zes.squad.gmh.common.util.JsonUtils;
 import com.zes.squad.gmh.entity.po.AppointmentPo;
@@ -139,6 +140,8 @@ public class AppointmentTask {
                             //每处理完一条预约在缓存中标识一下,避免和获取锁key重复,默认1小时过期
                             cacheService.put(cacheKey, appointmentPo.getCustomerMobile(), DEFAULT_APPOINTMENT_TIMEOUT);
                         }
+                    } catch (GmhException gmhException) {
+                        throw gmhException;
                     } catch (Exception e) {
                         log.error("使用redis锁控制预约短信提醒异常", e);
                     } finally {

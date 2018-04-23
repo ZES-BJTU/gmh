@@ -50,6 +50,7 @@
 			<mvc:exclude-mapping path="/users/applyAuthCode" />
 			<mvc:exclude-mapping path="/users/resetPassword" />
 			<mvc:exclude-mapping path="/export/**" />
+			<mvc:exclude-mapping path="/gmh/**" />
 			<mvc:exclude-mapping path="/appointment/remind/**" />
 			<bean class="com.zes.squad.gmh.web.interceptor.AuthInterceptor" />
 		</mvc:interceptor>

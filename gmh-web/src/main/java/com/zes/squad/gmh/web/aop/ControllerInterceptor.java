@@ -18,7 +18,7 @@ public class ControllerInterceptor implements MethodInterceptor {
         try {
             Object result = invocation.proceed();
             long endTime = System.currentTimeMillis();
-            log.error(">>>>>调用controller成功, 调用方法 :{}, 接口耗时:{}ms", getApiInfo(invocation), endTime - beginTime);
+            log.info(">>>>>调用controller成功, 调用方法 :{}, 接口耗时:{}ms", getApiInfo(invocation), endTime - beginTime);
             return result;
         } catch (GmhException e) {
             long endTime = System.currentTimeMillis();

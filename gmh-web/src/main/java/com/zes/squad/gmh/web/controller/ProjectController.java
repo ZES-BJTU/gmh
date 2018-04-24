@@ -209,7 +209,7 @@ public class ProjectController {
     public JsonResult<List<ProjectVo>> doListAllProjects() {
         List<ProjectPo> pos = projectService.listAllProjects();
         if (CollectionUtils.isEmpty(pos)) {
-            return JsonResults.success();
+            return JsonResults.success(Lists.newArrayList());
         }
         List<ProjectVo> vos = CommonConverter.mapList(pos, ProjectVo.class);
         return JsonResults.success(vos);

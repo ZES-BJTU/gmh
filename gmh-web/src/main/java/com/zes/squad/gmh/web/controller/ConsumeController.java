@@ -104,11 +104,13 @@ public class ConsumeController {
     	if(managerList.size()==0 || managerList.size()>1){
     		throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "店铺信息异常");
     	}
-    	
-        if(params.getConsumeRecordPo().getCouponAmount()>1 && (params.getValidStr()=="" || params.getValidStr()==null)){
-        	
-        	messageService.sendAuthCode(managerUser.getMobile());
-        }
+    	if(params.getConsumeRecordPo().getCouponAmount() != null){
+    		if(params.getConsumeRecordPo().getCouponAmount()>1 && (params.getValidStr()=="" || params.getValidStr()==null)){
+            	
+            	messageService.sendAuthCode(managerUser.getMobile());
+            }
+    	}
+        
         if (params.getConsumeRecordPo().getCouponAmount() != null) {
             if (params.getConsumeRecordPo().getCouponAmount() > 1) {
                 if (params.getValidStr() == null) {

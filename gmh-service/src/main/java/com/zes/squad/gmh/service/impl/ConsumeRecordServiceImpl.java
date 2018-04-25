@@ -341,6 +341,16 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
                 }
 
             }
+            if(ac.getType()==3){ //如果是产品，则扣除产品数量
+            	ProductFlowPo flowPo = new ProductFlowPo();
+                flowPo.setAmount(ac.getNumber());
+                flowPo.setProductId(ac.getRelatedId());
+                flowPo.setRecordId(consumeRecord.getId());
+                flowPo.setStatus(1);
+                flowPo.setStoreId(ThreadContext.getUserStoreId());
+                flowPo.setType(3);
+                productService.reduceProductAmount(flowPo);
+            }
 
         }
         calAmount(consumeRecord, consumeRecordDetails, new ArrayList<ConsumeRecordGiftPo>());

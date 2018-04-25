@@ -111,7 +111,10 @@ public class CustomerServiceImpl implements CustomerService {
             generateStringCell(row, columnNum++, po.getMobile());
             //出生日期
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String dateString = formatter.format(po.getBirthday());
+            String dateString = "";
+            if(po.getBirthday()!=null){
+                dateString = formatter.format(po.getBirthday());
+            }
             generateStringCell(row, columnNum++, dateString);
             //来源
             generateStringCell(row, columnNum++, po.getSource());

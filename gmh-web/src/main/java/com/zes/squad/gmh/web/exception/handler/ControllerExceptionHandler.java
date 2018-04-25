@@ -1,6 +1,7 @@
 package com.zes.squad.gmh.web.exception.handler;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.zes.squad.gmh.common.exception.ErrorCodeEnum;
 import com.zes.squad.gmh.common.exception.GmhException;
@@ -9,8 +10,8 @@ import com.zes.squad.gmh.web.common.JsonResults.JsonResult;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Deprecated
 @Slf4j
+@RestControllerAdvice
 public class ControllerExceptionHandler {
 
     @ExceptionHandler({ GmhException.class })

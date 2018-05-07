@@ -12,5 +12,6 @@ public class PrintVo {
     private ConsumeRecordVo               consumeRecordVo;
     private StoreVo                       storeVo;
     private List<CustomerMemberCardUnion> customerMemberCardUnions;
+    private String 						  url;
 
 }

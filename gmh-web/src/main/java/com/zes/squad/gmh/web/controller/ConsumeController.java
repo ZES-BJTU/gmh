@@ -399,6 +399,7 @@ public class ConsumeController {
         printVo.setConsumeRecordVo(consumeRecordVo);
         printVo.setStoreVo(storeVo);
         printVo.setCustomerMemberCardUnions(printUnion.getCustomerMemberCardUnions());
+        printVo.setUrl(printUnion.getUrl());
         return printVo;
     }
 

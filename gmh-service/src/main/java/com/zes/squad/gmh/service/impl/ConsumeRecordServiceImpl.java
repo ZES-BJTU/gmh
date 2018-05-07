@@ -73,6 +73,7 @@ import com.zes.squad.gmh.mapper.CustomerMemberCardContentMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardFlowMapper;
 import com.zes.squad.gmh.mapper.CustomerMemberCardMapper;
 import com.zes.squad.gmh.mapper.EmployeeMapper;
+import com.zes.squad.gmh.mapper.JudgementMapper;
 import com.zes.squad.gmh.mapper.MemberCardMapper;
 import com.zes.squad.gmh.mapper.ProductFlowMapper;
 import com.zes.squad.gmh.mapper.ProductMapper;
@@ -136,7 +137,8 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
     private MemberCardMapper                memberCardMapper;
     @Autowired
     private ConsumeSaleEmployeeMapper       consumeSaleEmployeeMapper;
-
+    @Autowired
+    private JudgementMapper                 judgementMapper;
     @Override
     public void createProductConsumeRecord(Map<String, Object> map, ConsumeRecordPo consumeRecord,
                                            List<ConsumeRecordDetailPo> consumeRecordDetails,
@@ -790,6 +792,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
             cmcu.setCustomerMemberCardContent(customerMemberCardContentMapper.getContentList(cmcu.getId()));
         }
         printUnion.setCustomerMemberCardUnions(customerMemberCardUnions);
+        printUnion.setUrl(judgementMapper.getUrl());
         return printUnion;
     }
 

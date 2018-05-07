@@ -15,4 +15,5 @@ public class PrintUnion {
     private List<ConsumeRecordDetailUnion> consumeRecordDetailUnion;
     private List<ConsumeRecordGiftUnion>   consumeRecordGiftUnion;
     private List<CustomerMemberCardUnion>  customerMemberCardUnions;
+    private String 						   url;
 }

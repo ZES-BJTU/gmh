@@ -584,7 +584,7 @@ public class ConsumeRecordServiceImpl implements ConsumeRecordService {
                         + cardProjectLeftList.get(i).getAmount().toString() + ",";
             }
             message = "{\"remain\":\"" + moneyMessage + projectMessage + " \"} ";
-            boolean smsStatus = SMSHelper.sendMessage(consumeRecord.getCustomerMobile(), "SMS_132395798", message);
+            boolean smsStatus = SMSHelper.sendMessage(consumeRecord.getCustomerMobile(), "SMS_134315866", message);
             if(!smsStatus){
             	throw new GmhException(ErrorCodeEnum.BUSINESS_EXCEPTION_OPERATION_NOT_ALLOWED, "消费提醒发送异常");
             }
